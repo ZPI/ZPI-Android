@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ZPI1</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+	<string name="pause">PAUSE</string>
+    <string name="stop">STOP</string>
+    <string name="start">START</string>
+    <string name="ustawienia">Ustawienia</string>
+    <string name="gps_enabled">GPS włączony</string>
+    <string name="gps_disabled">GPS wyłączony</string>
+    
+</resources>
