@@ -19,7 +19,7 @@ public class HistoryActivity extends Activity implements GestureListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
 		prepareGestureListener();
-		
+		addListeners();
 	}
 
 	private void prepareGestureListener() {
@@ -67,6 +67,9 @@ public class HistoryActivity extends Activity implements GestureListener{
 	public void onDownToUpSwipe() {
 		// TODO Auto-generated method stub
 		
+	}
+	private void addListeners() {
+	
 	}
 	
 }

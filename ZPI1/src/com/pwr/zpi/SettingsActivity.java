@@ -19,6 +19,7 @@ public class SettingsActivity extends Activity implements GestureListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings_activity);
 		prepareGestureListener();
+		addListeners();
 	}
 
 	@Override
@@ -65,6 +66,9 @@ public class SettingsActivity extends Activity implements GestureListener {
 	public void onDownToUpSwipe() {
 		// TODO Auto-generated method stub
 		
+	}
+	private void addListeners() {
+	
 	}
 	
 }

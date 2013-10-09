@@ -19,6 +19,7 @@ public class PlaningActivity extends Activity implements GestureListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.planing_activity);
 		prepareGestureListener();
+		addListeners();
 	}
 
 
@@ -68,5 +69,9 @@ public class PlaningActivity extends Activity implements GestureListener {
 	public void onDownToUpSwipe() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void addListeners() {
+	
 	}
 }
