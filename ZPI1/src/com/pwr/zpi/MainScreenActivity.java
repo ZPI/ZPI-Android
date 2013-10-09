@@ -1,5 +1,8 @@
 package com.pwr.zpi;
 
+import com.pwr.zpi.listeners.GestureListener;
+import com.pwr.zpi.listeners.MyGestureDetector;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -13,13 +16,15 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainScreenActivity extends Activity implements OnClickListener{
+public class MainScreenActivity extends Activity implements GestureListener, OnClickListener {
 
-	TextView GPSStatusTextView;
+	private TextView GPSStatusTextView;
+	private GestureDetector gestureDetector;
+	private View.OnTouchListener gestureListener;
 	private static final short GPS_NOT_ENABLED = 0;
 	private static final short NO_GPS_SIGNAL = 1;
 	private static final short GPS_WORKING = 2;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,7 +44,7 @@ public class MainScreenActivity extends Activity implements OnClickListener{
 
 	private void prepareGestureListener() {
 		// Gesture detection
-		gestureDetector = new GestureDetector(this, new MyGestureDetector());
+		gestureDetector = new GestureDetector(this, new MyGestureDetector(this, true, true, true, true));
 		gestureListener = new View.OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				return gestureDetector.onTouchEvent(event);
@@ -87,42 +92,29 @@ public class MainScreenActivity extends Activity implements OnClickListener{
 		return gpsStatus;
 	}
 
-	private static final int SWIPE_MIN_DISTANCE = 120;
-	private static final int SWIPE_MAX_OFF_PATH = 250;
-	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-	private GestureDetector gestureDetector;
-	View.OnTouchListener gestureListener;
+	private void startActivity(Class<? extends Activity> activity) {
+		Intent i = new Intent(MainScreenActivity.this, activity);
+		startActivity(i);
+	}
 
-	class MyGestureDetector extends SimpleOnGestureListener {
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
-			try {
-				if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-					return false;
-				// right to left swipe
-				if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(MainScreenActivity.this, "Left Swipe",
-							Toast.LENGTH_SHORT).show();
-				} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(MainScreenActivity.this, "Right Swipe",
-							Toast.LENGTH_SHORT).show();
-				} else if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(MainScreenActivity.this, "Up Swipe",
-							Toast.LENGTH_SHORT).show();
-				} else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE
-						&& Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
-					Toast.makeText(MainScreenActivity.this, "Down Swipe",
-							Toast.LENGTH_SHORT).show();
-				}
-			} catch (Exception e) {
-			}
-			return false;
-		}
+	@Override
+	public void onLeftToRightSwipe() {
+		startActivity(PlaningActivity.class);
+	}
 
+	@Override
+	public void onRightToLeftSwipe() {
+		startActivity(HistoryActivity.class);
+	}
+
+	@Override
+	public void onUpToDownSwipe() {
+		startActivity(ActivityActivity.class);
+	}
+
+	@Override
+	public void onDownToUpSwipe() {
+		startActivity(SettingsActivity.class);
 	}
 
 	@Override

@@ -71,7 +71,10 @@ int id textView3 0x7f05000a
 int id textView4 0x7f05000b
 int id textViewGPSIndicator 0x7f050010
 int layout activity_view 0x7f030000
-int layout main_screen_activity 0x7f030001
+int layout history_activity 0x7f030001
+int layout main_screen_activity 0x7f030002
+int layout planing_activity 0x7f030003
+int layout settings_activity 0x7f030004
 int menu main 0x7f090000
 int string action_settings 0x7f060016
 int string app_name 0x7f060015
