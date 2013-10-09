@@ -10,21 +10,26 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
-public class ActivityActivity extends FragmentActivity {
+public class ActivityActivity extends FragmentActivity implements OnClickListener{
 
 	private GoogleMap mMap;
-	
+	private Button stopButton;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
+        
+        stopButton = (Button) findViewById(R.id.stopButton);
         mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                 .getMap();
         
-      
+        stopButton.setOnClickListener(this);
         
         //skopiowane sk¹dœtam bo zacz¹³em gpsa, ale nic jeszcze nie zrobi³em
 //     		Acquire a reference to the system Location Manager
@@ -54,5 +59,22 @@ public class ActivityActivity extends FragmentActivity {
 //        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 //        
     }
+    
+	@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v == stopButton)
+		{
+			//TODO finish and save activity
+			finish();
+			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		}
+		
+	}
     
 }
