@@ -11,4 +11,11 @@ public class HistoryActivity extends Activity {
 		setContentView(R.layout.history_activity);
 	}
 
+	@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
+
+    }
+	
 }

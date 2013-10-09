@@ -12,4 +12,9 @@ public class PlaningActivity extends Activity {
 	}
 
 
+	@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+	}
 }

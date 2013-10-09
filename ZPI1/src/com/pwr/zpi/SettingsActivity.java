@@ -11,4 +11,10 @@ public class SettingsActivity extends Activity {
 		setContentView(R.layout.settings_activity);
 	}
 
+	@Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
+	}
+	
 }
