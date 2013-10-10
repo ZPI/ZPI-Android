@@ -61,6 +61,12 @@ public class MainScreenActivity extends Activity implements OnClickListener, Ges
 		startButton.setOnClickListener(this);
 		planningButton.setOnClickListener(this);
 		//TODO add listeners to buttons so that swipe will work
+		
+		GPSStatusTextView.setOnTouchListener(gestureListener);
+		settingsButton.setOnTouchListener(gestureListener);
+		historyButton.setOnTouchListener(gestureListener);
+		startButton.setOnTouchListener(gestureListener);
+		planningButton.setOnTouchListener(gestureListener);
 	}
 
 	private void prepareGestureListener() {
