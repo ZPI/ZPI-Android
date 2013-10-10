@@ -11,4 +11,30 @@
     <string name="gps_enabled">GPS włączony</string>
     <string name="gps_disabled">GPS wyłączony \n czy włączyć?</string>
     
+    
+    <!-- meassured values -->
+    <string name="distance">Distance</string>
+    <string name="actual_time">Actual Time</string> <!-- godzina -->
+    <string name="time">Time</string>
+    <string name="time_lap">Lap Time</string>
+    <string name="time_last_lap">Last Lap Time</string>
+    <string name="date">Date</string>
+    <string name="gps_accuracy">GPS Accuracy</string>
+    <string name="distance_lap">Lap Distance</string>
+    <string name="distance_last_lap">Last Lap Distance</string>
+    <string name="pace">Pace</string>
+    <string name="pace_avrage">Avrage Pace</string>
+    <string name="pace_lap">Lap Pace</string>
+    <string name="pace_last_lap">Last Lap Pace</string>
+    <string name="pace_best">Best Pace</string>
+    <string name="height">Height</string>
+    <string name="speed">Speed</string>
+    <string name="speed_avrage">Avrage Speed</string>
+    <string name="speed_lap">Lap Speed</string>
+    <string name="speed_last_lap">Last Lap Speed</string>
+    <string name="speed_max">Max Speed</string>
+    <string name="height_max">Max Height</string>
+    <string name="height_min">Min Height</string>
+    
+    
 </resources>
