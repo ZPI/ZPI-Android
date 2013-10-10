@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="#CC0077AA"
+                android:background="@drawable/button_background"
                 android:padding="@dimen/buttons_padding"
                 android:text="@string/pause" />
 
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="#AA0077AA"
+                android:background="@drawable/button_background"
                 android:padding="@dimen/buttons_padding"
                 android:text="@string/stop" />
 
@@ -47,7 +47,6 @@
             android:layout_centerHorizontal="true" >
 
             <TableRow
-                android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -55,7 +54,7 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
-                    android:background="#CC0077AA"
+                    android:background="@color/main_color"
                     android:orientation="vertical" >
 
                     <TextView
@@ -77,7 +76,7 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
-                    android:background="#CC0077AA"
+                    android:background="@color/main_color"
                     android:orientation="vertical" >
 
                     <TextView
@@ -98,7 +97,6 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -106,7 +104,7 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
-                    android:background="#CC0077AA"
+                    android:background="@color/main_color"
                     android:orientation="vertical" >
 
                       <TextView
@@ -119,7 +117,7 @@
                           android:id="@+id/dataTextView3"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:text="0 min/km"
+                          android:text="0 km/min"
                           android:textSize="@dimen/big_text_size" />
 
                 </LinearLayout>
@@ -128,7 +126,7 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
-                    android:background="#CC0077AA"
+                    android:background="@color/main_color"
                     android:orientation="vertical" >
 
                     <TextView
@@ -141,7 +139,7 @@
                           android:id="@+id/dataTextView4"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:text="0 min/km"
+                          android:text="0 km/min"
                           android:textSize="@dimen/big_text_size" />
                       
                 </LinearLayout>
