@@ -117,7 +117,7 @@
                           android:id="@+id/dataTextView3"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:text="0 km/min"
+                          android:text="0 min/km"
                           android:textSize="@dimen/big_text_size" />
 
                 </LinearLayout>
@@ -139,7 +139,7 @@
                           android:id="@+id/dataTextView4"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:text="0 km/min"
+                          android:text="0 min/km"
                           android:textSize="@dimen/big_text_size" />
                       
                 </LinearLayout>
