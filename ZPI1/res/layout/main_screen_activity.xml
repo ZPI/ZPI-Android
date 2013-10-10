@@ -23,7 +23,8 @@
         android:text="Plany treningowe"
         android:focusable="true"
         android:clickable="true"
-        android:background="@android:drawable/btn_default" />
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding" />
     
     <com.pwr.zpi.views.VerticalTextView
         android:id="@+id/buttonHistory"
@@ -33,10 +34,12 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="Historia"
+        android:textAppearance="@android:style/TextAppearance.Medium"
         android:gravity="bottom"
         android:focusable="true"
         android:clickable="true"
-        android:background="@android:drawable/btn_default" />
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding" />
 
     <Button
         android:id="@+id/buttonSettings"
@@ -44,7 +47,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/ustawienia" />
+        android:text="@string/ustawienia"
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding" />
 
     <TextView
         android:id="@+id/textViewGPSIndicator"
