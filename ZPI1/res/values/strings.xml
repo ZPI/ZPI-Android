@@ -36,5 +36,9 @@
     <string name="height_max">Max Height</string>
     <string name="height_min">Min Height</string>
     
-    
+    <!-- Units -->
+    <string name="seconds">s</string>
+    <string name="minutes_per_km">min/\nkm</string>
+    <string name="km">km</string>
+   
 </resources>
