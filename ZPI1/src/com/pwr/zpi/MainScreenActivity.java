@@ -7,6 +7,7 @@ import com.pwr.zpi.views.VerticalTextView;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.GestureDetector;
@@ -120,25 +121,41 @@ public class MainScreenActivity extends Activity implements OnClickListener, Ges
 		return gpsStatus;
 	}
 
-	private void startActivity(Class<? extends Activity> activity, short swipeDirection) {
-		Intent i = new Intent(MainScreenActivity.this, activity);
-		startActivity(i);
-		if (swipeDirection == RIGHT)
-		{
-			overridePendingTransition(R.anim.in_right_anim,R.anim.out_right_anim);
-		}
-		else if (swipeDirection == LEFT)
-		{
-			overridePendingTransition(R.anim.in_left_anim,R.anim.out_left_anim);
-		}
-		else if (swipeDirection == DOWN)
-		{
-			overridePendingTransition(R.anim.in_down_anim,R.anim.out_down_anim);
-		}
-		else if (swipeDirection == UP)
-		{
-			overridePendingTransition(R.anim.in_up_anim,R.anim.out_up_anim);
-		}
+	private void startActivity(Class<? extends Activity> activity, final short swipeDirection) {
+		final Intent i = new Intent(MainScreenActivity.this, activity);
+		
+		
+		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>(){
+
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				Toast.makeText(MainScreenActivity.this, "loading", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				startActivity(i);
+				if (swipeDirection == RIGHT)
+				{
+					overridePendingTransition(R.anim.in_right_anim,R.anim.out_right_anim);
+				}
+				else if (swipeDirection == LEFT)
+				{
+					overridePendingTransition(R.anim.in_left_anim,R.anim.out_left_anim);
+				}
+				else if (swipeDirection == DOWN)
+				{
+					overridePendingTransition(R.anim.in_down_anim,R.anim.out_down_anim);
+				}
+				else if (swipeDirection == UP)
+				{
+					overridePendingTransition(R.anim.in_up_anim,R.anim.out_up_anim);
+				}
+				return null;
+			}
+			
+		}.execute();
 	}
 
 	@Override
