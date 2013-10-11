@@ -202,7 +202,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 	private void updateData(TextView textBox, int meassuredValue) {
 		if (meassuredValue == distanceID) {
-			textBox.setText(String.format("%.2f", distance));
+			textBox.setText(String.format("%.2f", distance/1000));
 		} else if (meassuredValue == paceID) {
 			// convert pace to show second
 			double rest = pace - (int) pace;
@@ -244,14 +244,14 @@ public class ActivityActivity extends FragmentActivity implements
 		Toast.makeText(this, speed + "", Toast.LENGTH_SHORT).show();
 
 		pace = (double) 1 / (speed * 60 / 1000);
-		DataTextView3.setText(pace + " min/km");
+		//DataTextView3.setText(pace + " min/km");
 
 		distance += lastLocation.distanceTo(location);
-		DataTextView1.setText(distance / 1000 + " km");
+		//DataTextView1.setText(distance / 1000 + " km");
 
 		time = System.currentTimeMillis() - startTime;
 
-		avgPace = ((double) time / 60000) / distance;
+		avgPace = ((double) time / 60) / distance;
 
 		updateData(DataTextView1, dataTextView1Content);
 		updateData(DataTextView2, dataTextView2Content);
