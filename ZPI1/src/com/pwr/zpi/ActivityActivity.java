@@ -12,7 +12,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.pwr.zpi.Dialogs.ErrorDialogFragment;
+import com.pwr.zpi.dialogs.ErrorDialogFragment;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -38,7 +38,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private GoogleMap mMap;
 	private Button stopButton;
 	private static final String TAG = "ActivityActivity";
-	private LocationClient mLocationClient;
+	private LocationClient mLocationClient;  
 	private TextView DataTextView1;
 	private TextView DataTextView2;
 	private TextView DataTextView3;
@@ -189,9 +189,10 @@ public class ActivityActivity extends FragmentActivity implements
 		Log.i(TAG, "onConnected");
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		startTime = System.currentTimeMillis();
-		
+
 		Location location = mLocationClient.getLastLocation();
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13));
+		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+				location.getLatitude(), location.getLongitude()), 13));
 	}
 
 	@Override
@@ -202,27 +203,33 @@ public class ActivityActivity extends FragmentActivity implements
 
 	private void updateData(TextView textBox, int meassuredValue) {
 		if (meassuredValue == distanceID) {
-			textBox.setText(String.format("%.2f", distance/1000));
+			textBox.setText(String.format("%.2f", distance / 1000));
 		} else if (meassuredValue == paceID) {
-			// convert pace to show second
-			double rest = pace - (int) pace;
-			rest = rest * 60;
+			if (pace < 30) {
+				// convert pace to show second
+				double rest = pace - (int) pace;
+				rest = rest * 60;
 
-			String secondsZero = (rest < 10) ? "0" : "";
+				String secondsZero = (rest < 10) ? "0" : "";
 
-			textBox.setText(String.format("%.0f:%s%.0f", avgPace, secondsZero,
-					rest));
-			
-			textBox.setText(String.format("%.0f:%.0f", pace, rest));
+				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
+						rest));
+			} else {
+				textBox.setText("-----");
+			}
 		} else if (meassuredValue == avgPaceID) {
-			// convert pace to show second
-			double rest = avgPace - (int) avgPace;
-			rest = rest * 60;
+			if (avgPace < 30) {
+				// convert pace to show second
+				double rest = avgPace - (int) avgPace;
+				rest = rest * 60;
 
-			String secondsZero = (rest < 10) ? "0" : "";
+				String secondsZero = (rest < 10) ? "0" : "";
 
-			textBox.setText(String.format("%.0f:%s%.0f", avgPace, secondsZero,
-					rest));
+				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
+						secondsZero, rest));
+			} else {
+				textBox.setText("-----");
+			}
 		}
 		// TODO a thread to update time every second
 		else if (meassuredValue == timeID) {
@@ -241,13 +248,14 @@ public class ActivityActivity extends FragmentActivity implements
 	private void countData(Location location, Location lastLocation) {
 
 		float speed = location.getSpeed();
-		Toast.makeText(this, speed + "", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, location.getAccuracy() + "", Toast.LENGTH_SHORT)
+				.show();
 
 		pace = (double) 1 / (speed * 60 / 1000);
-		//DataTextView3.setText(pace + " min/km");
+		// DataTextView3.setText(pace + " min/km");
 
 		distance += lastLocation.distanceTo(location);
-		//DataTextView1.setText(distance / 1000 + " km");
+		// DataTextView1.setText(distance / 1000 + " km");
 
 		time = System.currentTimeMillis() - startTime;
 
@@ -262,8 +270,8 @@ public class ActivityActivity extends FragmentActivity implements
 	@Override
 	public void onLocationChanged(Location location) {
 
-		//TODO upade ONLY when accuracy is good
-		
+		// TODO upade ONLY when accuracy is good
+
 		Location lastLocation;
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
@@ -278,7 +286,7 @@ public class ActivityActivity extends FragmentActivity implements
 		trace.add(location);
 
 		traceOnMap.add(latLng);
-		
+
 		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
 	}
