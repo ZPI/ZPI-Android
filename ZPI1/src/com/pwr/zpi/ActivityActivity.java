@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
+import com.pwr.zpi.listeners.MyLocationListener;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -31,23 +33,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ActivityActivity extends FragmentActivity implements
-		OnClickListener, GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener,
-		com.google.android.gms.location.LocationListener {
+		OnClickListener{
 
 	private GoogleMap mMap;
 	private Button stopButton;
-	private static final String TAG = "ActivityActivity";
-	private LocationClient mLocationClient;
+	private Button pauseButton;
+	private Button resumeButton;
+
 	private TextView DataTextView1;
 	private TextView DataTextView2;
-	private TextView DataTextView3;
-	private TextView DataTextView4;
-
-	private LinkedList<Location> trace;
-	private PolylineOptions traceOnMap;
-	private LocationRequest mLocationRequest;
-	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
+	private TextView LabelTextView1;
+	private TextView LabelTextView2;
+	private boolean isPaused;
+	MyLocationListener myLocationListener;
+	
+	//private LinkedList<LinkedList<Location>> trace;
+	//private PolylineOptions traceOnMap;
+	//private LocationRequest mLocationRequest;
+	//private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 
 	// measured values
 	double pace;
@@ -55,11 +58,11 @@ public class ActivityActivity extends FragmentActivity implements
 	double distance;
 	long time;
 	long startTime;
+	long pauseTime;
+	long pauseStartTime;
 
 	private int dataTextView1Content;
 	private int dataTextView2Content;
-	private int dataTextView3Content;
-	private int dataTextView4Content;
 
 	// measured values IDs
 	private static final int distanceID = 1;
@@ -73,53 +76,57 @@ public class ActivityActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_view);
 
 		stopButton = (Button) findViewById(R.id.stopButton);
+		pauseButton = (Button) findViewById(R.id.pauseButton);
+		resumeButton = (Button) findViewById(R.id.resumeButton);
+		
 		mMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
-		trace = new LinkedList<Location>();
+		//trace = new LinkedList<LinkedList<Location>>();
 		stopButton.setOnClickListener(this);
-		traceOnMap = new PolylineOptions();
+		resumeButton.setOnClickListener(this);
+		pauseButton.setOnClickListener(this);
+		pauseTime = 0;
+		//traceOnMap = new PolylineOptions();
 
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
-		DataTextView3 = (TextView) findViewById(R.id.dataTextView3);
-		DataTextView4 = (TextView) findViewById(R.id.dataTextView4);
 
+		LabelTextView1 = (TextView) findViewById(R.id.dataTextView1Discription);
+		LabelTextView2 = (TextView) findViewById(R.id.dataTextView2Discription);
+		
+		//to change displayed info, change dataTextViewContent and start initLabelsMethod
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
-		dataTextView3Content = paceID;
-		dataTextView4Content = avgPaceID;
-
-		mLocationClient = new LocationClient(this, this, this);
-		mLocationRequest = LocationRequest.create();
-		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
+		
+		initLabels(DataTextView1,LabelTextView1, dataTextView1Content);
+		initLabels(DataTextView2,LabelTextView2, dataTextView2Content);
+		
+		//TODO pobraæ z intencji zamiast tak
+		myLocationListener = MainScreenActivity.locationListener;
+		myLocationListener.start(this);
+		startTime = System.currentTimeMillis();
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		// Connect the client.
-		mLocationClient.connect();
-	}
-
-	@Override
-	protected void onStop() {
-
-		// If the client is connected
-		if (mLocationClient.isConnected()) {
-			/*
-			 * Remove location updates for a listener. The current Activity is
-			 * the listener, so the argument is "this".
-			 */
-			mLocationClient.removeLocationUpdates(this);
+	private void initLabels(TextView textViewInitialValue, TextView textView, int meassuredValue)
+	{
+		if (meassuredValue == distanceID) {
+			textView.setText(R.string.distance);
+			textViewInitialValue.setText("0.000");
+		} else if (meassuredValue == paceID) {
+			textView.setText(R.string.pace);
+			textViewInitialValue.setText("0:00");
+		} else if (meassuredValue == avgPaceID) {
+			textView.setText(R.string.pace_avrage);
+			textViewInitialValue.setText("0:00");
 		}
-		/*
-		 * After disconnect() is called, the client is considered "dead".
-		 */
-		mLocationClient.disconnect();
-		super.onStop();
+		else if (meassuredValue == timeID) {
+			textView.setText(R.string.time);
+			textViewInitialValue.setText("00:00:00");
+		}
 	}
+	
+
+
 
 	@Override
 	public void onBackPressed() {
@@ -134,72 +141,43 @@ public class ActivityActivity extends FragmentActivity implements
 			finish();
 			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
 		}
-
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-		Log.i(TAG, "onConnectionFailed");
-		/*
-		 * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
-		if (connectionResult.hasResolution()) {
-			try {
-				// Start an Activity that tries to resolve the error
-				connectionResult
-						.startResolutionForResult(
-								this,
-								MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-			} catch (IntentSender.SendIntentException e) {
-				// Log the error
-				e.printStackTrace();
+		else if (v == pauseButton)
+		{
+			myLocationListener.setPaused(!myLocationListener.isPaused());
+			isPaused = myLocationListener.isPaused();
+			if (isPaused)
+			{
+				stopButton.setVisibility(View.GONE);
+				pauseButton.setVisibility(View.GONE);
+				resumeButton.setVisibility(View.VISIBLE);
 			}
-		} else {
-			/*
-			 * If no resolution is available, display a dialog to the user with
-			 * the error.
-			 */
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-					connectionResult.getErrorCode(), this,
-					MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-						"Location Updates");
+			else
+			{
+				stopButton.setVisibility(View.VISIBLE);
+				pauseButton.setVisibility(View.VISIBLE);
+				resumeButton.setVisibility(View.GONE);
 			}
+			pauseStartTime = System.currentTimeMillis();
 		}
-
-	}
-
-	@Override
-	public void onConnected(Bundle bundle) {
-		Log.i(TAG, "onConnected");
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
-		startTime = System.currentTimeMillis();
-
-		Location location = mLocationClient.getLastLocation();
-		if (location != null) {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-					location.getLatitude(), location.getLongitude()), 13));
+		else if (v == resumeButton)
+		{
+			myLocationListener.setPaused(!myLocationListener.isPaused());
+			isPaused = myLocationListener.isPaused();
+			if (isPaused)
+			{
+				stopButton.setVisibility(View.GONE);
+				pauseButton.setVisibility(View.GONE);
+				resumeButton.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				stopButton.setVisibility(View.VISIBLE);
+				pauseButton.setVisibility(View.VISIBLE);
+				resumeButton.setVisibility(View.GONE);
+			}
+			pauseTime += System.currentTimeMillis()-pauseStartTime;
+			//trace.add(new LinkedList<Location>());
 		}
-	}
-
-	@Override
-	public void onDisconnected() {
-		Log.i(TAG, "onDisconnected");
 
 	}
 
@@ -217,7 +195,7 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
 						rest));
 			} else {
-				textBox.setText("-----");
+				textBox.setText("--------");
 			}
 		} else if (meassuredValue == avgPaceID) {
 			if (avgPace < 30) {
@@ -230,7 +208,7 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
 						secondsZero, rest));
 			} else {
-				textBox.setText("-----");
+				textBox.setText("--------");
 			}
 		}
 		// TODO a thread to update time every second
@@ -247,8 +225,16 @@ public class ActivityActivity extends FragmentActivity implements
 		}
 	}
 
-	private void countData(Location location, Location lastLocation) {
+	public void countData(Location location, Location lastLocation) {
 
+		LatLng latLng = new LatLng(location.getLatitude(),
+				location.getLongitude());
+		mMap.addPolyline(new PolylineOptions().add(
+				new LatLng(lastLocation.getLatitude(), lastLocation
+						.getLongitude())).add(latLng));
+		
+		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+		
 		float speed = location.getSpeed();
 		Toast.makeText(this, location.getAccuracy() + "", Toast.LENGTH_SHORT)
 				.show();
@@ -259,38 +245,43 @@ public class ActivityActivity extends FragmentActivity implements
 		distance += lastLocation.distanceTo(location);
 		// DataTextView1.setText(distance / 1000 + " km");
 
-		time = System.currentTimeMillis() - startTime;
+		//TODO - zmieniæ
+		time = System.currentTimeMillis() - startTime-pauseTime;
 
 		avgPace = ((double) time / 60) / distance;
 
 		updateData(DataTextView1, dataTextView1Content);
 		updateData(DataTextView2, dataTextView2Content);
-		updateData(DataTextView3, dataTextView3Content);
-		updateData(DataTextView4, dataTextView4Content);
-	}
 
+		
+		
+	}
 	@Override
-	public void onLocationChanged(Location location) {
-
-		// TODO upade ONLY when accuracy is good
-
-		Location lastLocation;
-		LatLng latLng = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		if (!trace.isEmpty()) {
-			lastLocation = trace.getLast();
-			mMap.addPolyline(new PolylineOptions().add(
-					new LatLng(lastLocation.getLatitude(), lastLocation
-							.getLongitude())).add(latLng));
-			countData(location, lastLocation);
+	protected void onStop() {
+		LocationClient locationClient = myLocationListener.getmLocationClient();
+		// If the client is connected
+		if (locationClient.isConnected()) {
+			/*
+			 * Remove location updates for a listener. The current Activity is
+			 * the listener, so the argument is "this".
+			 */
+			locationClient.removeLocationUpdates(myLocationListener);
 		}
-
-		trace.add(location);
-
-		traceOnMap.add(latLng);
-
-		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
+		/*
+		 * After disconnect() is called, the client is considered "dead".
+		 */
+		Log.i("test", "on stop");
+		locationClient.disconnect();
+		super.onStop();
 	}
+
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Connect the client.
+		myLocationListener.getmLocationClient().connect();
+	}
+
 
 }

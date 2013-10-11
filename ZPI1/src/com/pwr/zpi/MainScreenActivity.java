@@ -2,9 +2,12 @@ package com.pwr.zpi;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.views.VerticalTextView;
 
 import android.app.Activity;
@@ -31,11 +34,15 @@ public class MainScreenActivity extends FragmentActivity implements
 		OnClickListener, GestureListener {
 
 	private TextView GPSStatusTextView;
+	private TextView GPSSignalTextView;
 	private Button settingsButton;
 	private VerticalTextView historyButton;
 	private VerticalTextView planningButton;
 	private Button startButton;
 	private Button musicButton;
+	
+	//TODO potem zmieniê
+	public static MyLocationListener locationListener;
 
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -57,14 +64,19 @@ public class MainScreenActivity extends FragmentActivity implements
 		setContentView(R.layout.main_screen_activity);
 
 		GPSStatusTextView = (TextView) findViewById(R.id.textViewGPSIndicator);
+		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
 		settingsButton = (Button) findViewById(R.id.buttonSettings);
 		historyButton = (VerticalTextView) findViewById(R.id.buttonHistory);
 		planningButton = (VerticalTextView) findViewById(R.id.buttonPlans);
 		startButton = (Button) findViewById(R.id.buttonStart);
 		musicButton = (Button) findViewById(R.id.buttonMusic);
 
+		locationListener = new MyLocationListener(this);
+		
 		prepareGestureListener();
 		addListeners();
+		
+		locationListener.getmLocationClient().connect();
 	}
 
 	private void addListeners() {
@@ -258,4 +270,51 @@ public class MainScreenActivity extends FragmentActivity implements
 			}
 		}
 	}
+	public void showGPSAccuracy(double accuracy)
+	{
+		//TODO - zamieniæ na jakiœ wskaŸnik
+		GPSSignalTextView.setText(String.format("%.2f", accuracy));
+	}
+	@Override
+	protected void onStop() {
+/*		LocationClient locationClient = locationListener.getmLocationClient();
+		// If the client is connected
+		if (locationClient.isConnected()) {
+
+			locationClient.removeLocationUpdates(locationListener);
+		}
+
+		Log.i("test", "on stop");
+		locationClient.disconnect();*/
+		super.onStop();
+	}
+
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Connect the client.
+		//locationListener.getmLocationClient().connect();
+	}
+
+	@Override
+	protected void onDestroy() {
+		LocationClient locationClient = locationListener.getmLocationClient();
+		// If the client is connected
+		if (locationClient.isConnected()) {
+			/*
+			 * Remove location updates for a listener. The current Activity is
+			 * the listener, so the argument is "this".
+			 */
+			locationClient.removeLocationUpdates(locationListener);
+		}
+		/*
+		 * After disconnect() is called, the client is considered "dead".
+		 */
+		Log.i("test", "on stop");
+		locationClient.disconnect();
+		super.onDestroy();
+	}
+
+	
 }
