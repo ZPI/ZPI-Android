@@ -66,8 +66,9 @@ int drawable common_signin_btn_text_pressed_dark 0x7f020017
 int drawable common_signin_btn_text_pressed_light 0x7f020018
 int drawable ic_launcher 0x7f020019
 int drawable triangle 0x7f02001a
-int id action_settings 0x7f060015
+int id action_settings 0x7f060016
 int id buttonHistory 0x7f060012
+int id buttonMusic 0x7f060015
 int id buttonPlans 0x7f060011
 int id buttonSettings 0x7f060013
 int id buttonStart 0x7f060010
