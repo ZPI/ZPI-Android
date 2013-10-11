@@ -38,7 +38,6 @@
                 android:background="@drawable/button_background"
                 android:padding="@dimen/buttons_padding"
                 android:text="@string/stop" />
-
         </LinearLayout>
 
         <TableLayout
@@ -50,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
@@ -61,18 +60,34 @@
                         android:id="@+id/dataTextView1Discription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
                         android:text="@string/distance" />
 
                     <TextView
                         android:id="@+id/dataTextView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.0 km"
+                        android:layout_alignParentLeft="false"
+                        android:layout_below="@+id/dataTextView1Discription"
+                        android:layout_toLeftOf="@+id/dataTextView1Unit"
+                        android:text="0.0"
                         android:textSize="@dimen/big_text_size" />
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/dataTextView1Unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/dataTextView1"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/dataTextView1"
+                        android:gravity="bottom"
+                        android:text="@string/km"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                <LinearLayout
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
@@ -83,46 +98,72 @@
                         android:id="@+id/dataTextView2Discription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
                         android:text="@string/time" />
 
                     <TextView
                         android:id="@+id/dataTextView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                       	android:layout_toLeftOf="@+id/dataTextView2Unit"
+                        android:layout_below="@+id/dataTextView2Discription"
                         android:text="00:00:00 "
                         android:textSize="@dimen/big_text_size" />
-
-                </LinearLayout>
-
+                    <TextView
+                        android:id="@+id/dataTextView2Unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/dataTextView2"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/dataTextView2"
+                        android:gravity="bottom"
+                        android:text=""
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </RelativeLayout>
             </TableRow>
 
             <TableRow
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
-              <LinearLayout
+                <RelativeLayout
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
                     android:background="@color/main_color"
                     android:orientation="vertical" >
 
-                      <TextView
+                    <TextView
                         android:id="@+id/dataTextView3Discription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
                         android:text="@string/pace" />
 
-                      <TextView
-                          android:id="@+id/dataTextView3"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="0 min/km"
-                          android:textSize="@dimen/big_text_size" />
+                    <TextView
+                        android:id="@+id/dataTextView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/dataTextView3Discription"
+                        android:layout_toLeftOf="@+id/dataTextView3Unit"
+                        android:text="0:00"
+                        android:textSize="@dimen/big_text_size" />
+                    <TextView
+                        android:id="@+id/dataTextView3Unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/dataTextView3"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/dataTextView3"
+                        android:gravity="bottom"
+                        android:text="@string/minutes_per_km"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                    
+                </RelativeLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/small_margin"
@@ -133,18 +174,32 @@
                         android:id="@+id/dataTextView4Discription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
                         android:text="@string/pace_avrage" />
 
-                      <TextView
-                          android:id="@+id/dataTextView4"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="0 min/km"
-                          android:textSize="@dimen/big_text_size" />
-                      
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/dataTextView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/dataTextView4Discription"
+                        android:layout_toLeftOf="@+id/dataTextView4Unit"
+                        android:text="0:00"
+                        android:textSize="@dimen/big_text_size" />
+                    
+                    <TextView
+                        android:id="@+id/dataTextView4Unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/dataTextView4"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/dataTextView4"
+                        android:gravity="bottom"
+                        android:text="@string/minutes_per_km"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                </RelativeLayout>
             </TableRow>
         </TableLayout>
     </RelativeLayout>
-    
-    </FrameLayout>
+
+</FrameLayout>
