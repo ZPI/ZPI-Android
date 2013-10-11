@@ -2,7 +2,7 @@ package com.pwr.zpi;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.pwr.zpi.Dialogs.ErrorDialogFragment;
+import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.views.VerticalTextView;
