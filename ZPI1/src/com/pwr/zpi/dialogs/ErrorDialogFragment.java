@@ -1,4 +1,4 @@
-package com.pwr.zpi.Dialogs;
+package com.pwr.zpi.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
