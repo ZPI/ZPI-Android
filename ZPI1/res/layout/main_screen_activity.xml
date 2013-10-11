@@ -59,4 +59,14 @@
         android:layout_centerVertical="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/buttonMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonPlans"
+        android:layout_centerHorizontal="true"
+        android:text="Muzyka"
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding" />
+
 </RelativeLayout>

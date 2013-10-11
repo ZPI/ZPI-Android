@@ -38,7 +38,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private GoogleMap mMap;
 	private Button stopButton;
 	private static final String TAG = "ActivityActivity";
-	private LocationClient mLocationClient;  
+	private LocationClient mLocationClient;
 	private TextView DataTextView1;
 	private TextView DataTextView2;
 	private TextView DataTextView3;
@@ -191,8 +191,10 @@ public class ActivityActivity extends FragmentActivity implements
 		startTime = System.currentTimeMillis();
 
 		Location location = mLocationClient.getLastLocation();
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-				location.getLatitude(), location.getLongitude()), 13));
+		if (location != null) {
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+					location.getLatitude(), location.getLongitude()), 13));
+		}
 	}
 
 	@Override
