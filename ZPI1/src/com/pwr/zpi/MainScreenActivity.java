@@ -81,6 +81,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		historyButton.setOnTouchListener(gestureListener);
 		startButton.setOnTouchListener(gestureListener);
 		planningButton.setOnTouchListener(gestureListener);
+		musicButton.setOnTouchListener(gestureListener);
 	}
 
 	private void prepareGestureListener() {
