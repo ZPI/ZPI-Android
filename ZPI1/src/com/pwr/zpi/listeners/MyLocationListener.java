@@ -4,8 +4,11 @@ import java.util.LinkedList;
 
 import android.app.Dialog;
 import android.content.IntentSender;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -22,7 +25,7 @@ import com.pwr.zpi.dialogs.ErrorDialogFragment;
 
 public class MyLocationListener implements LocationListener,
 		GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener {
+		GooglePlayServicesClient.OnConnectionFailedListener, android.location.GpsStatus.Listener {
 
 	private ActivityActivity activityActivity;
 	private MainScreenActivity mainScreenActivity;
@@ -30,9 +33,14 @@ public class MyLocationListener implements LocationListener,
 	private LocationClient mLocationClient;
 	private LocationRequest mLocationRequest;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
+	private static final long MAX_UPDATE_TIME = 5000;
+	private static final int REQUIRED_ACCURACY = 10; //in meters
 	private GoogleMap mMap;
 	private boolean isStarted;
 	private boolean isPaused;
+	private boolean isGpsFix;
+	private Location mLastRecordedLocation;
+	private long mLastRecordedLocationTime;
 
 	public MyLocationListener(MainScreenActivity mainScreenActivity) {
 		this.mainScreenActivity = mainScreenActivity;
@@ -42,6 +50,8 @@ public class MyLocationListener implements LocationListener,
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		isStarted = false;
 		isPaused = false;
+		isGpsFix = false;
+		
 	}
 
 
@@ -120,6 +130,7 @@ public class MyLocationListener implements LocationListener,
 		if (isStarted) {
 			if (!isPaused) {
 				// TODO upade ONLY when accuracy is good
+				
 				Location lastLocation;
 				if (!trace.isEmpty() && !trace.getLast().isEmpty()) {
 					lastLocation = trace.getLast().getLast();
@@ -134,7 +145,8 @@ public class MyLocationListener implements LocationListener,
 			double accuracy = location.getAccuracy();
 			mainScreenActivity.showGPSAccuracy(accuracy);
 		}
-
+		mLastRecordedLocationTime = SystemClock.elapsedRealtime();
+		mLastRecordedLocation = location;
 	}
 
 	@Override
@@ -196,6 +208,28 @@ public class MyLocationListener implements LocationListener,
 			}
 		}
 
+	}
+
+	public boolean isGpsOk()
+	{
+		return isGpsFix && mLastRecordedLocation.getAccuracy()<REQUIRED_ACCURACY;
+	}
+
+	@Override
+	public void onGpsStatusChanged(int event) {
+		
+		switch (event) {
+			case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
+				if (mLastRecordedLocation != null) {
+					isGpsFix = (SystemClock.elapsedRealtime() - mLastRecordedLocationTime) < MAX_UPDATE_TIME;
+				}
+
+				break;
+			case GpsStatus.GPS_EVENT_FIRST_FIX:
+				isGpsFix = true;
+				break;
+		}
+		
 	}
 	
 	

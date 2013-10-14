@@ -140,7 +140,7 @@ public class ActivityActivity extends FragmentActivity implements
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
-		builder.setTitle(R.string.dialog_message);
+		builder.setMessage(R.string.dialog_message_on_stop);
 		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   finish();
