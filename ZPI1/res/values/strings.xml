@@ -11,7 +11,7 @@
     <string name="ustawienia">Ustawienia</string>
     <string name="gps_enabled">GPS włączony</string>
     <string name="gps_disabled">GPS wyłączony \n czy włączyć?</string>
-    
+    <string name="dialog_message">Are you sure, you wan\'t to stop recording the activity?</string>
     
     <!-- meassured values -->
     <string name="distance">Distance</string>

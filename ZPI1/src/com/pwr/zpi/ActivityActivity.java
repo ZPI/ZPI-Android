@@ -16,8 +16,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.listeners.MyLocationListener;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.location.Criteria;
 import android.location.Location;
@@ -25,6 +27,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -130,15 +133,38 @@ public class ActivityActivity extends FragmentActivity implements
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		showAlertDialog();
+	}
+	
+	private void showAlertDialog()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		// Add the buttons
+		builder.setTitle(R.string.dialog_message);
+		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   finish();
+		   			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		           }
+		       });
+		builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		               // User cancelled the dialog
+		           }
+		       });
+		// Set other dialog properties
+
+		// Create the AlertDialog
+		AlertDialog dialog = builder.create();
+		dialog.show();
+		
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v == stopButton) {
 			// TODO finish and save activity
-			finish();
-			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+			showAlertDialog();
 		}
 		else if (v == pauseButton)
 		{
@@ -281,5 +307,13 @@ public class ActivityActivity extends FragmentActivity implements
 		myLocationListener.getmLocationClient().connect();
 	}
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	        showAlertDialog();
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
 
 }
