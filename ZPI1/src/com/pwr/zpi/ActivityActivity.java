@@ -13,7 +13,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,8 +82,12 @@ public class ActivityActivity extends FragmentActivity implements
 		resumeButton = (Button) findViewById(R.id.resumeButton);
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
-		mMap = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map)).getMap();
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map);
+		mMap = mapFragment.getMap();
+		
+		mMap.setMyLocationEnabled(true);
+
 		// trace = new LinkedList<LinkedList<Location>>();
 		stopButton.setOnClickListener(this);
 		resumeButton.setOnClickListener(this);
@@ -112,8 +118,48 @@ public class ActivityActivity extends FragmentActivity implements
 		myLocationListener = MainScreenActivity.locationListener;
 		myLocationListener.start(this);
 		startTime = System.currentTimeMillis();
+		moveSystemControls(mapFragment);
+		
 	}
 
+	private void moveSystemControls(SupportMapFragment mapFragment)
+	{
+		
+		View zoomControls = mapFragment.getView().findViewById(0x1);
+
+		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+		    // ZoomControl is inside of RelativeLayout
+		    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
+
+		    // Align it to - parent top|left
+		    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		    params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		  
+
+		    // nie do koñca rozumiem tê metodê, trzeba zobaczyæ czy u Ciebie jest to samo czy nie za bardzo
+		    final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.zoom_buttons_margin),
+		            getResources().getDisplayMetrics());
+		    params.setMargins(0, 0, 0, margin);
+		}
+		zoomControls = mapFragment.getView().findViewById(0x2);
+
+		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+		    // ZoomControl is inside of RelativeLayout
+		    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
+
+		    // Align it to - parent top|left
+		    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+
+		   //  Update margins, set to 10dp
+		    final int margin1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.location_button_margin_top),
+		            getResources().getDisplayMetrics());
+		    final int margin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.location_button_margin_right),
+		            getResources().getDisplayMetrics());
+		    params.setMargins(0, margin1, margin2, 0);
+		}
+	}
+	
 	private void initLabels(TextView textViewInitialValue, TextView textView,
 			int meassuredValue) {
 		if (meassuredValue == distanceID) {
@@ -259,7 +305,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 	private void updateData(TextView textBox, int meassuredValue) {
 		if (meassuredValue == distanceID) {
-			textBox.setText(String.format("%.2f", distance / 1000));
+			textBox.setText(String.format("%.3f", distance / 1000));
 		} else if (meassuredValue == paceID) {
 			if (pace < 30) {
 				// convert pace to show second

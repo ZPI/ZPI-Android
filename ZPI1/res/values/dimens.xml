@@ -6,6 +6,7 @@
     <dimen name="small_margin">2dp</dimen>
     <dimen name="big_text_size">32dp</dimen>
     <dimen name="buttons_padding">8dp</dimen>
-    
-
+    <dimen name="zoom_buttons_margin">38dp</dimen>
+    <dimen name="location_button_margin_top">55dp</dimen>
+	<dimen name="location_button_margin_right">5dp</dimen>
 </resources>
