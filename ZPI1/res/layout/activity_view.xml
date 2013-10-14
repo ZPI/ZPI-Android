@@ -67,9 +67,10 @@
                     android:id="@+id/dataTextView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="false"
+                    android:layout_alignLeft="@+id/dataTextView1Discription"
                     android:layout_below="@+id/dataTextView1Discription"
                     android:layout_toLeftOf="@+id/dataTextView1Unit"
+                    android:gravity="center"
                     android:text="0.0"
                     android:textSize="@dimen/big_text_size" />
 
@@ -106,8 +107,10 @@
                     android:id="@+id/dataTextView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/dataTextView2Discription"
                     android:layout_below="@+id/dataTextView2Discription"
                     android:layout_toLeftOf="@+id/dataTextView2Unit"
+                    android:gravity="center"
                     android:text="00:00:00 "
                     android:textSize="@dimen/big_text_size" />
 

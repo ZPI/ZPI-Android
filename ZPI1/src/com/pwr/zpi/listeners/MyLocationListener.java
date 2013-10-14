@@ -212,7 +212,8 @@ public class MyLocationListener implements LocationListener,
 
 	public boolean isGpsOk()
 	{
-		return isGpsFix && mLastRecordedLocation.getAccuracy()<REQUIRED_ACCURACY;
+		return true;
+		//return isGpsFix && mLastRecordedLocation.getAccuracy()<REQUIRED_ACCURACY;
 	}
 
 	@Override

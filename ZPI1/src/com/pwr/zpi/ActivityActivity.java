@@ -1,6 +1,5 @@
 package com.pwr.zpi;
 
-
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -43,9 +43,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private TextView clickedUnitTextView;
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
-	
-		
-	
+
 	private boolean isPaused;
 	MyLocationListener myLocationListener;
 
@@ -85,7 +83,7 @@ public class ActivityActivity extends FragmentActivity implements
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		
+
 		mMap.setMyLocationEnabled(true);
 
 		// trace = new LinkedList<LinkedList<Location>>();
@@ -105,7 +103,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 		unitTextView1 = (TextView) findViewById(R.id.dataTextView1Unit);
 		unitTextView2 = (TextView) findViewById(R.id.dataTextView2Unit);
-		
+
 		// to change displayed info, change dataTextViewContent and start
 		// initLabelsMethod
 		dataTextView1Content = distanceID;
@@ -119,82 +117,103 @@ public class ActivityActivity extends FragmentActivity implements
 		myLocationListener.start(this);
 		startTime = System.currentTimeMillis();
 		moveSystemControls(mapFragment);
-		
+
 	}
 
-	private void moveSystemControls(SupportMapFragment mapFragment)
-	{
-		
+	private void moveSystemControls(SupportMapFragment mapFragment) {
+
 		View zoomControls = mapFragment.getView().findViewById(0x1);
 
-		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-		    // ZoomControl is inside of RelativeLayout
-		    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
+		if (zoomControls != null
+				&& zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+			// ZoomControl is inside of RelativeLayout
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls
+					.getLayoutParams();
 
-		    // Align it to - parent top|left
-		    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		    params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		  
+			// Align it to - parent top|left
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-		    // nie do koñca rozumiem tê metodê, trzeba zobaczyæ czy u Ciebie jest to samo czy nie za bardzo
-		    final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.zoom_buttons_margin),
-		            getResources().getDisplayMetrics());
-		    params.setMargins(0, 0, 0, margin);
+			// nie do koñca rozumiem tê metodê, trzeba zobaczyæ czy u Ciebie
+			// jest to samo czy nie za bardzo
+			final int margin = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(R.dimen.zoom_buttons_margin),
+					getResources().getDisplayMetrics());
+			params.setMargins(0, 0, 0, margin);
 		}
-		zoomControls = mapFragment.getView().findViewById(0x2);
+		View locationControls = mapFragment.getView().findViewById(0x2);
 
-		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-		    // ZoomControl is inside of RelativeLayout
-		    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
+		if (locationControls != null
+				&& locationControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+			// ZoomControl is inside of RelativeLayout
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls
+					.getLayoutParams();
 
-		    // Align it to - parent top|left
-		    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			// Align it to - parent top|left
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-
-		   //  Update margins, set to 10dp
-		    final int margin1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.location_button_margin_top),
-		            getResources().getDisplayMetrics());
-		    final int margin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources().getDimension(R.dimen.location_button_margin_right),
-		            getResources().getDisplayMetrics());
-		    params.setMargins(0, margin1, margin2, 0);
+			// Update margins, set to 10dp
+			final int margin1 = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(
+							R.dimen.location_button_margin_top), getResources()
+							.getDisplayMetrics());
+			final int margin2 = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(
+							R.dimen.location_button_margin_right),
+					getResources().getDisplayMetrics());
+			params.setMargins(0, margin1, margin2, 0);
 		}
 	}
-	
+
 	private void initLabels(TextView textViewInitialValue, TextView textView,
 			int meassuredValue) {
-		if (meassuredValue == distanceID) {
+		switch (meassuredValue) {
+		case distanceID:
 			textView.setText(R.string.distance);
 			textViewInitialValue.setText("0.000");
-		} else if (meassuredValue == paceID) {
+			break;
+		case paceID:
 			textView.setText(R.string.pace);
 			textViewInitialValue.setText("0:00");
-		} else if (meassuredValue == avgPaceID) {
+			break;
+		case avgPaceID:
 			textView.setText(R.string.pace_avrage);
 			textViewInitialValue.setText("0:00");
-		} else if (meassuredValue == timeID) {
+			break;
+		case timeID:
 			textView.setText(R.string.time);
 			textViewInitialValue.setText("00:00:00");
+			break;
 		}
-	}
-	
-	private void updateLabels(int meassuredValue, TextView labelTextView, TextView unitTextView, TextView contentTextView)
-	{
-		if (meassuredValue == distanceID) {
-			labelTextView.setText(R.string.distance);
-			unitTextView.setText(R.string.km);
-		} else if (meassuredValue == paceID) {
-			labelTextView.setText(R.string.pace);
-			unitTextView.setText(R.string.minutes_per_km);
-		} else if (meassuredValue == avgPaceID) {
-			labelTextView.setText(R.string.pace_avrage);
-			unitTextView.setText(R.string.minutes_per_km);
-		} else if (meassuredValue == timeID) {
-			labelTextView.setText(R.string.time);
-			unitTextView.setText("");
-		}
-		updateData(contentTextView, meassuredValue);
+
 	}
 
+	private void updateLabels(int meassuredValue, TextView labelTextView,
+			TextView unitTextView, TextView contentTextView) {
+		switch (meassuredValue) {
+		case distanceID:
+			labelTextView.setText(R.string.distance);
+			unitTextView.setText(R.string.km);
+			break;
+		case paceID:
+			labelTextView.setText(R.string.pace);
+			unitTextView.setText(R.string.minutes_per_km);
+			break;
+		case avgPaceID:
+			labelTextView.setText(R.string.pace_avrage);
+			unitTextView.setText(R.string.minutes_per_km);
+			break;
+		case timeID:
+			labelTextView.setText(R.string.time);
+			unitTextView.setText("");
+			break;
+		}
+
+		updateData(contentTextView, meassuredValue);
+	}
 
 	@Override
 	public void onBackPressed() {
@@ -205,7 +224,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private void showAlertDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
-		builder.setMessage(R.string.dialog_message_on_stop);
+		builder.setTitle(R.string.dialog_message_on_stop);
 		builder.setPositiveButton(android.R.string.yes,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -270,7 +289,7 @@ public class ActivityActivity extends FragmentActivity implements
 			clickedContentTextView = DataTextView2;
 			clickedLabelTextView = LabelTextView2;
 			clickedUnitTextView = unitTextView2;
-			clickedField =2;
+			clickedField = 2;
 			showMeassuredValuesMenu();
 		}
 
@@ -284,15 +303,18 @@ public class ActivityActivity extends FragmentActivity implements
 		// chcia³em zrobiæ tablice w stringach, ale potem zobaczy³em, ¿e ju¿ mam
 		// te wszystkie nazwy i teraz nie wiem czy tamto zmieniaæ w tablicê czy
 		// nie ma sensu
-		//kolejnoœæ w tablicy musi odpowiadaæ nr ID, tzn 0 - dystans itp.
-		final CharSequence[] items = { getMyString(R.string.distance), getMyString(R.string.pace), getMyString(R.string.pace_avrage),
+		// kolejnoœæ w tablicy musi odpowiadaæ nr ID, tzn 0 - dystans itp.
+
+		final CharSequence[] items = { getMyString(R.string.distance),
+				getMyString(R.string.pace), getMyString(R.string.pace_avrage),
 				getMyString(R.string.time) };
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.dialog_choose_what_to_display);
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
-				updateLabels(item, clickedLabelTextView, clickedUnitTextView, clickedContentTextView);
+				updateLabels(item, clickedLabelTextView, clickedUnitTextView,
+						clickedContentTextView);
 				if (clickedField == 1)
 					dataTextView1Content = item;
 				else
@@ -304,9 +326,13 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 
 	private void updateData(TextView textBox, int meassuredValue) {
-		if (meassuredValue == distanceID) {
+		
+		switch (meassuredValue)
+		{
+		case distanceID:
 			textBox.setText(String.format("%.3f", distance / 1000));
-		} else if (meassuredValue == paceID) {
+			break;
+		case paceID:
 			if (pace < 30) {
 				// convert pace to show second
 				double rest = pace - (int) pace;
@@ -317,9 +343,10 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
 						rest));
 			} else {
-				textBox.setText("--------");
+				textBox.setText(getResources().getString(R.string.dashes));
 			}
-		} else if (meassuredValue == avgPaceID) {
+			break;
+		case avgPaceID:
 			if (avgPace < 30) {
 				// convert pace to show second
 				double rest = avgPace - (int) avgPace;
@@ -330,11 +357,10 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
 						secondsZero, rest));
 			} else {
-				textBox.setText("--------");
+				textBox.setText(getResources().getString(R.string.dashes));
 			}
-		}
-		// TODO a thread to update time every second
-		else if (meassuredValue == timeID) {
+			break;
+		case timeID:
 			long hours = time / 3600000;
 			long minutes = (time / 60000) - hours * 60;
 			long seconds = (time / 1000) - hours * 3600 - minutes * 60;
@@ -344,7 +370,9 @@ public class ActivityActivity extends FragmentActivity implements
 
 			textBox.setText(String.format("%s%d:%s%d:%s%d", hourZero, hours,
 					minutesZero, minutes, secondsZero, seconds));
+			break;
 		}
+		
 	}
 
 	public void countData(Location location, Location lastLocation) {
