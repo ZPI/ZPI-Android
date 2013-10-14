@@ -34,7 +34,7 @@ public class MyLocationListener implements LocationListener,
 	private LocationRequest mLocationRequest;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
-	private static final int REQUIRED_ACCURACY = 10; //in meters
+	private static final int REQUIRED_ACCURACY = 100; //in meters
 	private GoogleMap mMap;
 	private boolean isStarted;
 	private boolean isPaused;
