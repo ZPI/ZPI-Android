@@ -69,4 +69,11 @@
         android:background="@drawable/button_background"
         android:padding="@dimen/buttons_padding" />
 
+    <TextView
+        android:id="@+id/GPSSignalTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewGPSIndicator"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
