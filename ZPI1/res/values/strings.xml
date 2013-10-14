@@ -14,7 +14,7 @@
     <string name="dialog_message_on_stop">Are you sure, you wan\'t to stop recording the activity?</string>
     <string name="dialog_message_low_gps_accuracy">Please wait for better gps signal</string>
     <string name="dialog_message_no_gps">Please enable gps</string>
-    
+    <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <!-- meassured values -->
     <string name="distance">Distance</string>
     <string name="actual_time">Actual Time</string> <!-- godzina -->
@@ -39,9 +39,12 @@
     <string name="height_max">Max Height</string>
     <string name="height_min">Min Height</string>
     
+    
+    
     <!-- Units -->
     <string name="seconds">s</string>
     <string name="minutes_per_km">min/\nkm</string>
     <string name="km">km</string>
+    
    
 </resources>

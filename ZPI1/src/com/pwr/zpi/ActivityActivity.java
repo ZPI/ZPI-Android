@@ -1,58 +1,56 @@
 package com.pwr.zpi;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.listeners.MyLocationListener;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentSender;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ActivityActivity extends FragmentActivity implements
-		OnClickListener{
+		OnClickListener {
 
 	private GoogleMap mMap;
+
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
-
 	private TextView DataTextView1;
 	private TextView DataTextView2;
+	private TextView clickedContentTextView;
 	private TextView LabelTextView1;
 	private TextView LabelTextView2;
+	private TextView clickedLabelTextView;
+	private TextView unitTextView1;
+	private TextView unitTextView2;
+	private TextView clickedUnitTextView;
+	private RelativeLayout dataRelativeLayout1;
+	private RelativeLayout dataRelativeLayout2;
+	
+		
+	
 	private boolean isPaused;
 	MyLocationListener myLocationListener;
-	
-	//private LinkedList<LinkedList<Location>> trace;
-	//private PolylineOptions traceOnMap;
-	//private LocationRequest mLocationRequest;
-	//private static final long LOCATION_UPDATE_FREQUENCY = 1000;
+
+	// private LinkedList<LinkedList<Location>> trace;
+	// private PolylineOptions traceOnMap;
+	// private LocationRequest mLocationRequest;
+	// private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 
 	// measured values
 	double pace;
@@ -65,12 +63,12 @@ public class ActivityActivity extends FragmentActivity implements
 
 	private int dataTextView1Content;
 	private int dataTextView2Content;
-
+	private int clickedField;
 	// measured values IDs
-	private static final int distanceID = 1;
-	private static final int paceID = 2;
-	private static final int avgPaceID = 3;
-	private static final int timeID = 4;
+	private static final int distanceID = 0;
+	private static final int paceID = 1;
+	private static final int avgPaceID = 2;
+	private static final int timeID = 3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,37 +78,44 @@ public class ActivityActivity extends FragmentActivity implements
 		stopButton = (Button) findViewById(R.id.stopButton);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
 		resumeButton = (Button) findViewById(R.id.resumeButton);
-		
+		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
+		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
 		mMap = ((SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map)).getMap();
-		//trace = new LinkedList<LinkedList<Location>>();
+		// trace = new LinkedList<LinkedList<Location>>();
 		stopButton.setOnClickListener(this);
 		resumeButton.setOnClickListener(this);
 		pauseButton.setOnClickListener(this);
+		dataRelativeLayout1.setOnClickListener(this);
+		dataRelativeLayout2.setOnClickListener(this);
 		pauseTime = 0;
-		//traceOnMap = new PolylineOptions();
+		// traceOnMap = new PolylineOptions();
 
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
 
 		LabelTextView1 = (TextView) findViewById(R.id.dataTextView1Discription);
 		LabelTextView2 = (TextView) findViewById(R.id.dataTextView2Discription);
+
+		unitTextView1 = (TextView) findViewById(R.id.dataTextView1Unit);
+		unitTextView2 = (TextView) findViewById(R.id.dataTextView2Unit);
 		
-		//to change displayed info, change dataTextViewContent and start initLabelsMethod
+		// to change displayed info, change dataTextViewContent and start
+		// initLabelsMethod
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
-		
-		initLabels(DataTextView1,LabelTextView1, dataTextView1Content);
-		initLabels(DataTextView2,LabelTextView2, dataTextView2Content);
-		
-		//TODO pobraæ z intencji zamiast tak
+
+		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
+		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
+
+		// TODO pobraæ z intencji zamiast tak
 		myLocationListener = MainScreenActivity.locationListener;
 		myLocationListener.start(this);
 		startTime = System.currentTimeMillis();
 	}
 
-	private void initLabels(TextView textViewInitialValue, TextView textView, int meassuredValue)
-	{
+	private void initLabels(TextView textViewInitialValue, TextView textView,
+			int meassuredValue) {
 		if (meassuredValue == distanceID) {
 			textView.setText(R.string.distance);
 			textViewInitialValue.setText("0.000");
@@ -120,14 +125,29 @@ public class ActivityActivity extends FragmentActivity implements
 		} else if (meassuredValue == avgPaceID) {
 			textView.setText(R.string.pace_avrage);
 			textViewInitialValue.setText("0:00");
-		}
-		else if (meassuredValue == timeID) {
+		} else if (meassuredValue == timeID) {
 			textView.setText(R.string.time);
 			textViewInitialValue.setText("00:00:00");
 		}
 	}
 	
-
+	private void updateLabels(int meassuredValue, TextView labelTextView, TextView unitTextView, TextView contentTextView)
+	{
+		if (meassuredValue == distanceID) {
+			labelTextView.setText(R.string.distance);
+			unitTextView.setText(R.string.km);
+		} else if (meassuredValue == paceID) {
+			labelTextView.setText(R.string.pace);
+			unitTextView.setText(R.string.minutes_per_km);
+		} else if (meassuredValue == avgPaceID) {
+			labelTextView.setText(R.string.pace_avrage);
+			unitTextView.setText(R.string.minutes_per_km);
+		} else if (meassuredValue == timeID) {
+			labelTextView.setText(R.string.time);
+			unitTextView.setText("");
+		}
+		updateData(contentTextView, meassuredValue);
+	}
 
 
 	@Override
@@ -135,29 +155,31 @@ public class ActivityActivity extends FragmentActivity implements
 		super.onBackPressed();
 		showAlertDialog();
 	}
-	
-	private void showAlertDialog()
-	{
+
+	private void showAlertDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
 		builder.setMessage(R.string.dialog_message_on_stop);
-		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   finish();
-		   			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
-		           }
-		       });
-		builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User cancelled the dialog
-		           }
-		       });
+		builder.setPositiveButton(android.R.string.yes,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						finish();
+						overridePendingTransition(R.anim.in_up_anim,
+								R.anim.out_up_anim);
+					}
+				});
+		builder.setNegativeButton(android.R.string.no,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User cancelled the dialog
+					}
+				});
 		// Set other dialog properties
 
 		// Create the AlertDialog
 		AlertDialog dialog = builder.create();
 		dialog.show();
-		
+
 	}
 
 	@Override
@@ -165,45 +187,74 @@ public class ActivityActivity extends FragmentActivity implements
 		if (v == stopButton) {
 			// TODO finish and save activity
 			showAlertDialog();
-		}
-		else if (v == pauseButton)
-		{
+		} else if (v == pauseButton) {
 			myLocationListener.setPaused(!myLocationListener.isPaused());
 			isPaused = myLocationListener.isPaused();
-			if (isPaused)
-			{
+			if (isPaused) {
 				stopButton.setVisibility(View.GONE);
 				pauseButton.setVisibility(View.GONE);
 				resumeButton.setVisibility(View.VISIBLE);
-			}
-			else
-			{
+			} else {
 				stopButton.setVisibility(View.VISIBLE);
 				pauseButton.setVisibility(View.VISIBLE);
 				resumeButton.setVisibility(View.GONE);
 			}
 			pauseStartTime = System.currentTimeMillis();
-		}
-		else if (v == resumeButton)
-		{
+		} else if (v == resumeButton) {
 			myLocationListener.setPaused(!myLocationListener.isPaused());
 			isPaused = myLocationListener.isPaused();
-			if (isPaused)
-			{
+			if (isPaused) {
 				stopButton.setVisibility(View.GONE);
 				pauseButton.setVisibility(View.GONE);
 				resumeButton.setVisibility(View.VISIBLE);
-			}
-			else
-			{
+			} else {
 				stopButton.setVisibility(View.VISIBLE);
 				pauseButton.setVisibility(View.VISIBLE);
 				resumeButton.setVisibility(View.GONE);
 			}
-			pauseTime += System.currentTimeMillis()-pauseStartTime;
-			//trace.add(new LinkedList<Location>());
+			pauseTime += System.currentTimeMillis() - pauseStartTime;
+			// trace.add(new LinkedList<Location>());
+		} else if (v == dataRelativeLayout1) {
+			clickedContentTextView = DataTextView1;
+			clickedLabelTextView = LabelTextView1;
+			clickedUnitTextView = unitTextView1;
+			clickedField = 1;
+			showMeassuredValuesMenu();
+		} else if (v == dataRelativeLayout2) {
+			clickedContentTextView = DataTextView2;
+			clickedLabelTextView = LabelTextView2;
+			clickedUnitTextView = unitTextView2;
+			clickedField =2;
+			showMeassuredValuesMenu();
 		}
 
+	}
+
+	private String getMyString(int stringId) {
+		return getResources().getString(stringId);
+	}
+
+	private void showMeassuredValuesMenu() {
+		// chcia³em zrobiæ tablice w stringach, ale potem zobaczy³em, ¿e ju¿ mam
+		// te wszystkie nazwy i teraz nie wiem czy tamto zmieniaæ w tablicê czy
+		// nie ma sensu
+		//kolejnoœæ w tablicy musi odpowiadaæ nr ID, tzn 0 - dystans itp.
+		final CharSequence[] items = { getMyString(R.string.distance), getMyString(R.string.pace), getMyString(R.string.pace_avrage),
+				getMyString(R.string.time) };
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.dialog_choose_what_to_display);
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				updateLabels(item, clickedLabelTextView, clickedUnitTextView, clickedContentTextView);
+				if (clickedField == 1)
+					dataTextView1Content = item;
+				else
+					dataTextView2Content = item;
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	private void updateData(TextView textBox, int meassuredValue) {
@@ -257,9 +308,9 @@ public class ActivityActivity extends FragmentActivity implements
 		mMap.addPolyline(new PolylineOptions().add(
 				new LatLng(lastLocation.getLatitude(), lastLocation
 						.getLongitude())).add(latLng));
-		
+
 		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-		
+
 		float speed = location.getSpeed();
 		Toast.makeText(this, location.getAccuracy() + "", Toast.LENGTH_SHORT)
 				.show();
@@ -270,17 +321,16 @@ public class ActivityActivity extends FragmentActivity implements
 		distance += lastLocation.distanceTo(location);
 		// DataTextView1.setText(distance / 1000 + " km");
 
-		//TODO - zmieniæ
-		time = System.currentTimeMillis() - startTime-pauseTime;
+		// TODO - zmieniæ
+		time = System.currentTimeMillis() - startTime - pauseTime;
 
 		avgPace = ((double) time / 60) / distance;
 
 		updateData(DataTextView1, dataTextView1Content);
 		updateData(DataTextView2, dataTextView2Content);
 
-		
-		
 	}
+
 	@Override
 	protected void onStop() {
 		LocationClient locationClient = myLocationListener.getmLocationClient();
@@ -299,7 +349,6 @@ public class ActivityActivity extends FragmentActivity implements
 		super.onStop();
 	}
 
-	
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -307,13 +356,12 @@ public class ActivityActivity extends FragmentActivity implements
 		myLocationListener.getmLocationClient().connect();
 	}
 
-	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	        showAlertDialog();
-	    }
-	    return super.onKeyDown(keyCode, event);
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			showAlertDialog();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }
