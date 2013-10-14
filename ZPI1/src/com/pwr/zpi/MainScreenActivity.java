@@ -311,7 +311,6 @@ public class MainScreenActivity extends FragmentActivity implements
 		/*
 		 * After disconnect() is called, the client is considered "dead".
 		 */
-		Log.i("test", "on stop");
 		locationClient.disconnect();
 		super.onDestroy();
 	}

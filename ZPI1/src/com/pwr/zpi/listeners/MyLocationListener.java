@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -119,7 +117,6 @@ public class MyLocationListener implements LocationListener,
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.i("test", "test");
 		if (isStarted) {
 			if (!isPaused) {
 				// TODO upade ONLY when accuracy is good
@@ -147,7 +144,6 @@ public class MyLocationListener implements LocationListener,
 
 
 		Location location = mLocationClient.getLastLocation();
-		Log.i("test","onConnected");
 	}
 
 	@Override

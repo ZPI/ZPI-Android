@@ -25,7 +25,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -270,7 +269,6 @@ public class ActivityActivity extends FragmentActivity implements
 		/*
 		 * After disconnect() is called, the client is considered "dead".
 		 */
-		Log.i("test", "on stop");
 		locationClient.disconnect();
 		super.onStop();
 	}
