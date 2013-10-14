@@ -1,53 +1,56 @@
 package com.pwr.zpi;
 
-import java.util.LinkedList;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.pwr.zpi.dialogs.ErrorDialogFragment;
+import com.pwr.zpi.listeners.MyLocationListener;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.IntentSender;
-import android.location.Criteria;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class ActivityActivity extends FragmentActivity implements
-		OnClickListener, GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener,
-		com.google.android.gms.location.LocationListener {
+		OnClickListener {
 
 	private GoogleMap mMap;
+
 	private Button stopButton;
-	private static final String TAG = "ActivityActivity";
-	private LocationClient mLocationClient;
+	private Button pauseButton;
+	private Button resumeButton;
 	private TextView DataTextView1;
 	private TextView DataTextView2;
-	private TextView DataTextView3;
-	private TextView DataTextView4;
+	private TextView clickedContentTextView;
+	private TextView LabelTextView1;
+	private TextView LabelTextView2;
+	private TextView clickedLabelTextView;
+	private TextView unitTextView1;
+	private TextView unitTextView2;
+	private TextView clickedUnitTextView;
+	private RelativeLayout dataRelativeLayout1;
+	private RelativeLayout dataRelativeLayout2;
 
-	private LinkedList<Location> trace;
-	private PolylineOptions traceOnMap;
-	private LocationRequest mLocationRequest;
-	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
+	private boolean isPaused;
+	MyLocationListener myLocationListener;
+
+	// private LinkedList<LinkedList<Location>> trace;
+	// private PolylineOptions traceOnMap;
+	// private LocationRequest mLocationRequest;
+	// private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 
 	// measured values
 	double pace;
@@ -55,17 +58,17 @@ public class ActivityActivity extends FragmentActivity implements
 	double distance;
 	long time;
 	long startTime;
+	long pauseTime;
+	long pauseStartTime;
 
 	private int dataTextView1Content;
 	private int dataTextView2Content;
-	private int dataTextView3Content;
-	private int dataTextView4Content;
-
+	private int clickedField;
 	// measured values IDs
-	private static final int distanceID = 1;
-	private static final int paceID = 2;
-	private static final int avgPaceID = 3;
-	private static final int timeID = 4;
+	private static final int distanceID = 0;
+	private static final int paceID = 1;
+	private static final int avgPaceID = 2;
+	private static final int timeID = 3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,140 +76,263 @@ public class ActivityActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_view);
 
 		stopButton = (Button) findViewById(R.id.stopButton);
-		mMap = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map)).getMap();
-		trace = new LinkedList<Location>();
+		pauseButton = (Button) findViewById(R.id.pauseButton);
+		resumeButton = (Button) findViewById(R.id.resumeButton);
+		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
+		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map);
+		mMap = mapFragment.getMap();
+
+		mMap.setMyLocationEnabled(true);
+
+		// trace = new LinkedList<LinkedList<Location>>();
 		stopButton.setOnClickListener(this);
-		traceOnMap = new PolylineOptions();
+		resumeButton.setOnClickListener(this);
+		pauseButton.setOnClickListener(this);
+		dataRelativeLayout1.setOnClickListener(this);
+		dataRelativeLayout2.setOnClickListener(this);
+		pauseTime = 0;
+		// traceOnMap = new PolylineOptions();
 
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
-		DataTextView3 = (TextView) findViewById(R.id.dataTextView3);
-		DataTextView4 = (TextView) findViewById(R.id.dataTextView4);
 
+		LabelTextView1 = (TextView) findViewById(R.id.dataTextView1Discription);
+		LabelTextView2 = (TextView) findViewById(R.id.dataTextView2Discription);
+
+		unitTextView1 = (TextView) findViewById(R.id.dataTextView1Unit);
+		unitTextView2 = (TextView) findViewById(R.id.dataTextView2Unit);
+
+		// to change displayed info, change dataTextViewContent and start
+		// initLabelsMethod
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
-		dataTextView3Content = paceID;
-		dataTextView4Content = avgPaceID;
 
-		mLocationClient = new LocationClient(this, this, this);
-		mLocationRequest = LocationRequest.create();
-		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
+		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
+
+		// TODO pobraæ z intencji zamiast tak
+		myLocationListener = MainScreenActivity.locationListener;
+		myLocationListener.start(this);
+		startTime = System.currentTimeMillis();
+		moveSystemControls(mapFragment);
 
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		// Connect the client.
-		mLocationClient.connect();
-	}
+	private void moveSystemControls(SupportMapFragment mapFragment) {
 
-	@Override
-	protected void onStop() {
+		View zoomControls = mapFragment.getView().findViewById(0x1);
 
-		// If the client is connected
-		if (mLocationClient.isConnected()) {
-			/*
-			 * Remove location updates for a listener. The current Activity is
-			 * the listener, so the argument is "this".
-			 */
-			mLocationClient.removeLocationUpdates(this);
+		if (zoomControls != null
+				&& zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+			// ZoomControl is inside of RelativeLayout
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls
+					.getLayoutParams();
+
+			// Align it to - parent top|left
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+			// nie do koñca rozumiem tê metodê, trzeba zobaczyæ czy u Ciebie
+			// jest to samo czy nie za bardzo
+			final int margin = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(R.dimen.zoom_buttons_margin),
+					getResources().getDisplayMetrics());
+			params.setMargins(0, 0, 0, margin);
 		}
-		/*
-		 * After disconnect() is called, the client is considered "dead".
-		 */
-		mLocationClient.disconnect();
-		super.onStop();
+		View locationControls = mapFragment.getView().findViewById(0x2);
+
+		if (locationControls != null
+				&& locationControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+			// ZoomControl is inside of RelativeLayout
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls
+					.getLayoutParams();
+
+			// Align it to - parent top|left
+			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+			// Update margins, set to 10dp
+			final int margin1 = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(
+							R.dimen.location_button_margin_top), getResources()
+							.getDisplayMetrics());
+			final int margin2 = (int) TypedValue.applyDimension(
+					TypedValue.COMPLEX_UNIT_DIP,
+					getResources().getDimension(
+							R.dimen.location_button_margin_right),
+					getResources().getDisplayMetrics());
+			params.setMargins(0, margin1, margin2, 0);
+		}
+	}
+
+	private void initLabels(TextView textViewInitialValue, TextView textView,
+			int meassuredValue) {
+		switch (meassuredValue) {
+		case distanceID:
+			textView.setText(R.string.distance);
+			textViewInitialValue.setText("0.000");
+			break;
+		case paceID:
+			textView.setText(R.string.pace);
+			textViewInitialValue.setText("0:00");
+			break;
+		case avgPaceID:
+			textView.setText(R.string.pace_avrage);
+			textViewInitialValue.setText("0:00");
+			break;
+		case timeID:
+			textView.setText(R.string.time);
+			textViewInitialValue.setText("00:00:00");
+			break;
+		}
+
+	}
+
+	private void updateLabels(int meassuredValue, TextView labelTextView,
+			TextView unitTextView, TextView contentTextView) {
+		switch (meassuredValue) {
+		case distanceID:
+			labelTextView.setText(R.string.distance);
+			unitTextView.setText(R.string.km);
+			break;
+		case paceID:
+			labelTextView.setText(R.string.pace);
+			unitTextView.setText(R.string.minutes_per_km);
+			break;
+		case avgPaceID:
+			labelTextView.setText(R.string.pace_avrage);
+			unitTextView.setText(R.string.minutes_per_km);
+			break;
+		case timeID:
+			labelTextView.setText(R.string.time);
+			unitTextView.setText("");
+			break;
+		}
+
+		updateData(contentTextView, meassuredValue);
 	}
 
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		showAlertDialog();
+	}
+
+	private void showAlertDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		// Add the buttons
+		builder.setTitle(R.string.dialog_message_on_stop);
+		builder.setPositiveButton(android.R.string.yes,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						finish();
+						overridePendingTransition(R.anim.in_up_anim,
+								R.anim.out_up_anim);
+					}
+				});
+		builder.setNegativeButton(android.R.string.no,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						// User cancelled the dialog
+					}
+				});
+		// Set other dialog properties
+
+		// Create the AlertDialog
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v == stopButton) {
 			// TODO finish and save activity
-			finish();
-			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
-		}
-
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-		Log.i(TAG, "onConnectionFailed");
-		/*
-		 * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
-		if (connectionResult.hasResolution()) {
-			try {
-				// Start an Activity that tries to resolve the error
-				connectionResult
-						.startResolutionForResult(
-								this,
-								MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-			} catch (IntentSender.SendIntentException e) {
-				// Log the error
-				e.printStackTrace();
+			showAlertDialog();
+		} else if (v == pauseButton) {
+			myLocationListener.setPaused(!myLocationListener.isPaused());
+			isPaused = myLocationListener.isPaused();
+			if (isPaused) {
+				stopButton.setVisibility(View.GONE);
+				pauseButton.setVisibility(View.GONE);
+				resumeButton.setVisibility(View.VISIBLE);
+			} else {
+				stopButton.setVisibility(View.VISIBLE);
+				pauseButton.setVisibility(View.VISIBLE);
+				resumeButton.setVisibility(View.GONE);
 			}
-		} else {
-			/*
-			 * If no resolution is available, display a dialog to the user with
-			 * the error.
-			 */
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-					connectionResult.getErrorCode(), this,
-					MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-						"Location Updates");
+			pauseStartTime = System.currentTimeMillis();
+		} else if (v == resumeButton) {
+			myLocationListener.setPaused(!myLocationListener.isPaused());
+			isPaused = myLocationListener.isPaused();
+			if (isPaused) {
+				stopButton.setVisibility(View.GONE);
+				pauseButton.setVisibility(View.GONE);
+				resumeButton.setVisibility(View.VISIBLE);
+			} else {
+				stopButton.setVisibility(View.VISIBLE);
+				pauseButton.setVisibility(View.VISIBLE);
+				resumeButton.setVisibility(View.GONE);
 			}
+			pauseTime += System.currentTimeMillis() - pauseStartTime;
+			// trace.add(new LinkedList<Location>());
+		} else if (v == dataRelativeLayout1) {
+			clickedContentTextView = DataTextView1;
+			clickedLabelTextView = LabelTextView1;
+			clickedUnitTextView = unitTextView1;
+			clickedField = 1;
+			showMeassuredValuesMenu();
+		} else if (v == dataRelativeLayout2) {
+			clickedContentTextView = DataTextView2;
+			clickedLabelTextView = LabelTextView2;
+			clickedUnitTextView = unitTextView2;
+			clickedField = 2;
+			showMeassuredValuesMenu();
 		}
 
 	}
 
-	@Override
-	public void onConnected(Bundle bundle) {
-		Log.i(TAG, "onConnected");
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
-		startTime = System.currentTimeMillis();
-
-		Location location = mLocationClient.getLastLocation();
-		if (location != null) {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-					location.getLatitude(), location.getLongitude()), 13));
-		}
+	private String getMyString(int stringId) {
+		return getResources().getString(stringId);
 	}
 
-	@Override
-	public void onDisconnected() {
-		Log.i(TAG, "onDisconnected");
+	private void showMeassuredValuesMenu() {
+		// chcia³em zrobiæ tablice w stringach, ale potem zobaczy³em, ¿e ju¿ mam
+		// te wszystkie nazwy i teraz nie wiem czy tamto zmieniaæ w tablicê czy
+		// nie ma sensu
+		// kolejnoœæ w tablicy musi odpowiadaæ nr ID, tzn 0 - dystans itp.
 
+		final CharSequence[] items = { getMyString(R.string.distance),
+				getMyString(R.string.pace), getMyString(R.string.pace_avrage),
+				getMyString(R.string.time) };
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.dialog_choose_what_to_display);
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				updateLabels(item, clickedLabelTextView, clickedUnitTextView,
+						clickedContentTextView);
+				if (clickedField == 1)
+					dataTextView1Content = item;
+				else
+					dataTextView2Content = item;
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	private void updateData(TextView textBox, int meassuredValue) {
-		if (meassuredValue == distanceID) {
-			textBox.setText(String.format("%.2f", distance / 1000));
-		} else if (meassuredValue == paceID) {
+		
+		switch (meassuredValue)
+		{
+		case distanceID:
+			textBox.setText(String.format("%.3f", distance / 1000));
+			break;
+		case paceID:
 			if (pace < 30) {
 				// convert pace to show second
 				double rest = pace - (int) pace;
@@ -217,9 +343,10 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
 						rest));
 			} else {
-				textBox.setText("-----");
+				textBox.setText(getResources().getString(R.string.dashes));
 			}
-		} else if (meassuredValue == avgPaceID) {
+			break;
+		case avgPaceID:
 			if (avgPace < 30) {
 				// convert pace to show second
 				double rest = avgPace - (int) avgPace;
@@ -230,11 +357,10 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
 						secondsZero, rest));
 			} else {
-				textBox.setText("-----");
+				textBox.setText(getResources().getString(R.string.dashes));
 			}
-		}
-		// TODO a thread to update time every second
-		else if (meassuredValue == timeID) {
+			break;
+		case timeID:
 			long hours = time / 3600000;
 			long minutes = (time / 60000) - hours * 60;
 			long seconds = (time / 1000) - hours * 3600 - minutes * 60;
@@ -244,10 +370,20 @@ public class ActivityActivity extends FragmentActivity implements
 
 			textBox.setText(String.format("%s%d:%s%d:%s%d", hourZero, hours,
 					minutesZero, minutes, secondsZero, seconds));
+			break;
 		}
+		
 	}
 
-	private void countData(Location location, Location lastLocation) {
+	public void countData(Location location, Location lastLocation) {
+
+		LatLng latLng = new LatLng(location.getLatitude(),
+				location.getLongitude());
+		mMap.addPolyline(new PolylineOptions().add(
+				new LatLng(lastLocation.getLatitude(), lastLocation
+						.getLongitude())).add(latLng));
+
+		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
 		float speed = location.getSpeed();
 		Toast.makeText(this, location.getAccuracy() + "", Toast.LENGTH_SHORT)
@@ -259,38 +395,47 @@ public class ActivityActivity extends FragmentActivity implements
 		distance += lastLocation.distanceTo(location);
 		// DataTextView1.setText(distance / 1000 + " km");
 
-		time = System.currentTimeMillis() - startTime;
+		// TODO - zmieniæ
+		time = System.currentTimeMillis() - startTime - pauseTime;
 
 		avgPace = ((double) time / 60) / distance;
 
 		updateData(DataTextView1, dataTextView1Content);
 		updateData(DataTextView2, dataTextView2Content);
-		updateData(DataTextView3, dataTextView3Content);
-		updateData(DataTextView4, dataTextView4Content);
+
 	}
 
 	@Override
-	public void onLocationChanged(Location location) {
-
-		// TODO upade ONLY when accuracy is good
-
-		Location lastLocation;
-		LatLng latLng = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		if (!trace.isEmpty()) {
-			lastLocation = trace.getLast();
-			mMap.addPolyline(new PolylineOptions().add(
-					new LatLng(lastLocation.getLatitude(), lastLocation
-							.getLongitude())).add(latLng));
-			countData(location, lastLocation);
+	protected void onStop() {
+		LocationClient locationClient = myLocationListener.getmLocationClient();
+		// If the client is connected
+		if (locationClient.isConnected()) {
+			/*
+			 * Remove location updates for a listener. The current Activity is
+			 * the listener, so the argument is "this".
+			 */
+			locationClient.removeLocationUpdates(myLocationListener);
 		}
+		/*
+		 * After disconnect() is called, the client is considered "dead".
+		 */
+		locationClient.disconnect();
+		super.onStop();
+	}
 
-		trace.add(location);
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// Connect the client.
+		myLocationListener.getmLocationClient().connect();
+	}
 
-		traceOnMap.add(latLng);
-
-		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			showAlertDialog();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }
