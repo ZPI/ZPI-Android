@@ -1,7 +1,19 @@
 package com.pwr.zpi;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
+import android.util.TypedValue;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -10,23 +22,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.listeners.MyLocationListener;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -48,7 +43,6 @@ public class ActivityActivity extends FragmentActivity implements
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 
-	private boolean isPaused;
 	MyLocationListener myLocationListener;
 
 	// private LinkedList<LinkedList<Location>> trace;
@@ -292,8 +286,7 @@ public class ActivityActivity extends FragmentActivity implements
 			// TODO finish and save activity
 			showAlertDialog();
 		} else if (v == pauseButton) { //stop time
-			myLocationListener.setPaused(!myLocationListener.isPaused());
-			isPaused = myLocationListener.isPaused();
+			myLocationListener.setPaused(true);
 				stopButton.setVisibility(View.GONE);
 				pauseButton.setVisibility(View.GONE);
 				resumeButton.setVisibility(View.VISIBLE);
@@ -301,8 +294,7 @@ public class ActivityActivity extends FragmentActivity implements
 			
 			handler.removeCallbacks(timeHandler);
 		} else if (v == resumeButton) { //start time
-			myLocationListener.setPaused(!myLocationListener.isPaused());
-			isPaused = myLocationListener.isPaused();
+			myLocationListener.setPaused(false);
 				stopButton.setVisibility(View.VISIBLE);
 				pauseButton.setVisibility(View.VISIBLE);
 				resumeButton.setVisibility(View.GONE);
