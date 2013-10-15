@@ -122,8 +122,6 @@ public class ActivityActivity extends FragmentActivity implements
 
 	Handler handler;
 	Runnable timeHandler;
-//	Timer timer;
-//	TimerTask timerTask;
 
 	private void startTimer() {
 		handler = new Handler();
