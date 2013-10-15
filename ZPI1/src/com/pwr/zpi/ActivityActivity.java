@@ -1,5 +1,20 @@
 package com.pwr.zpi;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
+import android.util.TypedValue;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -7,22 +22,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.listeners.MyLocationListener;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.location.Location;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -44,7 +43,6 @@ public class ActivityActivity extends FragmentActivity implements
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 
-	private boolean isPaused;
 	MyLocationListener myLocationListener;
 
 	// private LinkedList<LinkedList<Location>> trace;
@@ -56,7 +54,7 @@ public class ActivityActivity extends FragmentActivity implements
 	double pace;
 	double avgPace;
 	double distance;
-	long time;
+	Long time = 0L;
 	long startTime;
 	long pauseTime;
 	long pauseStartTime;
@@ -74,6 +72,8 @@ public class ActivityActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view);
+
+		startTimer();
 
 		stopButton = (Button) findViewById(R.id.stopButton);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
@@ -112,12 +112,43 @@ public class ActivityActivity extends FragmentActivity implements
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
 
-		// TODO pobraæ z intencji zamiast tak
+		// TODO pobraï¿½ z intencji zamiast tak
 		myLocationListener = MainScreenActivity.locationListener;
 		myLocationListener.start(this);
 		startTime = System.currentTimeMillis();
 		moveSystemControls(mapFragment);
 
+	}
+
+	Handler handler;
+	Runnable timeHandler;
+
+	private void startTimer() {
+		handler = new Handler();
+		timeHandler = new Runnable() {
+
+			@Override
+			public void run() {
+				runTimerTask();
+			}
+		};
+		handler.post(timeHandler);
+	}
+
+	protected void runTimerTask() {
+
+		synchronized (time) {
+			time = System.currentTimeMillis() - startTime - pauseTime;
+
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					updateData(DataTextView1, dataTextView1Content);
+					updateData(DataTextView2, dataTextView2Content);
+				}
+			});
+		}
+		handler.postDelayed(timeHandler, 1000);
 	}
 
 	private void moveSystemControls(SupportMapFragment mapFragment) {
@@ -134,7 +165,7 @@ public class ActivityActivity extends FragmentActivity implements
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-			// nie do koñca rozumiem tê metodê, trzeba zobaczyæ czy u Ciebie
+			// nie do koï¿½ca rozumiem tï¿½ metodï¿½, trzeba zobaczyï¿½ czy u Ciebie
 			// jest to samo czy nie za bardzo
 			final int margin = (int) TypedValue.applyDimension(
 					TypedValue.COMPLEX_UNIT_DIP,
@@ -252,33 +283,23 @@ public class ActivityActivity extends FragmentActivity implements
 		if (v == stopButton) {
 			// TODO finish and save activity
 			showAlertDialog();
-		} else if (v == pauseButton) {
-			myLocationListener.setPaused(!myLocationListener.isPaused());
-			isPaused = myLocationListener.isPaused();
-			if (isPaused) {
+		} else if (v == pauseButton) { //stop time
+			myLocationListener.setPaused(true);
 				stopButton.setVisibility(View.GONE);
 				pauseButton.setVisibility(View.GONE);
 				resumeButton.setVisibility(View.VISIBLE);
-			} else {
-				stopButton.setVisibility(View.VISIBLE);
-				pauseButton.setVisibility(View.VISIBLE);
-				resumeButton.setVisibility(View.GONE);
-			}
 			pauseStartTime = System.currentTimeMillis();
-		} else if (v == resumeButton) {
-			myLocationListener.setPaused(!myLocationListener.isPaused());
-			isPaused = myLocationListener.isPaused();
-			if (isPaused) {
-				stopButton.setVisibility(View.GONE);
-				pauseButton.setVisibility(View.GONE);
-				resumeButton.setVisibility(View.VISIBLE);
-			} else {
+			
+			handler.removeCallbacks(timeHandler);
+		} else if (v == resumeButton) { //start time
+			myLocationListener.setPaused(false);
 				stopButton.setVisibility(View.VISIBLE);
 				pauseButton.setVisibility(View.VISIBLE);
 				resumeButton.setVisibility(View.GONE);
-			}
 			pauseTime += System.currentTimeMillis() - pauseStartTime;
 			// trace.add(new LinkedList<Location>());
+			
+			handler.post(timeHandler);
 		} else if (v == dataRelativeLayout1) {
 			clickedContentTextView = DataTextView1;
 			clickedLabelTextView = LabelTextView1;
@@ -300,10 +321,10 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 
 	private void showMeassuredValuesMenu() {
-		// chcia³em zrobiæ tablice w stringach, ale potem zobaczy³em, ¿e ju¿ mam
-		// te wszystkie nazwy i teraz nie wiem czy tamto zmieniaæ w tablicê czy
+		// chciaï¿½em zrobiï¿½ tablice w stringach, ale potem zobaczyï¿½em, ï¿½e juï¿½ mam
+		// te wszystkie nazwy i teraz nie wiem czy tamto zmieniaï¿½ w tablicï¿½ czy
 		// nie ma sensu
-		// kolejnoœæ w tablicy musi odpowiadaæ nr ID, tzn 0 - dystans itp.
+		// kolejnoï¿½ï¿½ w tablicy musi odpowiadaï¿½ nr ID, tzn 0 - dystans itp.
 
 		final CharSequence[] items = { getMyString(R.string.distance),
 				getMyString(R.string.pace), getMyString(R.string.pace_avrage),
@@ -326,9 +347,8 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 
 	private void updateData(TextView textBox, int meassuredValue) {
-		
-		switch (meassuredValue)
-		{
+
+		switch (meassuredValue) {
 		case distanceID:
 			textBox.setText(String.format("%.3f", distance / 1000));
 			break;
@@ -372,7 +392,7 @@ public class ActivityActivity extends FragmentActivity implements
 					minutesZero, minutes, secondsZero, seconds));
 			break;
 		}
-		
+
 	}
 
 	public void countData(Location location, Location lastLocation) {
@@ -395,10 +415,9 @@ public class ActivityActivity extends FragmentActivity implements
 		distance += lastLocation.distanceTo(location);
 		// DataTextView1.setText(distance / 1000 + " km");
 
-		// TODO - zmieniæ
-		time = System.currentTimeMillis() - startTime - pauseTime;
-
-		avgPace = ((double) time / 60) / distance;
+		synchronized (time) {
+			avgPace = ((double) time / 60) / distance;
+		}
 
 		updateData(DataTextView1, dataTextView1Content);
 		updateData(DataTextView2, dataTextView2Content);
