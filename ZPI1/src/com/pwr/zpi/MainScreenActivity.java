@@ -44,7 +44,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	private Button musicButton;
 	private LocationManager service;
 	
-	//TODO potem zmieniê
+	//TODO potem zmieniï¿½
 	public static MyLocationListener locationListener;
 
 	private GestureDetector gestureDetector;
@@ -83,6 +83,8 @@ public class MainScreenActivity extends FragmentActivity implements
 		
 		service = (LocationManager) getSystemService(LOCATION_SERVICE);
 		service.addGpsStatusListener(locationListener);
+		
+		checkGPS();
 	}
 
 	private void addListeners() {
@@ -111,18 +113,6 @@ public class MainScreenActivity extends FragmentActivity implements
 				return gestureDetector.onTouchEvent(event);
 			}
 		};
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		checkGPS();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		checkGPS();
 	}
 
 	@Override
@@ -284,7 +274,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	}
 	public void showGPSAccuracy(double accuracy)
 	{
-		//TODO - zamieniæ na jakiœ wskaŸnik
+		//TODO - zamieniï¿½ na jakiï¿½ wskaï¿½nik
 		GPSSignalTextView.setText(String.format("%.2f", accuracy));
 	}
 	@Override
@@ -371,4 +361,12 @@ public class MainScreenActivity extends FragmentActivity implements
 		else
 			startActivity(ActivityActivity.class, DOWN);
 	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		checkGPS();
+	}
+	
+	
 }
