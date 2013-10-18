@@ -19,7 +19,7 @@ public class PlaningActivity extends Activity implements GestureListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.workouts_activity);
+		setContentView(R.layout.planing_activity);
 		prepareGestureListener();
 		addListeners();
 		TabHost tabHost = (TabHost)findViewById(R.id.tabhost);

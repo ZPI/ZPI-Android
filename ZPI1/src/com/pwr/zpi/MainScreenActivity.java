@@ -8,6 +8,7 @@ import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.listeners.MyLocationListener;
+import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.views.VerticalTextView;
 
 import android.app.Activity;
@@ -77,7 +78,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	public boolean isConnected;
 	private Location mLastLocation;
 	// service data
-	Messenger mService = null;
 	boolean mIsBound;
 	//final Messenger mMessenger = new Messenger(new IncomingHandler());
 
@@ -356,32 +356,23 @@ public class MainScreenActivity extends FragmentActivity implements
 			startActivity(ActivityActivity.class, DOWN);
 	}
 
+	
+	
 	// SERVICE METHODS
 	private void askForGpsStatus() {
 		try {
 			Message msg = Message.obtain(null,
 					MyLocationListener.MSG_ASK_FOR_GPS);
-			if (mService != null)
-				mService.send(msg);
+			if (mConnection.getmService()!= null)
+				mConnection.getmService().send(msg);
 		} catch (RemoteException e) {
 
 		}
 
 	}
+	
+	private MyServiceConnection mConnection = new MyServiceConnection();
 
-	private ServiceConnection mConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			Log.i("Service_info", "Main Screen Connected");
-			mService = new Messenger(service);
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			Log.i("Service_info", "Main Screen Disconnected");
-			mService = null;
-		}
-	};
 
 	void doBindService() {
 		Log.i("Service_info", "Main Screen Binding");
@@ -416,9 +407,8 @@ public class MainScreenActivity extends FragmentActivity implements
 				isConnected = true;
 				mLastLocation = (Location) intent.getParcelableExtra("Location");
 				showGPSAccuracy(mLastLocation.getAccuracy());
-				//if (mLastLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY)
 				askForGpsStatus();
-				//	gpsStatus = GPS_WORKING;
+
 				
 				break;
 			case MyLocationListener.MSG_ASK_FOR_GPS:
@@ -441,8 +431,6 @@ public class MainScreenActivity extends FragmentActivity implements
 
 				break;
 			}
-	        
-	        // Do stuff...
 	    }
 	};
 	

@@ -2,15 +2,14 @@
 <resources>
 
     <string name="app_name">ZPI1</string>
-    <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
 	<string name="pause">PAUSE</string>
     <string name="stop">STOP</string>
     <string name="start">START</string>
     <string name="resume">RESUME</string>
-    <string name="ustawienia">Ustawienia</string>
-    <string name="gps_enabled">GPS włączony</string>
-    <string name="gps_disabled">GPS wyłączony \n czy włączyć?</string>
+    <string name="ustawienia">Settings</string>
+    <string name="gps_enabled">GPS enabled</string>
+    <string name="gps_disabled">GPS not enabled \n enable it?</string>
     <string name="dialog_message_on_stop">Are you sure, you want to stop recording the activity?</string>
     <string name="dialog_message_low_gps_accuracy">Please wait for better gps signal</string>
     <string name="dialog_message_no_gps">Please enable gps</string>
@@ -42,7 +41,7 @@
     <string name="height_max">Max Height</string>
     <string name="height_min">Min Height</string>
     <string name="dashes">-:--</string>
-    <string name="new_workout">new workout</string>
+    <string name="new_workout">New workout</string>
     
     <!-- Units -->
     <string name="seconds">s</string>

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,10 +13,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
+
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -38,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.listeners.MyLocationListener;
+import com.pwr.zpi.services.MyServiceConnection;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -61,14 +58,11 @@ public class ActivityActivity extends FragmentActivity implements
 	private RelativeLayout dataRelativeLayout2;
 	private LinkedList<LinkedList<Location>> trace;
 	private Location mLastLocation;
-	private LinkedList<Location> backGroundLocation;
-//	MyLocationListener myLocationListener;
 	private boolean isPaused;
-	// private LinkedList<LinkedList<Location>> trace;
+
 	private PolylineOptions traceOnMap;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
-	// private LocationRequest mLocationRequest;
 	// private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 
 	// measured values
@@ -90,14 +84,12 @@ public class ActivityActivity extends FragmentActivity implements
 	private static final int timeID = 3;
 
 	// service data
-		Messenger mService = null;
-		boolean mIsBound;
-	//	final Messenger mMessenger = new Messenger(new IncomingHandler());
+	boolean mIsBound;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_view);
+		setContentView(R.layout.activity_activity);
 
 		startTimer();
 
@@ -112,7 +104,7 @@ public class ActivityActivity extends FragmentActivity implements
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 
-		//mMap.setMyLocationEnabled(true);
+
 
 		trace = new LinkedList<LinkedList<Location>>();
 		stopButton.setOnClickListener(this);
@@ -144,9 +136,6 @@ public class ActivityActivity extends FragmentActivity implements
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
 
-		// TODO pobra� z intencji zamiast tak
-		//myLocationListener = MainScreenActivity.locationListener;
-		//myLocationListener.start(this);
 		startTime = System.currentTimeMillis();
 		moveSystemControls(mapFragment);
 		isPaused = false;
@@ -495,19 +484,8 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 	
 	// SERVICE METHODS
-		private ServiceConnection mConnection = new ServiceConnection() {
-			public void onServiceConnected(ComponentName className, IBinder service) {
-				Log.i("Service_info", "Activity Connected");
-				mService = new Messenger(service);
-			}
+		private ServiceConnection mConnection = new MyServiceConnection();
 
-			public void onServiceDisconnected(ComponentName className) {
-				// This is called when the connection with the service has been
-				// unexpectedly disconnected -- that is, its process crashed.
-				Log.i("Service_info", "Activity Disconnected");
-				mService = null;
-			}
-		};
 		
 		void doBindService() {
 			Log.i("Service_info", "Activity Binding");

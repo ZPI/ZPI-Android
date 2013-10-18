@@ -56,7 +56,7 @@ public class MyLocationListener extends Service implements LocationListener,
 	private boolean isConnected;
 	private Location mLastRecordedLocation;
 	private long mLastRecordedLocationTime;
-	//private Location mLastLocation;
+	// private Location mLastLocation;
 
 	// Service data
 	ArrayList<Messenger> mClients = new ArrayList<Messenger>();
@@ -65,19 +65,9 @@ public class MyLocationListener extends Service implements LocationListener,
 	public static final int MSG_SEND_LOCATION = 3;
 	public static final int MSG_ASK_FOR_GPS = 4;
 	public static final String MESSAGE = "Message";
-	public static final String MESSAGE_FROM = "Message_from";
 	public static final int MESSAGE_FROM_MAIN_SCREEN = 1;
 	public static final int MESSAGE_FROM_ACTIVITY = 2;
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
-	
-
-	private boolean isGpsOk() {
-		return (mLastRecordedLocation == null) ? false : mLastRecordedLocation
-				.getAccuracy() < REQUIRED_ACCURACY;
-		// return true;
-		// return isGpsFix &&
-		// mLastRecordedLocation.getAccuracy()<REQUIRED_ACCURACY;
-	}
 
 	private int checkGPS() {
 
@@ -85,25 +75,26 @@ public class MyLocationListener extends Service implements LocationListener,
 		service.addGpsStatusListener(this);
 		short gpsStatus = 0;
 
-		
 		boolean enabled = service
 				.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-		if (!enabled) 		
+		if (!enabled)
 			gpsStatus = MainScreenActivity.GPS_NOT_ENABLED;
-		else if (isConnected && (mLastRecordedLocation ==null || mLastRecordedLocation.getAccuracy()>MyLocationListener.REQUIRED_ACCURACY))
-				
+		else if (isConnected
+				&& (mLastRecordedLocation == null || mLastRecordedLocation
+						.getAccuracy() > MyLocationListener.REQUIRED_ACCURACY))
+
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
-		else	
+		else
 			gpsStatus = MainScreenActivity.GPS_WORKING;
-		
+
 		return gpsStatus;
 	}
-	
+
 	// LOCATION METHODS FOR THE LISTENERS
 	@Override
 	public void onLocationChanged(Location location) {
-		
+
 		sendLocationToClients(location);
 		mLastRecordedLocationTime = SystemClock.elapsedRealtime();
 		mLastRecordedLocation = location;
@@ -119,7 +110,7 @@ public class MyLocationListener extends Service implements LocationListener,
 	@Override
 	public void onDisconnected() {
 		Log.i("Location_info", "onDisconnected");
-
+		isConnected = false;
 	}
 
 	@Override
@@ -171,7 +162,6 @@ public class MyLocationListener extends Service implements LocationListener,
 
 	}
 
-	
 	@Override
 	public void onGpsStatusChanged(int event) {
 
@@ -191,11 +181,11 @@ public class MyLocationListener extends Service implements LocationListener,
 
 	// SERVICE METHODS
 
-    @Override
-    public IBinder onBind(Intent intent) {
-    	Log.i("Service_info","onBind");
-        return mMessenger.getBinder();
-    }
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.i("Service_info", "onBind");
+		return mMessenger.getBinder();
+	}
 
 	/**
 	 * Handler of incoming messages from clients.
@@ -210,30 +200,18 @@ public class MyLocationListener extends Service implements LocationListener,
 			case MSG_UNREGISTER_CLIENT:
 				mClients.remove(msg.replyTo);
 				break;
-            case MyLocationListener.MSG_ASK_FOR_GPS:
-            	Log.i("Service_info","Service: asked for gps signal");
-            	int gpsStatus = checkGPS();
-            	
-        		Intent intent = new Intent(MyLocationListener.class.getSimpleName());
-        	    // Add data
-        		intent.putExtra(MESSAGE, MSG_ASK_FOR_GPS);
-        	    intent.putExtra("gpsStatus", gpsStatus);
-        	    LocalBroadcastManager.getInstance(MyLocationListener.this).sendBroadcast(intent);
-//            	
-//            	for (int i = mClients.size() - 1; i >= 0; i--) {
-//        			try {
-//        				// TODO Send Location
-//
-//        				mClients.get(i).send(Message.obtain(null, MyLocationListener.MSG_ASK_FOR_GPS, gpsStatus, 0));
-//        				
-//        			} catch (RemoteException e) {
-//        				// The client is dead. Remove it from the list;
-//        				// we are going through the list from back to front
-//        				// so this is safe to do inside the loop.
-//        				mClients.remove(i);
-//        			}
-//            	}
-            	break;
+			case MyLocationListener.MSG_ASK_FOR_GPS:
+				Log.i("Service_info", "Service: asked for gps signal");
+				int gpsStatus = checkGPS();
+
+				Intent intent = new Intent(
+						MyLocationListener.class.getSimpleName());
+				// Add data
+				intent.putExtra(MESSAGE, MSG_ASK_FOR_GPS);
+				intent.putExtra("gpsStatus", gpsStatus);
+				LocalBroadcastManager.getInstance(MyLocationListener.this)
+						.sendBroadcast(intent);
+				break;
 			default:
 				super.handleMessage(msg);
 			}
@@ -242,19 +220,20 @@ public class MyLocationListener extends Service implements LocationListener,
 
 	private void sendLocationToClients(Location location) {
 		Log.i("Service_info", "Service is sending location");
-		
+
 		Intent intent = new Intent(MyLocationListener.class.getSimpleName());
-	    // Add data
+		// Add data
 		intent.putExtra(MESSAGE, MSG_SEND_LOCATION);
-	    intent.putExtra("Location", location);
-	    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+		intent.putExtra("Location", location);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
 	}
 
 	@Override
 	public void onCreate() {
 		Log.i("Service_info", "Service created");
-		mLocationClient = new LocationClient(getApplicationContext(), this, this);
+		mLocationClient = new LocationClient(getApplicationContext(), this,
+				this);
 		mLocationRequest = LocationRequest.create();
 		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -269,23 +248,19 @@ public class MyLocationListener extends Service implements LocationListener,
 	@Override
 	public boolean onUnbind(Intent intent) {
 		Log.i("Service_info", "Service Unbind");
-		 // If the client is connected
-		
-		// TODO Auto-generated method stub
 		return super.onUnbind(intent);
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.i("Service_info", "Service Unbind");
-		
-		 if (mLocationClient.isConnected()) {
-			 
-			 mLocationClient.removeLocationUpdates(this); }
-			 
-			 mLocationClient.disconnect();
-		// TODO Auto-generated method stub
+		Log.i("Service_info", "Service Destroyed");
+
+		if (mLocationClient.isConnected()) {
+			mLocationClient.removeLocationUpdates(this);
+		}
+
+		mLocationClient.disconnect();
 		super.onDestroy();
 	}
-	
+
 }
