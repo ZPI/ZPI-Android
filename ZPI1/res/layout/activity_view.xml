@@ -14,6 +14,7 @@
         android:layout_height="match_parent" >
 
         <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -41,6 +42,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -138,6 +140,18 @@
             android:padding="@dimen/buttons_padding"
             android:text="@string/resume"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/TextViewGPSAccuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/linearLayout1"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginRight="@dimen/small_margin"
+            android:background="@drawable/button_background"
+            android:text="@string/gps_accuracy" />
 
     </RelativeLayout>
 
