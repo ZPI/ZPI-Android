@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import android.app.Dialog;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -64,6 +65,7 @@ public class MyLocationListener extends Service implements LocationListener,
 	public static final int MSG_UNREGISTER_CLIENT = 2;
 	public static final int MSG_SEND_LOCATION = 3;
 	public static final int MSG_ASK_FOR_GPS = 4;
+	public static final int MSG_SHOW_GOOGLE_SERVICES_DIALOG = 5;
 	public static final String MESSAGE = "Message";
 	public static final int MESSAGE_FROM_MAIN_SCREEN = 1;
 	public static final int MESSAGE_FROM_ACTIVITY = 2;
@@ -116,6 +118,17 @@ public class MyLocationListener extends Service implements LocationListener,
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
 		Log.i("Location_info", "onConnectionFailed");
+		
+		Intent intent = new Intent(MyLocationListener.class.getSimpleName());
+		int statusCode = connectionResult.getErrorCode();
+		PendingIntent pendingIntent = connectionResult.getResolution();
+		// Add data
+		intent.putExtra(MESSAGE, MSG_SHOW_GOOGLE_SERVICES_DIALOG);		
+		intent.putExtra("pending_intent", connectionResult.getResolution());
+		intent.putExtra("status_code", statusCode);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+		
 		/*
 		 * Google Play services can resolve some errors it detects. If the error
 		 * has a resolution, try sending an Intent to start a Google Play

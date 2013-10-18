@@ -9,7 +9,7 @@
     <string name="resume">RESUME</string>
     <string name="ustawienia">Settings</string>
     <string name="gps_enabled">GPS enabled</string>
-    <string name="gps_disabled">GPS not enabled \n enable it?</string>
+    <string name="gps_disabled">GPS not enabled \nenable it?</string>
     <string name="dialog_message_on_stop">Are you sure, you want to stop recording the activity?</string>
     <string name="dialog_message_low_gps_accuracy">Please wait for better gps signal</string>
     <string name="dialog_message_no_gps">Please enable gps</string>

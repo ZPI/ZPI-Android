@@ -457,14 +457,11 @@ public class ActivityActivity extends FragmentActivity implements
 
 		float speed = location.getSpeed();
 		GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy),location.getAccuracy()));
-//		Toast.makeText(this, location.getAccuracy() + "", Toast.LENGTH_SHORT)
-//				.show();
+
 
 		pace = (double) 1 / (speed * 60 / 1000);
-		// DataTextView3.setText(pace + " min/km");
 
 		distance += lastLocation.distanceTo(location);
-		// DataTextView1.setText(distance / 1000 + " km");
 
 		synchronized (time) {
 			avgPace = ((double) time / 60) / distance;

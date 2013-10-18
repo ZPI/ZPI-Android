@@ -15,6 +15,8 @@ public class PlaningActivity extends Activity implements GestureListener {
 
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
+	private static final String TAB_SPEC_1_TAG = "TabSpec1";
+	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +26,11 @@ public class PlaningActivity extends Activity implements GestureListener {
 		addListeners();
 		TabHost tabHost = (TabHost)findViewById(R.id.tabhost);
 		tabHost.setup();
-		TabSpec tabSpecs = tabHost.newTabSpec("TabSpec");
+		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tab1);
 		tabSpecs.setIndicator("Workouts");
 		tabHost.addTab(tabSpecs);
-		tabSpecs = tabHost.newTabSpec("TabSpec2");
+		tabSpecs = tabHost.newTabSpec(TAB_SPEC_2_TAG);
 		tabSpecs.setContent(R.id.tab2);
 		tabSpecs.setIndicator("Workouts");
 		tabHost.addTab(tabSpecs);
