@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 
 public class PlaningActivity extends Activity implements GestureListener {
 
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
+	private static final String TAB_SPEC_1_TAG = "TabSpec1";
+	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,16 @@ public class PlaningActivity extends Activity implements GestureListener {
 		setContentView(R.layout.planing_activity);
 		prepareGestureListener();
 		addListeners();
+		TabHost tabHost = (TabHost)findViewById(R.id.tabhost);
+		tabHost.setup();
+		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
+		tabSpecs.setContent(R.id.tab1);
+		tabSpecs.setIndicator("Workouts");
+		tabHost.addTab(tabSpecs);
+		tabSpecs = tabHost.newTabSpec(TAB_SPEC_2_TAG);
+		tabSpecs.setContent(R.id.tab2);
+		tabSpecs.setIndicator("Workouts");
+		tabHost.addTab(tabSpecs);
 	}
 
 

@@ -14,7 +14,6 @@
         android:layout_height="match_parent" >
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -42,7 +41,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -152,7 +150,6 @@
             android:layout_marginRight="@dimen/small_margin"
             android:background="@drawable/button_background"
             android:text="@string/gps_accuracy" />
-
     </RelativeLayout>
 
 </FrameLayout>
