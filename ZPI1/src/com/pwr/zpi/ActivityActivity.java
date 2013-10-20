@@ -409,7 +409,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
+				textBox.setText(String.format("%d:%s%.0f", (int)pace, secondsZero,
 						rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
@@ -423,7 +423,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
+				textBox.setText(String.format("%d:%s%.0f", (int)avgPace,
 						secondsZero, rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
