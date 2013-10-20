@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.android.gms.internal.cu;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.Pair;
 
@@ -14,10 +15,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 0;
+	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "Historia_biegacza";
 	
 	//Tables names
@@ -49,7 +51,7 @@ public class Database extends SQLiteOpenHelper {
 			PWT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + PWT_RUN_NUMBER + " INTEGER, " +
 			PWT_SUB_RUN_NUMBER + " INTEGER, " +
 			PWT_LONGITUDE + " DOUBLE, " + PWT_LATITUDE + " DOUBLE, " +
-			PWT_ALTITUDE + " DOUBLE, " + PWT_TIME_FROM_START + " INTEGER" + " FOREIGN KEY (" + 
+			PWT_ALTITUDE + " DOUBLE, " + PWT_TIME_FROM_START + " INTEGER, " + "FOREIGN KEY (" + 
 			PWT_RUN_NUMBER + ")" + " REFERENCES " + DATES + " (" + DATES_RUN_NUMBER + ")" + ")";
 	
 	public Database (Context context) {
@@ -140,6 +142,8 @@ public class Database extends SQLiteOpenHelper {
 		Date endDate = new Date(cursor.getLong(1));
 		readSingleRun.setEndDate(endDate);
 		
+		Log.e("db", cursor.getLong(2) + "");
+		
 		readSingleRun.setRunID(cursor.getLong(2));
 		readSingleRun.setDistance(cursor.getDouble(3));
 		readSingleRun.setRunTime(cursor.getLong(4));
@@ -156,19 +160,49 @@ public class Database extends SQLiteOpenHelper {
 				PWT_LATITUDE, PWT_ALTITUDE, PWT_TIME_FROM_START};
 		LinkedList<LinkedList<Pair<Location, Long>>> trace = null;
 		
-		Cursor cursor = db.query(POINTS_WITH_TIME, columns, DATES_RUN_NUMBER + "=?", new String[] {runID + ""}, null, null, PWT_SUB_RUN_NUMBER + " ASC");
+		Cursor cursor = db.query(POINTS_WITH_TIME, columns, PWT_RUN_NUMBER + " = ?", new String[] {runID + ""}, null, null, PWT_SUB_RUN_NUMBER);
 		if (cursor.moveToFirst()) {
             trace = new LinkedList<LinkedList<Pair<Location,Long>>>();
+            long lastSubRunID = -1;
+            LinkedList<Pair<Location, Long>> subRun = null;
             do {
-            	LinkedList<Pair<Location, Long>> subRun = null; //TODO get every sub run for runID
-            	trace.add(subRun);
+            	long subrunID = cursor.getLong(2);
+            	long time = cursor.getLong(6);
+            	Location location = getLocationFromCursor(cursor);
+            	
+            	if (subrunID != lastSubRunID) {
+            		if (subRun != null) {
+            			trace.add(subRun);
+            		}
+            		lastSubRunID = subrunID;
+            		subRun = new LinkedList<Pair<Location,Long>>();
+            	}
+            	subRun.add(new Pair<Location, Long>(location, time));
             }
             while (cursor.moveToNext());
+            trace.add(subRun); // adding last subrun
 		}
 		cursor.close();
 		
 		
 		return trace;
+	}
+	
+	private Location getLocationFromCursor(Cursor cursor) {
+		double lon = cursor.getDouble(3);
+    	double lat = cursor.getDouble(4);
+    	double alt = cursor.getDouble(5);
+    	
+    	Location location = new Location("");
+    	location.setLongitude(lon);
+    	location.setLatitude(lat);
+    	location.setAltitude(alt);
+    	
+    	return location;
+	}
+	
+	public String getDBName() {
+		return DATABASE_NAME;
 	}
 
 }
