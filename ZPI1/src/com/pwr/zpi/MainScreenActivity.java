@@ -60,7 +60,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	private LocationManager service;
 	private int gpsStatus = -1;
 
-	// TODO potem zmieniê
+	// TODO potem zmieniï¿½
 	// public static MyLocationListener locationListener;
 
 	private GestureDetector gestureDetector;
@@ -393,7 +393,7 @@ public class MainScreenActivity extends FragmentActivity implements
 			// Get the error dialog from Google Play services
 			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
 					connectionResult.getErrorCode(), this,
-					REQUEST_GOOGLE_PLAY_SERVICES); //tu by³a z³a liczba w dokumentacji :/
+					REQUEST_GOOGLE_PLAY_SERVICES); //tu byï¿½a zï¿½a liczba w dokumentacji :/
 
 			// If Google Play services can provide an error dialog
 			if (errorDialog != null) {
@@ -426,8 +426,11 @@ public class MainScreenActivity extends FragmentActivity implements
 
 	void doBindService() {
 		Log.i("Service_info", "Main Screen Binding");
-		bindService(new Intent(MainScreenActivity.this,
-				MyLocationListener.class), mConnection,
+		Intent i = new Intent(MainScreenActivity.this,
+				MyLocationListener.class);
+		i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		bindService(i, mConnection,
 				Context.BIND_AUTO_CREATE);
 		mIsBound = true;
 	}

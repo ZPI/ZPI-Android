@@ -276,4 +276,11 @@ public class MyLocationListener extends Service implements LocationListener,
 		super.onDestroy();
 	}
 
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return Service.START_STICKY;
+	}
+
+	
+	
 }
