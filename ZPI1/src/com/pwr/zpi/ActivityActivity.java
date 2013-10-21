@@ -485,11 +485,16 @@ public class ActivityActivity extends FragmentActivity implements
 
 		
 		void doBindService() {
-			Log.i("Service_info", "Activity Binding");
-			bindService(new Intent(ActivityActivity.this,
-					MyLocationListener.class), mConnection,
-					Context.BIND_AUTO_CREATE);
-			mIsBound = true;
+
+                Log.i("Service_info", "ActivityActivity Binding");
+                Intent i = new Intent(ActivityActivity.this,
+                                MyLocationListener.class);
+                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                bindService(i, mConnection,
+                                Context.BIND_AUTO_CREATE);
+                mIsBound = true;
+        
 		}
 
 		void doUnbindService() {

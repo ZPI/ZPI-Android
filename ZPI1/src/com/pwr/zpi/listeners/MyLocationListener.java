@@ -118,17 +118,16 @@ public class MyLocationListener extends Service implements LocationListener,
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
 		Log.i("Location_info", "onConnectionFailed");
-		
+
 		Intent intent = new Intent(MyLocationListener.class.getSimpleName());
 		int statusCode = connectionResult.getErrorCode();
 		PendingIntent pendingIntent = connectionResult.getResolution();
 		// Add data
-		intent.putExtra(MESSAGE, MSG_SHOW_GOOGLE_SERVICES_DIALOG);		
+		intent.putExtra(MESSAGE, MSG_SHOW_GOOGLE_SERVICES_DIALOG);
 		intent.putExtra("pending_intent", connectionResult.getResolution());
 		intent.putExtra("status_code", statusCode);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
-		
 		/*
 		 * Google Play services can resolve some errors it detects. If the error
 		 * has a resolution, try sending an Intent to start a Google Play
@@ -274,6 +273,11 @@ public class MyLocationListener extends Service implements LocationListener,
 
 		mLocationClient.disconnect();
 		super.onDestroy();
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return Service.START_STICKY;
 	}
 
 }
