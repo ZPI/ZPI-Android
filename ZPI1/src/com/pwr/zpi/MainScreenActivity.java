@@ -424,13 +424,16 @@ public class MainScreenActivity extends FragmentActivity implements
 
 	private MyServiceConnection mConnection = new MyServiceConnection();
 
-	void doBindService() {
-		Log.i("Service_info", "Main Screen Binding");
-		bindService(new Intent(MainScreenActivity.this,
-				MyLocationListener.class), mConnection,
-				Context.BIND_AUTO_CREATE);
-		mIsBound = true;
-	}
+	 void doBindService() {
+         Log.i("Service_info", "Main Screen Binding");
+         Intent i = new Intent(MainScreenActivity.this,
+                         MyLocationListener.class);
+         i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+         i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+         bindService(i, mConnection,
+                         Context.BIND_AUTO_CREATE);
+         mIsBound = true;
+ }
 
 	void doUnbindService() {
 		Log.i("Service_info", "Main Screen Unbinding");

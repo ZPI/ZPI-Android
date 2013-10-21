@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +55,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private TextView unitTextView2;
 	private TextView clickedUnitTextView;
 	private TextView GPSAccuracy;
+	private LinearLayout startStopLayout;
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 	private LinkedList<LinkedList<Location>> trace;
@@ -89,7 +91,7 @@ public class ActivityActivity extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_activity);
+		setContentView(R.layout.activity_view);
 
 		startTimer();
 
@@ -99,7 +101,7 @@ public class ActivityActivity extends FragmentActivity implements
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
 		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
-		
+		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
@@ -334,17 +336,15 @@ public class ActivityActivity extends FragmentActivity implements
 			showAlertDialog();
 		} else if (v == pauseButton) { //stop time
 			isPaused = true;
-				stopButton.setVisibility(View.GONE);
-				pauseButton.setVisibility(View.GONE);
+				startStopLayout.setVisibility(View.INVISIBLE);
 				resumeButton.setVisibility(View.VISIBLE);
 			pauseStartTime = System.currentTimeMillis();
 			
 			handler.removeCallbacks(timeHandler);
 		} else if (v == resumeButton) { //start time
 			isPaused = false;
-				stopButton.setVisibility(View.VISIBLE);
-				pauseButton.setVisibility(View.VISIBLE);
-				resumeButton.setVisibility(View.GONE);
+			startStopLayout.setVisibility(View.VISIBLE);
+			resumeButton.setVisibility(View.GONE);
 			pauseTime += System.currentTimeMillis() - pauseStartTime;
 			trace.add(new LinkedList<Location>());
 			
@@ -409,7 +409,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%.0f:%s%.0f", pace, secondsZero,
+				textBox.setText(String.format("%d:%s%.0f", (int)pace, secondsZero,
 						rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
@@ -423,7 +423,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%.0f:%s%.0f", avgPace,
+				textBox.setText(String.format("%d:%s%.0f", (int)avgPace,
 						secondsZero, rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
@@ -485,11 +485,16 @@ public class ActivityActivity extends FragmentActivity implements
 
 		
 		void doBindService() {
-			Log.i("Service_info", "Activity Binding");
-			bindService(new Intent(ActivityActivity.this,
-					MyLocationListener.class), mConnection,
-					Context.BIND_AUTO_CREATE);
-			mIsBound = true;
+
+                Log.i("Service_info", "ActivityActivity Binding");
+                Intent i = new Intent(ActivityActivity.this,
+                                MyLocationListener.class);
+                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                bindService(i, mConnection,
+                                Context.BIND_AUTO_CREATE);
+                mIsBound = true;
+        
 		}
 
 		void doUnbindService() {

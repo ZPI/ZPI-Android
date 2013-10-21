@@ -47,6 +47,13 @@
     <string name="seconds">s</string>
     <string name="minutes_per_km">min/\nkm</string>
     <string name="km">km</string>
+    <string name="add_workout">Add this workout</string>
+    <string name="zero_times">0 times</string>
+    <string name="repeat">Repeat</string>
+    <string name="wormup">Worm up</string>
+    <string name="add_new">Add new</string>
+    <string name="actions">Actions</string>
+    <string name="name">Name</string>
     
    
 </resources>
