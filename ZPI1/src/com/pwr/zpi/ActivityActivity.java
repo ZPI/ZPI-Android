@@ -362,12 +362,7 @@ public class ActivityActivity extends FragmentActivity implements
 								R.anim.out_up_anim);
 					}
 				});
-		builder.setNegativeButton(android.R.string.no,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User cancelled the dialog
-					}
-				});
+		builder.setNegativeButton(android.R.string.no, null);
 		// Set other dialog properties
 
 		// Create the AlertDialog
@@ -539,15 +534,13 @@ public class ActivityActivity extends FragmentActivity implements
 		super.onPause();
 	}
 	
-
-	// potrzebne ??? w koncu jest juz metoda onBackPressed z dokladnie tym samym.
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//			showAlertDialog();
-//		}
-//		return super.onKeyDown(keyCode, event);
-//	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			showAlertDialog();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
 	// SERVICE METHODS
 	private ServiceConnection mConnection = new MyServiceConnection();
