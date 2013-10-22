@@ -152,7 +152,8 @@
             android:layout_marginRight="@dimen/small_margin"
             android:background="@drawable/button_background"
             android:text="@string/gps_accuracy" />
-
     </RelativeLayout>
+
+    <include layout="@layout/count_down_timer_layer"/>
 
 </FrameLayout>
