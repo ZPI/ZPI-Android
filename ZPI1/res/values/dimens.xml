@@ -10,4 +10,5 @@
     <dimen name="zoom_buttons_margin">38dp</dimen>
     <dimen name="location_button_margin_top">55dp</dimen>
 	<dimen name="location_button_margin_right">5dp</dimen>
+	<dimen name="count_down_timer_size">50dp</dimen>
 </resources>

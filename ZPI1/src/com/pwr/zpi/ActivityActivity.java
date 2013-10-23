@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 import android.app.AlertDialog;
@@ -9,8 +10,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -36,6 +40,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
+import com.pwr.zpi.utils.BeepPlayer;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -55,6 +60,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private TextView unitTextView2;
 	private TextView clickedUnitTextView;
 	private TextView GPSAccuracy;
+	private TextView countDownTextView;
 	private LinearLayout startStopLayout;
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
@@ -87,40 +93,48 @@ public class ActivityActivity extends FragmentActivity implements
 
 	// service data
 	boolean mIsBound;
-	
+
+	// time counting fields
+	private Handler handler;
+	private Runnable timeHandler;
+	private static final int COUNT_DOWN_TIME = 5;
+	private static final String TAG = ActivityActivity.class.getSimpleName();
+	BeepPlayer beepPlayer;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view);
 
-		startTimer();
+		initFields();
+		addListeners();
 
+		initDisplayedData();
+		
+		prepareServiceAndStart();
+
+		startTimerAfterCountDown();
+	}
+
+	private void initFields() {
 		stopButton = (Button) findViewById(R.id.stopButton);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
 		resumeButton = (Button) findViewById(R.id.resumeButton);
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
 		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
+		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 
-
-
 		trace = new LinkedList<LinkedList<Location>>();
-		stopButton.setOnClickListener(this);
-		resumeButton.setOnClickListener(this);
-		pauseButton.setOnClickListener(this);
-		dataRelativeLayout1.setOnClickListener(this);
-		dataRelativeLayout2.setOnClickListener(this);
-		GPSAccuracy.setText(getMyString(R.string.gps_accuracy)+" ?");
-		
 		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
 		traceOnMap.color(traceColor);
-		
+
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
 
@@ -135,34 +149,79 @@ public class ActivityActivity extends FragmentActivity implements
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
 
+		isPaused = false;
+		
+		beepPlayer = new BeepPlayer(this);
+		
+		moveSystemControls(mapFragment);
+	}
+	
+	private void addListeners() {
+		stopButton.setOnClickListener(this);
+		resumeButton.setOnClickListener(this);
+		pauseButton.setOnClickListener(this);
+		dataRelativeLayout1.setOnClickListener(this);
+		dataRelativeLayout2.setOnClickListener(this);
+	}
+	
+	private void initDisplayedData() {
+		GPSAccuracy.setText(getMyString(R.string.gps_accuracy) + " ?");
+
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
-
-		startTime = System.currentTimeMillis();
-		moveSystemControls(mapFragment);
-		isPaused = false;
+	}
+	
+	private void prepareServiceAndStart() {
 		doBindService();
-
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMyServiceReceiver,
-		          new IntentFilter(MyLocationListener.class.getSimpleName()));
+		LocalBroadcastManager.getInstance(this).registerReceiver(
+				mMyServiceReceiver,
+				new IntentFilter(MyLocationListener.class.getSimpleName()));
 	}
 
-	
-	
 	@Override
 	protected void onDestroy() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyServiceReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(
+				mMyServiceReceiver);
 		doUnbindService();
 		super.onDestroy();
 	}
 
-
-
-	Handler handler;
-	Runnable timeHandler;
-
-	private void startTimer() {
+	// start of timer methods
+	private void startTimerAfterCountDown() {
 		handler = new Handler();
+		prepareTimeCountingHandler();
+		handler.post(new CounterRunnable(COUNT_DOWN_TIME));
+	}
+
+	private class CounterRunnable implements Runnable {
+
+		final int x;
+
+		public CounterRunnable(int x) {
+			this.x = x;
+		}
+
+		@Override
+		public void run() {
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					if (x == 0) {
+						countDownTextView.setVisibility(View.GONE);
+						startTime = System.currentTimeMillis();
+						handler.post(timeHandler);
+					} else {
+						countDownTextView.setText(x + "");
+						beepPlayer.playBeep();
+						handler.postDelayed(new CounterRunnable(x - 1), 1000);
+					}
+				}
+			});
+		}
+	}
+
+	private void prepareTimeCountingHandler() {
 		timeHandler = new Runnable() {
 
 			@Override
@@ -170,7 +229,6 @@ public class ActivityActivity extends FragmentActivity implements
 				runTimerTask();
 			}
 		};
-		handler.post(timeHandler);
 	}
 
 	protected void runTimerTask() {
@@ -188,6 +246,8 @@ public class ActivityActivity extends FragmentActivity implements
 		}
 		handler.postDelayed(timeHandler, 1000);
 	}
+
+	// end of timer methods
 
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 
@@ -302,12 +362,7 @@ public class ActivityActivity extends FragmentActivity implements
 								R.anim.out_up_anim);
 					}
 				});
-		builder.setNegativeButton(android.R.string.no,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// User cancelled the dialog
-					}
-				});
+		builder.setNegativeButton(android.R.string.no, null);
 		// Set other dialog properties
 
 		// Create the AlertDialog
@@ -315,39 +370,36 @@ public class ActivityActivity extends FragmentActivity implements
 		dialog.show();
 
 	}
-	public void showLostGpsSignalDialog()
-	{
+
+	public void showLostGpsSignalDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
 		builder.setTitle(R.string.dialog_message_on_lost_gpsp);
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-					}
-				});
+		builder.setPositiveButton(android.R.string.ok, null);
 		AlertDialog dialog = builder.create();
 		dialog.show();
-		
+
 	}
+
 	@Override
 	public void onClick(View v) {
 		if (v == stopButton) {
 			// TODO finish and save activity
 			showAlertDialog();
-		} else if (v == pauseButton) { //stop time
+		} else if (v == pauseButton) { // stop time
 			isPaused = true;
-				startStopLayout.setVisibility(View.INVISIBLE);
-				resumeButton.setVisibility(View.VISIBLE);
+			startStopLayout.setVisibility(View.INVISIBLE);
+			resumeButton.setVisibility(View.VISIBLE);
 			pauseStartTime = System.currentTimeMillis();
-			
+
 			handler.removeCallbacks(timeHandler);
-		} else if (v == resumeButton) { //start time
+		} else if (v == resumeButton) { // start time
 			isPaused = false;
 			startStopLayout.setVisibility(View.VISIBLE);
 			resumeButton.setVisibility(View.GONE);
 			pauseTime += System.currentTimeMillis() - pauseStartTime;
 			trace.add(new LinkedList<Location>());
-			
+
 			handler.post(timeHandler);
 		} else if (v == dataRelativeLayout1) {
 			clickedContentTextView = DataTextView1;
@@ -409,8 +461,8 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%d:%s%.0f", (int)pace, secondsZero,
-						rest));
+				textBox.setText(String.format("%d:%s%.0f", (int) pace,
+						secondsZero, rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
 			}
@@ -423,7 +475,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 				String secondsZero = (rest < 10) ? "0" : "";
 
-				textBox.setText(String.format("%d:%s%.0f", (int)avgPace,
+				textBox.setText(String.format("%d:%s%.0f", (int) avgPace,
 						secondsZero, rest));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
@@ -446,7 +498,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 	public void countData(Location location, Location lastLocation) {
 
-		Log.i("ActivityActivity", "countData: "+location);
+		Log.i("ActivityActivity", "countData: " + location);
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
 		traceOnMap.add(latLng);
@@ -456,8 +508,8 @@ public class ActivityActivity extends FragmentActivity implements
 		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
 		float speed = location.getSpeed();
-		GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy),location.getAccuracy()));
-
+		GPSAccuracy.setText(String.format("%s %.2f m",
+				getString(R.string.gps_accuracy), location.getAccuracy()));
 
 		pace = (double) 1 / (speed * 60 / 1000);
 
@@ -471,7 +523,13 @@ public class ActivityActivity extends FragmentActivity implements
 		updateData(DataTextView2, dataTextView2Content);
 
 	}
-
+	
+	@Override
+	protected void onPause() {
+		beepPlayer.stopPlayer();
+		super.onPause();
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -479,69 +537,68 @@ public class ActivityActivity extends FragmentActivity implements
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	// SERVICE METHODS
-		private ServiceConnection mConnection = new MyServiceConnection();
+	private ServiceConnection mConnection = new MyServiceConnection();
 
-		
-		void doBindService() {
+	void doBindService() {
 
-                Log.i("Service_info", "ActivityActivity Binding");
-                Intent i = new Intent(ActivityActivity.this,
-                                MyLocationListener.class);
-                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                bindService(i, mConnection,
-                                Context.BIND_AUTO_CREATE);
-                mIsBound = true;
-        
+		Log.i("Service_info", "ActivityActivity Binding");
+		Intent i = new Intent(ActivityActivity.this, MyLocationListener.class);
+		i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+
+	}
+
+	void doUnbindService() {
+		Log.i("Service_info", "Activity Unbinding");
+		if (mIsBound) {
+			unbindService(mConnection);
+			mIsBound = false;
+
 		}
+	}
 
-		void doUnbindService() {
-			Log.i("Service_info", "Activity Unbinding");
-			if (mIsBound) {
-				unbindService(mConnection);
-				mIsBound = false;
-				
+	// handler for the events launched by the service
+	private BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i("Service_info", "onReceive");
+			int messageType = intent
+					.getIntExtra(MyLocationListener.MESSAGE, -1);
+			switch (messageType) {
+			case MyLocationListener.MSG_SEND_LOCATION:
+				Log.i("Service_info", "ActivityActivity: got Location");
+
+				Location newLocation = (Location) intent
+						.getParcelableExtra("Location");
+
+				// no pause and good gps
+				if (!isPaused
+						&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
+					// not first point after start or resume
+
+					if (!trace.isEmpty() && !trace.getLast().isEmpty()) {
+
+						if (mLastLocation == null)
+							Log.e("Location_info",
+									"Shouldn't be here, mLastLocation is null");
+
+						// TODO move trace to ActivityActivity
+						countData(newLocation, mLastLocation);
+					}
+					if (trace.isEmpty())
+						trace.add(new LinkedList<Location>());
+					trace.getLast().add(newLocation);
+				} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
+					// TODO make progress dialog, waiting for gps
+					showLostGpsSignalDialog();
+				}
+				mLastLocation = newLocation;
+				break;
 			}
 		}
-		// handler for the events launched by the service
-		private BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
-		    @Override
-		    public void onReceive(Context context, Intent intent) {
-		    	Log.i("Service_info", "onReceive");
-		    	int messageType = intent.getIntExtra(MyLocationListener.MESSAGE, -1);
-		    	switch (messageType) {
-				case MyLocationListener.MSG_SEND_LOCATION:
-					Log.i("Service_info", "ActivityActivity: got Location");
-					
-					Location newLocation = (Location) intent.getParcelableExtra(
-							"Location");
-					
-					//no pause and good gps
-					if (!isPaused && newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
-						//not first point after start or resume
-						
-						if (!trace.isEmpty() && !trace.getLast().isEmpty()) {
-							
-							if (mLastLocation == null)
-								Log.e("Location_info","Shouldn't be here, mLastLocation is null");
-							
-							// TODO move trace to ActivityActivity
-							countData(newLocation, mLastLocation);
-						}
-						if (trace.isEmpty())
-							trace.add(new LinkedList<Location>());
-						trace.getLast().add(newLocation);
-					} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
-						//TODO make progress dialog, waiting for gps
-						showLostGpsSignalDialog();
-					}
-					mLastLocation = newLocation;
-					break;
-				}		
-		    }
-		};
-
-
+	};
 }
