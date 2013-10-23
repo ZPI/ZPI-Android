@@ -14,7 +14,7 @@
     <string name="dialog_message_low_gps_accuracy">Please wait for better gps signal</string>
     <string name="dialog_message_no_gps">Please enable gps</string>
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
-    <string name="dialog_message_on_lost_gpsp">GPS connection lost!</string>
+    <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
     
     <!-- meassured values -->

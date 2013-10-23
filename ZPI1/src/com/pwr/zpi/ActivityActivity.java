@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -100,6 +101,9 @@ public class ActivityActivity extends FragmentActivity implements
 	private static final int COUNT_DOWN_TIME = 5;
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	BeepPlayer beepPlayer;
+	
+	// progress dialog lost gps
+	private ProgressDialog lostGPSDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -372,13 +376,8 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 
 	public void showLostGpsSignalDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		// Add the buttons
-		builder.setTitle(R.string.dialog_message_on_lost_gpsp);
-		builder.setPositiveButton(android.R.string.ok, null);
-		AlertDialog dialog = builder.create();
-		dialog.show();
-
+		lostGPSDialog = ProgressDialog.show(this, getResources().getString(R.string.dialog_message_on_lost_gpsp), null); //TODO strings
+		lostGPSDialog.setCancelable(true);
 	}
 
 	@Override
@@ -580,6 +579,11 @@ public class ActivityActivity extends FragmentActivity implements
 						&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
 					// not first point after start or resume
 
+					if (lostGPSDialog != null) {
+						lostGPSDialog.dismiss();
+						lostGPSDialog = null;
+					}
+					
 					if (!trace.isEmpty() && !trace.getLast().isEmpty()) {
 
 						if (mLastLocation == null)

@@ -4,7 +4,9 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,8 +20,9 @@ public class HistoryActivity extends Activity implements GestureListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
-		prepareGestureListener();
+		
 		addListeners();
+		
 	}
 
 	private void prepareGestureListener() {
@@ -69,7 +72,7 @@ public class HistoryActivity extends Activity implements GestureListener{
 		
 	}
 	private void addListeners() {
-	
+		prepareGestureListener();
 	}
 	
 }
