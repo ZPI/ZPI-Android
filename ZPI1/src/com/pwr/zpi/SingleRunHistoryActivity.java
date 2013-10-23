@@ -33,7 +33,7 @@ public class SingleRunHistoryActivity extends FragmentActivity{
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		loadData(getIntent().getLongExtra("id", 0));
+		loadData(getIntent().getLongExtra(getResources().getString(R.string.id), 0));
 		
 		
 	}

@@ -24,7 +24,7 @@ public class WorkoutsActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		if (v== addActionButton)
 		{
-			startActivity(new Intent(WorkoutsActivity.this,NewActionActivity.class));
+			startActivity(new Intent(WorkoutsActivity.this,NewWorkoutActionActivity.class));
 		}
 		
 	}

@@ -36,10 +36,11 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
+	SingleRun run_data[];
 	/*
 	 * MOCK DATA
 	 */
-	SingleRun run_data[];
+
 
 	private void addMockData() {
 		
@@ -94,22 +95,23 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tabThisWeek);
-		tabSpecs.setIndicator("Workouts");
+		tabSpecs.setIndicator(getResources().getString(R.string.this_week));
 		tabHost.addTab(tabSpecs);
 		tabSpecs = tabHost.newTabSpec(TAB_SPEC_2_TAG);
 		tabSpecs.setContent(R.id.tabThisMonth);
-		tabSpecs.setIndicator("Workouts");
+		tabSpecs.setIndicator(getResources().getString(R.string.this_month));
 		tabHost.addTab(tabSpecs);
 		tabSpecs = tabHost.newTabSpec(TAB_SPEC_3_TAG);
 		tabSpecs.setContent(R.id.tabAll);
-		tabSpecs.setIndicator("Workouts");
+		tabSpecs.setIndicator(getResources().getString(R.string.all));
 		tabHost.addTab(tabSpecs);
 		
 		// TODO get from database
-		//addMockData();
+		addMockData();
 		run_data = new SingleRun[11];
 		Database db = new Database(this);
 		run_data = db.getAllRuns().toArray(run_data);
+		
 		RunAdapter adapter = new RunAdapter(this,
 				R.layout.history_run_list_item, run_data);
 
@@ -179,10 +181,9 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		// TODO Auto-generated method stub
 		Intent intent = new Intent(HistoryActivity.this, SingleRunHistoryActivity.class);
 		SingleRun selectedValue = (SingleRun) adapter.getItemAtPosition(position);
-		intent.putExtra("id", selectedValue.getRunID());
+		intent.putExtra(getResources().getString(R.string.id), selectedValue.getRunID());
 		startActivity(intent);
 		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 		
