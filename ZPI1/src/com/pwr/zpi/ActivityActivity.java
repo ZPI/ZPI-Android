@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -496,6 +497,20 @@ public class ActivityActivity extends FragmentActivity implements
 
 	}
 
+	private float findBearing(Location location, Location lastLocation)
+	{
+		double dLon = location.getLongitude()-lastLocation.getLongitude();
+		double lat1 = lastLocation.getLatitude();
+		double lat2 = location.getLatitude();
+		
+				
+		double y = Math.sin(dLon)* Math.cos(lat2);
+		double x =  Math.cos(lat1)*Math.sin(lat2) -
+		        Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+		double brng =  Math.atan2(y, x);
+		return (float) Math.toDegrees(brng);
+	}
+	
 	public void countData(Location location, Location lastLocation) {
 
 		Log.i("ActivityActivity", "countData: " + location);
@@ -505,8 +520,19 @@ public class ActivityActivity extends FragmentActivity implements
 
 		mMap.clear();
 		mMap.addPolyline(traceOnMap);
-		mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+		
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+		.target(latLng)
+	    .zoom(17)                   // Sets the zoom
+	    .bearing(findBearing(location, lastLocation))                // Sets the orientation of the camera to east
+	    .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+	    .build();                   // Creates a CameraPosition from the builder
+	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+		
+	//	mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
+		
+		
 		float speed = location.getSpeed();
 		GPSAccuracy.setText(String.format("%s %.2f m",
 				getString(R.string.gps_accuracy), location.getAccuracy()));
