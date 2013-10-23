@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.net.IDN;
 import java.util.LinkedList;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -33,7 +34,7 @@ public class SingleRunHistoryActivity extends FragmentActivity{
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		loadData(getIntent().getLongExtra(getResources().getString(R.string.id), 0));
+		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
 		
 		
 	}

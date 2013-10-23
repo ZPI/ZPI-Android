@@ -18,6 +18,7 @@ public class SingleRun {
 	private double distance;
 	private long runTime;
 
+	//TODO remove constructors 
 	public SingleRun()
 	{
 		

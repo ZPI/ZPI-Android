@@ -36,6 +36,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
+	public static final String ID_TAG = "id";
 	SingleRun run_data[];
 	/*
 	 * MOCK DATA
@@ -183,7 +184,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		Intent intent = new Intent(HistoryActivity.this, SingleRunHistoryActivity.class);
 		SingleRun selectedValue = (SingleRun) adapter.getItemAtPosition(position);
-		intent.putExtra(getResources().getString(R.string.id), selectedValue.getRunID());
+		intent.putExtra(ID_TAG, selectedValue.getRunID());
 		startActivity(intent);
 		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 		
