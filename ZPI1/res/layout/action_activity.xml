@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/ButtonSteady"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/workout_big_margin"
+        android:text="@string/steady" />
+
+    <Button
+        android:id="@+id/buttonFast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/ButtonSteady"
+        android:layout_alignBottom="@+id/ButtonSteady"
+        android:layout_toRightOf="@+id/ButtonSteady"
+        android:text="@string/fast" />
+
+    <Button
+        android:id="@+id/buttonSlow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/ButtonSteady"
+        android:layout_alignBottom="@+id/ButtonSteady"
+        android:layout_toLeftOf="@+id/ButtonSteady"
+        android:text="@string/slow" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutTimeDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/ButtonSteady"
+        android:layout_marginTop="54dp" >
+
+        <Button
+            android:id="@+id/buttonTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/time" />
+
+        <Button
+            android:id="@+id/buttonDistance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/distance" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/TextViewActionUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/buttonFast"
+        android:layout_below="@+id/LinearLayoutTimeDistance"
+        android:layout_marginTop="122dp"
+        android:text="@string/km" />
+
+</RelativeLayout>

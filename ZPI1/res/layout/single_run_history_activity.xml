@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+
+            <Button
+                android:id="@+id/buttonSplits"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/splits" />
+
+            <Button
+                android:id="@+id/buttonCharts"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/charts" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutFirstRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+
+            <RelativeLayout
+                android:id="@+id/RelativeLayout1dataHistory"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_marginBottom="186dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/TextView1HistoryDiscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/buttons_padding"
+                    android:text="@string/distance" />
+
+                <TextView
+                    android:id="@+id/TextView1History"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/TextView1HistoryDiscription"
+                    android:layout_below="@+id/TextView1HistoryDiscription"
+                    android:layout_toLeftOf="@+id/TextView1HistoryUnit"
+                    android:gravity="center"
+                    android:textSize="@dimen/big_text_size" />
+
+                <TextView
+                    android:id="@+id/TextView1HistoryUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/TextView1History"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/TextView1History"
+                    android:gravity="bottom"
+                    android:text="@string/km"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dataRelativeLayout2DataHistory"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_marginBottom="186dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/TextView2HistoryDiscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/buttons_padding"
+                    android:text="@string/distance" />
+
+                <TextView
+                    android:id="@+id/TextView2History"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/TextView2HistoryDiscription"
+                    android:layout_below="@+id/TextView2HistoryDiscription"
+                    android:layout_toLeftOf="@+id/TextView2HistoryUnit"
+                    android:gravity="center"
+                    android:textSize="@dimen/big_text_size" />
+
+                <TextView
+                    android:id="@+id/TextView2HistoryUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/TextView2History"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/TextView2History"
+                    android:gravity="bottom"
+                    android:text="@string/km"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" 
+            android:layout_below="@+id/LinearLayoutFirstRow">
+
+            <RelativeLayout
+                android:id="@+id/dataRelativeLayout3DataHistory"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_marginBottom="186dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/TextView3HistoryDiscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/buttons_padding"
+                    android:text="@string/distance" />
+
+                <TextView
+                    android:id="@+id/TextView3History"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/TextView3HistoryDiscription"
+                    android:layout_below="@+id/TextView3HistoryDiscription"
+                    android:layout_toLeftOf="@+id/TextView3HistoryUnit"
+                    android:gravity="center"
+                    android:textSize="@dimen/big_text_size" />
+
+                <TextView
+                    android:id="@+id/TextView2HistoryUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/TextView3History"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/TextView3History"
+                    android:gravity="bottom"
+                    android:text="@string/km"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dataRelativeLayout4DataHistory"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_marginBottom="186dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/TextView4HistoryDiscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/buttons_padding"
+                    android:text="@string/distance" />
+
+                <TextView
+                    android:id="@+id/TextView4History"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/TextView4HistoryDiscription"
+                    android:layout_below="@+id/TextView4HistoryDiscription"
+                    android:layout_toLeftOf="@+id/TextView4HistoryUnit"
+                    android:gravity="center"
+                    android:textSize="@dimen/big_text_size" />
+
+                <TextView
+                    android:id="@+id/TextView4HistoryUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/TextView4History"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/TextView4History"
+                    android:gravity="bottom"
+                    android:text="@string/km"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

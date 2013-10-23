@@ -57,6 +57,23 @@
             android:name="com.pwr.zpi.PlaningActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pwr.zpi.WorkoutsActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pwr.zpi.NewWorkoutActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        
+        <activity
+            android:name="com.pwr.zpi.NewActionActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.pwr.zpi.SingleRunHistoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         
         <service android:name="com.pwr.zpi.listeners.MyLocationListener" />
 
