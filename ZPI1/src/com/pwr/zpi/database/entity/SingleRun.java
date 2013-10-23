@@ -18,6 +18,19 @@ public class SingleRun {
 	private double distance;
 	private long runTime;
 
+	//TODO remove constructors 
+	public SingleRun()
+	{
+		
+	}
+	//for testing history list
+	public SingleRun(Date startDate,double distance, long runTime)
+	{
+		this.startDate = startDate;
+		this.distance = distance;
+		this.runTime = runTime;
+	}
+	
 	public long getRunID() {
 		return runID;
 	}
