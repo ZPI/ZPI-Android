@@ -3,7 +3,7 @@
 
     <string name="app_name">ZPI1</string>
     <string name="hello_world">Hello world!</string>
-	<string name="pause">PAUSE</string>
+    <string name="pause">PAUSE</string>
     <string name="stop">STOP</string>
     <string name="start">START</string>
     <string name="resume">RESUME</string>
@@ -16,7 +16,7 @@
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
-    
+
     <!-- meassured values -->
     <string name="distance">Distance</string>
     <string name="actual_time">Actual Time</string> <!-- godzina -->
@@ -42,7 +42,7 @@
     <string name="height_min">Min Height</string>
     <string name="dashes">-:--</string>
     <string name="new_workout">New workout</string>
-    
+
     <!-- Units -->
     <string name="seconds">s</string>
     <string name="minutes_per_km">min/\nkm</string>
@@ -54,6 +54,26 @@
     <string name="add_new">Add new</string>
     <string name="actions">Actions</string>
     <string name="name">Name</string>
+
+    <!-- workouts -->
+    <string name="new_workout">New workout</string>
+    <string name="add_workout">Add this workout</string>
+    <string name="zero_times">0 times</string>
+    <string name="repeat">Repeat</string>
+    <string name="wormup">Worm up</string>
+    <string name="add_new">Add new</string>
+    <string name="actions">Actions</string>
+    <string name="name">Name</string>
+    <string name="select_workout">Select this workout</string>
+    <string name="slow">Slow</string>
+    <string name="steady">Steady</string>
+    <string name="fast">Fast</string>
+    <string name="splits">Splits</string>
+    <string name="charts">Charts</string>
+
     
-   
+    <string name="this_week">This week</string>
+    <string name="this_month">This month</string>
+    <string name="all">All</string>
+    <string name="id">id</string>
 </resources>
