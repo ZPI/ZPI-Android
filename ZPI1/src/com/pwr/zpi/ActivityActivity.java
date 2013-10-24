@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.pwr.zpi.counting_data.CountBearing;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
@@ -495,20 +496,6 @@ public class ActivityActivity extends FragmentActivity implements
 		}
 
 	}
-
-	private float findBearing(Location location, Location lastLocation)
-	{
-		double dLon = location.getLongitude()-lastLocation.getLongitude();
-		double lat1 = lastLocation.getLatitude();
-		double lat2 = location.getLatitude();
-		
-				
-		double y = Math.sin(dLon)* Math.cos(lat2);
-		double x =  Math.cos(lat1)*Math.sin(lat2) -
-		        Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
-		double brng =  Math.atan2(y, x);
-		return (float) Math.toDegrees(brng);
-	}
 	
 	public void countData(Location location, Location lastLocation) {
 
@@ -523,8 +510,8 @@ public class ActivityActivity extends FragmentActivity implements
 		CameraPosition cameraPosition = new CameraPosition.Builder()
 		.target(latLng)
 	    .zoom(17)                   // Sets the zoom
-	    .bearing(findBearing(location, lastLocation))                // Sets the orientation of the camera to east
-	    .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+	    .bearing(CountBearing.countBearing(location, lastLocation))                // Sets the orientation of the camera to east
+	    .tilt(60)                   
 	    .build();                   // Creates a CameraPosition from the builder
 	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		
