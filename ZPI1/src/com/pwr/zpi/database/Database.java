@@ -76,13 +76,16 @@ public class Database extends SQLiteOpenHelper {
 
 	public boolean insertSingleRun(SingleRun singleRun) {
 		SQLiteDatabase db = getWritableDatabase();
-
+		
 		long runID = insertDatePart(db, singleRun);
 		boolean isInsertOk = runID != -1;
 		if (isInsertOk) {
+			db.beginTransaction();
+		
 			long subRunNumber = 1;
-			for (LinkedList<Pair<Location, Long>> subRun : singleRun
-					.getTraceWithTime()) {
+			LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime = singleRun
+					.getTraceWithTime();
+			for (LinkedList<Pair<Location, Long>> subRun : traceWithTime) {
 				for (Pair<Location, Long> singlePointWithTime : subRun) {
 					isInsertOk = isInsertOk
 							&& insertRunPart(db, singlePointWithTime, runID,
@@ -90,6 +93,10 @@ public class Database extends SQLiteOpenHelper {
 				}
 				subRunNumber++;
 			}
+			if (isInsertOk)
+				db.setTransactionSuccessful();	
+	        db.endTransaction();
+			
 		}
 		db.close();
 		return isInsertOk;
