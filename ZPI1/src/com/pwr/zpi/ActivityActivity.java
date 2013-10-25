@@ -1,9 +1,7 @@
 package com.pwr.zpi;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.LinkedList;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -12,14 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.location.Location;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
-
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -31,22 +25,18 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.pwr.zpi.counting_data.CountBearing;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
+import com.pwr.zpi.utils.CountBearing;
 import com.pwr.zpi.utils.Pair;
 
 public class ActivityActivity extends FragmentActivity implements
@@ -79,7 +69,6 @@ public class ActivityActivity extends FragmentActivity implements
 	private PolylineOptions traceOnMap;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
-	// private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 
 	// measured values
 	double pace;
@@ -367,7 +356,7 @@ public class ActivityActivity extends FragmentActivity implements
 		showAlertDialog();
 	}
 	
-	//invoke when finsching activity
+	//invoke when finishing activity
 	private void saveRun()
 	{
 		//add last values 

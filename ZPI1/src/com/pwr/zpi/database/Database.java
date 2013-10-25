@@ -93,8 +93,10 @@ public class Database extends SQLiteOpenHelper {
 				}
 				subRunNumber++;
 			}
-			db.setTransactionSuccessful();
-            db.endTransaction();
+			if (isInsertOk)
+				db.setTransactionSuccessful();	
+	        db.endTransaction();
+			
 		}
 		db.close();
 		return isInsertOk;
