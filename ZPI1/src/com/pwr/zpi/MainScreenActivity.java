@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -60,7 +61,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	private LocationManager service;
 	private int gpsStatus = -1;
 
-	// TODO potem zmieniê
+	// TODO potem zmieniï¿½
 	// public static MyLocationListener locationListener;
 
 	private GestureDetector gestureDetector;
@@ -344,6 +345,7 @@ public class MainScreenActivity extends FragmentActivity implements
 			// Create the AlertDialog
 			AlertDialog dialog = builder.create();
 			dialog.show();
+			
 		} else if (gpsStatus == NO_GPS_SIGNAL) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			// Add the buttons
@@ -393,7 +395,7 @@ public class MainScreenActivity extends FragmentActivity implements
 			// Get the error dialog from Google Play services
 			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
 					connectionResult.getErrorCode(), this,
-					REQUEST_GOOGLE_PLAY_SERVICES); //tu by³a z³a liczba w dokumentacji :/
+					REQUEST_GOOGLE_PLAY_SERVICES); //tu byï¿½a zï¿½a liczba w dokumentacji :/
 
 			// If Google Play services can provide an error dialog
 			if (errorDialog != null) {

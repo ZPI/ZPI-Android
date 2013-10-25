@@ -89,7 +89,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
-		prepareGestureListener();
+		
 		addListeners();
 
 		TabHost tabHost = (TabHost) findViewById(R.id.tabhostHistory);
@@ -187,8 +187,6 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		intent.putExtra(ID_TAG, selectedValue.getRunID());
 		startActivity(intent);
 		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
-		
-		
 	}
 
 }
