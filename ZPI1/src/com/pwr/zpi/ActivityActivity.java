@@ -1,6 +1,7 @@
 package com.pwr.zpi;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.LinkedList;
 
 import android.app.AlertDialog;
@@ -41,9 +42,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.counting_data.CountBearing;
+import com.pwr.zpi.database.Database;
+import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
+import com.pwr.zpi.utils.Pair;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -67,10 +71,11 @@ public class ActivityActivity extends FragmentActivity implements
 	private LinearLayout startStopLayout;
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
-	private LinkedList<LinkedList<Location>> trace;
 	private Location mLastLocation;
 	private boolean isPaused;
-
+	private SingleRun singleRun;
+	private LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime;
+	private Calendar calendar;
 	private PolylineOptions traceOnMap;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
@@ -135,7 +140,8 @@ public class ActivityActivity extends FragmentActivity implements
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 
-		trace = new LinkedList<LinkedList<Location>>();
+
+		traceWithTime = new LinkedList<LinkedList<Pair<Location,Long>>>();
 		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
@@ -154,7 +160,12 @@ public class ActivityActivity extends FragmentActivity implements
 		// initLabelsMethod
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
-
+		
+		//make single run object
+		singleRun = new SingleRun();
+		calendar = Calendar.getInstance(); 
+		
+		singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
 		
 		beepPlayer = new BeepPlayer(this);
@@ -355,7 +366,20 @@ public class ActivityActivity extends FragmentActivity implements
 		super.onBackPressed();
 		showAlertDialog();
 	}
-
+	
+	//invoke when finsching activity
+	private void saveRun()
+	{
+		//add last values 
+		singleRun.setEndDate(calendar.getTime());
+		singleRun.setRunTime(time);
+		singleRun.setDistance(distance);
+		singleRun.setTraceWithTime(traceWithTime);
+		
+		//store in DB
+		Database db = new Database(this);
+		db.insertSingleRun(singleRun);
+	}
 	private void showAlertDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
@@ -363,6 +387,7 @@ public class ActivityActivity extends FragmentActivity implements
 		builder.setPositiveButton(android.R.string.yes,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
+						saveRun();
 						finish();
 						overridePendingTransition(R.anim.in_up_anim,
 								R.anim.out_up_anim);
@@ -377,7 +402,7 @@ public class ActivityActivity extends FragmentActivity implements
 
 	}
 
-	public void showLostGpsSignalDialog() {
+	private void showLostGpsSignalDialog() {
 		lostGPSDialog = ProgressDialog.show(this, getResources().getString(R.string.dialog_message_on_lost_gpsp), null); //TODO strings
 		lostGPSDialog.setCancelable(true);
 	}
@@ -399,8 +424,7 @@ public class ActivityActivity extends FragmentActivity implements
 			startStopLayout.setVisibility(View.VISIBLE);
 			resumeButton.setVisibility(View.GONE);
 			pauseTime += System.currentTimeMillis() - pauseStartTime;
-			trace.add(new LinkedList<Location>());
-
+			traceWithTime.add(new LinkedList<Pair<Location,Long>>());
 			handler.post(timeHandler);
 		} else if (v == dataRelativeLayout1) {
 			clickedContentTextView = DataTextView1;
@@ -448,6 +472,7 @@ public class ActivityActivity extends FragmentActivity implements
 		alert.show();
 	}
 
+	//update display
 	private void updateData(TextView textBox, int meassuredValue) {
 
 		switch (meassuredValue) {
@@ -497,7 +522,8 @@ public class ActivityActivity extends FragmentActivity implements
 
 	}
 	
-	public void countData(Location location, Location lastLocation) {
+	//count everything with 2 last location points
+	private void countData(Location location, Location lastLocation) {
 
 		Log.i("ActivityActivity", "countData: " + location);
 		LatLng latLng = new LatLng(location.getLatitude(),
@@ -531,9 +557,42 @@ public class ActivityActivity extends FragmentActivity implements
 			avgPace = ((double) time / 60) / distance;
 		}
 
-		updateData(DataTextView1, dataTextView1Content);
-		updateData(DataTextView2, dataTextView2Content);
 
+
+	}
+	
+	//this runs on every update
+	private void updateGpsInfo(Location newLocation)
+	{
+		// no pause and good gps
+		if (!isPaused
+				&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
+			// not first point after start or resume
+
+			if (lostGPSDialog != null) {
+				lostGPSDialog.dismiss();
+				lostGPSDialog = null;
+			}
+			
+			if (!traceWithTime.isEmpty() && !traceWithTime.getLast().isEmpty()) {
+
+				if (mLastLocation == null)
+					Log.e("Location_info",
+							"Shouldn't be here, mLastLocation is null");
+
+				
+				countData(newLocation, mLastLocation);
+			}
+			if (traceWithTime.isEmpty())
+				traceWithTime.add(new LinkedList<Pair<Location,Long>>());
+			updateData(DataTextView1, dataTextView1Content);
+			updateData(DataTextView2, dataTextView2Content);
+			traceWithTime.getLast().add(new Pair<Location, Long>(newLocation,calendar.getTimeInMillis()));
+		} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
+			// TODO make progress dialog, waiting for gps
+			showLostGpsSignalDialog();
+		}
+		mLastLocation = newLocation;
 	}
 	
 	@Override
@@ -587,33 +646,9 @@ public class ActivityActivity extends FragmentActivity implements
 				Location newLocation = (Location) intent
 						.getParcelableExtra("Location");
 
-				// no pause and good gps
-				if (!isPaused
-						&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
-					// not first point after start or resume
-
-					if (lostGPSDialog != null) {
-						lostGPSDialog.dismiss();
-						lostGPSDialog = null;
-					}
-					
-					if (!trace.isEmpty() && !trace.getLast().isEmpty()) {
-
-						if (mLastLocation == null)
-							Log.e("Location_info",
-									"Shouldn't be here, mLastLocation is null");
-
-						// TODO move trace to ActivityActivity
-						countData(newLocation, mLastLocation);
-					}
-					if (trace.isEmpty())
-						trace.add(new LinkedList<Location>());
-					trace.getLast().add(newLocation);
-				} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
-					// TODO make progress dialog, waiting for gps
-					showLostGpsSignalDialog();
-				}
-				mLastLocation = newLocation;
+				updateGpsInfo(newLocation);
+				
+				
 				break;
 			}
 		}

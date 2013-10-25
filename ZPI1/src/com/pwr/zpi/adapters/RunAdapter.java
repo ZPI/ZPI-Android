@@ -54,7 +54,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun>{
         
         holder.time.setText(convertTime(run.getRunTime()));
         holder.date.setText(DateFormat.format("yyyy.MM.dd, kk:mm", run.getStartDate()));
-        holder.distance.setText(String.format("%.2f",run.getDistance()));
+        holder.distance.setText(String.format("%.3fkm",run.getDistance()/1000));
         
         return row;
     }

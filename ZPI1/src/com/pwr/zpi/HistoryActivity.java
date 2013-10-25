@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -108,18 +109,18 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		tabHost.addTab(tabSpecs);
 		
 		// TODO get from database
-		addMockData();
-		run_data = new SingleRun[11];
-		Database db = new Database(this);
-		run_data = db.getAllRuns().toArray(run_data);
+		//addMockData();
+		//run_data = new SingleRun[11];
 		
-		RunAdapter adapter = new RunAdapter(this,
-				R.layout.history_run_list_item, run_data);
 
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
 
+		run_data = readfromDB();
+		
+		RunAdapter adapter = new RunAdapter(this,
+				R.layout.history_run_list_item, run_data);
 		listViewThisWeek.setAdapter(adapter);
 		listViewThisMonth.setAdapter(adapter);
 		listViewAll.setAdapter(adapter);
@@ -127,7 +128,19 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		listViewThisMonth.setOnItemClickListener(this);
 		listViewAll.setOnItemClickListener(this);
 	}
+	
+	private SingleRun[] readfromDB()
+	{
+		Database db = new Database(this);
+		ArrayList<SingleRun> runs;
+		runs = (ArrayList<SingleRun>) db.getAllRuns();
+		SingleRun[] run_data = new SingleRun[0];
+		if (runs!=null)
+			run_data = runs.toArray(run_data);
 
+		return run_data;
+	}
+	
 	private void prepareGestureListener() {
 		// Gesture detection
 		gestureDetector = new GestureDetector(this, new MyGestureDetector(this,
