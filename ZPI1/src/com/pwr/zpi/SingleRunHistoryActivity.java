@@ -9,20 +9,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.utils.LineChart;
 import com.pwr.zpi.utils.Pair;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
-public class SingleRunHistoryActivity extends FragmentActivity{
+public class SingleRunHistoryActivity extends FragmentActivity implements OnClickListener{
 
 	GoogleMap mMap;
 	private TextView distanceTextView;
 	private TextView timeTextView;
 	private TextView avgPaceTextView;
+	private Button chartButton;
 	
 	SingleRun run;
 	
@@ -31,14 +37,23 @@ public class SingleRunHistoryActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.single_run_history_activity);
 		
+		init();
+		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
+		
+		addListeners();
+	}
+	
+	private void init() {
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
-		
-		
+		chartButton = (Button) findViewById(R.id.buttonCharts);
 	}
 	
+	private void addListeners() {
+		chartButton.setOnClickListener(this);
+	}
+
 	private void loadData(long runID)
 	{
 		Database database = new Database(this);
@@ -51,7 +66,7 @@ public class SingleRunHistoryActivity extends FragmentActivity{
 			{
 				polyLine.add(new LatLng(singlePoint.first.getLatitude(), singlePoint.first.getLongitude()));
 			}
-			mMap.addPolyline(polyLine);
+			if (mMap!=null)mMap.addPolyline(polyLine);
 		}
 	
 	}
@@ -63,7 +78,11 @@ public class SingleRunHistoryActivity extends FragmentActivity{
 
 	}
 
-	
-	
-	
+	@Override
+	public void onClick(View view) {
+		if (view == chartButton) {
+			Intent i = LineChart.getChartForData(run, this);
+			startActivity(i);
+		}
+	}
 }

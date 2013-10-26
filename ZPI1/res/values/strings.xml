@@ -75,4 +75,12 @@
     <string name="this_week">This week</string>
     <string name="this_month">This month</string>
     <string name="all">All</string>
+    
+    <!-- chart strings -->
+    <string name="chart_title">Run\'s data</string>
+    <string name="chart_ox_distance">Distance</string>
+    <string name="chart_oy1_speed">Speed</string>
+    <string name="chart_oy2_altitude">Altitude</string>
+    <string name="chart_legend_oy1">Covered distance</string>
+    <string name="chart_legend_oy2">Altitude</string>
 </resources>
