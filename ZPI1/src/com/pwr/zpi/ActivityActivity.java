@@ -30,6 +30,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
@@ -67,6 +70,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime;
 	private Calendar calendar;
 	private PolylineOptions traceOnMap;
+	private Polyline traceOnMapObject;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
 
@@ -135,7 +139,8 @@ public class ActivityActivity extends FragmentActivity implements
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
 		traceOnMap.color(traceColor);
-
+		traceOnMapObject = mMap.addPolyline(traceOnMap);
+		
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
 
@@ -517,10 +522,10 @@ public class ActivityActivity extends FragmentActivity implements
 		Log.i("ActivityActivity", "countData: " + location);
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		traceOnMap.add(latLng);
+		
 
-		mMap.clear();
-		mMap.addPolyline(traceOnMap);
+		traceOnMap.add(latLng);
+		traceOnMapObject.setPoints(traceOnMap.getPoints());
 		
 		CameraPosition cameraPosition = new CameraPosition.Builder()
 		.target(latLng)
@@ -542,6 +547,14 @@ public class ActivityActivity extends FragmentActivity implements
 
 		distance += lastLocation.distanceTo(location);
 
+		double lastDistans = distance/1000;
+		
+		distance += lastLocation.distanceTo(location);
+		int distancetoShow = (int)(distance/1000);
+		//new km
+		if (distancetoShow-(int)lastDistans>0)
+			addMarker(location,distancetoShow);
+		
 		synchronized (time) {
 			avgPace = ((double) time / 60) / distance;
 		}
@@ -549,6 +562,14 @@ public class ActivityActivity extends FragmentActivity implements
 
 
 	}
+	
+	private void addMarker(Location location, int distance) {
+		Marker marker = mMap.addMarker(new MarkerOptions().position(
+				new LatLng(location.getLatitude(), location.getLongitude()))
+				.title(distance + "km"));
+		marker.showInfoWindow();
+	}
+
 	
 	//this runs on every update
 	private void updateGpsInfo(Location newLocation)
