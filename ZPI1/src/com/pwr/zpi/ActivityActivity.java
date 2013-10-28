@@ -523,7 +523,7 @@ public class ActivityActivity extends FragmentActivity implements
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
 		
-		traceOnMapObject.setPoints(traceOnMap.getPoints());
+
 		traceOnMap.add(latLng);
 		traceOnMapObject.setPoints(traceOnMap.getPoints());
 		
