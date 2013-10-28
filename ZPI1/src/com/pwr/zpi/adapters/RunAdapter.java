@@ -1,6 +1,6 @@
 package com.pwr.zpi.adapters;
 
-import java.util.Date;
+import java.util.List;
 
 import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.SingleRun;
@@ -17,15 +17,13 @@ import android.widget.TextView;
 public class RunAdapter extends ArrayAdapter<SingleRun>{
 	
 	
-	Context context; 
-    int layoutResourceId;    
-    SingleRun data[] = null;
+	private Context context; 
+	private int layoutResourceId;    
     
-    public RunAdapter(Context context, int layoutResourceId, SingleRun[] data) {
+    public RunAdapter(Context context, int layoutResourceId, List<SingleRun> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
-        this.data = data;
     }
 
     @Override
@@ -50,7 +48,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun>{
             holder = (RunHolder)row.getTag();
         }
         
-        SingleRun run = data[position];
+        SingleRun run = getItem(position);
         
         holder.time.setText(convertTime(run.getRunTime()));
         holder.date.setText(DateFormat.format("yyyy.MM.dd, kk:mm", run.getStartDate()));

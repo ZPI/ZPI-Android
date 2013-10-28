@@ -17,6 +17,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.location.Location;
+import android.util.Log;
 
 import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.SingleRun;
@@ -110,6 +111,7 @@ public class LineChart {
 
 		Intent intent = ChartFactory.getCubicLineChartIntent(context, dataset,
 				renderer, 0.3f, res.getString(R.string.chart_title));
+		
 		return intent;
 	}
 

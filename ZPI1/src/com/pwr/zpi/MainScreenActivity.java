@@ -1,5 +1,7 @@
 package com.pwr.zpi;
 
+import java.util.Locale;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
@@ -36,6 +38,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -113,6 +116,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		LocalBroadcastManager.getInstance(this).registerReceiver(
 				mMyServiceReceiver,
 				new IntentFilter(MyLocationListener.class.getSimpleName()));
+		
 	}
 
 	private void addListeners() {

@@ -576,7 +576,9 @@ public class ActivityActivity extends FragmentActivity implements
 				traceWithTime.add(new LinkedList<Pair<Location,Long>>());
 			updateData(DataTextView1, dataTextView1Content);
 			updateData(DataTextView2, dataTextView2Content);
-			traceWithTime.getLast().add(new Pair<Location, Long>(newLocation,calendar.getTimeInMillis()));
+			synchronized (time) {
+				traceWithTime.getLast().add(new Pair<Location, Long>(newLocation,time));
+			}
 		} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
 			// TODO make progress dialog, waiting for gps
 			showLostGpsSignalDialog();

@@ -22,55 +22,61 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class SingleRunHistoryActivity extends FragmentActivity implements OnClickListener{
+public class SingleRunHistoryActivity extends FragmentActivity implements
+		OnClickListener {
+
+	protected static final String RUN_ID = "runID";
 
 	GoogleMap mMap;
 	private TextView distanceTextView;
 	private TextView timeTextView;
 	private TextView avgPaceTextView;
 	private Button chartButton;
-	
+	private Button splitsButton;
+
 	SingleRun run;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.single_run_history_activity);
-		
+
 		init();
 		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
-		
+
 		addListeners();
 	}
-	
+
 	private void init() {
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		chartButton = (Button) findViewById(R.id.buttonCharts);
-	}
-	
-	private void addListeners() {
-		chartButton.setOnClickListener(this);
+		splitsButton = (Button) findViewById(R.id.buttonSplits);
 	}
 
-	private void loadData(long runID)
-	{
+	private void addListeners() {
+		chartButton.setOnClickListener(this);
+		splitsButton.setOnClickListener(this);
+	}
+
+	private void loadData(long runID) {
 		Database database = new Database(this);
 		run = database.getRun(runID);
-		LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime = run.getTraceWithTime();
-		for (LinkedList<Pair<Location,Long>> singleTrace:traceWithTime)
-		{
+		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
+				.getTraceWithTime();
+		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
 			PolylineOptions polyLine = new PolylineOptions();
-			for (Pair<Location,Long> singlePoint:singleTrace)
-			{
-				polyLine.add(new LatLng(singlePoint.first.getLatitude(), singlePoint.first.getLongitude()));
+			for (Pair<Location, Long> singlePoint : singleTrace) {
+				polyLine.add(new LatLng(singlePoint.first.getLatitude(),
+						singlePoint.first.getLongitude()));
 			}
-			if (mMap!=null)mMap.addPolyline(polyLine);
+			if (mMap != null)
+				mMap.addPolyline(polyLine);
 		}
-	
+
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
@@ -82,6 +88,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	public void onClick(View view) {
 		if (view == chartButton) {
 			Intent i = LineChart.getChartForData(run, this);
+			startActivity(i);
+		} else if (view == splitsButton) {
+			Intent i = new Intent(SingleRunHistoryActivity.this,
+					SplitsActivity.class);
+			i.putExtra(RUN_ID, run.getRunID());
 			startActivity(i);
 		}
 	}
