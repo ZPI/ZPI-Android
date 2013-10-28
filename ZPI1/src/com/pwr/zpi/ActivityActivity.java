@@ -36,7 +36,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
-import com.pwr.zpi.utils.CountBearing;
+import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.Pair;
 
 public class ActivityActivity extends FragmentActivity implements
@@ -525,7 +525,7 @@ public class ActivityActivity extends FragmentActivity implements
 		CameraPosition cameraPosition = new CameraPosition.Builder()
 		.target(latLng)
 	    .zoom(17)                   // Sets the zoom
-	    .bearing(CountBearing.countBearing(location, lastLocation))                // Sets the orientation of the camera to east
+	    .bearing(GeographicalEvaluations.countBearing(location, lastLocation))                // Sets the orientation of the camera to east
 	    .tilt(60)                   
 	    .build();                   // Creates a CameraPosition from the builder
 	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
