@@ -42,53 +42,6 @@ public class HistoryActivity extends Activity implements GestureListener,
 	public static final String ID_TAG = "id";
 	List<SingleRun> run_data;
 
-	/*
-	 * MOCK DATA
-	 */
-
-	private void addMockData() {
-
-		Database db = new Database(this);
-		for (int i = 0; i < 11; i++) {
-			boolean isOK = db.insertSingleRun(prepareData((i + 3) * 3));
-			;
-		}
-		db.close();
-	}
-
-	private SingleRun prepareData(int number) {
-		SingleRun singleRun = new SingleRun();
-		singleRun.setDistance(number * 13);
-		singleRun.setStartDate(new Date(number * 13000L));
-		singleRun.setEndDate(new Date(number * 13000L + 3532000000L));
-		singleRun.setRunTime(number * 130000L);
-		singleRun.setTraceWithTime(prepareTraceWithTime(number));
-		return singleRun;
-	}
-
-	private LinkedList<LinkedList<Pair<Location, Long>>> prepareTraceWithTime(
-			int number) {
-		LinkedList<LinkedList<Pair<Location, Long>>> trace = new LinkedList<LinkedList<Pair<Location, Long>>>();
-		for (int i = 0; i < 5; i++) {
-			LinkedList<Pair<Location, Long>> subrun = new LinkedList<Pair<Location, Long>>();
-			for (int j = 0; j < number; j++) {
-				Location l = new Location("");
-				l.setLatitude(number * i * j);
-				l.setLongitude(number * i / (j + 1));
-				l.setAltitude(number);
-				subrun.add(new Pair<Location, Long>(l, number * 13000L));
-
-			}
-			trace.add(subrun);
-		}
-		Log.i("Database", "run added");
-		return trace;
-	}
-
-	/*
-	 * END MOCK DATA
-	 */
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

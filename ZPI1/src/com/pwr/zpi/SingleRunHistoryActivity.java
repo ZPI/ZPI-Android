@@ -31,6 +31,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private TextView distanceTextView;
 	private TextView timeTextView;
 	private TextView avgPaceTextView;
+	private TextView avgSpeedTextView;
 	private Button chartButton;
 	private Button splitsButton;
 
@@ -43,7 +44,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 
 		init();
 		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
-
+		initFields();
+		showData();
 		addListeners();
 	}
 
@@ -54,7 +56,51 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		chartButton = (Button) findViewById(R.id.buttonCharts);
 		splitsButton = (Button) findViewById(R.id.buttonSplits);
 	}
+	
+	private void initFields() {
+		distanceTextView = (TextView) findViewById(R.id.TextView1History);
+		timeTextView = (TextView) findViewById(R.id.TextView2History);
+		avgPaceTextView = (TextView) findViewById(R.id.TextView3History);
+		avgSpeedTextView = (TextView) findViewById(R.id.TextView4History);
+	}
+	
+	private void showData()
+	{
+		//show distance
+		distanceTextView.setText(String.format("%.3f",run.getDistance()/1000));
+		
+		//show time
+		long time = run.getRunTime();
+		long hours = time / 3600000;
+		long minutes = (time / 60000) - hours * 60;
+		long seconds = (time / 1000) - hours * 3600 - minutes * 60;
+		String hourZero = (hours < 10) ? "0" : "";
+		String minutesZero = (minutes < 10) ? "0" : "";
+		String secondsZero = (seconds < 10) ? "0" : "";
 
+		timeTextView.setText(String.format("%s%d:%s%d:%s%d", hourZero, hours,
+				minutesZero, minutes, secondsZero, seconds));
+		
+		//show avg pace
+		double speed = run.getDistance()/1000/run.getRunTime()*1000*60*60;
+		double pace = (double)1/speed*60;
+
+		if (pace<300) //slower is completely irrelevant + it makes text to long
+		{
+			// convert pace to show second
+			double rest = pace - (int) pace;
+			rest = rest * 60;
+			secondsZero = (rest < 10) ? "0" : "";
+			avgPaceTextView.setText(String.format("%d:%s%.0f", (int) pace,
+					secondsZero, rest));
+		}
+		else
+			avgPaceTextView.setText(getResources().getString(R.string.dashes));
+		//show avg speed
+		avgSpeedTextView.setText(String.format("%.2f",speed));
+		
+	}
+	
 	private void addListeners() {
 		chartButton.setOnClickListener(this);
 		splitsButton.setOnClickListener(this);

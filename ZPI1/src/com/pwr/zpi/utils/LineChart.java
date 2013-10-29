@@ -103,8 +103,8 @@ public class LineChart {
 		renderer.setApplyBackgroundColor(true);
 		renderer.setBackgroundColor(Color.BLACK);
 
-		XYMultipleSeriesDataset dataset = buildDataset(
-				new String[] { res.getString(R.string.chart_legend_oy1) }, x, values);
+		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy1) }, x, values, 100);
 		values.clear();
 		values.add(altitudeValues);
 		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy2) }, x, values, 1);
