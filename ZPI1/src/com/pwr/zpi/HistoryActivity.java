@@ -88,8 +88,6 @@ public class HistoryActivity extends Activity implements GestureListener,
 		Database db = new Database(this);
 		List<SingleRun> runs;
 		runs = db.getAllRuns();
-		SingleRun[] run_data = new SingleRun[0];
-		
 
 		return runs;
 	}
