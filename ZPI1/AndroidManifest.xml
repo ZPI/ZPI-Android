@@ -31,7 +31,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.pwr.zpi.MainScreenActivity"
+            android:name=".MainScreenActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
@@ -42,36 +42,40 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pwr.zpi.ActivityActivity"
+            android:name=".ActivityActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.HistoryActivity"
+            android:name=".HistoryActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.SettingsActivity"
+            android:name=".SettingsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.PlaningActivity"
+            android:name=".PlaningActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.WorkoutsActivity"
+            android:name=".WorkoutsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.NewWorkoutActivity"
+            android:name=".NewWorkoutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         
         <activity
-            android:name="com.pwr.zpi.NewWorkoutActionActivity"
+            android:name=".NewWorkoutActionActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.pwr.zpi.SingleRunHistoryActivity"
+            android:name=".SingleRunHistoryActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SplitsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity android:name="org.achartengine.GraphicalActivity"

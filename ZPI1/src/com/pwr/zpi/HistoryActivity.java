@@ -3,6 +3,7 @@ package com.pwr.zpi;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.pwr.zpi.adapters.RunAdapter;
 import com.pwr.zpi.database.Database;
@@ -39,7 +40,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
 	public static final String ID_TAG = "id";
-	SingleRun run_data[];
+	List<SingleRun> run_data;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,15 +84,12 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewAll.setOnItemClickListener(this);
 	}
 
-	private SingleRun[] readfromDB() {
+	private List<SingleRun> readfromDB() {
 		Database db = new Database(this);
-		ArrayList<SingleRun> runs;
-		runs = (ArrayList<SingleRun>) db.getAllRuns();
-		SingleRun[] run_data = new SingleRun[0];
-		if (runs != null)
-			run_data = runs.toArray(run_data);
+		List<SingleRun> runs;
+		runs = db.getAllRuns();
 
-		return run_data;
+		return runs;
 	}
 
 	private void prepareGestureListener() {

@@ -21,6 +21,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.LineChart;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.TimeFormatter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -35,6 +36,8 @@ import android.widget.TextView;
 public class SingleRunHistoryActivity extends FragmentActivity implements
 		OnClickListener {
 
+	protected static final String RUN_ID = "runID";
+
 	GoogleMap mMap;
 	LatLngBounds.Builder boundsBuilder;
 	Polyline traceOnMapObject;
@@ -43,6 +46,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private TextView avgPaceTextView;
 	private TextView avgSpeedTextView;
 	private Button chartButton;
+	private Button splitsButton;
 
 	SingleRun run;
 
@@ -64,6 +68,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		chartButton = (Button) findViewById(R.id.buttonCharts);
+		splitsButton = (Button) findViewById(R.id.buttonSplits);
 	}
 
 	private void mapCenter() {
@@ -136,20 +141,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 
 		// show time
 		long time = run.getRunTime();
-		long hours = time / 3600000;
-		long minutes = (time / 60000) - hours * 60;
-		long seconds = (time / 1000) - hours * 3600 - minutes * 60;
-		String hourZero = (hours < 10) ? "0" : "";
-		String minutesZero = (minutes < 10) ? "0" : "";
-		String secondsZero = (seconds < 10) ? "0" : "";
-
-		timeTextView.setText(String.format("%s%d:%s%d:%s%d", hourZero, hours,
-				minutesZero, minutes, secondsZero, seconds));
-
-		// show avg pace
-		double speed = run.getDistance() / 1000 / run.getRunTime() * 1000 * 60
-				* 60;
-		double pace = (double) 1 / speed * 60;
+		timeTextView.setText(TimeFormatter.formatTimeHHMMSS(time));
+		
+		//show avg pace
+		double speed = run.getDistance()/1000/run.getRunTime()*1000*60*60;
+		double pace = (double)1/speed*60;
 
 		if (pace < 300) // slower is completely irrelevant + it makes text to
 						// long
@@ -157,9 +153,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			// convert pace to show second
 			double rest = pace - (int) pace;
 			rest = rest * 60;
-			secondsZero = (rest < 10) ? "0" : "";
-			avgPaceTextView.setText(String.format("%d:%s%.0f", (int) pace,
-					secondsZero, rest));
+			avgPaceTextView.setText(String.format("%d:%02.0f", (int) pace,
+					rest));
 		} else
 			avgPaceTextView.setText(getResources().getString(R.string.dashes));
 		// show avg speed
@@ -169,12 +164,23 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 
 	private void addListeners() {
 		chartButton.setOnClickListener(this);
+		splitsButton.setOnClickListener(this);
 	}
 
 	private void loadData(long runID) {
 		Database database = new Database(this);
 		run = database.getRun(runID);
-		
+		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
+				.getTraceWithTime();
+		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
+			PolylineOptions polyLine = new PolylineOptions();
+			for (Pair<Location, Long> singlePoint : singleTrace) {
+				polyLine.add(new LatLng(singlePoint.first.getLatitude(),
+						singlePoint.first.getLongitude()));
+			}
+			if (mMap != null)
+				mMap.addPolyline(polyLine);
+		}
 
 	}
 
@@ -189,6 +195,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	public void onClick(View view) {
 		if (view == chartButton) {
 			Intent i = LineChart.getChartForData(run, this);
+			startActivity(i);
+		} else if (view == splitsButton) {
+			Intent i = new Intent(SingleRunHistoryActivity.this,
+					SplitsActivity.class);
+			i.putExtra(RUN_ID, run.getRunID());
 			startActivity(i);
 		}
 	}

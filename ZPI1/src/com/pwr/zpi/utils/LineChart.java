@@ -17,6 +17,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
 import android.location.Location;
+import android.util.Log;
 
 import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.SingleRun;
@@ -102,14 +103,15 @@ public class LineChart {
 		renderer.setApplyBackgroundColor(true);
 		renderer.setBackgroundColor(Color.BLACK);
 
-		XYMultipleSeriesDataset dataset = buildDataset(
-				new String[] { res.getString(R.string.chart_legend_oy1) }, x, values);
+		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy1) }, x, values, 100);
 		values.clear();
 		values.add(altitudeValues);
 		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy2) }, x, values, 1);
 
 		Intent intent = ChartFactory.getCubicLineChartIntent(context, dataset,
 				renderer, 0.3f, res.getString(R.string.chart_title));
+		
 		return intent;
 	}
 
