@@ -80,4 +80,5 @@
     <string name="chart_legend_oy2">Altitude</string>
     <string name="split_time">Split time</string>
     <string name="total_time">Total time</string>
+    <string name="no_splits_info">No splits. Run more than a kilometer</string>
 </resources>

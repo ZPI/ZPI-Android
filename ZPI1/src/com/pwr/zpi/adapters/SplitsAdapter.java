@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.pwr.zpi.R;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.TimeFormatter;
 
 
 import android.app.Activity;
@@ -50,25 +51,10 @@ public class SplitsAdapter extends ArrayAdapter<Pair<Integer, Pair<Long, Long>>>
 		Pair<Integer, Pair<Long, Long>> data = getItem(position);
 		
 		holder.kilometer.setText(String.valueOf(data.first));
-		holder.splitTime.setText(longToTimeFormat(data.second.first));
-		holder.totalTime.setText(longToTimeFormat(data.second.second));
+		holder.splitTime.setText(TimeFormatter.formatTimeMMSSorHHMMSS(data.second.first));
+		holder.totalTime.setText(TimeFormatter.formatTimeMMSSorHHMMSS(data.second.second));
 		
 		return row;
-	}
-	
-	private CharSequence longToTimeFormat(long milliseconds) {
-		Date date = new Date(milliseconds);
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		int minutes = c.get(Calendar.MINUTE);
-		int seconds = c.get(Calendar.SECOND);
-		int hours = c.get(Calendar.HOUR);
-		StringBuilder sb = new StringBuilder();
-		if (hours != 0) {
-			sb.append(hours).append(":");
-		}
-		sb.append(minutes).append(":").append(seconds);
-		return sb.toString();
 	}
 
 	private class RowHolder {

@@ -15,11 +15,14 @@ import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 public class SplitsActivity extends Activity {
 
 	ListView splitsListView;
+	RelativeLayout noSplitsInfoRelativeLayout;
 	SingleRun singleRun;
 	
 	@Override
@@ -34,7 +37,12 @@ public class SplitsActivity extends Activity {
 		singleRun = getSingleRunFromIntent();
 		
 		splitsListView = (ListView) findViewById(R.id.listViewSplits);
+		noSplitsInfoRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutNoSplitsInfo);
 		splitsListView.setAdapter(new SplitsAdapter(this, R.layout.splits_activity_list_item, parseData(singleRun.getTraceWithTime())));
+		if (splitsListView.getAdapter().getCount() == 0) {
+			splitsListView.setVisibility(View.GONE);
+			noSplitsInfoRelativeLayout.setVisibility(View.VISIBLE);
+		}
 	}
 
 

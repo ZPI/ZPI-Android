@@ -15,29 +15,28 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/km"
-            android:gravity="center"
             android:layout_marginLeft="@dimen/small_margin"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="wrap_content"
-            android:text="@string/split_time"
+            android:layout_weight="1"
             android:gravity="center"
+            android:text="@string/km"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="3"
             android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="@string/split_time"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:gravity="center"
             android:text="@string/total_time"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </LinearLayout>
 
     <ImageView
@@ -47,10 +46,32 @@
         android:layout_marginRight="@dimen/small_margin"
         android:src="@drawable/horizontal_line" />
 
-    <ListView
-        android:id="@+id/listViewSplits"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+        android:layout_height="fill_parent" >
+
+        <ListView
+            android:id="@+id/listViewSplits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayoutNoSplitsInfo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="@string/no_splits_info"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+        </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>
