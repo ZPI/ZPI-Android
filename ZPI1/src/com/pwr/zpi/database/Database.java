@@ -209,7 +209,6 @@ public class Database extends SQLiteOpenHelper {
 			trace = new LinkedList<LinkedList<Pair<Location, Long>>>();
 			long lastSubRunID = -1;
 			LinkedList<Pair<Location, Long>> subRun = null;
-			db.beginTransaction();
 			do {
 				long subrunID = cursor.getLong(2);
 				long time = cursor.getLong(6);
@@ -225,8 +224,6 @@ public class Database extends SQLiteOpenHelper {
 				subRun.add(new Pair<Location, Long>(location, time));
 			} while (cursor.moveToNext());
 			trace.add(subRun); // adding last subrun
-			db.setTransactionSuccessful();	
-	        db.endTransaction();
 		}
 		cursor.close();
 
