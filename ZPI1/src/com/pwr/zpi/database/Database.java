@@ -455,7 +455,6 @@ public class Database extends SQLiteOpenHelper {
 	}
 
 	private List<WorkoutAction> mergeSimpleAdvancedActionsOrdered(
-			// wrong :< do it better TODO
 			List<WorkoutActionSimple> simpleActions,
 			List<WorkoutActionAdvanced> advancedActions) {
 		List<WorkoutAction> result = new ArrayList<WorkoutAction>();
