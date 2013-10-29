@@ -44,6 +44,9 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	}
 	
 	public double getDistance() {
+		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME) {
+			distance =  
+		}
 		return distance;
 	}
 
