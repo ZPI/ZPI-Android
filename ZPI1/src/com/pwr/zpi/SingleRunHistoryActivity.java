@@ -36,7 +36,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		OnClickListener {
 
 	GoogleMap mMap;
-	LatLngBounds.Builder boundsBilder;
+	LatLngBounds.Builder boundsBuilder;
 	Polyline traceOnMapObject;
 	private TextView distanceTextView;
 	private TextView timeTextView;
@@ -71,7 +71,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
 				.getTraceWithTime();
 	
-		boundsBilder = new LatLngBounds.Builder();
+		boundsBuilder = new LatLngBounds.Builder();
 		double lastDistance=0;
 		double newDistance =0;
 		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
@@ -83,7 +83,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 				LatLng latLng = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				polyLine.add(latLng);
-				boundsBilder.include(latLng);
+				boundsBuilder.include(latLng);
 				if (lastLocation!= null)
 				{
 					newDistance+=location.distanceTo(lastLocation);
@@ -107,7 +107,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			    @Override
 			    public void onCameraChange(CameraPosition arg0) {
 			        // Move camera.
-			    	LatLngBounds bounds = boundsBilder.build();
+			    	LatLngBounds bounds = boundsBuilder.build();
 			        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
 			        // Remove listener to prevent position reset on camera move.
 			        mMap.setOnCameraChangeListener(null);
