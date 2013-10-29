@@ -372,7 +372,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(AS_VALUE_TYPE, workoutAction.getValueType());
 		cv.put(AS_VALUE, workoutAction.getValue());
 		cv.put(AS_ORDER_NUMBER, index);
-		
+
 		return db.insert(ACTIONS_SIMPLE, null, cv);
 	}
 
@@ -384,7 +384,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(AA_TIME_VALUE, workoutAction.getTime());
 		cv.put(AA_PACE_VALUE, workoutAction.getPace());
 		cv.put(AA_ORDER_NUMBER, index);
-		
+
 		return db.insert(ACTIONS_ADVANCED, null, cv);
 	}
 
@@ -447,13 +447,15 @@ public class Database extends SQLiteOpenHelper {
 
 		if (workout != null
 				&& (simpleActions != null || advancedActions != null)) {
-			workout.setActions(mergeSimpleAdvancedActionsOrdered(simpleActions, advancedActions));
+			workout.setActions(mergeSimpleAdvancedActionsOrdered(simpleActions,
+					advancedActions));
 		}
 
 		return workout;
 	}
 
-	private List<WorkoutAction> mergeSimpleAdvancedActionsOrdered(//wrong :< do it better TODO
+	private List<WorkoutAction> mergeSimpleAdvancedActionsOrdered(
+			// wrong :< do it better TODO
 			List<WorkoutActionSimple> simpleActions,
 			List<WorkoutActionAdvanced> advancedActions) {
 		List<WorkoutAction> result = new ArrayList<WorkoutAction>();
@@ -464,17 +466,18 @@ public class Database extends SQLiteOpenHelper {
 			result.addAll(simpleActions);
 		}
 		Collections.sort(result);
-		
+
 		return result;
 	}
 
 	private List<WorkoutActionSimple> getSimpleWorkoutActions(
 			SQLiteDatabase db, long workoutID) {
 		String query = "SELECT " + AS_ID + ", " + AS_SPEED_TYPE + ", "
-				+ AS_VALUE_TYPE + ", " + AS_VALUE + ", " + AS_ORDER_NUMBER + " FROM " + ACTIONS_SIMPLE
-				+ " WHERE " + AS_ID + " IN " + "(" + "SELECT " + WA_ACTION_ID
-				+ " FROM " + WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID
-				+ "=?" + " AND " + WA_ACTION_TYPE + "=?" + ")";
+				+ AS_VALUE_TYPE + ", " + AS_VALUE + ", " + AS_ORDER_NUMBER
+				+ " FROM " + ACTIONS_SIMPLE + " WHERE " + AS_ID + " IN " + "("
+				+ "SELECT " + WA_ACTION_ID + " FROM " + WORKOUTS_ACTIONS
+				+ " WHERE " + WA_WORKOUT_ID + "=?" + " AND " + WA_ACTION_TYPE
+				+ "=?" + ")";
 		Cursor cursor = db.rawQuery(query, new String[] { workoutID + "",
 				WorkoutAction.ACTION_SIMPLE + "" });
 
@@ -502,10 +505,11 @@ public class Database extends SQLiteOpenHelper {
 			SQLiteDatabase db, long workoutID) {
 		String query = "SELECT " + AA_ID + ", " + AA_TYPE + ", "
 				+ AA_DISTANCE_VALUE + ", " + AA_TIME_VALUE + ", "
-				+ AA_PACE_VALUE + ", " + AA_ORDER_NUMBER + " FROM " + ACTIONS_ADVANCED + " WHERE "
-				+ AA_ID + " IN " + "(" + "SELECT " + WA_ACTION_ID + " FROM "
-				+ WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID + "=?" + " AND "
-				+ WA_ACTION_TYPE + "=?" + ")";
+				+ AA_PACE_VALUE + ", " + AA_ORDER_NUMBER + " FROM "
+				+ ACTIONS_ADVANCED + " WHERE " + AA_ID + " IN " + "("
+				+ "SELECT " + WA_ACTION_ID + " FROM " + WORKOUTS_ACTIONS
+				+ " WHERE " + WA_WORKOUT_ID + "=?" + " AND " + WA_ACTION_TYPE
+				+ "=?" + ")";
 		Cursor cursor = db.rawQuery(query, new String[] { workoutID + "",
 				WorkoutAction.ACTION_ADVANCED + "" });
 
@@ -530,4 +534,54 @@ public class Database extends SQLiteOpenHelper {
 		return advanced;
 	}
 
+	public boolean deleteWorkoutAction(long workoutID, long actionID) {
+		SQLiteDatabase db = getReadableDatabase();
+		String[] columns = new String[] { WA_ID, WA_WORKOUT_ID, WA_ACTION_ID,
+				WA_ACTION_TYPE };
+		boolean isDeleted = false;
+		Cursor cursor = db.query(WORKOUTS_ACTIONS, columns, WA_WORKOUT_ID
+				+ "=? AND " + WA_ACTION_ID + "=?", new String[] {
+				workoutID + "", actionID + "" }, null, null, null);
+		if (cursor.moveToFirst()) {
+			int actionType = cursor.getInt(3);
+			String[] queryString = new String[] { actionID + "" };
+			if (actionType == WorkoutAction.ACTION_ADVANCED) {
+				isDeleted = db.delete(ACTIONS_ADVANCED, AA_ID + "=?",
+						queryString) != 0;
+			} else if (actionType == WorkoutAction.ACTION_SIMPLE) {
+				isDeleted = db
+						.delete(ACTIONS_SIMPLE, AS_ID + "=?", queryString) != 0;
+			}
+			isDeleted = isDeleted
+					&& db.delete(WORKOUTS_ACTIONS, WA_WORKOUT_ID + "=? AND "
+							+ WA_ACTION_ID + "=?", new String[] {
+							workoutID + "", actionID + "" }) != 0;
+		}
+		cursor.close();
+		db.close();
+		return isDeleted;
+	}
+
+	public boolean deleteWorkout(long workoutID) {
+		SQLiteDatabase db = getWritableDatabase();
+		boolean isOK;
+		String queryAdvanced = "DELETE * FROM " + ACTIONS_ADVANCED + " WHERE "
+				+ AA_ID + " IN " + "(SELECT " + WA_ACTION_ID + " FROM "
+				+ WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID + "=? AND "
+				+ WA_ACTION_TYPE + "=?" + ")";
+		db.rawQuery(queryAdvanced, new String[] { workoutID + "",
+				WorkoutAction.ACTION_ADVANCED + "" }).getCount();
+		String querySimple = "DELETE * FROM " + ACTIONS_SIMPLE + " WHERE "
+				+ AS_ID + " IN " + "(SELECT " + WA_ACTION_ID + " FROM "
+				+ WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID + "=? AND "
+				+ WA_ACTION_TYPE + "=?" + ")";
+		db.rawQuery(querySimple, new String[] { workoutID + "",
+				WorkoutAction.ACTION_SIMPLE + "" });
+
+		db.delete(WORKOUTS_ACTIONS, WA_WORKOUT_ID + "=?",
+				new String[] { workoutID + "" });
+		isOK = db.delete(WORKOUTS, WORKOUTS_ID + "=?", new String[] { workoutID + "" }) != 0;
+		db.close();
+		return isOK;
+	}
 }
