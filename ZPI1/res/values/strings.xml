@@ -78,7 +78,13 @@
     <string name="chart_oy2_altitude">Altitude</string>
     <string name="chart_legend_oy1">Covered distance</string>
     <string name="chart_legend_oy2">Altitude</string>
+    
+    <!-- splits strings -->
     <string name="split_time">Split time</string>
     <string name="total_time">Total time</string>
     <string name="no_splits_info">No splits. Run more than a kilometer</string>
+    
+    <!-- context menu -->
+    <string name="menu_ctx_actions">Actions</string>
+    <string name="delete_action">Delete</string>
 </resources>
