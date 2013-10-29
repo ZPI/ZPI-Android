@@ -545,14 +545,12 @@ public class ActivityActivity extends FragmentActivity implements
 
 		pace = (double) 1 / (speed * 60 / 1000);
 
+		double lastDistance = distance/1000;
 		distance += lastLocation.distanceTo(location);
 
-		double lastDistans = distance/1000;
-		
-		distance += lastLocation.distanceTo(location);
 		int distancetoShow = (int)(distance/1000);
 		//new km
-		if (distancetoShow-(int)lastDistans>0)
+		if (distancetoShow-(int)lastDistance>0)
 			addMarker(location,distancetoShow);
 		
 		synchronized (time) {
