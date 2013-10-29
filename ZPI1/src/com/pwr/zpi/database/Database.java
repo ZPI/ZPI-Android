@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.android.gms.internal.cu;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.utils.Pair;
 
 import android.content.ContentValues;
@@ -25,6 +25,10 @@ public class Database extends SQLiteOpenHelper {
 	// Tables names
 	private static final String DATES = "Daty";
 	private static final String POINTS_WITH_TIME = "Pomiary_lokacji_i_czasu";
+	private static final String WORKOUTS = "Plany_treningowe";
+	private static final String WORKOUTS_ACTIONS = "Plany_podakcje";
+	private static final String ACTIONS_SIMPLE = "Akcje";
+	private static final String ACTIONS_ADVANCED = "Akcje_zaawansowane";
 
 	// Tables column names
 	// dates
@@ -41,6 +45,26 @@ public class Database extends SQLiteOpenHelper {
 	private static final String PWT_LATITUDE = "pwt_latitude";
 	private static final String PWT_ALTITUDE = "pwt_altitude";
 	private static final String PWT_TIME_FROM_START = "pwr_time_from_start";
+	// workouts
+	private static final String WORKOUTS_ID = "workouts_id";
+	private static final String WORKOUTS_NAME = "workouts_name";
+	private static final String WORKOUTS_REPEATS = "workouts_repeats";
+	private static final String WORKOUTS_WARM_UP = "workouts_warm_up";
+	// workouts actions
+	private static final String WA_WORKOUT_ID = "wa_id";
+	private static final String WA_ACTION_ID = "wa_action_id";
+	private static final String WA_ACTION_TYPE = "wa_action_type";
+	// action simple
+	private static final String AS_ID = "as_id";
+	private static final String AS_SPEED_TYPE = "as_speed_type";
+	private static final String AS_VALUE_TYPE = "as_value_type";
+	private static final String AS_VALUE = "as_value";
+	// action advanced
+	private static final String AA_ID = "aa_id";
+	private static final String AA_TYPE = "aa_type";
+	private static final String AA_DISTANCE_VALUE = "aa_distance_value";
+	private static final String AA_TIME_VALUE = "aa_time_value";
+	private static final String AA_PACE_VALUE = "aa_pace_value";
 
 	// Tables creation schemas
 	private static final String CREATE_TABLE_DATES = "CREATE TABLE " + DATES
@@ -56,6 +80,23 @@ public class Database extends SQLiteOpenHelper {
 			+ " DOUBLE, " + PWT_TIME_FROM_START + " INTEGER, "
 			+ "FOREIGN KEY (" + PWT_RUN_NUMBER + ")" + " REFERENCES " + DATES
 			+ " (" + DATES_RUN_NUMBER + ")" + ")";
+	private static final String CREATE_TABLE_WORKOUTS = "CREATE TABLE " + WORKOUTS + "(" +
+			WORKOUTS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
+			+ WORKOUTS_NAME + " TEXT, " + WORKOUTS_REPEATS + " INTEGER, " 
+			+ WORKOUTS_WARM_UP + " INTEGER" + ")";
+	private static final String CREATE_TABLE_WORKOUTS_ACTIONS = "CREATE TABLE " + WORKOUTS_ACTIONS + "("
+			+ WA_WORKOUT_ID + " INTEGER, " + WA_ACTION_ID + " INTEGER, "
+			+ WA_ACTION_TYPE + " INTEGER, "
+			+ "PRIMARY KEY (" + WA_ACTION_ID + ", " + WA_WORKOUT_ID + ")"; 
+	private static final String CREATE_TABLE_ACTIONS_SIMPLE = "CREATE TABLE " + ACTIONS_SIMPLE + "("
+			+ AS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ AS_SPEED_TYPE + " INTEGER, " + AS_VALUE_TYPE + " INTEGER, "
+			+ AS_VALUE + " DOUBLE" + ")";
+	private static final String CREATE_TABLE_ACTIONS_ADVANCED = "CREATE TABLE " + ACTIONS_ADVANCED + "("
+			+ AA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ AA_TYPE + " INTEGER, " + AA_DISTANCE_VALUE + " DOUBLE, "
+			+ AA_TIME_VALUE + " DOUBLE, "
+			+ AA_PACE_VALUE + " DOUBLE" + ")";
 
 	public Database(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -65,10 +106,18 @@ public class Database extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_TABLE_DATES);
 		db.execSQL(CREATE_TABLE_POINTS_WITH_TIME);
+		db.execSQL(CREATE_TABLE_WORKOUTS);
+		db.execSQL(CREATE_TABLE_WORKOUTS_ACTIONS);
+		db.execSQL(CREATE_TABLE_ACTIONS_SIMPLE);
+		db.execSQL(CREATE_TABLE_ACTIONS_ADVANCED);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_ADVANCED);
+		db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_SIMPLE);
+		db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS_ACTIONS);
+		db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS);
 		db.execSQL("DROP TABLE IF EXISTS " + POINTS_WITH_TIME);
 		db.execSQL("DROP TABLE IF EXISTS " + DATES);
 		onCreate(db);
@@ -251,5 +300,10 @@ public class Database extends SQLiteOpenHelper {
 		deletedNumber += db.delete(DATES, DATES_RUN_NUMBER + "=?", queryArgs);
 		db.close();
 		return deletedNumber != 0;
+	}
+	
+	public boolean insertWorkout(Workout workout) {
+		
+		return false;
 	}
 }
