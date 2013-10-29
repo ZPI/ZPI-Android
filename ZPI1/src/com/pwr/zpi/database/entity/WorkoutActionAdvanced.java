@@ -15,16 +15,22 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 		super(WorkoutAction.ACTION_ADVANCED);
 	}
 	
+	public WorkoutActionAdvanced(int type, double distance,
+			double pace, long time) {
+		this();
+		this.type = type;
+		this.distance = distance;
+		this.pace = pace;
+		this.time = time;
+	}
+	
 	/**
 	 * distance pace constructor
 	 * @param distance
 	 * @param pace
 	 */
 	public WorkoutActionAdvanced(double distance, double pace) {
-		this();
-		this.distance = distance;
-		this.pace = pace;
-		this.type = WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE;
+		this(WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE, distance, pace, 0);
 	}
 	/**
 	 * time distance constructor
@@ -32,10 +38,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 * @param distance
 	 */
 	public WorkoutActionAdvanced(long time, double distance) {
-		this();
-		this.distance = distance;
-		this.time = time;
-		this.type = WorkoutAction.ACTION_ADVANCED_TYPE_TIME_DISTANCE;
+		this(WorkoutAction.ACTION_ADVANCED_TYPE_TIME_DISTANCE, distance, 0, time);
 	}
 	
 	/**
@@ -44,10 +47,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 * @param time
 	 */
 	public WorkoutActionAdvanced(double pace, long time) {
-		this();
-		this.time = time;
-		this.pace = pace;
-		this.type = WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME;
+		this(WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME, 0, pace, time);
 	}
 	
 	/**

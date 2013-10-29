@@ -4,11 +4,20 @@ import java.util.List;
 
 public class Workout {
 	
+	private long ID;
 	private String name;
 	private List<WorkoutAction> actions;
 	private boolean isWarmUp;
 	private int repeatCount;
 
+	public long getID() {
+		return ID;
+	}
+
+	public void setID(long iD) {
+		ID = iD;
+	}
+	
 	public String getName() {
 		return name;
 	}
