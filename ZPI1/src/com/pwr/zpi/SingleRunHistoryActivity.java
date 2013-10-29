@@ -2,13 +2,23 @@ package com.pwr.zpi;
 
 import java.net.IDN;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.LineChart;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
@@ -29,6 +39,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	protected static final String RUN_ID = "runID";
 
 	GoogleMap mMap;
+	LatLngBounds.Builder boundsBuilder;
+	Polyline traceOnMapObject;
 	private TextView distanceTextView;
 	private TextView timeTextView;
 	private TextView avgPaceTextView;
@@ -48,6 +60,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		initFields();
 		showData();
 		addListeners();
+		mapCenter();
 	}
 
 	private void init() {
@@ -57,6 +70,62 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		chartButton = (Button) findViewById(R.id.buttonCharts);
 		splitsButton = (Button) findViewById(R.id.buttonSplits);
 	}
+
+	private void mapCenter() {
+		
+		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
+				.getTraceWithTime();
+	
+		boundsBuilder = new LatLngBounds.Builder();
+		double lastDistance=0;
+		double newDistance =0;
+		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
+			PolylineOptions polyLine = new PolylineOptions();
+			
+			Location lastLocation = null;
+			for (Pair<Location, Long> singlePoint : singleTrace) {
+				Location location = singlePoint.first;
+				LatLng latLng = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				polyLine.add(latLng);
+				boundsBuilder.include(latLng);
+				if (lastLocation!= null)
+				{
+					newDistance+=location.distanceTo(lastLocation);
+					int showDistance = (int)(newDistance/1000);
+					if (showDistance-(int)(lastDistance/1000)>0)
+					{
+						addMarker(location,showDistance);
+					}
+					
+				}
+				lastDistance = newDistance;
+				
+				lastLocation = location;
+				
+			}
+			if (mMap != null)
+				traceOnMapObject = mMap.addPolyline(polyLine);
+		}
+			mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+
+			    @Override
+			    public void onCameraChange(CameraPosition arg0) {
+			        // Move camera.
+			    	LatLngBounds bounds = boundsBuilder.build();
+			        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+			        // Remove listener to prevent position reset on camera move.
+			        mMap.setOnCameraChangeListener(null);
+			    }
+			});
+	}
+
+	private void addMarker(Location location, int distance) {
+		Marker marker = mMap.addMarker(new MarkerOptions().position(
+				new LatLng(location.getLatitude(), location.getLongitude()))
+				.title(distance + "km"));
+		marker.showInfoWindow();
+	}
 	
 	private void initFields() {
 		distanceTextView = (TextView) findViewById(R.id.TextView1History);
@@ -64,13 +133,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		avgPaceTextView = (TextView) findViewById(R.id.TextView3History);
 		avgSpeedTextView = (TextView) findViewById(R.id.TextView4History);
 	}
-	
-	private void showData()
-	{
-		//show distance
-		distanceTextView.setText(String.format("%.3f",run.getDistance()/1000));
-		
-		//show time
+
+	private void showData() {
+		// show distance
+		distanceTextView
+				.setText(String.format("%.3f", run.getDistance() / 1000));
+
+		// show time
 		long time = run.getRunTime();
 		timeTextView.setText(TimeFormatter.formatTimeHHMMSS(time));
 		
@@ -78,21 +147,21 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		double speed = run.getDistance()/1000/run.getRunTime()*1000*60*60;
 		double pace = (double)1/speed*60;
 
-		if (pace<300) //slower is completely irrelevant + it makes text to long
+		if (pace < 300) // slower is completely irrelevant + it makes text to
+						// long
 		{
 			// convert pace to show second
 			double rest = pace - (int) pace;
 			rest = rest * 60;
 			avgPaceTextView.setText(String.format("%d:%02.0f", (int) pace,
 					rest));
-		}
-		else
+		} else
 			avgPaceTextView.setText(getResources().getString(R.string.dashes));
-		//show avg speed
-		avgSpeedTextView.setText(String.format("%.2f",speed));
-		
+		// show avg speed
+		avgSpeedTextView.setText(String.format("%.2f", speed));
+
 	}
-	
+
 	private void addListeners() {
 		chartButton.setOnClickListener(this);
 		splitsButton.setOnClickListener(this);
