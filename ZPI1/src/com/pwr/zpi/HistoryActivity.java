@@ -17,10 +17,15 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -41,6 +46,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
 	public static final String ID_TAG = "id";
 	List<SingleRun> run_data;
+	
+	private TabHost tabHost;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 
 		addListeners();
 
-		TabHost tabHost = (TabHost) findViewById(R.id.tabhostHistory);
+		//changing order brakes the proper work of context menu
+		tabHost = (TabHost) findViewById(R.id.tabhostHistory);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tabThisWeek);
@@ -82,6 +90,9 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewThisWeek.setOnItemClickListener(this);
 		listViewThisMonth.setOnItemClickListener(this);
 		listViewAll.setOnItemClickListener(this);
+		registerForContextMenu(listViewThisWeek);
+		registerForContextMenu(listViewThisMonth);
+		registerForContextMenu(listViewAll);
 	}
 
 	private List<SingleRun> readfromDB() {
@@ -159,4 +170,53 @@ public class HistoryActivity extends Activity implements GestureListener,
 		Log.e("S", "not started");
 	}
 
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		switch (v.getId()) {
+		case R.id.listViewAll:
+		case R.id.listViewThisMonth:
+		case R.id.listViewThisWeek:
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.context_menu, menu);
+			menu.setHeaderTitle(R.string.menu_ctx_actions);
+			break;
+		default:
+			break;
+		}
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.delete_action_menuitem:
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			RunAdapter adapter = null; //when adapters will change use interface here ;)
+			switch (tabHost.getCurrentTab()) {
+			case 0:
+				adapter = (RunAdapter) listViewThisWeek.getAdapter();
+				break;
+			case 1:
+				adapter = (RunAdapter) listViewThisMonth.getAdapter();
+				break;
+			case 2:
+				adapter = (RunAdapter) listViewAll.getAdapter();
+				break;
+			default:
+				break;
+			}
+			if (adapter != null) {
+				SingleRun toDelete = adapter.getItem(info.position);
+				adapter.remove(toDelete);
+				Database db = new Database(this);
+				db.deleteRun(toDelete.getRunID());
+				db.close();
+			}
+			break;
+		default:
+			break;
+		}
+		return super.onContextItemSelected(item);
+	}
 }

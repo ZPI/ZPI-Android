@@ -76,14 +76,14 @@ public class Database extends SQLiteOpenHelper {
 
 	public boolean insertSingleRun(SingleRun singleRun) {
 		SQLiteDatabase db = getWritableDatabase();
-		
+
 		long runID = insertDatePart(db, singleRun);
 		boolean isInsertOk = runID != -1;
 		if (isInsertOk) {
 			db.beginTransaction();
-		
+
 			long subRunNumber = 1;
-			LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime = singleRun
+			LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = singleRun
 					.getTraceWithTime();
 			for (LinkedList<Pair<Location, Long>> subRun : traceWithTime) {
 				for (Pair<Location, Long> singlePointWithTime : subRun) {
@@ -94,9 +94,9 @@ public class Database extends SQLiteOpenHelper {
 				subRunNumber++;
 			}
 			if (isInsertOk)
-				db.setTransactionSuccessful();	
-	        db.endTransaction();
-			
+				db.setTransactionSuccessful();
+			db.endTransaction();
+
 		}
 		db.close();
 		return isInsertOk;
@@ -130,27 +130,25 @@ public class Database extends SQLiteOpenHelper {
 		return db.insert(POINTS_WITH_TIME, null, cv) != -1;
 	}
 
-	public SingleRun getRun(long runID)
-	{
+	public SingleRun getRun(long runID) {
 		SQLiteDatabase db = getReadableDatabase();
-		
+
 		String[] columns = { DATES_START_HOUR, DATES_END_HOUR,
 				DATES_RUN_NUMBER, DATES_RUN_DISTANCE, DATES_RUN_TIME };
 
-        
-        Cursor cursor = db.query(DATES, columns, DATES_RUN_NUMBER + "=?", new String[] { runID
-                + "" }, null, null, null);
-        
-        SingleRun run = null;
-        if (cursor != null && cursor.moveToFirst()) {
-                run = getSingleRunForCursor(cursor, db, true);
-                cursor.close();
-        }
-        cursor.close();
-        db.close();
-        return run;
+		Cursor cursor = db.query(DATES, columns, DATES_RUN_NUMBER + "=?",
+				new String[] { runID + "" }, null, null, null);
+
+		SingleRun run = null;
+		if (cursor != null && cursor.moveToFirst()) {
+			run = getSingleRunForCursor(cursor, db, true);
+			cursor.close();
+		}
+		cursor.close();
+		db.close();
+		return run;
 	}
-	
+
 	public List<SingleRun> getAllRuns() {
 		SQLiteDatabase db = getReadableDatabase();
 		String[] columns = { DATES_START_HOUR, DATES_END_HOUR,
@@ -171,8 +169,9 @@ public class Database extends SQLiteOpenHelper {
 		return runs;
 	}
 
-	private SingleRun getSingleRunForCursor(Cursor cursor, SQLiteDatabase db, boolean needAllInfo) {
-		
+	private SingleRun getSingleRunForCursor(Cursor cursor, SQLiteDatabase db,
+			boolean needAllInfo) {
+
 		SingleRun readSingleRun = new SingleRun();
 		Date startDate = new Date(cursor.getLong(0));
 		readSingleRun.setStartDate(startDate);
@@ -185,13 +184,11 @@ public class Database extends SQLiteOpenHelper {
 		readSingleRun.setRunID(cursor.getLong(2));
 		readSingleRun.setDistance(cursor.getDouble(3));
 		readSingleRun.setRunTime(cursor.getLong(4));
-		if (needAllInfo)
-		{
+		if (needAllInfo) {
 			LinkedList<LinkedList<Pair<Location, Long>>> trace = getTraceForRunID(
 					readSingleRun.getRunID(), db);
 			readSingleRun.setTraceWithTime(trace);
 		}
-
 
 		return readSingleRun;
 	}
@@ -247,4 +244,12 @@ public class Database extends SQLiteOpenHelper {
 		return DATABASE_NAME;
 	}
 
+	public boolean deleteRun(long runID) {
+		SQLiteDatabase db = getWritableDatabase();
+		String[] queryArgs = new String[] { runID + "" };
+		int deletedNumber = db.delete(POINTS_WITH_TIME, PWT_RUN_NUMBER + "=?", queryArgs);
+		deletedNumber += db.delete(DATES, DATES_RUN_NUMBER + "=?", queryArgs);
+		db.close();
+		return deletedNumber != 0;
+	}
 }
