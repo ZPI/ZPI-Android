@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -30,7 +31,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
 public class HistoryActivity extends Activity implements GestureListener,
-	OnItemClickListener {
+OnItemClickListener {
 	
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
