@@ -1,10 +1,16 @@
 package com.pwr.zpi;
 
-import java.net.IDN;
 import java.util.LinkedList;
-import java.util.List;
 
-import com.google.android.gms.maps.CameraUpdate;
+import android.content.Intent;
+import android.location.Location;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -18,26 +24,15 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
-import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.LineChart;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.location.Location;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
-
 public class SingleRunHistoryActivity extends FragmentActivity implements
-		OnClickListener {
-
+	OnClickListener {
+	
 	protected static final String RUN_ID = "runID";
-
+	
 	GoogleMap mMap;
 	LatLngBounds.Builder boundsBuilder;
 	Polyline traceOnMapObject;
@@ -47,14 +42,14 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private TextView avgSpeedTextView;
 	private Button chartButton;
 	private Button splitsButton;
-
+	
 	SingleRun run;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.single_run_history_activity);
-
+		
 		init();
 		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
 		initFields();
@@ -62,23 +57,23 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		addListeners();
 		mapCenter();
 	}
-
+	
 	private void init() {
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.map);
+			.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		chartButton = (Button) findViewById(R.id.buttonCharts);
 		splitsButton = (Button) findViewById(R.id.buttonSplits);
 	}
-
+	
 	private void mapCenter() {
 		
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
-				.getTraceWithTime();
-	
+			.getTraceWithTime();
+		
 		boundsBuilder = new LatLngBounds.Builder();
-		double lastDistance=0;
-		double newDistance =0;
+		double lastDistance = 0;
+		double newDistance = 0;
 		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
 			PolylineOptions polyLine = new PolylineOptions();
 			
@@ -86,16 +81,16 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			for (Pair<Location, Long> singlePoint : singleTrace) {
 				Location location = singlePoint.first;
 				LatLng latLng = new LatLng(location.getLatitude(),
-						location.getLongitude());
+					location.getLongitude());
 				polyLine.add(latLng);
 				boundsBuilder.include(latLng);
-				if (lastLocation!= null)
+				if (lastLocation != null)
 				{
-					newDistance+=location.distanceTo(lastLocation);
-					int showDistance = (int)(newDistance/1000);
-					if (showDistance-(int)(lastDistance/1000)>0)
+					newDistance += location.distanceTo(lastLocation);
+					int showDistance = (int) (newDistance / 1000);
+					if (showDistance - (int) (lastDistance / 1000) > 0)
 					{
-						addMarker(location,showDistance);
+						addMarker(location, showDistance);
 					}
 					
 				}
@@ -104,26 +99,27 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 				lastLocation = location;
 				
 			}
-			if (mMap != null)
+			if (mMap != null) {
 				traceOnMapObject = mMap.addPolyline(polyLine);
+			}
 		}
-			mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-
-			    @Override
-			    public void onCameraChange(CameraPosition arg0) {
-			        // Move camera.
-			    	LatLngBounds bounds = boundsBuilder.build();
-			        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
-			        // Remove listener to prevent position reset on camera move.
-			        mMap.setOnCameraChangeListener(null);
-			    }
-			});
+		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			
+			@Override
+			public void onCameraChange(CameraPosition arg0) {
+				// Move camera.
+				LatLngBounds bounds = boundsBuilder.build();
+				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+				// Remove listener to prevent position reset on camera move.
+				mMap.setOnCameraChangeListener(null);
+			}
+		});
 	}
-
+	
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
-				new LatLng(location.getLatitude(), location.getLongitude()))
-				.title(distance + "km"));
+			new LatLng(location.getLatitude(), location.getLongitude()))
+			.title(distance + "km"));
 		marker.showInfoWindow();
 	}
 	
@@ -133,72 +129,65 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		avgPaceTextView = (TextView) findViewById(R.id.TextView3History);
 		avgSpeedTextView = (TextView) findViewById(R.id.TextView4History);
 	}
-
+	
 	private void showData() {
 		// show distance
 		distanceTextView
-				.setText(String.format("%.3f", run.getDistance() / 1000));
-
+			.setText(String.format("%.3f", run.getDistance() / 1000));
+		
 		// show time
 		long time = run.getRunTime();
 		timeTextView.setText(TimeFormatter.formatTimeHHMMSS(time));
 		
 		//show avg pace
-		double speed = run.getDistance()/1000/run.getRunTime()*1000*60*60;
-		double pace = (double)1/speed*60;
-
-		if (pace < 300) // slower is completely irrelevant + it makes text to
-						// long
-		{
-			// convert pace to show second
-			double rest = pace - (int) pace;
-			rest = rest * 60;
-			avgPaceTextView.setText(String.format("%d:%02.0f", (int) pace,
-					rest));
-		} else
-			avgPaceTextView.setText(getResources().getString(R.string.dashes));
-		// show avg speed
+		double speed = run.getDistance() / 1000 / run.getRunTime() * 1000 * 60 * 60;
+		double pace = 1 / speed * 60;
+		avgPaceTextView.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace));
+		
+		//show avgSpeed
 		avgSpeedTextView.setText(String.format("%.2f", speed));
-
+		
 	}
-
+	
 	private void addListeners() {
 		chartButton.setOnClickListener(this);
 		splitsButton.setOnClickListener(this);
 	}
-
+	
 	private void loadData(long runID) {
 		Database database = new Database(this);
 		run = database.getRun(runID);
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
-				.getTraceWithTime();
+			.getTraceWithTime();
 		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
 			PolylineOptions polyLine = new PolylineOptions();
 			for (Pair<Location, Long> singlePoint : singleTrace) {
 				polyLine.add(new LatLng(singlePoint.first.getLatitude(),
-						singlePoint.first.getLongitude()));
+					singlePoint.first.getLongitude()));
 			}
-			if (mMap != null)
+			if (mMap != null) {
 				mMap.addPolyline(polyLine);
+			}
 		}
-
+		
 	}
-
+	
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
 		overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
-
+		
 	}
-
+	
 	@Override
 	public void onClick(View view) {
 		if (view == chartButton) {
 			Intent i = LineChart.getChartForData(run, this);
 			startActivity(i);
-		} else if (view == splitsButton) {
+		}
+		else if (view == splitsButton) {
 			Intent i = new Intent(SingleRunHistoryActivity.this,
-					SplitsActivity.class);
+				SplitsActivity.class);
 			i.putExtra(RUN_ID, run.getRunID());
 			startActivity(i);
 		}

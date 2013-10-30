@@ -5,14 +5,13 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.util.Log;
 
 public class BeepPlayer {
-
+	
 	private static final String BEEP_FILE_NAME = "beep.mp3";
 	
-	private MediaPlayer player;
+	private final MediaPlayer player;
 	private AssetFileDescriptor afd;
 	
 	public BeepPlayer(Context context) {
@@ -23,13 +22,14 @@ public class BeepPlayer {
 			afd.close();
 			player.prepare();
 			player.setVolume(1f, 1f);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			Log.e(context.getClass().getSimpleName(), "error reading beep file from assets");
 			e.printStackTrace();
 		}
 		
 	}
-
+	
 	public void playBeep() {
 		player.start();
 	}

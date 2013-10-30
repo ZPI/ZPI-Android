@@ -3,8 +3,7 @@ package com.pwr.zpi;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class NewWorkoutActivity extends Activity{
-
+public class NewWorkoutActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
