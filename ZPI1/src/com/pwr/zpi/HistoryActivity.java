@@ -1,7 +1,10 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
@@ -45,6 +48,9 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
 	public static final String ID_TAG = "id";
 	List<SingleRun> run_data;
+	
+	private static final int FILTER_MONTH = 0;
+	private static final int FILTER_WEEK = 1;
 	
 	private TabHost tabHost;
 	
@@ -91,11 +97,13 @@ public class HistoryActivity extends Activity implements GestureListener,
 		
 		run_data = readfromDB();
 		Collections.sort(run_data);
-		adapterThisWeek = new RunAdapter(this,
+		adapterThisAll = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
+		run_data = removeOlderThen(run_data, FILTER_MONTH);
 		adapterThisMonth = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
-		adapterThisAll = new RunAdapter(this,
+		run_data = removeOlderThen(run_data, FILTER_WEEK);
+		adapterThisWeek = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
 		listViewThisWeek.setAdapter(adapterThisWeek);
 		listViewThisMonth.setAdapter(adapterThisMonth);
@@ -106,6 +114,33 @@ public class HistoryActivity extends Activity implements GestureListener,
 		registerForContextMenu(listViewAll);
 		
 		//adapterThisWeek.getFilter().filter();
+	}
+	
+	private List<SingleRun> removeOlderThen(List<SingleRun> runs, int type)
+	{
+		Calendar cal = Calendar.getInstance();
+		switch (type) {
+			case FILTER_MONTH:
+				cal.add(Calendar.DATE, -31);	//czy 30? czy wyœwietlaæ tylko bie¿¹cy miesi¹c?
+				break;
+			case FILTER_WEEK:
+				cal.add(Calendar.DATE, -7);
+				break;
+			default:
+				break;
+		}
+		
+		Date lastMonth = cal.getTime();
+		Iterator<SingleRun> it = runs.iterator();
+		while (it.hasNext())
+		{
+			SingleRun singleRun = it.next();
+			if (singleRun.getStartDate().before(lastMonth)) {
+				it.remove();
+			}
+		}
+		
+		return runs;
 	}
 	
 	private List<SingleRun> readfromDB() {
