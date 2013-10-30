@@ -1,6 +1,10 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
@@ -31,7 +35,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
 public class HistoryActivity extends Activity implements GestureListener,
-OnItemClickListener {
+	OnItemClickListener {
 	
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -45,20 +49,30 @@ OnItemClickListener {
 	public static final String ID_TAG = "id";
 	List<SingleRun> run_data;
 	
+	private static final int FILTER_MONTH = 0;
+	private static final int FILTER_WEEK = 1;
+	
 	private TabHost tabHost;
 	
 	// context item stuff
 	AdapterContextMenuInfo info;
 	RunAdapter adapter;
+	RunAdapter adapterThisWeek;
+	RunAdapter adapterThisMonth;
+	RunAdapter adapterThisAll;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
 		
+		initTabs();
+		initList();
 		addListeners();
-		
-		// changing order brakes the proper work of context menu
+	}
+	
+	private void initTabs()
+	{
 		tabHost = (TabHost) findViewById(R.id.tabhostHistory);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
@@ -73,28 +87,63 @@ OnItemClickListener {
 		tabSpecs.setContent(R.id.tabAll);
 		tabSpecs.setIndicator(getResources().getString(R.string.all));
 		tabHost.addTab(tabSpecs);
-		
-		// TODO get from database
-		// addMockData();
-		// run_data = new SingleRun[11];
-		
+	}
+	
+	private void initList()
+	{
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
 		
 		run_data = readfromDB();
 		
-		RunAdapter adapter = new RunAdapter(this,
+		Collections.sort(run_data);
+		adapterThisAll = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
-		listViewThisWeek.setAdapter(adapter);
-		listViewThisMonth.setAdapter(adapter);
-		listViewAll.setAdapter(adapter);
-		listViewThisWeek.setOnItemClickListener(this);
-		listViewThisMonth.setOnItemClickListener(this);
-		listViewAll.setOnItemClickListener(this);
+		ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
+			new ArrayList<SingleRun>(run_data), FILTER_MONTH);
+		adapterThisMonth = new RunAdapter(this,
+			R.layout.history_run_list_item, run_data_month);
+		ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+			run_data_month), FILTER_WEEK);
+		adapterThisWeek = new RunAdapter(this,
+			R.layout.history_run_list_item, run_data_week);
+		listViewThisWeek.setAdapter(adapterThisWeek);
+		listViewThisMonth.setAdapter(adapterThisMonth);
+		listViewAll.setAdapter(adapterThisAll);
+		
 		registerForContextMenu(listViewThisWeek);
 		registerForContextMenu(listViewThisMonth);
 		registerForContextMenu(listViewAll);
+		
+		//adapterThisWeek.getFilter().filter();
+	}
+	
+	private List<SingleRun> removeOlderThen(List<SingleRun> runs, int type)
+	{
+		Calendar cal = Calendar.getInstance();
+		switch (type) {
+			case FILTER_MONTH:
+				cal.add(Calendar.DATE, -31);	//czy 30? czy wyœwietlaæ tylko bie¿¹cy miesi¹c?
+				break;
+			case FILTER_WEEK:
+				cal.add(Calendar.DATE, -7);
+				break;
+			default:
+				break;
+		}
+		
+		Date lastMonth = cal.getTime();
+		Iterator<SingleRun> it = runs.iterator();
+		while (it.hasNext())
+		{
+			SingleRun singleRun = it.next();
+			if (singleRun.getStartDate().before(lastMonth)) {
+				it.remove();
+			}
+		}
+		
+		return runs;
 	}
 	
 	private List<SingleRun> readfromDB() {
@@ -161,7 +210,9 @@ OnItemClickListener {
 	}
 	
 	private void addListeners() {
-		
+		listViewThisWeek.setOnItemClickListener(this);
+		listViewThisMonth.setOnItemClickListener(this);
+		listViewAll.setOnItemClickListener(this);
 	}
 	
 	@Override
@@ -220,8 +271,12 @@ OnItemClickListener {
 						// romove
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
+							
 							SingleRun toDelete = adapter.getItem(info.position);
-							adapter.remove(toDelete);
+							
+							adapterThisWeek.remove(toDelete);
+							adapterThisMonth.remove(toDelete);
+							adapterThisAll.remove(toDelete);
 							Database db = new Database(HistoryActivity.this);
 							db.deleteRun(toDelete.getRunID());
 							db.close();

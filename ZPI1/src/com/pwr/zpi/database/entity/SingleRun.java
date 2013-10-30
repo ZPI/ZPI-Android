@@ -7,7 +7,7 @@ import android.location.Location;
 
 import com.pwr.zpi.utils.Pair;
 
-public class SingleRun {
+public class SingleRun implements Comparable {
 	
 	private long runID;
 	private LinkedList<Integer> runSubIDs; // when there are two or more subsequent runs ex o--(run)--o ..(space).. o--(run)--o
@@ -87,6 +87,12 @@ public class SingleRun {
 	
 	public void setRunTime(long runTime) {
 		this.runTime = runTime;
+	}
+	
+	@Override
+	public int compareTo(Object o) {
+		SingleRun run = (SingleRun) o;
+		return run.startDate.compareTo(getStartDate());
 	}
 	
 }

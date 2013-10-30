@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ZPI1</string>
+    <string name="pause">PAUZA</string>
+    <string name="stop">STOP</string>
+    <string name="start">START</string>
+    <string name="resume">WZNÓW</string>
+    <string name="ustawienia">Ustawienia</string>
+    <string name="gps_enabled">GPS włącząny</string>
+    <string name="gps_disabled">GPS wyłączony \nwłączyć?</string>
+    <string name="dialog_message_on_stop">Czy na pewno chcesz przerwać nagrywanie?</string>
+    <string name="dialog_message_low_gps_accuracy">Prszę poczekać na lepszy sygnał GPS</string>
+    <string name="dialog_message_no_gps">Proszę włączyć GPS</string>
+    <string name="dialog_choose_what_to_display">Co wyświetlać w tym polu?</string>
+    <string name="dialog_message_on_lost_gpsp">Oczekiwanie na sygnał GPS#8230;</string>
+    <string name="dialog_message_romve">Czy na pewno chcesz usunąć tę aktywność?</string>
+    <string name="gps_accuracy">Dokładność GPS</string>
+
+    <!-- meassured values -->
+    <string name="distance">Dystans</string>
+    <string name="actual_time">Akyaulny czas</string>
+ <!-- godzina -->
+    <string name="time">Czas</string>
+    <string name="time_lap">Czas Okrążenia</string>
+    <string name="time_last_lap">Czas Ostatniego Okrążenia</string>
+    <string name="date">Data</string>
+    <string name="gps_accuracy_value">Dokładność GPS</string>
+    <string name="distance_lap">Dystans Okrążenia</string>
+    <string name="distance_last_lap">Dystans Ostatniego Okrążenia</string>
+    <string name="pace">Tempo</string>
+    <string name="pace_avrage">Średnie Tempo</string>
+    <string name="pace_lap">Tempo Okrążenia</string>
+    <string name="pace_last_lap">Tempo Ostatniego Okrążenia</string>
+    <string name="pace_best">Najszybsze Tempo</string>
+    <string name="height">Wysokość</string>
+    <string name="speed">Prędkość</string>
+    <string name="speed_avrage">Średnia Prędkość</string>
+    <string name="speed_lap">Prędkość Okrążenia</string>
+    <string name="speed_last_lap">Prędkość Ostatniego Okrążenia</string>
+    <string name="speed_max">Największa Prędkość</string>
+    <string name="height_max">Największa Wyskość</string>
+    <string name="height_min">Najmniejsza Wysokość</string>
+    <string name="dashes">-:--</string>
+
+    <!-- Units -->
+    <string name="seconds">s</string>
+    <string name="minutes_per_km">min/\nkm</string>
+    <string name="km">km</string>
+    <string name="km_per_hour">km/\nh</string>
+
+    <!-- workouts -->
+    <string name="new_workout">Nowy trening</string>
+    <string name="add_workout">Dodaj trening</string>
+    <string name="zero_times">0 razy</string>
+    <string name="repeat">Powtórzenia</string>
+    <string name="wormup">Rozgrzewka</string>
+    <string name="add_new">Dodaj nową</string>
+    <string name="actions">Akcja</string>
+    <string name="name">Imię</string>
+    <string name="select_workout">Wybierz ten trening</string>
+    <string name="slow">Wolno</string>
+    <string name="steady">Steady</string>
+    <string name="fast">Szybko</string>
+    <string name="splits">Międzyczasy</string>
+    <string name="charts">Wykresy</string>
+    <string name="this_week">Ten tydzień</string>
+    <string name="this_month">Ten miesiąc</string>
+    <string name="all">Wszystko</string>
+
+    <!-- chart strings -->
+    <string name="chart_title">Dane biegów</string>
+    <string name="chart_ox_distance">Dystans</string>
+    <string name="chart_oy1_speed">Prędkość</string>
+    <string name="chart_oy2_altitude">Wysokość</string>
+    <string name="chart_legend_oy1">Przebyty Dystans</string>
+    <string name="chart_legend_oy2">Wysokość</string>
+
+    <!-- splits strings -->
+    <string name="split_time">Czas km</string>
+    <string name="total_time">Czas całkowity</string>
+    <string name="no_splits_info">Żadnych międzyczasów. Przebiegnij więcej niż 1km</string>
+
+    <!-- context menu -->
+    <string name="menu_ctx_actions">Akcje</string>
+    <string name="delete_action">Usuń</string>
+
+    <!-- other -->
+    <string name="empty_string"></string>
+    <string name="no_history_info">Brak historii aktywności</string>
+
+</resources>

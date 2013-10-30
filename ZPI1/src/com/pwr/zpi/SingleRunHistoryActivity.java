@@ -1,6 +1,7 @@
 package com.pwr.zpi;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import android.content.Intent;
 import android.location.Location;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -109,11 +111,29 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			public void onCameraChange(CameraPosition arg0) {
 				// Move camera.
 				LatLngBounds bounds = boundsBuilder.build();
-				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 				// Remove listener to prevent position reset on camera move.
 				mMap.setOnCameraChangeListener(null);
 			}
 		});
+		List<LatLng> points = traceOnMapObject.getPoints();
+		if (!points.isEmpty()) {
+			addStartAndFinish(points.get(0),
+				points.get(points.size() - 1));
+		}
+		
+	}
+	
+	private void addStartAndFinish(LatLng startPos, LatLng finishPos)
+	{
+		
+		Marker start = mMap.addMarker(new MarkerOptions()
+			.position(startPos)
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
+		Marker meta = mMap.addMarker(new MarkerOptions()
+			.position(finishPos)
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.meta)));
+		
 	}
 	
 	private void addMarker(Location location, int distance) {
