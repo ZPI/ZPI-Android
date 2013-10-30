@@ -96,15 +96,18 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
 		
 		run_data = readfromDB();
+		
 		Collections.sort(run_data);
 		adapterThisAll = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
-		run_data = removeOlderThen(run_data, FILTER_MONTH);
+		ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
+			new ArrayList<SingleRun>(run_data), FILTER_MONTH);
 		adapterThisMonth = new RunAdapter(this,
-			R.layout.history_run_list_item, run_data);
-		run_data = removeOlderThen(run_data, FILTER_WEEK);
+			R.layout.history_run_list_item, run_data_month);
+		ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+			run_data_month), FILTER_WEEK);
 		adapterThisWeek = new RunAdapter(this,
-			R.layout.history_run_list_item, run_data);
+			R.layout.history_run_list_item, run_data_week);
 		listViewThisWeek.setAdapter(adapterThisWeek);
 		listViewThisMonth.setAdapter(adapterThisMonth);
 		listViewAll.setAdapter(adapterThisAll);
