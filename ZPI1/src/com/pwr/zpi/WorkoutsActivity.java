@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class WorkoutsActivity extends Activity implements OnClickListener{
+public class WorkoutsActivity extends Activity implements OnClickListener {
 	
 	Button addActionButton;
 	
@@ -19,14 +19,14 @@ public class WorkoutsActivity extends Activity implements OnClickListener{
 		addActionButton = (Button) findViewById(R.id.buttonNewIntervalAction);
 		addActionButton.setOnClickListener(this);
 	}
-
+	
 	@Override
 	public void onClick(View v) {
-		if (v== addActionButton)
+		if (v == addActionButton)
 		{
-			startActivity(new Intent(WorkoutsActivity.this,NewWorkoutActionActivity.class));
+			startActivity(new Intent(WorkoutsActivity.this, NewWorkoutActionActivity.class));
 		}
 		
 	}
-
+	
 }

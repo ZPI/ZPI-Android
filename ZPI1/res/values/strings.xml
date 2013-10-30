@@ -15,6 +15,7 @@
     <string name="dialog_message_no_gps">Please enable gps</string>
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
+    <string name="dialog_message_romve">Are you sure, you want to remove this activity?</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
 
     <!-- meassured values -->
@@ -41,7 +42,7 @@
     <string name="height_max">Max Height</string>
     <string name="height_min">Min Height</string>
     <string name="dashes">-:--</string>
-    <string name="new_workout">New workout</string>
+
 
     <!-- Units -->
     <string name="seconds">s</string>
@@ -87,5 +88,7 @@
     <string name="menu_ctx_actions">Actions</string>
     <string name="delete_action">Delete</string>
     
+    <!-- other -->
+    <string name="empty_string"></string>
     <string name="no_history_info">There\'s no activity history</string>
 </resources>
