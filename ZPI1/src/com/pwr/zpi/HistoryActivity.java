@@ -1,5 +1,6 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -29,7 +31,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
 public class HistoryActivity extends Activity implements GestureListener,
-	OnItemClickListener {
+OnItemClickListener {
 	
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -99,7 +101,13 @@ public class HistoryActivity extends Activity implements GestureListener,
 		Database db = new Database(this);
 		List<SingleRun> runs;
 		runs = db.getAllRuns();
-		
+		if (runs == null) {
+			runs = new ArrayList<SingleRun>();
+			RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayoutNoRunHistory);
+			rl.setVisibility(View.VISIBLE);
+			tabHost.setVisibility(View.GONE);
+			prepareGestureListener();
+		}
 		return runs;
 	}
 	

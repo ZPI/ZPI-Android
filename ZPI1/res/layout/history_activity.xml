@@ -2,75 +2,95 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#fa122c" >
+    android:background="@color/main_color"
+    android:orientation="vertical" >
 
-     <TabHost
-        android:id="@+id/tabhostHistory"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <LinearLayout
+        <TabHost
+            android:id="@+id/tabhostHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </TabWidget>
+
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <LinearLayout
+                        android:id="@+id/tabThisWeek"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
+
+                        <ListView
+                            android:id="@+id/listViewThisWeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:cacheColorHint="@color/list_transparent_color" >
+                        </ListView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tabThisMonth"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
+
+                        <ListView
+                            android:id="@+id/listViewThisMonth"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:cacheColorHint="@color/list_transparent_color" >
+                        </ListView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tabAll"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" >
+
+                        <ListView
+                            android:id="@+id/listViewAll"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:cacheColorHint="@color/list_transparent_color" >
+                        </ListView>
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+        </TabHost>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayoutNoRunHistory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:visibility="gone" >
 
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </TabWidget>
-
-            <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-
-                <LinearLayout
-                    android:id="@+id/tabThisWeek"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
-
-                    <ListView
-                        android:id="@+id/listViewThisWeek"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" 
-                        android:cacheColorHint="@color/list_transparent_color">
-                    </ListView>
-                    
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tabThisMonth"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
-
-                    <ListView
-                        android:id="@+id/listViewThisMonth"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" 
-                        android:cacheColorHint="@color/list_transparent_color">
-                    </ListView>
-
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/tabAll"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
-
-                    <ListView
-                        android:id="@+id/listViewAll"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" 
-                        android:cacheColorHint="@color/list_transparent_color">
-                    </ListView>
-
-                </LinearLayout>
-            </FrameLayout>
-        </LinearLayout>
-    </TabHost>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:text="@string/no_history_info"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+        </RelativeLayout>
+    </FrameLayout>
 
 </RelativeLayout>
