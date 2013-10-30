@@ -88,5 +88,6 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">Brak historii aktywności</string>
+	<string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
 
 </resources>

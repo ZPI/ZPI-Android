@@ -88,5 +88,5 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">There\'s no activity history</string>
-
+	<string name="notification_message">Activity recording. Click here to open.</string>
 </resources>
