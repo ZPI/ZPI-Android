@@ -24,7 +24,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 public class LineChart {
 	
 	private static Double speedMin, speedMax, distanceMin, distanceMax,
-		altitudeMin, altitudeMax;
+	altitudeMin, altitudeMax;
 	
 	public static Intent getChartForData(SingleRun run, Context context) {
 		
@@ -73,12 +73,6 @@ public class LineChart {
 			PointStyle.POINT };
 		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer(2);
 		setRenderer(renderer, colors, styles);
-		int length = renderer.getSeriesRendererCount();
-		for (int i = 0; i < length; i++) {
-			XYSeriesRenderer r = (XYSeriesRenderer) renderer
-				.getSeriesRendererAt(i);
-			r.setLineWidth(3f);
-		}
 		setChartSettings(renderer, res.getString(R.string.chart_title), res.getString(R.string.chart_ox_distance),
 			res.getString(R.string.chart_oy1_speed),
 			distanceMin, distanceMax, speedMin, speedMax, Color.LTGRAY,
@@ -104,7 +98,7 @@ public class LineChart {
 		renderer.setBackgroundColor(Color.BLACK);
 		
 		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy1) }, x, values, 100);
+		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy1) }, x, values, 0);
 		values.clear();
 		values.add(altitudeValues);
 		addXYSeries(dataset, new String[] { res.getString(R.string.chart_legend_oy2) }, x, values, 1);
@@ -117,10 +111,10 @@ public class LineChart {
 	
 	private static void findMinMax(double speed, double distance,
 		double altitude) {
-		if (speed < speedMin) {
+		if (speed < speedMin && speed != Double.NaN && !Double.isInfinite(speed)) {
 			speedMin = speed;
 		}
-		else if (speed > speedMax) {
+		else if (speed > speedMax && speed != Double.NaN && !Double.isInfinite(speed)) {
 			speedMax = speed;
 		}
 		
@@ -160,6 +154,7 @@ public class LineChart {
 			XYSeriesRenderer r = new XYSeriesRenderer();
 			r.setColor(colors[i]);
 			r.setPointStyle(styles[i]);
+			r.setLineWidth(3f);
 			renderer.addSeriesRenderer(r);
 		}
 	}
@@ -177,13 +172,6 @@ public class LineChart {
 		renderer.setYAxisMax(yMax);
 		renderer.setAxesColor(axesColor);
 		renderer.setLabelsColor(labelsColor);
-	}
-	
-	private static XYMultipleSeriesDataset buildDataset(String[] titles,
-		List<double[]> xValues, List<double[]> yValues) {
-		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-		addXYSeries(dataset, titles, xValues, yValues, 0);
-		return dataset;
 	}
 	
 	private static void addXYSeries(XYMultipleSeriesDataset dataset,
