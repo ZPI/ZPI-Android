@@ -1,7 +1,7 @@
 package com.pwr.zpi.database.entity;
 
 public final class WorkoutActionAdvanced extends WorkoutAction {
-
+	
 	/**
 	 * one of WorkoutAction constants ACTION_ADVANCED_TYPE_TIME_DISTANCE,
 	 * ACTION_ADVANCED_TYPE_DISTANCE_PACE, ACTION_ADVANCED_TYPE_PACE_TIME
@@ -10,13 +10,12 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	private double distance;
 	private double pace;
 	private long time;
-
+	
 	private WorkoutActionAdvanced() {
 		super(WorkoutAction.ACTION_ADVANCED);
 	}
 	
-	public WorkoutActionAdvanced(int type, double distance,
-			double pace, long time) {
+	public WorkoutActionAdvanced(int type, double distance, double pace, long time) {
 		this();
 		this.type = type;
 		this.distance = distance;
@@ -26,14 +25,17 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	
 	/**
 	 * distance pace constructor
+	 * 
 	 * @param distance
 	 * @param pace
 	 */
 	public WorkoutActionAdvanced(double distance, double pace) {
 		this(WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE, distance, pace, 0);
 	}
+	
 	/**
 	 * time distance constructor
+	 * 
 	 * @param time
 	 * @param distance
 	 */
@@ -43,6 +45,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	
 	/**
 	 * pace time constructor
+	 * 
 	 * @param pace
 	 * @param time
 	 */
@@ -59,14 +62,14 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 		}
 		return distance;
 	}
-
+	
 	/**
 	 * @param distance in km
 	 */
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-
+	
 	/**
 	 * @return pace in min / km
 	 */
@@ -76,14 +79,14 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 		}
 		return pace;
 	}
-
+	
 	/**
 	 * @param pace in min / km
 	 */
 	public void setPace(double pace) {
 		this.pace = pace;
 	}
-
+	
 	/**
 	 * @return time in miliseconds
 	 */
@@ -93,14 +96,14 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 		}
 		return time;
 	}
-
+	
 	/**
 	 * @param time in miliseconds
 	 */
 	public void setTime(long time) {
 		this.time = time;
 	}
-
+	
 	/**
 	 * one of WorkoutAction constants ACTION_ADVANCED_TYPE_TIME_DISTANCE,
 	 * ACTION_ADVANCED_TYPE_DISTANCE_PACE, ACTION_ADVANCED_TYPE_PACE_TIME
@@ -108,7 +111,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	public int getType() {
 		return type;
 	}
-
+	
 	/**
 	 * one of WorkoutAction constants ACTION_ADVANCED_TYPE_TIME_DISTANCE,
 	 * ACTION_ADVANCED_TYPE_DISTANCE_PACE, ACTION_ADVANCED_TYPE_PACE_TIME
