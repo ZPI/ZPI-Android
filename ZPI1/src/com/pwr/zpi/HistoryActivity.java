@@ -1,6 +1,7 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -31,7 +32,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
 public class HistoryActivity extends Activity implements GestureListener,
-OnItemClickListener {
+	OnItemClickListener {
 	
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -50,15 +51,22 @@ OnItemClickListener {
 	// context item stuff
 	AdapterContextMenuInfo info;
 	RunAdapter adapter;
+	RunAdapter adapterThisWeek;
+	RunAdapter adapterThisMonth;
+	RunAdapter adapterThisAll;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
 		
+		initTabs();
+		initList();
 		addListeners();
-		
-		// changing order brakes the proper work of context menu
+	}
+	
+	private void initTabs()
+	{
 		tabHost = (TabHost) findViewById(R.id.tabhostHistory);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
@@ -73,28 +81,31 @@ OnItemClickListener {
 		tabSpecs.setContent(R.id.tabAll);
 		tabSpecs.setIndicator(getResources().getString(R.string.all));
 		tabHost.addTab(tabSpecs);
-		
-		// TODO get from database
-		// addMockData();
-		// run_data = new SingleRun[11];
-		
+	}
+	
+	private void initList()
+	{
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
 		
 		run_data = readfromDB();
-		
-		RunAdapter adapter = new RunAdapter(this,
+		Collections.sort(run_data);
+		adapterThisWeek = new RunAdapter(this,
 			R.layout.history_run_list_item, run_data);
-		listViewThisWeek.setAdapter(adapter);
-		listViewThisMonth.setAdapter(adapter);
-		listViewAll.setAdapter(adapter);
-		listViewThisWeek.setOnItemClickListener(this);
-		listViewThisMonth.setOnItemClickListener(this);
-		listViewAll.setOnItemClickListener(this);
+		adapterThisMonth = new RunAdapter(this,
+			R.layout.history_run_list_item, run_data);
+		adapterThisAll = new RunAdapter(this,
+			R.layout.history_run_list_item, run_data);
+		listViewThisWeek.setAdapter(adapterThisWeek);
+		listViewThisMonth.setAdapter(adapterThisMonth);
+		listViewAll.setAdapter(adapterThisAll);
+		
 		registerForContextMenu(listViewThisWeek);
 		registerForContextMenu(listViewThisMonth);
 		registerForContextMenu(listViewAll);
+		
+		//adapterThisWeek.getFilter().filter();
 	}
 	
 	private List<SingleRun> readfromDB() {
@@ -161,7 +172,9 @@ OnItemClickListener {
 	}
 	
 	private void addListeners() {
-		
+		listViewThisWeek.setOnItemClickListener(this);
+		listViewThisMonth.setOnItemClickListener(this);
+		listViewAll.setOnItemClickListener(this);
 	}
 	
 	@Override
@@ -220,8 +233,12 @@ OnItemClickListener {
 						// romove
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
+							
 							SingleRun toDelete = adapter.getItem(info.position);
-							adapter.remove(toDelete);
+							
+							adapterThisWeek.remove(toDelete);
+							adapterThisMonth.remove(toDelete);
+							adapterThisAll.remove(toDelete);
 							Database db = new Database(HistoryActivity.this);
 							db.deleteRun(toDelete.getRunID());
 							db.close();
