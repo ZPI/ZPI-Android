@@ -66,7 +66,6 @@
     <string name="splits">Splits</string>
     <string name="charts">Charts</string>
 
-    
     <string name="this_week">This week</string>
     <string name="this_month">This month</string>
     <string name="all">All</string>
@@ -87,4 +86,6 @@
     <!-- context menu -->
     <string name="menu_ctx_actions">Actions</string>
     <string name="delete_action">Delete</string>
+    
+    <string name="no_history_info">There\'s no activity history</string>
 </resources>

@@ -29,6 +29,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -99,7 +100,13 @@ public class HistoryActivity extends Activity implements GestureListener,
 		Database db = new Database(this);
 		List<SingleRun> runs;
 		runs = db.getAllRuns();
-
+		if (runs == null) {
+			runs = new ArrayList<SingleRun>();
+			RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayoutNoRunHistory);
+			rl.setVisibility(View.VISIBLE);
+			tabHost.setVisibility(View.GONE);
+			prepareGestureListener();
+		}
 		return runs;
 	}
 
