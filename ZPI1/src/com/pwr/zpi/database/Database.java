@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	private static final String DATABASE_NAME = "Historia_biegacza";
 
 	// Tables names
@@ -459,10 +459,10 @@ public class Database extends SQLiteOpenHelper {
 			List<WorkoutActionAdvanced> advancedActions) {
 		List<WorkoutAction> result = new ArrayList<WorkoutAction>();
 		if (simpleActions != null) {
-			result.addAll(advancedActions);
+			result.addAll(simpleActions);
 		}
 		if (advancedActions != null) {
-			result.addAll(simpleActions);
+			result.addAll(advancedActions);
 		}
 		Collections.sort(result);
 
