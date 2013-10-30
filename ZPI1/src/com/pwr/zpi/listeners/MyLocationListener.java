@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.pwr.zpi.MainScreenActivity;
-import com.pwr.zpi.database.Database;
 
 public class MyLocationListener extends Service implements LocationListener,
 	GooglePlayServicesClient.ConnectionCallbacks,
@@ -81,8 +80,6 @@ public class MyLocationListener extends Service implements LocationListener,
 			gpsStatus = MainScreenActivity.GPS_WORKING;
 		}
 		
-		Database db = new Database(this);
-		
 		return gpsStatus;
 	}
 	
@@ -120,50 +117,6 @@ public class MyLocationListener extends Service implements LocationListener,
 		intent.putExtra("pending_intent", connectionResult.getResolution());
 		intent.putExtra("status_code", statusCode);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-		
-		/*
-		 * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
-		// TODO send message, move everything to MainScreen
-		// if (connectionResult.hasResolution()) {
-		// try {
-		// // Start an Activity that tries to resolve the error
-		// connectionResult
-		// .startResolutionForResult(
-		// mainScreenActivity,
-		// MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-		// /*
-		// * Thrown if Google Play services canceled the original
-		// * PendingIntent
-		// */
-		// } catch (IntentSender.SendIntentException e) {
-		// // Log the error
-		// e.printStackTrace();
-		// }
-		// } else {
-		// /*
-		// * If no resolution is available, display a dialog to the user with
-		// * the error.
-		// */
-		// // Get the error dialog from Google Play services
-		// Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-		// connectionResult.getErrorCode(), mainScreenActivity,
-		// MainScreenActivity.CONNECTION_FAILURE_RESOLUTION_REQUEST);
-		//
-		// // If Google Play services can provide an error dialog
-		// if (errorDialog != null) {
-		// // Create a new DialogFragment for the error dialog
-		// ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-		// // Set the dialog in the DialogFragment
-		// errorFragment.setDialog(errorDialog);
-		// // Show the error dialog in the DialogFragment
-		// errorFragment.show(
-		// mainScreenActivity.getSupportFragmentManager(),
-		// "Location Updates");
-		// }
-		// }
 		
 	}
 	
