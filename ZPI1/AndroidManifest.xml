@@ -44,7 +44,8 @@
         <activity
             android:name=".ActivityActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" 
+            android:launchMode="singleTask"/>
         <activity
             android:name=".HistoryActivity"
             android:configChanges="orientation"
