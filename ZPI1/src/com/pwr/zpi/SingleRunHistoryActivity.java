@@ -146,18 +146,9 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		//show avg pace
 		double speed = run.getDistance()/1000/run.getRunTime()*1000*60*60;
 		double pace = (double)1/speed*60;
+		avgPaceTextView.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace));
 
-		if (pace < 300) // slower is completely irrelevant + it makes text to
-						// long
-		{
-			// convert pace to show second
-			double rest = pace - (int) pace;
-			rest = rest * 60;
-			avgPaceTextView.setText(String.format("%d:%02.0f", (int) pace,
-					rest));
-		} else
-			avgPaceTextView.setText(getResources().getString(R.string.dashes));
-		// show avg speed
+		//show avgSpeed
 		avgSpeedTextView.setText(String.format("%.2f", speed));
 
 	}

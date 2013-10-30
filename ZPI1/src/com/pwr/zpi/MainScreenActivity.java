@@ -30,6 +30,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
+import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.listeners.MyLocationListener;
@@ -95,13 +96,13 @@ public class MainScreenActivity extends FragmentActivity implements
 		// locationListener.getmLocationClient().connect();
 
 		isConnected = false;
-
+		doStartService();
 		doBindService();
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(
 				mMyServiceReceiver,
 				new IntentFilter(MyLocationListener.class.getSimpleName()));
-		
+
 	}
 
 	private void addListeners() {
@@ -302,6 +303,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	@Override
 	protected void onDestroy() {
 		doUnbindService();
+		doStopService();
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(
 				mMyServiceReceiver);
 		super.onDestroy();
@@ -312,44 +314,31 @@ public class MainScreenActivity extends FragmentActivity implements
 			// Shouldn't be here;
 			Log.e("Service_info", "no gps status info");
 		} else if (gpsStatus == GPS_NOT_ENABLED) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			// Add the buttons
-			builder.setTitle(R.string.dialog_message_no_gps);
-			builder.setPositiveButton(android.R.string.yes,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							Intent intent = new Intent(
-									android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-							startActivity(intent);
-						}
-					});
-			builder.setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// User cancelled the dialog
-						}
-					});
-			// Set other dialog properties
+			MyDialog dialog = new MyDialog();
+			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent intent = new Intent(
+							android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(intent);
+				}
+			};
 
-			// Create the AlertDialog
-			AlertDialog dialog = builder.create();
-			dialog.show();
-			
+			dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
+					R.string.empty_string, android.R.string.yes,
+					android.R.string.no, positiveButtonHandler, null);
+
 		} else if (gpsStatus == NO_GPS_SIGNAL) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			// Add the buttons
-			builder.setTitle(R.string.dialog_message_low_gps_accuracy);
-			builder.setPositiveButton(android.R.string.ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
+			MyDialog dialog = new MyDialog();
+			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
 
-						}
-					});
-			// Set other dialog properties
+				}
+			};
+			dialog.showAlertDialog(this,
+					R.string.dialog_message_low_gps_accuracy,
+					R.string.empty_string, android.R.string.ok,
+					R.string.empty_string, positiveButtonHandler, null);
 
-			// Create the AlertDialog
-			AlertDialog dialog = builder.create();
-			dialog.show();
 		} else
 			startActivity(ActivityActivity.class, DOWN);
 	}
@@ -364,10 +353,8 @@ public class MainScreenActivity extends FragmentActivity implements
 		if (connectionResult.hasResolution()) {
 			try {
 				// Start an Activity that tries to resolve the error
-				connectionResult
-						.startResolutionForResult(
-								this,
-								CONNECTION_FAILURE_RESOLUTION_REQUEST);
+				connectionResult.startResolutionForResult(this,
+						CONNECTION_FAILURE_RESOLUTION_REQUEST);
 				/*
 				 * Thrown if Google Play services canceled the original
 				 * PendingIntent
@@ -384,7 +371,8 @@ public class MainScreenActivity extends FragmentActivity implements
 			// Get the error dialog from Google Play services
 			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
 					connectionResult.getErrorCode(), this,
-					REQUEST_GOOGLE_PLAY_SERVICES); //tu by�a z�a liczba w dokumentacji :/
+					REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
+													// dokumentacji :/
 
 			// If Google Play services can provide an error dialog
 			if (errorDialog != null) {
@@ -415,16 +403,30 @@ public class MainScreenActivity extends FragmentActivity implements
 
 	private MyServiceConnection mConnection = new MyServiceConnection();
 
-	 void doBindService() {
-         Log.i("Service_info", "Main Screen Binding");
-         Intent i = new Intent(MainScreenActivity.this,
-                         MyLocationListener.class);
-         i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-         i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-         bindService(i, mConnection,
-                         Context.BIND_AUTO_CREATE);
-         mIsBound = true;
- }
+	void doStartService() {
+		Log.i("Service_info", "Main Screen --> start service");
+		Intent intent = new Intent(MainScreenActivity.this,
+				MyLocationListener.class);
+		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		startService(intent);
+	}
+
+	void doStopService() {
+		Log.i("Service_info", "Main Screen --> stop service");
+		Intent intent = new Intent(MainScreenActivity.this,
+				MyLocationListener.class);
+		stopService(intent);
+	}
+
+	void doBindService() {
+		Log.i("Service_info", "Main Screen Binding");
+		Intent i = new Intent(MainScreenActivity.this, MyLocationListener.class);
+		i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+		mIsBound = true;
+	}
 
 	void doUnbindService() {
 		Log.i("Service_info", "Main Screen Unbinding");
@@ -476,13 +478,14 @@ public class MainScreenActivity extends FragmentActivity implements
 				break;
 			case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
 				Log.i("Service_info", "show Google services dialog");
-				int errorCode = intent.getIntExtra("status_code",-1);
-				PendingIntent pendingIntent = intent.getParcelableExtra("pending_intent");
-				showGoogleServicesDialog(new ConnectionResult(errorCode, pendingIntent));
+				int errorCode = intent.getIntExtra("status_code", -1);
+				PendingIntent pendingIntent = intent
+						.getParcelableExtra("pending_intent");
+				showGoogleServicesDialog(new ConnectionResult(errorCode,
+						pendingIntent));
 				break;
 			}
 		}
 	};
 
 }
-

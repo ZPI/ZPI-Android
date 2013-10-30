@@ -36,11 +36,13 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
 import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements
 		OnClickListener {
@@ -67,7 +69,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private Location mLastLocation;
 	private boolean isPaused;
 	private SingleRun singleRun;
-	private LinkedList<LinkedList<Pair<Location,Long>>> traceWithTime;
+	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private Calendar calendar;
 	private PolylineOptions traceOnMap;
 	private Polyline traceOnMapObject;
@@ -101,7 +103,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private static final int COUNT_DOWN_TIME = 5;
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	BeepPlayer beepPlayer;
-	
+
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
 
@@ -114,7 +116,7 @@ public class ActivityActivity extends FragmentActivity implements
 		addListeners();
 
 		initDisplayedData();
-		
+
 		prepareServiceAndStart();
 
 		startTimerAfterCountDown();
@@ -133,14 +135,13 @@ public class ActivityActivity extends FragmentActivity implements
 				.findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 
-
-		traceWithTime = new LinkedList<LinkedList<Pair<Location,Long>>>();
+		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
 		traceOnMap.color(traceColor);
 		traceOnMapObject = mMap.addPolyline(traceOnMap);
-		
+
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
 
@@ -154,19 +155,19 @@ public class ActivityActivity extends FragmentActivity implements
 		// initLabelsMethod
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
-		
-		//make single run object
+
+		// make single run object
 		singleRun = new SingleRun();
-		calendar = Calendar.getInstance(); 
-		
+		calendar = Calendar.getInstance();
+
 		singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
-		
+
 		beepPlayer = new BeepPlayer(this);
-		
+
 		moveSystemControls(mapFragment);
 	}
-	
+
 	private void addListeners() {
 		stopButton.setOnClickListener(this);
 		resumeButton.setOnClickListener(this);
@@ -174,14 +175,14 @@ public class ActivityActivity extends FragmentActivity implements
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
 	}
-	
+
 	private void initDisplayedData() {
 		GPSAccuracy.setText(getMyString(R.string.gps_accuracy) + " ?");
 
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
 	}
-	
+
 	private void prepareServiceAndStart() {
 		doBindService();
 		LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -274,7 +275,8 @@ public class ActivityActivity extends FragmentActivity implements
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-			// nie do ko�ca rozumiem t� metod�, trzeba zobaczy� czy u Ciebie
+			// nie do ko�ca rozumiem t� metod�, trzeba zobaczy� czy u
+			// Ciebie
 			// jest to samo czy nie za bardzo
 			final int margin = (int) TypedValue.applyDimension(
 					TypedValue.COMPLEX_UNIT_DIP,
@@ -360,44 +362,38 @@ public class ActivityActivity extends FragmentActivity implements
 		super.onBackPressed();
 		showAlertDialog();
 	}
-	
-	//invoke when finishing activity
-	private void saveRun()
-	{
-		//add last values 
+
+	// invoke when finishing activity
+	private void saveRun() {
+		// add last values
 		singleRun.setEndDate(calendar.getTime());
 		singleRun.setRunTime(time);
 		singleRun.setDistance(distance);
 		singleRun.setTraceWithTime(traceWithTime);
-		
-		//store in DB
+
+		// store in DB
 		Database db = new Database(this);
 		db.insertSingleRun(singleRun);
 	}
+
 	private void showAlertDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		// Add the buttons
-		builder.setTitle(R.string.dialog_message_on_stop);
-		builder.setPositiveButton(android.R.string.yes,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						saveRun();
-						finish();
-						overridePendingTransition(R.anim.in_up_anim,
-								R.anim.out_up_anim);
-					}
-				});
-		builder.setNegativeButton(android.R.string.no, null);
-		// Set other dialog properties
-
-		// Create the AlertDialog
-		AlertDialog dialog = builder.create();
-		dialog.show();
-
+		MyDialog dialog = new MyDialog();
+		DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				saveRun();
+				finish();
+				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+			}
+		};
+		dialog.showAlertDialog(this, R.string.dialog_message_on_stop,
+				R.string.empty_string, android.R.string.yes,
+				android.R.string.no, positiveButtonHandler, null);
 	}
 
 	private void showLostGpsSignalDialog() {
-		lostGPSDialog = ProgressDialog.show(this, getResources().getString(R.string.dialog_message_on_lost_gpsp), null); //TODO strings
+		lostGPSDialog = ProgressDialog.show(this,
+				getResources().getString(R.string.dialog_message_on_lost_gpsp),
+				null); // TODO strings
 		lostGPSDialog.setCancelable(true);
 	}
 
@@ -418,7 +414,7 @@ public class ActivityActivity extends FragmentActivity implements
 			startStopLayout.setVisibility(View.VISIBLE);
 			resumeButton.setVisibility(View.GONE);
 			pauseTime += System.currentTimeMillis() - pauseStartTime;
-			traceWithTime.add(new LinkedList<Pair<Location,Long>>());
+			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
 			handler.post(timeHandler);
 		} else if (v == dataRelativeLayout1) {
 			clickedContentTextView = DataTextView1;
@@ -441,18 +437,18 @@ public class ActivityActivity extends FragmentActivity implements
 	}
 
 	private void showMeassuredValuesMenu() {
-		// chcia�em zrobi� tablice w stringach, ale potem zobaczy�em, �e ju� mam
-		// te wszystkie nazwy i teraz nie wiem czy tamto zmienia� w tablic� czy
+		// chcia�em zrobi� tablice w stringach, ale potem zobaczy�em, �e
+		// ju� mam
+		// te wszystkie nazwy i teraz nie wiem czy tamto zmienia� w tablic�
+		// czy
 		// nie ma sensu
 		// kolejno�� w tablicy musi odpowiada� nr ID, tzn 0 - dystans itp.
 
 		final CharSequence[] items = { getMyString(R.string.distance),
 				getMyString(R.string.pace), getMyString(R.string.pace_avrage),
 				getMyString(R.string.time) };
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.dialog_choose_what_to_display);
-		builder.setItems(items, new DialogInterface.OnClickListener() {
+		MyDialog dialog = new MyDialog();
+		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				updateLabels(item, clickedLabelTextView, clickedUnitTextView,
 						clickedContentTextView);
@@ -461,12 +457,13 @@ public class ActivityActivity extends FragmentActivity implements
 				else
 					dataTextView2Content = item;
 			}
-		});
-		AlertDialog alert = builder.create();
-		alert.show();
+		};
+		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display,
+				R.string.empty_string, R.string.empty_string,
+				R.string.empty_string, null, null, items, itemsHandler);
 	}
 
-	//update display
+	// update display
 	private void updateData(TextView textBox, int meassuredValue) {
 
 		switch (meassuredValue) {
@@ -475,92 +472,68 @@ public class ActivityActivity extends FragmentActivity implements
 			break;
 		case paceID:
 			if (pace < 30) {
-				// convert pace to show second
-				double rest = pace - (int) pace;
-				rest = rest * 60;
-
-				String secondsZero = (rest < 10) ? "0" : "";
-
-				textBox.setText(String.format("%d:%s%.0f", (int) pace,
-						secondsZero, rest));
+				textBox.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
 			}
 			break;
 		case avgPaceID:
 			if (avgPace < 30) {
-				// convert pace to show second
-				double rest = avgPace - (int) avgPace;
-				rest = rest * 60;
-
-				String secondsZero = (rest < 10) ? "0" : "";
-
-				textBox.setText(String.format("%d:%s%.0f", (int) avgPace,
-						secondsZero, rest));
+				textBox.setText(TimeFormatter.formatTimeMMSSorHHMMSS(avgPace));
 			} else {
 				textBox.setText(getResources().getString(R.string.dashes));
 			}
 			break;
 		case timeID:
-			long hours = time / 3600000;
-			long minutes = (time / 60000) - hours * 60;
-			long seconds = (time / 1000) - hours * 3600 - minutes * 60;
-			String hourZero = (hours < 10) ? "0" : "";
-			String minutesZero = (minutes < 10) ? "0" : "";
-			String secondsZero = (seconds < 10) ? "0" : "";
-
-			textBox.setText(String.format("%s%d:%s%d:%s%d", hourZero, hours,
-					minutesZero, minutes, secondsZero, seconds));
+			textBox.setText(TimeFormatter.formatTimeHHMMSS(time));
 			break;
 		}
 
 	}
-	
-	//count everything with 2 last location points
+
+	// count everything with 2 last location points
 	private void countData(Location location, Location lastLocation) {
 
 		Log.i("ActivityActivity", "countData: " + location);
 		LatLng latLng = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		
 
 		traceOnMap.add(latLng);
 		traceOnMapObject.setPoints(traceOnMap.getPoints());
-		
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-		.target(latLng)
-	    .zoom(17)                   // Sets the zoom
-	    .bearing(GeographicalEvaluations.countBearing(location, lastLocation))                // Sets the orientation of the camera to east
-	    .tilt(60)                   
-	    .build();                   // Creates a CameraPosition from the builder
-	mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-		
-	//	mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-		
-		
+		CameraPosition cameraPosition = new CameraPosition.Builder()
+				.target(latLng).zoom(17)
+				// Sets the zoom
+				.bearing(
+						GeographicalEvaluations.countBearing(location,
+								lastLocation)) // Sets the orientation of the
+												// camera to east
+				.tilt(60).build(); // Creates a CameraPosition from the builder
+		mMap.animateCamera(CameraUpdateFactory
+				.newCameraPosition(cameraPosition));
+
+		// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
 		float speed = location.getSpeed();
 		GPSAccuracy.setText(String.format("%s %.2f m",
 				getString(R.string.gps_accuracy), location.getAccuracy()));
 
 		pace = (double) 1 / (speed * 60 / 1000);
 
-		double lastDistance = distance/1000;
+		double lastDistance = distance / 1000;
 		distance += lastLocation.distanceTo(location);
 
-		int distancetoShow = (int)(distance/1000);
-		//new km
-		if (distancetoShow-(int)lastDistance>0)
-			addMarker(location,distancetoShow);
-		
+		int distancetoShow = (int) (distance / 1000);
+		// new km
+		if (distancetoShow - (int) lastDistance > 0)
+			addMarker(location, distancetoShow);
+
 		synchronized (time) {
 			avgPace = ((double) time / 60) / distance;
 		}
 
-
-
 	}
-	
+
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
 				new LatLng(location.getLatitude(), location.getLongitude()))
@@ -568,10 +541,8 @@ public class ActivityActivity extends FragmentActivity implements
 		marker.showInfoWindow();
 	}
 
-	
-	//this runs on every update
-	private void updateGpsInfo(Location newLocation)
-	{
+	// this runs on every update
+	private void updateGpsInfo(Location newLocation) {
 		// no pause and good gps
 		if (!isPaused
 				&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
@@ -581,22 +552,22 @@ public class ActivityActivity extends FragmentActivity implements
 				lostGPSDialog.dismiss();
 				lostGPSDialog = null;
 			}
-			
+
 			if (!traceWithTime.isEmpty() && !traceWithTime.getLast().isEmpty()) {
 
 				if (mLastLocation == null)
 					Log.e("Location_info",
 							"Shouldn't be here, mLastLocation is null");
 
-				
 				countData(newLocation, mLastLocation);
 			}
 			if (traceWithTime.isEmpty())
-				traceWithTime.add(new LinkedList<Pair<Location,Long>>());
+				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
 			updateData(DataTextView1, dataTextView1Content);
 			updateData(DataTextView2, dataTextView2Content);
 			synchronized (time) {
-				traceWithTime.getLast().add(new Pair<Location, Long>(newLocation,time));
+				traceWithTime.getLast().add(
+						new Pair<Location, Long>(newLocation, time));
 			}
 		} else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
 			// TODO make progress dialog, waiting for gps
@@ -604,13 +575,13 @@ public class ActivityActivity extends FragmentActivity implements
 		}
 		mLastLocation = newLocation;
 	}
-	
+
 	@Override
 	protected void onPause() {
 		beepPlayer.stopPlayer();
 		super.onPause();
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -657,8 +628,7 @@ public class ActivityActivity extends FragmentActivity implements
 						.getParcelableExtra("Location");
 
 				updateGpsInfo(newLocation);
-				
-				
+
 				break;
 			}
 		}

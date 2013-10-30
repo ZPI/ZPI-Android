@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.ActivityActivity;
 import com.pwr.zpi.MainScreenActivity;
 import com.pwr.zpi.R;
+import com.pwr.zpi.database.Database;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 
 public class MyLocationListener extends Service implements LocationListener,
@@ -90,6 +91,8 @@ public class MyLocationListener extends Service implements LocationListener,
 		else
 			gpsStatus = MainScreenActivity.GPS_WORKING;
 
+		Database db = new Database(this);
+		
 		return gpsStatus;
 	}
 

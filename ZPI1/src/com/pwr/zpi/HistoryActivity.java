@@ -8,11 +8,14 @@ import java.util.List;
 import com.pwr.zpi.adapters.RunAdapter;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.utils.Pair;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -46,8 +49,12 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
 	public static final String ID_TAG = "id";
 	List<SingleRun> run_data;
-	
+
 	private TabHost tabHost;
+
+	// context item stuff
+	AdapterContextMenuInfo info;
+	RunAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +63,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 
 		addListeners();
 
-		//changing order brakes the proper work of context menu
+		// changing order brakes the proper work of context menu
 		tabHost = (TabHost) findViewById(R.id.tabhostHistory);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
@@ -189,8 +196,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.delete_action_menuitem:
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-			RunAdapter adapter = null; //when adapters will change use interface here ;)
+			info = (AdapterContextMenuInfo) item.getMenuInfo();
+			adapter = null; // when adapters will change use interface here ;)
 			switch (tabHost.getCurrentTab()) {
 			case 0:
 				adapter = (RunAdapter) listViewThisWeek.getAdapter();
@@ -205,11 +212,23 @@ public class HistoryActivity extends Activity implements GestureListener,
 				break;
 			}
 			if (adapter != null) {
-				SingleRun toDelete = adapter.getItem(info.position);
-				adapter.remove(toDelete);
-				Database db = new Database(this);
-				db.deleteRun(toDelete.getRunID());
-				db.close();
+				MyDialog dialog = new MyDialog();
+				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+
+					// romove
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						SingleRun toDelete = adapter.getItem(info.position);
+						adapter.remove(toDelete);
+						Database db = new Database(HistoryActivity.this);
+						db.deleteRun(toDelete.getRunID());
+						db.close();
+					}
+				};
+				dialog.showAlertDialog(this, R.string.dialog_message_romve,
+						R.string.empty_string, android.R.string.yes,
+						android.R.string.no, positiveButtonHandler, null);
+
 			}
 			break;
 		default:
