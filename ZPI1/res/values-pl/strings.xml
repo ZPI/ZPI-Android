@@ -57,16 +57,22 @@
     <string name="wormup">Rozgrzewka</string>
     <string name="add_new">Dodaj nową</string>
     <string name="actions">Akcja</string>
-    <string name="name">Imię</string>
+    <string name="name">Nazwa</string>
     <string name="select_workout">Wybierz ten trening</string>
     <string name="slow">Wolno</string>
-    <string name="steady">Steady</string>
+    <string name="steady">Średnio</string>
     <string name="fast">Szybko</string>
     <string name="splits">Międzyczasy</string>
     <string name="charts">Wykresy</string>
     <string name="this_week">Ten tydzień</string>
     <string name="this_month">Ten miesiąc</string>
     <string name="all">Wszystko</string>
+    <string name="distansAndTime">Dystans \ni czas</string>
+	<string name="distansAndPace">Dystans \ni tempo</string>
+	<string name="timeAndPace">Czas \ni tempo</string>
+	<string name="add_action">Dodaj tę akcję</string>
+	<string name="interval">Interwał</string>
+	<string name="virtual_partner">Wirtualny \npartner</string>
 
     <!-- chart strings -->
     <string name="chart_title">Dane biegów</string>
@@ -89,5 +95,6 @@
     <string name="empty_string"></string>
     <string name="no_history_info">Brak historii aktywności</string>
 	<string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
+	<string name="colon">:</string>
 
 </resources>
