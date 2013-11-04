@@ -99,7 +99,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 	public void onClick(View v) {
 		if (v == newWorkoutButton)
 		{
-			startActivity(new Intent(PlaningActivity.this, WorkoutsActivity.class));
+			startActivity(new Intent(PlaningActivity.this, NewWorkoutActivity.class));
 		}
 		
 	}

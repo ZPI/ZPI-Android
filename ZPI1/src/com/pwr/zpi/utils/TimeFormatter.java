@@ -37,6 +37,7 @@ public class TimeFormatter {
 		double rest = pace - (int) pace;
 		rest = rest * 60;
 		int hours = (int) (pace / 60);
+		pace -= hours * 60;
 		if (hours == 0) return String.format("%d:%02d", (int) pace, (int) rest);
 		else return String.format("%02d:%02d:%02d", hours, (int) pace, (int) rest);
 		

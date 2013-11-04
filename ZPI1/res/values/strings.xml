@@ -42,14 +42,18 @@
     <string name="height_max">Max Height</string>
     <string name="height_min">Min Height</string>
     <string name="dashes">-:--</string>
+    <string name="dashes2">-,---</string>
 
     <!-- Units -->
     <string name="seconds">s</string>
     <string name="minutes_per_km">min/\nkm</string>
     <string name="km">km</string>
     <string name="km_per_hour">km/\nh</string>
+    <string name="m">m</string>
 
     <!-- workouts -->
+    <string name="workouts">Workout</string>
+    <string name="trening_plans">Trening \nplans</string>
     <string name="new_workout">New workout</string>
     <string name="add_workout">Add this workout</string>
     <string name="zero_times">0 times</string>
@@ -67,7 +71,13 @@
     <string name="this_week">This week</string>
     <string name="this_month">This month</string>
     <string name="all">All</string>
-
+    <string name="distansAndTime">Distance \nand time</string>
+	<string name="distansAndPace">Distance \nand pace</string>
+	<string name="timeAndPace">Time \nand pace</string>
+	<string name="add_action">Add this action</string>
+    <string name="interval">Interval</string>
+	<string name="virtual_partner">Virtual \npartner</string>
+	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
     <string name="chart_ox_distance">Distance</string>
@@ -88,5 +98,6 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">There\'s no activity history</string>
-
+	<string name="notification_message">Activity recording. Click here to open.</string>
+	<string name="colon">:</string>
 </resources>

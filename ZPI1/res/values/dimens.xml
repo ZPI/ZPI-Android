@@ -13,4 +13,8 @@
 	<dimen name="workout_big_margin">80dp</dimen>
 	<dimen name="count_down_timer_size">50dp</dimen>
 	<dimen name="horizontal_line_stroke">2dp</dimen>
+	<dimen name="picker_button_height">35dp</dimen>
+	<dimen name="picker_button_width">57dp</dimen>
+	<dimen name="picker_edit_text_width">63dp</dimen>
+	<dimen name="picker_edit_text_height">40dp</dimen>
 </resources>

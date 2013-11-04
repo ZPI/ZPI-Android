@@ -3,6 +3,8 @@ package com.pwr.zpi;
 import java.util.Calendar;
 import java.util.LinkedList;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +17,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -76,7 +79,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private Polyline traceOnMapObject;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
-	
+	private static final int NOTIFICATION_ID = 1;
 	// measured values
 	double pace;
 	double avgPace;
@@ -121,6 +124,7 @@ public class ActivityActivity extends FragmentActivity implements
 		prepareServiceAndStart();
 		
 		startTimerAfterCountDown();
+		createNotification();
 	}
 	
 	private void initFields() {
@@ -196,6 +200,7 @@ public class ActivityActivity extends FragmentActivity implements
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(
 			mMyServiceReceiver);
 		doUnbindService();
+		destroyNotification();
 		super.onDestroy();
 	}
 	
@@ -604,6 +609,35 @@ public class ActivityActivity extends FragmentActivity implements
 			showAlertDialog();
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	private void createNotification()
+	{
+		NotificationCompat.Builder mBuilder =
+			new NotificationCompat.Builder(this)
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(getResources().getString(R.string.app_name))
+				.setContentText(getResources().getString(R.string.notification_message));
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(this, ActivityActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+			getApplicationContext(),
+			0,
+			resultIntent,
+			PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		mBuilder.setContentIntent(contentIntent);
+		mBuilder.setOngoing(true);
+		NotificationManager mNotificationManager =
+			(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	}
+	
+	private void destroyNotification()
+	{
+		NotificationManager mNotificationManager =
+			(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(NOTIFICATION_ID);
 	}
 	
 	// SERVICE METHODS
