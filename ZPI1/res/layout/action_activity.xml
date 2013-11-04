@@ -32,31 +32,81 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <Button
-                        android:id="@+id/ButtonSteady"
+                    <RelativeLayout
+                        android:id="@+id/RelativeLayout2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="@dimen/workout_big_margin"
-                        android:text="@string/steady" />
+                        android:layout_above="@+id/LinearLayoutTimeDistance"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true" >
+
+                        <Button
+                            android:id="@+id/ButtonSteady"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/steady" />
+
+                        <Button
+                            android:id="@+id/buttonFast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@+id/ButtonSteady"
+                            android:layout_toRightOf="@id/ButtonSteady"
+                            android:text="@string/fast" />
+
+                        <Button
+                            android:id="@+id/buttonSlow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBaseline="@+id/ButtonSteady"
+                            android:layout_toLeftOf="@id/ButtonSteady"
+                            android:text="@string/slow" />
+
+                    </RelativeLayout>
 
                     <Button
-                        android:id="@+id/buttonFast"
+                        android:id="@+id/buttonAddIntervalWorkout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@+id/ButtonSteady"
-                        android:layout_alignBottom="@+id/ButtonSteady"
-                        android:layout_toRightOf="@+id/ButtonSteady"
-                        android:text="@string/fast" />
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:text="@string/add_action" />
 
-                    <Button
-                        android:id="@+id/buttonSlow"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@+id/ButtonSteady"
-                        android:layout_alignBottom="@+id/ButtonSteady"
-                        android:layout_toLeftOf="@+id/ButtonSteady"
-                        android:text="@string/slow" />
+                        android:layout_above="@+id/buttonAddIntervalWorkout"
+                        android:layout_below="@+id/LinearLayoutTimeDistance"
+                        android:layout_marginLeft="@dimen/big_text_size"
+                        android:layout_marginRight="@dimen/big_text_size">
+
+                        <com.pwr.zpi.views.CustomPicker
+                            android:id="@+id/customPickerIntervalPicker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="false"
+                            android:layout_centerVertical="true"
+                            custom:maxValue="999"
+                            custom:minValue="0"
+                             >
+                        </com.pwr.zpi.views.CustomPicker>
+
+                        <TextView
+                            android:id="@+id/TextViewActionUnit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/big_text_size"
+                            android:text="@string/km"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:id="@+id/LinearLayoutTimeDistance"
@@ -64,8 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentRight="true"
-                        android:layout_below="@+id/ButtonSteady"
-                        android:layout_marginTop="54dp" >
+                        android:layout_centerVertical="true" >
 
                         <Button
                             android:id="@+id/buttonTime"
@@ -81,15 +130,6 @@
                             android:layout_weight="1"
                             android:text="@string/distance" />
                     </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/TextViewActionUnit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignRight="@+id/buttonFast"
-                        android:layout_below="@+id/LinearLayoutTimeDistance"
-                        android:layout_marginTop="122dp"
-                        android:text="@string/km" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -153,8 +193,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     custom:maxValue="999"
-                                    custom:minValue="0" 
-                                     >
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -168,10 +207,9 @@
                                     android:id="@+id/customPickerTab1M"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:incrementValue="5"
                                     custom:maxValue="999"
-                                    custom:minValue="0" 
-                                    custom:incrementValue="5" >
-           
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -180,7 +218,6 @@
                                     android:gravity="center"
                                     android:text="@string/m"
                                     android:textAppearance="?android:attr/textAppearanceLarge" />
-
                             </LinearLayout>
 
                             <TextView
@@ -198,9 +235,9 @@
                                     android:id="@+id/customPickerTab1TimeHour"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="23"
-                                    custom:minValue="0" 
-                                    custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -214,9 +251,9 @@
                                     android:id="@+id/customPickerTab1TimeMin"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0"
-                                    custom:digitNumber="2" >
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -230,9 +267,9 @@
                                     android:id="@+id/customPickerTab1TimeSec"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                    custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
                             </LinearLayout>
 
@@ -286,8 +323,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     custom:maxValue="999"
-                                    custom:minValue="0" 
-                                     >
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -301,10 +337,9 @@
                                     android:id="@+id/customPickerTab2M"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:incrementValue="5"
                                     custom:maxValue="999"
-                                    custom:minValue="0" 
-                                    custom:incrementValue="5" >
-           
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -313,8 +348,8 @@
                                     android:gravity="center"
                                     android:text="@string/m"
                                     android:textAppearance="?android:attr/textAppearanceLarge" />
-
                             </LinearLayout>
+
                             <TextView
                                 android:id="@+id/TextViewTab2Pace"
                                 android:layout_width="match_parent"
@@ -330,9 +365,9 @@
                                     android:id="@+id/customPickerTab2PaceMin"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                    custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -346,9 +381,9 @@
                                     android:id="@+id/customPickerTab2PaceSec"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                    custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -424,9 +459,9 @@
                                     android:id="@+id/customPickerTab3TimeMin"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                     custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -440,9 +475,9 @@
                                     android:id="@+id/customPickerTab3TimeSec"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                     custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
                             </LinearLayout>
 
@@ -461,9 +496,9 @@
                                     android:id="@+id/customPickerTab3PaceMin"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                    custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView
@@ -477,9 +512,9 @@
                                     android:id="@+id/customPickerTab3PaceSec"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    custom:digitNumber="2"
                                     custom:maxValue="59"
-                                    custom:minValue="0" 
-                                     custom:digitNumber="2">
+                                    custom:minValue="0" >
                                 </com.pwr.zpi.views.CustomPicker>
 
                                 <TextView

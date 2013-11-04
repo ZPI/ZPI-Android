@@ -52,6 +52,8 @@
     <string name="m">m</string>
 
     <!-- workouts -->
+    <string name="workouts">Workout</string>
+    <string name="trening_plans">Trening \nplans</string>
     <string name="new_workout">New workout</string>
     <string name="add_workout">Add this workout</string>
     <string name="zero_times">0 times</string>
@@ -96,7 +98,6 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">There\'s no activity history</string>
-	<string name="notification_message">Activity recording. Click here to open.</string>
 	<string name="notification_message">Activity recording. Click here to open.</string>
 	<string name="colon">:</string>
 </resources>
