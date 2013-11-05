@@ -50,7 +50,8 @@ public class GeographicalEvaluations {
 	 * @return speed in km / h
 	 */
 	public static double calculateSpeedBetweenPoints(Location location, long time, Location lastLocation, long lastTime) {
-		Log.e("T", countDistance(location, lastLocation) + " - " + (time - lastTime));
-		return countDistance(location, lastLocation) / (time - lastTime) * 1000 * 60 * 60; //TODO check calculation? 
+		double distance = location.distanceTo(lastLocation);
+		Log.e("T", distance + " - " + (time - lastTime));
+		return distance / (time - lastTime) * 1000 * 60 * 60; //TODO check calculation? 
 	}
 }
