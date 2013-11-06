@@ -385,6 +385,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		if (workout.hasNextAction()) {
 			workout.progressWorkout(distance, time);
 			expandableListAdapter.notifyDataSetChanged();
+			expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 		}
 	}
 	
