@@ -7,7 +7,7 @@
     <string name="start">START</string>
     <string name="resume">WZNÓW</string>
     <string name="ustawienia">Ustawienia</string>
-    <string name="gps_enabled">GPS włącząny</string>
+    <string name="gps_enabled">GPS włączony</string>
     <string name="gps_disabled">GPS wyłączony \nwłączyć?</string>
     <string name="dialog_message_on_stop">Czy na pewno chcesz przerwać nagrywanie?</string>
     <string name="dialog_message_low_gps_accuracy">Prszę poczekać na lepszy sygnał GPS</string>
