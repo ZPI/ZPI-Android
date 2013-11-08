@@ -50,13 +50,14 @@
     <string name="km">km</string>
     <string name="km_per_hour">km/\nh</string>
     <string name="m">m</string>
+    <string name="minutes">min</string>
 
     <!-- workouts -->
     <string name="workouts">Workout</string>
     <string name="trening_plans">Trening \nplans</string>
     <string name="new_workout">New workout</string>
     <string name="add_workout">Add this workout</string>
-    <string name="zero_times">0 times</string>
+    <string name="times">times</string>
     <string name="repeat">Repeat</string>
     <string name="wormup">Worm up</string>
     <string name="add_new">Add new</string>

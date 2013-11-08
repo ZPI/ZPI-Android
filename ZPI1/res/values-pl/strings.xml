@@ -54,7 +54,7 @@
     <string name="trening_plans">Plany \ntreningowe</string>
     <string name="new_workout">Nowy trening</string>
     <string name="add_workout">Dodaj trening</string>
-    <string name="zero_times">0 razy</string>
+    <string name="times">razy</string>
     <string name="repeat">Powtórzenia</string>
     <string name="wormup">Rozgrzewka</string>
     <string name="add_new">Dodaj nową</string>

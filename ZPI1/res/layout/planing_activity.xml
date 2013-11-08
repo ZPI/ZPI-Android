@@ -41,6 +41,9 @@
                         android:id="@+id/buttonNewWorkout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:background="@drawable/button_background"
+                        android:padding="@dimen/buttons_padding"
                         android:text="@string/new_workout" />
                     
                 </LinearLayout>
