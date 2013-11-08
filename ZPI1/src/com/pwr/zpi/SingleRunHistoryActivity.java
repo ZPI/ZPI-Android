@@ -1,7 +1,6 @@
 package com.pwr.zpi;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import android.content.Intent;
 import android.location.Location;
@@ -116,10 +115,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 				mMap.setOnCameraChangeListener(null);
 			}
 		});
-		List<LatLng> points = traceOnMapObject.getPoints();
-		if (!points.isEmpty()) {
-			addStartAndFinish(points.get(0),
-				points.get(points.size() - 1));
+		LinkedList<LinkedList<Pair<Location, Long>>> trace = run.getTraceWithTime();
+		
+		if (!trace.isEmpty()) {
+			Location start = trace.getFirst().getFirst().first;
+			Location finish = trace.getLast().getLast().first;
+			addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()),
+				new LatLng(finish.getLatitude(), finish.getLongitude()));
 		}
 		
 	}
