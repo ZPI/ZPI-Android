@@ -1,10 +1,10 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,14 +17,19 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,24 +43,30 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.pwr.zpi.adapters.DrawerWorkoutsAdapter;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
+import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
 import com.pwr.zpi.utils.GeographicalEvaluations;
+import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
-public class ActivityActivity extends FragmentActivity implements
-	OnClickListener {
+public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
 	private GoogleMap mMap;
 	
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
+	private ImageButton workoutDdrawerButton;
 	private TextView DataTextView1;
 	private TextView DataTextView2;
 	private TextView clickedContentTextView;
@@ -79,7 +90,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private Polyline traceOnMapObject;
 	private static final float traceThickness = 5;
 	private static final int traceColor = Color.RED;
-	private static final int NOTIFICATION_ID = 1;
+	
 	// measured values
 	double pace;
 	double avgPace;
@@ -111,6 +122,12 @@ public class ActivityActivity extends FragmentActivity implements
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
 	
+	// workout drawer fields
+	private DrawerWorkoutsAdapter expandableListAdapter;
+	private ExpandableListView expandableListView;
+	private Workout workout;
+	private DrawerLayout drawerLayout;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -124,20 +141,85 @@ public class ActivityActivity extends FragmentActivity implements
 		prepareServiceAndStart();
 		
 		startTimerAfterCountDown();
-		createNotification();
+		Notifications
+		.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
 	}
+	
+	// MOCK
+	private Workout getWorkoutData() {
+		//TODO get workout id from intent
+		Workout w;
+		w = prepareWorkout(30);
+		this.workout = w;
+		return w;
+	}
+	
+	//MOCK FIXME
+	private Workout prepareWorkout(int number) {
+		Workout workout = new Workout();
+		workout.setName("Workout " + number);
+		workout.setRepeatCount(number);
+		workout.setWarmUp(number % 2 == 0);
+		workout.setActions(prepareActions(number));
+		return workout;
+	}
+	
+	private List<WorkoutAction> prepareActions(int number) {
+		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+		//		for (int i = 0; i < number; i++) {
+		//			if (i % 2 == 0) {
+		//				actions.add(prepareSimpleAction(number, i));
+		//			}
+		//			else {
+		//				actions.add(prepareAdvancedAction(number, i));
+		//			}
+		//		}
+		actions.add(new WorkoutActionAdvanced(10000L, 1000D));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 3000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 5000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 1000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		//		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 1000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
+			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
+		return actions;
+	}
+	
+	//END MOCK
 	
 	private void initFields() {
 		stopButton = (Button) findViewById(R.id.stopButton);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
 		resumeButton = (Button) findViewById(R.id.resumeButton);
+		workoutDdrawerButton = (ImageButton) findViewById(R.id.imageButtonWorkoutDrawerButton);
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
 		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
-		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-			.findFragmentById(R.id.map);
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
@@ -170,6 +252,13 @@ public class ActivityActivity extends FragmentActivity implements
 		
 		beepPlayer = new BeepPlayer(this);
 		
+		// drawer initialization
+		expandableListView = (ExpandableListView) findViewById(R.id.left_drawer);
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		expandableListAdapter = new DrawerWorkoutsAdapter(this, getWorkoutData());
+		expandableListView.setAdapter(expandableListAdapter);
+		expandableListView.expandGroup(0);
+		
 		moveSystemControls(mapFragment);
 	}
 	
@@ -177,8 +266,34 @@ public class ActivityActivity extends FragmentActivity implements
 		stopButton.setOnClickListener(this);
 		resumeButton.setOnClickListener(this);
 		pauseButton.setOnClickListener(this);
+		workoutDdrawerButton.setOnClickListener(this);
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
+		
+		expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
+			
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+				return true;
+			}
+		});
+		
+		drawerLayout.setDrawerListener(new DrawerListener() {
+			
+			@Override
+			public void onDrawerStateChanged(int arg0) {}
+			
+			@Override
+			public void onDrawerSlide(View arg0, float arg1) {}
+			
+			@Override
+			public void onDrawerOpened(View arg0) {
+				expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+			}
+			
+			@Override
+			public void onDrawerClosed(View arg0) {}
+		});
 	}
 	
 	private void initDisplayedData() {
@@ -190,17 +305,15 @@ public class ActivityActivity extends FragmentActivity implements
 	
 	private void prepareServiceAndStart() {
 		doBindService();
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-			mMyServiceReceiver,
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMyServiceReceiver,
 			new IntentFilter(MyLocationListener.class.getSimpleName()));
 	}
 	
 	@Override
 	protected void onDestroy() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(
-			mMyServiceReceiver);
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyServiceReceiver);
 		doUnbindService();
-		destroyNotification();
+		Notifications.destroyNotification(this);
 		super.onDestroy();
 	}
 	
@@ -208,6 +321,7 @@ public class ActivityActivity extends FragmentActivity implements
 	private void startTimerAfterCountDown() {
 		handler = new Handler();
 		prepareTimeCountingHandler();
+		pauseButton.setClickable(false);
 		handler.post(new CounterRunnable(COUNT_DOWN_TIME));
 	}
 	
@@ -228,6 +342,7 @@ public class ActivityActivity extends FragmentActivity implements
 					if (x == 0) {
 						countDownTextView.setVisibility(View.GONE);
 						startTime = System.currentTimeMillis();
+						pauseButton.setClickable(true);
 						handler.post(timeHandler);
 					}
 					else {
@@ -254,7 +369,7 @@ public class ActivityActivity extends FragmentActivity implements
 		
 		synchronized (time) {
 			time = System.currentTimeMillis() - startTime - pauseTime;
-			
+			processWorkout();
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -266,17 +381,23 @@ public class ActivityActivity extends FragmentActivity implements
 		handler.postDelayed(timeHandler, 1000);
 	}
 	
+	private void processWorkout() {
+		if (workout.hasNextAction()) {
+			workout.progressWorkout(distance, time);
+			expandableListAdapter.notifyDataSetChanged();
+			expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+		}
+	}
+	
 	// end of timer methods
 	
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 		
 		View zoomControls = mapFragment.getView().findViewById(0x1);
 		
-		if (zoomControls != null
-			&& zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
 			// ZoomControl is inside of RelativeLayout
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls
-				.getLayoutParams();
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
 			
 			// Align it to - parent top|left
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -285,40 +406,29 @@ public class ActivityActivity extends FragmentActivity implements
 			// nie do ko�ca rozumiem t� metod�, trzeba zobaczy� czy u
 			// Ciebie
 			// jest to samo czy nie za bardzo
-			final int margin = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP,
-				getResources().getDimension(R.dimen.zoom_buttons_margin),
-				getResources().getDisplayMetrics());
+			final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
+				.getDimension(R.dimen.zoom_buttons_margin), getResources().getDisplayMetrics());
 			params.setMargins(0, 0, 0, margin);
 		}
 		View locationControls = mapFragment.getView().findViewById(0x2);
 		
-		if (locationControls != null
-			&& locationControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
+		if (locationControls != null && locationControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
 			// ZoomControl is inside of RelativeLayout
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls
-				.getLayoutParams();
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls.getLayoutParams();
 			
 			// Align it to - parent top|left
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			
 			// Update margins, set to 10dp
-			final int margin1 = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP,
-				getResources().getDimension(
-					R.dimen.location_button_margin_top), getResources()
-					.getDisplayMetrics());
-			final int margin2 = (int) TypedValue.applyDimension(
-				TypedValue.COMPLEX_UNIT_DIP,
-				getResources().getDimension(
-					R.dimen.location_button_margin_right),
-				getResources().getDisplayMetrics());
+			final int margin1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
+				.getDimension(R.dimen.location_button_margin_top), getResources().getDisplayMetrics());
+			final int margin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
+				.getDimension(R.dimen.location_button_margin_right), getResources().getDisplayMetrics());
 			params.setMargins(0, margin1, margin2, 0);
 		}
 	}
 	
-	private void initLabels(TextView textViewInitialValue, TextView textView,
-		int meassuredValue) {
+	private void initLabels(TextView textViewInitialValue, TextView textView, int meassuredValue) {
 		switch (meassuredValue) {
 			case distanceID:
 				textView.setText(R.string.distance);
@@ -340,8 +450,8 @@ public class ActivityActivity extends FragmentActivity implements
 		
 	}
 	
-	private void updateLabels(int meassuredValue, TextView labelTextView,
-		TextView unitTextView, TextView contentTextView) {
+	private void updateLabels(int meassuredValue, TextView labelTextView, TextView unitTextView,
+		TextView contentTextView) {
 		switch (meassuredValue) {
 			case distanceID:
 				labelTextView.setText(R.string.distance);
@@ -357,7 +467,7 @@ public class ActivityActivity extends FragmentActivity implements
 				break;
 			case timeID:
 				labelTextView.setText(R.string.time);
-				unitTextView.setText("");
+				unitTextView.setText(R.string.empty_string);
 				break;
 		}
 		
@@ -393,15 +503,12 @@ public class ActivityActivity extends FragmentActivity implements
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
 			}
 		};
-		dialog.showAlertDialog(this, R.string.dialog_message_on_stop,
-			R.string.empty_string, android.R.string.yes,
+		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
 			android.R.string.no, positiveButtonHandler, null);
 	}
 	
 	private void showLostGpsSignalDialog() {
-		lostGPSDialog = ProgressDialog.show(this,
-			getResources().getString(R.string.dialog_message_on_lost_gpsp),
-			null); // TODO strings
+		lostGPSDialog = ProgressDialog.show(this, getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
 		lostGPSDialog.setCancelable(true);
 	}
 	
@@ -441,6 +548,15 @@ public class ActivityActivity extends FragmentActivity implements
 			clickedField = 2;
 			showMeassuredValuesMenu();
 		}
+		else if (v == workoutDdrawerButton) {
+			boolean isOpen = drawerLayout.isDrawerOpen(Gravity.LEFT);
+			if (!isOpen) {
+				drawerLayout.openDrawer(Gravity.LEFT);
+			}
+			else {
+				drawerLayout.closeDrawer(Gravity.LEFT);
+			}
+		}
 		
 	}
 	
@@ -456,15 +572,13 @@ public class ActivityActivity extends FragmentActivity implements
 		// nie ma sensu
 		// kolejno�� w tablicy musi odpowiada� nr ID, tzn 0 - dystans itp.
 		
-		final CharSequence[] items = { getMyString(R.string.distance),
-			getMyString(R.string.pace), getMyString(R.string.pace_avrage),
-			getMyString(R.string.time) };
+		final CharSequence[] items = { getMyString(R.string.distance), getMyString(R.string.pace),
+			getMyString(R.string.pace_avrage), getMyString(R.string.time) };
 		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int item) {
-				updateLabels(item, clickedLabelTextView, clickedUnitTextView,
-					clickedContentTextView);
+				updateLabels(item, clickedLabelTextView, clickedUnitTextView, clickedContentTextView);
 				if (clickedField == 1) {
 					dataTextView1Content = item;
 				}
@@ -473,13 +587,12 @@ public class ActivityActivity extends FragmentActivity implements
 				}
 			}
 		};
-		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display,
-			R.string.empty_string, R.string.empty_string,
-			R.string.empty_string, null, null, items, itemsHandler);
+		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
+			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
 	}
 	
 	// update display
-	private void updateData(TextView textBox, int meassuredValue) {
+	protected void updateData(TextView textBox, int meassuredValue) {
 		
 		switch (meassuredValue) {
 			case distanceID:
@@ -505,35 +618,28 @@ public class ActivityActivity extends FragmentActivity implements
 				textBox.setText(TimeFormatter.formatTimeHHMMSS(time));
 				break;
 		}
-		
 	}
 	
 	// count everything with 2 last location points
 	private void countData(Location location, Location lastLocation) {
 		
 		Log.i("ActivityActivity", "countData: " + location);
-		LatLng latLng = new LatLng(location.getLatitude(),
-			location.getLongitude());
+		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 		
 		traceOnMap.add(latLng);
 		traceOnMapObject.setPoints(traceOnMap.getPoints());
 		
-		CameraPosition cameraPosition = new CameraPosition.Builder()
-			.target(latLng).zoom(17)
+		CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(17)
 			// Sets the zoom
-			.bearing(
-				GeographicalEvaluations.countBearing(location,
-					lastLocation)) // Sets the orientation of the
-									// camera to east
+			.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
+			// camera to east
 			.tilt(60).build(); // Creates a CameraPosition from the builder
-		mMap.animateCamera(CameraUpdateFactory
-			.newCameraPosition(cameraPosition));
+		mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		
 		// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 		
 		float speed = location.getSpeed();
-		GPSAccuracy.setText(String.format("%s %.2f m",
-			getString(R.string.gps_accuracy), location.getAccuracy()));
+		GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
 		
 		pace = (double) 1 / (speed * 60 / 1000);
 		
@@ -549,21 +655,18 @@ public class ActivityActivity extends FragmentActivity implements
 		synchronized (time) {
 			avgPace = ((double) time / 60) / distance;
 		}
-		
 	}
 	
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
-			new LatLng(location.getLatitude(), location.getLongitude()))
-			.title(distance + "km"));
+			new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km"));
 		marker.showInfoWindow();
 	}
 	
 	// this runs on every update
 	private void updateGpsInfo(Location newLocation) {
 		// no pause and good gps
-		if (!isPaused
-			&& newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
+		if (!isPaused && newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
 			// not first point after start or resume
 			
 			if (lostGPSDialog != null) {
@@ -574,8 +677,7 @@ public class ActivityActivity extends FragmentActivity implements
 			if (!traceWithTime.isEmpty() && !traceWithTime.getLast().isEmpty()) {
 				
 				if (mLastLocation == null) {
-					Log.e("Location_info",
-						"Shouldn't be here, mLastLocation is null");
+					Log.e("Location_info", "Shouldn't be here, mLastLocation is null");
 				}
 				
 				countData(newLocation, mLastLocation);
@@ -586,8 +688,7 @@ public class ActivityActivity extends FragmentActivity implements
 			updateData(DataTextView1, dataTextView1Content);
 			updateData(DataTextView2, dataTextView2Content);
 			synchronized (time) {
-				traceWithTime.getLast().add(
-					new Pair<Location, Long>(newLocation, time));
+				traceWithTime.getLast().add(new Pair<Location, Long>(newLocation, time));
 			}
 		}
 		else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
@@ -609,35 +710,6 @@ public class ActivityActivity extends FragmentActivity implements
 			showAlertDialog();
 		}
 		return super.onKeyDown(keyCode, event);
-	}
-	
-	private void createNotification()
-	{
-		NotificationCompat.Builder mBuilder =
-			new NotificationCompat.Builder(this)
-				.setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle(getResources().getString(R.string.app_name))
-				.setContentText(getResources().getString(R.string.notification_message));
-		// Creates an explicit intent for an Activity in your app
-		Intent resultIntent = new Intent(this, ActivityActivity.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(
-			getApplicationContext(),
-			0,
-			resultIntent,
-			PendingIntent.FLAG_UPDATE_CURRENT);
-		
-		mBuilder.setContentIntent(contentIntent);
-		mBuilder.setOngoing(true);
-		NotificationManager mNotificationManager =
-			(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-	}
-	
-	private void destroyNotification()
-	{
-		NotificationManager mNotificationManager =
-			(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNotificationManager.cancel(NOTIFICATION_ID);
 	}
 	
 	// SERVICE METHODS
@@ -668,14 +740,12 @@ public class ActivityActivity extends FragmentActivity implements
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.i("Service_info", "onReceive");
-			int messageType = intent
-				.getIntExtra(MyLocationListener.MESSAGE, -1);
+			int messageType = intent.getIntExtra(MyLocationListener.MESSAGE, -1);
 			switch (messageType) {
 				case MyLocationListener.MSG_SEND_LOCATION:
 					Log.i("Service_info", "ActivityActivity: got Location");
 					
-					Location newLocation = (Location) intent
-						.getParcelableExtra("Location");
+					Location newLocation = (Location) intent.getParcelableExtra("Location");
 					
 					updateGpsInfo(newLocation);
 					
