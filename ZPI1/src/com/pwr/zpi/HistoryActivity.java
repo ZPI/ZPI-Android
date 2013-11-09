@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -232,7 +231,6 @@ public class HistoryActivity extends Activity implements GestureListener,
 			intent.putExtra(ID_TAG, selectedValue.getRunID());
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
-			Log.e("S", "not started");
 		}
 	}
 	

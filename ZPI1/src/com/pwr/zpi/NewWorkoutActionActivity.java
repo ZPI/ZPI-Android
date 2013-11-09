@@ -209,195 +209,185 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 		//if tab has changed
 		if (buttonActual != v && buttonActionTypeActual != v && buttonSpeedTypeActual != v)
 		{
+			switch (v.getId())
+			{
+				case R.id.tabButtonDistanceTime:
+					scrollViewActual.setVisibility(View.GONE);
+					buttonDistanceTime.setSelected(true);
+					buttonActual.setSelected(false);
+					scrollViewDistanceTime.setVisibility(View.VISIBLE);
+					buttonActual = buttonDistanceTime;
+					scrollViewActual = scrollViewDistanceTime;
+					break;
+				case R.id.tabButtonDistancePace:
+					scrollViewActual.setVisibility(View.GONE);
+					buttonActual.setSelected(false);
+					buttonDistancePace.setSelected(true);
+					scrollViewDistancePace.setVisibility(View.VISIBLE);
+					buttonActual = buttonDistancePace;
+					scrollViewActual = scrollViewDistancePace;
+					break;
+				case R.id.tabButtonTimePace:
+					scrollViewActual.setVisibility(View.GONE);
+					buttonActual.setSelected(false);
+					buttonTimePace.setSelected(true);
+					scrollViewTimePace.setVisibility(View.VISIBLE);
+					buttonActual = buttonTimePace;
+					scrollViewActual = scrollViewTimePace;
+					break;
+				case R.id.buttonTab1Add:
+					WorkoutActionAdvanced action = new WorkoutActionAdvanced(timeTab1, distanceTab1 * 1000);
+					Intent returnIntent = new Intent();
+					returnIntent.putExtra(WorkoutAction.TAG, action);
+					setResult(RESULT_OK, returnIntent);
+					finish();
+					break;
+				case R.id.buttonTab2Add:
+					action = new WorkoutActionAdvanced(distanceTab2 * 1000, paceTab2);
+					returnIntent = new Intent();
+					returnIntent.putExtra(WorkoutAction.TAG, action);
+					setResult(RESULT_OK, returnIntent);
+					finish();
+					break;
+				case R.id.buttonTab3Add:
+					action = new WorkoutActionAdvanced(paceTab3, timeTab3);
+					returnIntent = new Intent();
+					returnIntent.putExtra(WorkoutAction.TAG, action);
+					setResult(RESULT_OK, returnIntent);
+					finish();
+					break;
+				case R.id.buttonSlow:
+					buttonSpeedTypeActual.setSelected(false);
+					buttonActionSpeedTypeSlow.setSelected(true);
+					buttonSpeedTypeActual = buttonActionSpeedTypeSlow;
+					break;
+				case R.id.buttonSteady:
+					buttonSpeedTypeActual.setSelected(false);
+					buttonActionSpeedTypeSteady.setSelected(true);
+					buttonSpeedTypeActual = buttonActionSpeedTypeSteady;
+					break;
+				case R.id.buttonFast:
+					buttonSpeedTypeActual.setSelected(false);
+					buttonActionSpeedTypeFast.setSelected(true);
+					buttonSpeedTypeActual = buttonActionSpeedTypeFast;
+					break;
+				case R.id.buttonDistance:
+					buttonActionTypeActual.setSelected(false);
+					buttonActionTypeDistance.setSelected(true);
+					buttonActionTypeActual = buttonActionTypeDistance;
+					distanceChooser.setVisibility(View.VISIBLE);
+					timeChooser.setVisibility(View.GONE);
+					break;
+				case R.id.buttonTime:
+					buttonActionTypeActual.setSelected(false);
+					buttonActionTypeTime.setSelected(true);
+					buttonActionTypeActual = buttonActionTypeTime;
+					distanceChooser.setVisibility(View.GONE);
+					timeChooser.setVisibility(View.VISIBLE);
+					break;
+				case R.id.buttonAddIntervalWorkout:
+					int speedType = 0;
+					int valueType = 0;
+					double value = 0;
+					switch (buttonActionTypeActual.getId())
+					{
+						case R.id.buttonDistance:
+							valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE;
+							value = pickerKm.getValue() * 1000 + (double) (pickerM.getValue());
+							break;
+						case R.id.buttonTime:
+							valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME;
+							value = pickerHours.getValue() * MILINSECONDS_IN_HOUR + pickerMinutes.getValue()
+								* MILINSECONDS_IN_MINUTE + pickerSec.getValue() * MILINSECONDS_IN_SECOND;
+							
+							break;
+					}
+					
+					switch (buttonSpeedTypeActual.getId())
+					{
+						case R.id.buttonSlow:
+							speedType = WorkoutAction.ACTION_SIMPLE_SPEED_SLOW;
+							break;
+						case R.id.buttonSteady:
+							speedType = WorkoutAction.ACTION_SIMPLE_SPEED_STEADY;
+							break;
+						case R.id.buttonFast:
+							speedType = WorkoutAction.ACTION_SIMPLE_SPEED_FAST;
+							break;
+					}
+					
+					WorkoutActionSimple actionSimple = new WorkoutActionSimple(speedType, valueType, value);
+					returnIntent = new Intent();
+					returnIntent.putExtra(WorkoutAction.TAG, actionSimple);
+					setResult(RESULT_OK, returnIntent);
+					finish();
+					break;
+			}
 			
-			if (v == buttonDistanceTime)
-			{
-				scrollViewActual.setVisibility(View.GONE);
-				buttonDistanceTime.setSelected(true);
-				buttonActual.setSelected(false);
-				scrollViewDistanceTime.setVisibility(View.VISIBLE);
-				buttonActual = buttonDistanceTime;
-				scrollViewActual = scrollViewDistanceTime;
-			}
-			else if (v == buttonDistancePace)
-			{
-				scrollViewActual.setVisibility(View.GONE);
-				buttonActual.setSelected(false);
-				buttonDistancePace.setSelected(true);
-				scrollViewDistancePace.setVisibility(View.VISIBLE);
-				buttonActual = buttonDistancePace;
-				scrollViewActual = scrollViewDistancePace;
-			}
-			else if (v == buttonTimePace)
-			{
-				scrollViewActual.setVisibility(View.GONE);
-				buttonActual.setSelected(false);
-				buttonTimePace.setSelected(true);
-				scrollViewTimePace.setVisibility(View.VISIBLE);
-				buttonActual = buttonTimePace;
-				scrollViewActual = scrollViewTimePace;
-			}
-			else if (v == buttonTab1Add)
-			{
-				WorkoutActionAdvanced action = new WorkoutActionAdvanced(timeTab1, distanceTab1);
-				Intent returnIntent = new Intent();
-				returnIntent.putExtra(WorkoutAction.TAG, action);
-				setResult(RESULT_OK, returnIntent);
-				finish();
-				
-			}
-			else if (v == buttonTab2Add)
-			{
-				WorkoutActionAdvanced action = new WorkoutActionAdvanced(distanceTab2, paceTab2);
-				Intent returnIntent = new Intent();
-				returnIntent.putExtra(WorkoutAction.TAG, action);
-				setResult(RESULT_OK, returnIntent);
-				finish();
-			}
-			else if (v == buttonTab3Add)
-			{
-				WorkoutActionAdvanced action = new WorkoutActionAdvanced(paceTab3, timeTab3);
-				Intent returnIntent = new Intent();
-				returnIntent.putExtra(WorkoutAction.TAG, action);
-				setResult(RESULT_OK, returnIntent);
-				finish();
-			}
-			else if (v == buttonActionSpeedTypeSlow)
-			{
-				buttonSpeedTypeActual.setSelected(false);
-				buttonActionSpeedTypeSlow.setSelected(true);
-				buttonSpeedTypeActual = buttonActionSpeedTypeSlow;
-			}
-			else if (v == buttonActionSpeedTypeSteady)
-			{
-				buttonSpeedTypeActual.setSelected(false);
-				buttonActionSpeedTypeSteady.setSelected(true);
-				buttonSpeedTypeActual = buttonActionSpeedTypeSteady;
-			}
-			else if (v == buttonActionSpeedTypeFast)
-			{
-				buttonSpeedTypeActual.setSelected(false);
-				buttonActionSpeedTypeFast.setSelected(true);
-				buttonSpeedTypeActual = buttonActionSpeedTypeFast;
-			}
-			else if (v == buttonActionTypeDistance)
-			{
-				buttonActionTypeActual.setSelected(false);
-				buttonActionTypeDistance.setSelected(true);
-				buttonActionTypeActual = buttonActionTypeDistance;
-				distanceChooser.setVisibility(View.VISIBLE);
-				timeChooser.setVisibility(View.GONE);
-			}
-			else if (v == buttonActionTypeTime)
-			{
-				buttonActionTypeActual.setSelected(false);
-				buttonActionTypeTime.setSelected(true);
-				buttonActionTypeActual = buttonActionTypeTime;
-				distanceChooser.setVisibility(View.GONE);
-				timeChooser.setVisibility(View.VISIBLE);
-			}
-			else if (v == buttonAddInterval)
-			{
-				int speedType = 0;
-				int valueType = 0;
-				double value = 0;
-				if (buttonActionTypeActual == buttonActionTypeDistance)
-				{
-					valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE;
-					value = pickerKm.getValue() + (double) (pickerM.getValue()) / 1000;
-				}
-				else if (buttonActionTypeActual == buttonActionTypeTime)
-				{
-					valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME;
-					value = pickerHours.getValue() * MILINSECONDS_IN_HOUR + pickerMinutes.getValue()
-						* MILINSECONDS_IN_MINUTE + pickerSec.getValue() * MILINSECONDS_IN_SECOND;
-				}
-				if (buttonSpeedTypeActual == buttonActionSpeedTypeSlow)
-				{
-					speedType = WorkoutAction.ACTION_SIMPLE_SPEED_SLOW;
-				}
-				else if (buttonSpeedTypeActual == buttonActionSpeedTypeSteady)
-				{
-					speedType = WorkoutAction.ACTION_SIMPLE_SPEED_STEADY;
-				}
-				else if (buttonSpeedTypeActual == buttonActionSpeedTypeFast)
-				{
-					speedType = WorkoutAction.ACTION_SIMPLE_SPEED_FAST;
-				}
-				WorkoutActionSimple action = new WorkoutActionSimple(speedType, valueType, value);
-				Intent returnIntent = new Intent();
-				returnIntent.putExtra(WorkoutAction.TAG, action);
-				setResult(RESULT_OK, returnIntent);
-				finish();
-			}
 		}
 	}
 	
 	@Override
 	public void afterTextChanged(Editable s) {
-		//tab1
-		if (buttonActual == buttonDistanceTime)
-		{
-			double seconds = pickerTab1TimeSec.getValue();
-			double distanceInKm = pickerTab1DistanceKm.getValue() + (double) (pickerTab1DistanceM.getValue()) / 1000;
-			distanceTab1 = distanceInKm;
-			double timeInMinutes = pickerTab1TimeHours.getValue() * MINUTES_IN_HOUR
-				+ pickerTab1TimeMin.getValue() +
-				seconds / SECOND_IN_MINUTE;
-			timeTab1 = (long) (timeInMinutes * MILINSECONDS_IN_MINUTE);
-			
-			if (distanceInKm != 0)
-			{
-				buttonTab1Add.setEnabled(true);
-				double pace = timeInMinutes / distanceInKm;
-				//paceTab1 = pace;
-				editTextTab1Pace.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace) + " min/km");
-				
-			}
-			else {
-				buttonTab1Add.setEnabled(false);
-				editTextTab1Pace.setText(getResources().getString(R.string.dashes) + " min/km");
-			}
-			
-		}
-		//tab2
-		else if (buttonActual == buttonDistancePace)
-		{
-			
-			double distanceInKm = pickerTab2DistanceKm.getValue() + (double) (pickerTab2DistanceM.getValue()) / 1000;
-			distanceTab2 = distanceInKm;
-			long paceInMilisecondsPerKm = pickerTab2PaceMin.getValue() * MILINSECONDS_IN_MINUTE
-				+ pickerTab2PaceSec.getValue() * MILINSECONDS_IN_SECOND;
-			paceTab2 = paceInMilisecondsPerKm / MILINSECONDS_IN_MINUTE;
-			long timeInMiliseconds = (long) (paceInMilisecondsPerKm * distanceInKm);
-			//timeTab2 = timeInMiliseconds;
-			editTextTab2Time.setText(TimeFormatter.formatTimeHHMMSS(timeInMiliseconds));
-		}
-		//tab3
-		else if (buttonActual == buttonTimePace)
-		{
-			double seconds = pickerTab3PaceSec.getValue();
-			double paceInMinutesPerKm = pickerTab3PaceMin.getValue() + seconds
-				/ SECOND_IN_MINUTE;
-			paceTab3 = paceInMinutesPerKm;
-			seconds = pickerTab3TimeSec.getValue();
-			double timeInMinutes = pickerTab3TimeHours.getValue() * MINUTES_IN_HOUR
-				+ pickerTab3TimeMin.getValue() +
-				(seconds) / SECOND_IN_MINUTE;
-			timeTab3 = (long) (timeInMinutes * MILINSECONDS_IN_MINUTE);
-			if (paceInMinutesPerKm != 0)
-			{
-				buttonTab3Add.setEnabled(true);
-				double distance = timeInMinutes / paceInMinutesPerKm;
-				//distanceTab3 = distance;
-				editTextTab3Distance.setText(String.format("%.3fkm", distance));
-			}
-			else {
-				buttonTab3Add.setEnabled(false);
-				editTextTab3Distance.setText(getResources().getString(R.string.dashes2));
-			}
-		}
 		
+		switch (buttonActual.getId())
+		{
+			case R.id.tabButtonDistanceTime:
+				double seconds = pickerTab1TimeSec.getValue();
+				double distanceInKm = pickerTab1DistanceKm.getValue() + (double) (pickerTab1DistanceM.getValue())
+					/ 1000;
+				distanceTab1 = distanceInKm;
+				double timeInMinutes = pickerTab1TimeHours.getValue() * MINUTES_IN_HOUR
+					+ pickerTab1TimeMin.getValue() +
+					seconds / SECOND_IN_MINUTE;
+				timeTab1 = (long) (timeInMinutes * MILINSECONDS_IN_MINUTE);
+				
+				if (distanceInKm != 0)
+				{
+					buttonTab1Add.setEnabled(true);
+					double pace = timeInMinutes / distanceInKm;
+					//paceTab1 = pace;
+					editTextTab1Pace.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace) + " min/km");
+					
+				}
+				else {
+					buttonTab1Add.setEnabled(false);
+					editTextTab1Pace.setText(getResources().getString(R.string.dashes) + " min/km");
+				}
+				break;
+			case R.id.tabButtonDistancePace:
+				distanceInKm = pickerTab2DistanceKm.getValue() + (double) (pickerTab2DistanceM.getValue()) / 1000;
+				distanceTab2 = distanceInKm;
+				long paceInMilisecondsPerKm = pickerTab2PaceMin.getValue() * MILINSECONDS_IN_MINUTE
+					+ pickerTab2PaceSec.getValue() * MILINSECONDS_IN_SECOND;
+				paceTab2 = paceInMilisecondsPerKm / MILINSECONDS_IN_MINUTE;
+				long timeInMiliseconds = (long) (paceInMilisecondsPerKm * distanceInKm);
+				//timeTab2 = timeInMiliseconds;
+				editTextTab2Time.setText(TimeFormatter.formatTimeHHMMSS(timeInMiliseconds));
+				break;
+			case R.id.tabButtonTimePace:
+				seconds = pickerTab3PaceSec.getValue();
+				double paceInMinutesPerKm = pickerTab3PaceMin.getValue() + seconds
+					/ SECOND_IN_MINUTE;
+				paceTab3 = paceInMinutesPerKm;
+				seconds = pickerTab3TimeSec.getValue();
+				timeInMinutes = pickerTab3TimeHours.getValue() * MINUTES_IN_HOUR
+					+ pickerTab3TimeMin.getValue() +
+					(seconds) / SECOND_IN_MINUTE;
+				timeTab3 = (long) (timeInMinutes * MILINSECONDS_IN_MINUTE);
+				if (paceInMinutesPerKm != 0)
+				{
+					buttonTab3Add.setEnabled(true);
+					double distance = timeInMinutes / paceInMinutesPerKm;
+					//distanceTab3 = distance;
+					editTextTab3Distance.setText(String.format("%.3fkm", distance));
+				}
+				else {
+					buttonTab3Add.setEnabled(false);
+					editTextTab3Distance.setText(getResources().getString(R.string.dashes2));
+				}
+				break;
+		}
 	}
 	
 	@Override

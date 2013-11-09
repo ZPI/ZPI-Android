@@ -72,7 +72,7 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 			WorkoutActionAdvanced advancedAction = (WorkoutActionAdvanced) action;
 			holder.time.setText(TimeFormatter.formatTimeHHMMSS(advancedAction.getTime()));
 			holder.pace.setText(TimeFormatter.formatTimeMMSSorHHMMSS(advancedAction.getPace()));
-			holder.distance.setText(String.format("%.3f", advancedAction.getDistance()));
+			holder.distance.setText(String.format("%.3f", advancedAction.getDistance() / 1000));
 			holder.advancedActionData.setVisibility(View.VISIBLE);
 			holder.simpleActionData.setVisibility(View.GONE);
 			
@@ -99,7 +99,7 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 			switch (valueType)
 			{
 				case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
-					holder.timeOrDistance.setText(String.format("%.3f", simpleAction.getValue()));
+					holder.timeOrDistance.setText(String.format("%.3f", simpleAction.getValue() / 1000));
 					holder.timeOrDistanceDescription.setText(context.getResources().getString(R.string.distance));
 					holder.timeOrDistanceUnit.setText(context.getResources().getString(R.string.km));
 					break;

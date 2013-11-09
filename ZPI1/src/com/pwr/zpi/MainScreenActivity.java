@@ -154,18 +154,21 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		Intent i = new Intent(MainScreenActivity.this, activity);
 		
 		startActivity(i);
-		if (swipeDirection == RIGHT) {
-			overridePendingTransition(R.anim.in_right_anim,
-				R.anim.out_right_anim);
-		}
-		else if (swipeDirection == LEFT) {
-			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
-		}
-		else if (swipeDirection == DOWN) {
-			overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
-		}
-		else if (swipeDirection == UP) {
-			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		switch (swipeDirection)
+		{
+			case RIGHT:
+				overridePendingTransition(R.anim.in_right_anim,
+					R.anim.out_right_anim);
+				break;
+			case LEFT:
+				overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+				break;
+			case DOWN:
+				overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
+				break;
+			case UP:
+				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				break;
 		}
 	}
 	
@@ -279,43 +282,47 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	}
 	
 	private void startActivityIfPossible() {
-		if (gpsStatus == -1) {
-			// Shouldn't be here;
-			Log.e("Service_info", "no gps status info");
+		switch (gpsStatus)
+		{
+			case -1:
+				// Shouldn't be here;
+				Log.e("Service_info", "no gps status info");
+				break;
+			case GPS_NOT_ENABLED:
+				MyDialog dialog = new MyDialog();
+				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						Intent intent = new Intent(
+							android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivity(intent);
+					}
+				};
+				
+				dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
+					R.string.empty_string, android.R.string.yes,
+					android.R.string.no, positiveButtonHandler, null);
+				
+				break;
+			case NO_GPS_SIGNAL:
+				dialog = new MyDialog();
+				positiveButtonHandler = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						
+					}
+				};
+				dialog.showAlertDialog(this,
+					R.string.dialog_message_low_gps_accuracy,
+					R.string.empty_string, android.R.string.ok,
+					R.string.empty_string, positiveButtonHandler, null);
+				break;
+			default:
+				startActivity(ActivityActivity.class, DOWN);
+				break;
+		
 		}
-		else if (gpsStatus == GPS_NOT_ENABLED) {
-			MyDialog dialog = new MyDialog();
-			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					Intent intent = new Intent(
-						android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					startActivity(intent);
-				}
-			};
-			
-			dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
-				R.string.empty_string, android.R.string.yes,
-				android.R.string.no, positiveButtonHandler, null);
-			
-		}
-		else if (gpsStatus == NO_GPS_SIGNAL) {
-			MyDialog dialog = new MyDialog();
-			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					
-				}
-			};
-			dialog.showAlertDialog(this,
-				R.string.dialog_message_low_gps_accuracy,
-				R.string.empty_string, android.R.string.ok,
-				R.string.empty_string, positiveButtonHandler, null);
-			
-		}
-		else {
-			startActivity(ActivityActivity.class, DOWN);
-		}
+		
 	}
 	
 	private void showGoogleServicesDialog(ConnectionResult connectionResult) {
@@ -469,33 +476,35 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		View v = mCurrent;
-		if (v == GPSStatusTextView) {
-			// if gps is not running
-			if (gpsStatus == GPS_NOT_ENABLED) {
-				Intent intent = new Intent(
-					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				startActivity(intent);
-			}
+		switch (mCurrent.getId())
+		{
+			case R.id.textViewGPSIndicator:
+				// if gps is not running
+				if (gpsStatus == GPS_NOT_ENABLED) {
+					Intent intent = new Intent(
+						Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(intent);
+				}
+				break;
+			case R.id.buttonStart:
+				startActivityIfPossible();
+				break;
+			case R.id.buttonHistory:
+				startActivity(HistoryActivity.class, LEFT);
+				break;
+			case R.id.buttonSettings:
+				startActivity(SettingsActivity.class, UP);
+				break;
+			case R.id.buttonPlans:
+				startActivity(PlaningActivity.class, RIGHT);
+				break;
+			case R.id.buttonMusic:
+				startSystemMusicPlayer();
+				break;
+			default:
+				break;
 		}
-		else if (v == startButton) {
-			startActivityIfPossible();
-			
-		}
-		else if (v == historyButton) {
-			startActivity(HistoryActivity.class, LEFT);
-			
-		}
-		else if (v == settingsButton) {
-			startActivity(SettingsActivity.class, UP);
-			
-		}
-		else if (v == planningButton) {
-			startActivity(PlaningActivity.class, RIGHT);
-		}
-		else if (v == musicButton) {
-			startSystemMusicPlayer();
-		}
+		
 	}
 	
 }

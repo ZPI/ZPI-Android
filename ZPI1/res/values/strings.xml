@@ -16,6 +16,9 @@
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
     <string name="dialog_message_romve">Are you sure, you want to remove this activity?</string>
+     <string name="dialog_message_remove_action">Are you sure, you want to remove this action?</string>
+     <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
+ 
     <string name="gps_accuracy">GPS Accuracy:</string>
 
     <!-- meassured values -->

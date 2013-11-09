@@ -25,6 +25,7 @@ public class Workout {
 		this.lastActionDistance = 0;
 		this.lastActionTime = 0;
 		this.howMuchLeft = 0;
+		this.ID = -1;
 	}
 	
 	public long getID() {
@@ -194,8 +195,8 @@ public class Workout {
 			if (getValue) {
 				value = ((WorkoutActionAdvanced) action).getDistance();
 			}
-			sb.append(String.format("%.3f", value / 1000));
-			sb.append("km");
+			sb.append(String.format("%.0f", value));
+			sb.append("m");
 		}
 		else {
 			WorkoutActionSimple simple = (WorkoutActionSimple) action;
@@ -203,8 +204,8 @@ public class Workout {
 				value = simple.getValue();
 			}
 			if (simple.getValueType() == WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE) {
-				sb.append(String.format("%.3f", value / 1000));
-				sb.append("km");
+				sb.append(String.format("%.0f", value));
+				sb.append("m");
 			}
 			else {
 				sb.append(TimeFormatter.formatTimeHHMMSS(value.longValue()));
