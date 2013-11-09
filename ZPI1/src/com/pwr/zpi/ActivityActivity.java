@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -418,7 +417,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// end of timer methods
-	
+	//TODO przesun¹æ ¿eby nie by³y pod innymi ikonami
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 		
 		View zoomControls = mapFragment.getView().findViewById(0x1);
@@ -529,6 +528,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				saveRun();
 				finish();
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				mConnection.sendMessage(MyLocationListener.MSG_STOP);
 			}
 		};
 		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
@@ -555,6 +555,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				pauseStartTime = System.currentTimeMillis();
 				
 				handler.removeCallbacks(timeHandler);
+				mConnection.sendMessage(MyLocationListener.MSG_PAUSE);
 				break;
 			case R.id.resumeButton:
 				isPaused = false;
@@ -563,6 +564,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				pauseTime += System.currentTimeMillis() - pauseStartTime;
 				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
 				handler.post(timeHandler);
+				mConnection.sendMessage(MyLocationListener.MSG_START);
 				break;
 			case R.id.dataRelativeLayout1:
 				clickedContentTextView = DataTextView1;
@@ -744,7 +746,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// SERVICE METHODS
-	private final ServiceConnection mConnection = new MyServiceConnection();
+	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.ACTIVITY);
 	
 	void doBindService() {
 		
@@ -770,7 +772,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("Service_info", "onReceive");
 			int messageType = intent.getIntExtra(MyLocationListener.MESSAGE, -1);
 			switch (messageType) {
 				case MyLocationListener.MSG_SEND_LOCATION:

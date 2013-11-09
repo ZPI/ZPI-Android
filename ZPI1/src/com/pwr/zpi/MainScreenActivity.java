@@ -127,7 +127,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+		if (!mIsBound) {
+			doBindService();
+		}
 		askForGpsStatus();
 	}
 	
@@ -374,20 +376,24 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	// SERVICE METHODS
 	private void askForGpsStatus() {
-		try {
-			Message msg = Message.obtain(null,
-				MyLocationListener.MSG_ASK_FOR_GPS);
-			if (mConnection.getmService() != null) {
-				mConnection.getmService().send(msg);
+		if (mIsBound)
+		{
+			try {
+				
+				Message msg = Message.obtain(null,
+					MyLocationListener.MSG_ASK_FOR_GPS);
+				if (mConnection.getmService() != null) {
+					mConnection.getmService().send(msg);
+				}
 			}
-		}
-		catch (RemoteException e) {
-			
+			catch (RemoteException e) {
+				
+			}
 		}
 		
 	}
 	
-	private final MyServiceConnection mConnection = new MyServiceConnection();
+	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.MAIN_SCREEN);
 	
 	void doStartService() {
 		Log.i("Service_info", "Main Screen --> start service");
@@ -428,48 +434,55 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("Service_info", "onReceive");
-			
-			// Extract data included in the Intent
-			int message_type = intent.getIntExtra(MyLocationListener.MESSAGE,
-				-1);
-			
-			switch (message_type) {
-				case MyLocationListener.MSG_SEND_LOCATION:
-					Log.i("Service_info", "got Location");
-					isConnected = true;
-					mLastLocation = (Location) intent
-						.getParcelableExtra("Location");
-					showGPSAccuracy(mLastLocation.getAccuracy());
-					askForGpsStatus();
-					
-					break;
-				case MyLocationListener.MSG_ASK_FOR_GPS:
-					gpsStatus = intent.getIntExtra("gpsStatus", GPS_NOT_ENABLED);
-					Log.i("Service_info", "gotGpsStatus: " + gpsStatus);
-					switch (gpsStatus) {
-						case GPS_NOT_ENABLED:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_disabled));
-							break;
-						case NO_GPS_SIGNAL:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_enabled));
-							break;
-						case GPS_WORKING:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_enabled));
-							break;
-					}
-					break;
-				case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
-					Log.i("Service_info", "show Google services dialog");
-					int errorCode = intent.getIntExtra("status_code", -1);
-					PendingIntent pendingIntent = intent
-						.getParcelableExtra("pending_intent");
-					showGoogleServicesDialog(new ConnectionResult(errorCode,
-						pendingIntent));
-					break;
+			if (mIsBound)
+			{
+				// Extract data included in the Intent
+				int message_type = intent.getIntExtra(MyLocationListener.MESSAGE,
+					-1);
+				
+				switch (message_type) {
+					case MyLocationListener.MSG_SEND_LOCATION:
+						Log.i("Service_info", "MainScreen-got Location");
+						isConnected = true;
+						mLastLocation = (Location) intent
+							.getParcelableExtra("Location");
+						showGPSAccuracy(mLastLocation.getAccuracy());
+						askForGpsStatus();
+						
+						break;
+					case MyLocationListener.MSG_ASK_FOR_GPS:
+						gpsStatus = intent.getIntExtra("gpsStatus", GPS_NOT_ENABLED);
+						Log.i("Service_info", "MainScreen-gotGpsStatus: " + gpsStatus);
+						switch (gpsStatus) {
+							case GPS_NOT_ENABLED:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_disabled));
+								break;
+							case NO_GPS_SIGNAL:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_enabled));
+								break;
+							case GPS_WORKING:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_enabled));
+								break;
+						}
+						break;
+					case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
+						Log.i("Service_info", "show Google services dialog");
+						int errorCode = intent.getIntExtra("status_code", -1);
+						PendingIntent pendingIntent = intent
+							.getParcelableExtra("pending_intent");
+						showGoogleServicesDialog(new ConnectionResult(errorCode,
+							pendingIntent));
+						break;
+					case MyLocationListener.MSG_START:
+						doUnbindService();
+						break;
+					case MyLocationListener.MSG_STOP:
+						doBindService();
+						break;
+				}
 			}
 		}
 	};
