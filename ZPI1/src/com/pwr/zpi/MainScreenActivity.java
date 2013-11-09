@@ -146,7 +146,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return gestureListener.onTouch(null, event);
+		return gestureListener.onTouch(mCurrent, event);
 	}
 	
 	private void startActivity(Class<? extends Activity> activity,
