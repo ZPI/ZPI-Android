@@ -38,6 +38,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	OnItemClickListener {
 	
 	GestureDetector gestureDetector;
+	MyGestureDetector myGestureDetector;
 	private View.OnTouchListener gestureListener;
 	private ListView listViewThisWeek;
 	private ListView listViewThisMonth;
@@ -53,7 +54,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final int FILTER_WEEK = 1;
 	
 	private TabHost tabHost;
-	
+	private View mCurrent;
 	// context item stuff
 	AdapterContextMenuInfo info;
 	RunAdapter adapter;
@@ -65,7 +66,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history_activity);
-		
+		prepareGestureListener();
 		initTabs();
 		initList();
 		addListeners();
@@ -155,15 +156,16 @@ public class HistoryActivity extends Activity implements GestureListener,
 			RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayoutNoRunHistory);
 			rl.setVisibility(View.VISIBLE);
 			tabHost.setVisibility(View.GONE);
-			prepareGestureListener();
+			
 		}
 		return runs;
 	}
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		gestureDetector = new GestureDetector(this, new MyGestureDetector(this,
-			false, false, true, false));
+		myGestureDetector = new MyGestureDetector(this,
+			false, false, true, false);
+		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -213,19 +215,25 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewThisWeek.setOnItemClickListener(this);
 		listViewThisMonth.setOnItemClickListener(this);
 		listViewAll.setOnItemClickListener(this);
+		listViewThisWeek.setOnTouchListener(gestureListener);
+		listViewThisMonth.setOnTouchListener(gestureListener);
+		listViewAll.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position,
 		long id) {
-		Intent intent = new Intent(HistoryActivity.this,
-			SingleRunHistoryActivity.class);
-		SingleRun selectedValue = (SingleRun) adapter
-			.getItemAtPosition(position);
-		intent.putExtra(ID_TAG, selectedValue.getRunID());
-		startActivity(intent);
-		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
-		Log.e("S", "not started");
+		if (!myGestureDetector.isFlingDetected())
+		{
+			Intent intent = new Intent(HistoryActivity.this,
+				SingleRunHistoryActivity.class);
+			SingleRun selectedValue = (SingleRun) adapter
+				.getItemAtPosition(position);
+			intent.putExtra(ID_TAG, selectedValue.getRunID());
+			startActivity(intent);
+			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+			Log.e("S", "not started");
+		}
 	}
 	
 	@Override
@@ -293,4 +301,11 @@ public class HistoryActivity extends Activity implements GestureListener,
 		}
 		return super.onContextItemSelected(item);
 	}
+	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,8 +35,7 @@ import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.views.VerticalTextView;
 
-public class MainScreenActivity extends FragmentActivity implements
-	OnClickListener, GestureListener {
+public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
@@ -48,7 +46,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	private Button musicButton;
 	private LocationManager service;
 	private int gpsStatus = -1;
-	
+	private View mCurrent;
 	// TODO potem zmieni�
 	// public static MyLocationListener locationListener;
 	
@@ -105,14 +103,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	}
 	
 	private void addListeners() {
-		GPSStatusTextView.setOnClickListener(this);
-		settingsButton.setOnClickListener(this);
-		historyButton.setOnClickListener(this);
-		startButton.setOnClickListener(this);
-		planningButton.setOnClickListener(this);
-		musicButton.setOnClickListener(this);
-		// TODO add listeners to buttons so that swipe will work
-		
 		GPSStatusTextView.setOnTouchListener(gestureListener);
 		settingsButton.setOnTouchListener(gestureListener);
 		historyButton.setOnTouchListener(gestureListener);
@@ -128,6 +118,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				mCurrent = v;
 				return gestureDetector.onTouchEvent(event);
 			}
 		};
@@ -200,37 +191,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	public void onDownToUpSwipe() {
 		startActivity(SettingsActivity.class, UP);
 		
-	}
-	
-	@Override
-	public void onClick(View v) {
-		
-		if (v == GPSStatusTextView) {
-			// if gps is not running
-			if (gpsStatus == GPS_NOT_ENABLED) {
-				Intent intent = new Intent(
-					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				startActivity(intent);
-			}
-		}
-		else if (v == startButton) {
-			startActivityIfPossible();
-			
-		}
-		else if (v == historyButton) {
-			startActivity(HistoryActivity.class, LEFT);
-			
-		}
-		else if (v == settingsButton) {
-			startActivity(SettingsActivity.class, UP);
-			
-		}
-		else if (v == planningButton) {
-			startActivity(PlaningActivity.class, RIGHT);
-		}
-		else if (v == musicButton) {
-			startSystemMusicPlayer();
-		}
 	}
 	
 	private void startSystemMusicPlayer() {
@@ -506,5 +466,36 @@ public class MainScreenActivity extends FragmentActivity implements
 			}
 		}
 	};
+	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		View v = mCurrent;
+		if (v == GPSStatusTextView) {
+			// if gps is not running
+			if (gpsStatus == GPS_NOT_ENABLED) {
+				Intent intent = new Intent(
+					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				startActivity(intent);
+			}
+		}
+		else if (v == startButton) {
+			startActivityIfPossible();
+			
+		}
+		else if (v == historyButton) {
+			startActivity(HistoryActivity.class, LEFT);
+			
+		}
+		else if (v == settingsButton) {
+			startActivity(SettingsActivity.class, UP);
+			
+		}
+		else if (v == planningButton) {
+			startActivity(PlaningActivity.class, RIGHT);
+		}
+		else if (v == musicButton) {
+			startSystemMusicPlayer();
+		}
+	}
 	
 }

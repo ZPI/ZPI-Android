@@ -23,11 +23,13 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
-public class PlaningActivity extends Activity implements GestureListener, OnClickListener, OnItemClickListener {
+public class PlaningActivity extends Activity implements GestureListener, OnClickListener, OnItemClickListener
+{
 	
 	public static final int MY_RESULT_CODE = 2;
 	public static final String WORKOUTS_NUMBER_TAG = "work_count";
 	GestureDetector gestureDetector;
+	MyGestureDetector myGestureDetector;
 	private View.OnTouchListener gestureListener;
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
@@ -35,13 +37,14 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 	private ListView workoutsListView;
 	private ArrayList<Workout> workoutsList;
 	private WorkoutAdapter workoutAdapter;
+	private View mCurrent;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.planing_activity);
 		prepareGestureListener();
-		addListeners();
+		
 		TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
@@ -59,7 +62,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 		workoutsListView = (ListView) findViewById(R.id.listViewWorkouts);
 		workoutsListView.setAdapter(workoutAdapter);
 		newWorkoutButton = (Button) findViewById(R.id.buttonNewWorkout);
-		newWorkoutButton.setOnClickListener(this);
+		//newWorkoutButton.setOnClickListener(this);
+		addListeners();
 	}
 	
 	private ArrayList<Workout> getWorkoutsFromDB()
@@ -78,7 +82,9 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		gestureDetector = new GestureDetector(this, new MyGestureDetector(this, false, false, false, true));
+		myGestureDetector = new MyGestureDetector(this,
+			false, false, false, true);
+		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -87,10 +93,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 		};
 	}
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return gestureListener.onTouch(null, event);
-	}
+	//	@Override
+	//	public boolean onTouchEvent(MotionEvent event) {
+	//		return gestureListener.onTouch(null, event);
+	//	}
 	
 	@Override
 	public void onLeftToRightSwipe() {
@@ -117,22 +123,27 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 	}
 	
 	private void addListeners() {
-		
+		newWorkoutButton.setOnTouchListener(gestureListener);
+		workoutsListView.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
 	public void onClick(View v) {
-		if (v == newWorkoutButton)
-		{
-			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
-			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
-			startActivityForResult(intent, MY_RESULT_CODE);
-		}
-		
+		//		if (v == newWorkoutButton)
+		//		{
+		//			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
+		//			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
+		//			startActivityForResult(intent, MY_RESULT_CODE);
+		//		}
+		//		
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int positon, long id) {
+		if (!myGestureDetector.isFlingDetected())
+		{	
+			
+		}
 		// TODO Auto-generated method stub
 		
 	}
@@ -160,4 +171,17 @@ public class PlaningActivity extends Activity implements GestureListener, OnClic
 			}
 		}
 	}
+	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		View v = mCurrent;
+		if (v == newWorkoutButton)
+		{
+			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
+			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
+			startActivityForResult(intent, MY_RESULT_CODE);
+		}
+		
+	}
+	
 }

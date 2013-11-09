@@ -73,4 +73,9 @@ public class SettingsActivity extends Activity implements GestureListener {
 		
 	}
 	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		
+	}
+	
 }
