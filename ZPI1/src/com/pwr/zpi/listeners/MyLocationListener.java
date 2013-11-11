@@ -209,7 +209,7 @@ public class MyLocationListener extends Service implements LocationListener,
 	
 	@Override
 	public void onCreate() {
-		Log.i("Service_info", "Service created");
+		Log.i("Service_info2", "Service created");
 		mLocationClient = new LocationClient(getApplicationContext(), this,
 			this);
 		mLocationRequest = LocationRequest.create();

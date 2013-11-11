@@ -261,10 +261,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		beepPlayer = new BeepPlayer(this);
 		
 		Intent i = getIntent();
-		long id = i.getLongExtra(PlaningActivity.ID_TAG, -1);
 		expandableListView = (ExpandableListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (id != -1)
+		if (i.hasExtra(PlaningActivity.ID_TAG))
 		{
 			// drawer initialization
 			

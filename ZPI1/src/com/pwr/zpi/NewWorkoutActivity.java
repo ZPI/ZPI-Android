@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -16,23 +18,24 @@ import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.views.CustomPicker;
 
-public class NewWorkoutActivity extends Activity implements OnClickListener {
+public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener {
 	
 	public static final String NAME_TAG = "name";
 	public static final String LIST_TAG = "list";
 	public static final String REPEAT_TAG = "repeat";
 	public static final String WORMUP_TAG = "wormup";
 	
-	public static final int MY_RESULT_CODE = 1;
+	public static final int MY_RESULT_CODE_ADD = 1;
+	public static final int MY_RESULT_CODE_EDIT = 2;
 	private Button addActionButton;
 	private Button addThisWorkoutButton;
 	private EditText workautNameEditText;
 	private ToggleButton isWarmUpToggleButton;
 	private CustomPicker repeatPicker;
-	
+	private int editedPos;
 	ArrayList<WorkoutAction> workoutsActionList;
 	WorkoutActionsAdapter workoutActionAdapter;
-	ListView workautsListView;
+	ListView workoutsListView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +47,15 @@ public class NewWorkoutActivity extends Activity implements OnClickListener {
 	
 	private void initFields()
 	{
-		workautsListView = (ListView) findViewById(R.id.listViewActions);
+		workoutsListView = (ListView) findViewById(R.id.listViewActions);
 		workoutsActionList = new ArrayList<WorkoutAction>();
 		
 		View header = getLayoutInflater().inflate(R.layout.new_workout_header, null);
 		View footer = getLayoutInflater().inflate(R.layout.new_workout_footer, null);
-		workautsListView.addHeaderView(header);
-		workautsListView.addFooterView(footer);
+		workoutsListView.addHeaderView(header);
+		workoutsListView.addFooterView(footer);
 		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workoutsActionList);
-		workautsListView.setAdapter(workoutActionAdapter);
+		workoutsListView.setAdapter(workoutActionAdapter);
 		
 		//all buttons are in header and footer
 		addActionButton = (Button) footer.findViewById(R.id.buttonNewWorkoutAction);
@@ -69,13 +72,14 @@ public class NewWorkoutActivity extends Activity implements OnClickListener {
 	{
 		addActionButton.setOnClickListener(this);
 		addThisWorkoutButton.setOnClickListener(this);
+		workoutsListView.setOnItemClickListener(this);
 	}
 	
 	@Override
 	public void onClick(View v) {
 		if (v == addActionButton)
 		{
-			startActivityForResult(new Intent(this, NewWorkoutActionActivity.class), MY_RESULT_CODE);
+			startActivityForResult(new Intent(this, NewWorkoutActionActivity.class), MY_RESULT_CODE_ADD);
 		}
 		else if (v == addThisWorkoutButton)
 		{
@@ -93,17 +97,37 @@ public class NewWorkoutActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
-		if (requestCode == MY_RESULT_CODE) {
-			
-			if (resultCode == RESULT_OK) {
-				WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
-				workoutsActionList.add(workoutAction);
-				workoutActionAdapter.notifyDataSetChanged();
-			}
-			if (resultCode == RESULT_CANCELED) {
-				//Write your code if there's no result
-			}
+		switch (requestCode) {
+			case MY_RESULT_CODE_ADD:
+				
+				if (resultCode == RESULT_OK) {
+					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
+					workoutsActionList.add(workoutAction);
+					workoutActionAdapter.notifyDataSetChanged();
+				}
+				if (resultCode == RESULT_CANCELED) {
+					//Write your code if there's no result
+				}
+				break;
+			case MY_RESULT_CODE_EDIT:
+				if (resultCode == RESULT_OK) {
+					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
+					workoutsActionList.set(editedPos, workoutAction);
+					workoutActionAdapter.notifyDataSetChanged();
+				}
+				break;
 		}
+	}
+	
+	@Override
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
+		// TODO Auto-generated method stub
+		editedPos = position - 1;
+		Intent intent = new Intent(this, NewWorkoutActionActivity.class);
+		WorkoutAction action = (WorkoutAction) adapter.getItemAtPosition(position);
+		intent.putExtra(WorkoutAction.TAG, action);
+		startActivityForResult(intent, MY_RESULT_CODE_EDIT);
+		
 	}
 	
 }

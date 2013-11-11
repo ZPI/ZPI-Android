@@ -29,6 +29,10 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 	private static final long MILINSECONDS_IN_HOUR = 3600000;
 	private static final long MILINSECONDS_IN_MINUTE = 60000;
 	private static final long MILINSECONDS_IN_SECOND = 1000;
+	private static final int TAB1 = 1;
+	private static final int TAB2 = 2;
+	private static final int TAB3 = 3;
+	private TabHost tabHost;
 	
 	//Interval Action
 	Button buttonActionSpeedTypeSlow;
@@ -98,11 +102,12 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 		initTabs();
 		initFields();
 		addListeners();
+		setDataIfEdit();
 	}
 	
 	private void initTabs()
 	{
-		TabHost tabHost = (TabHost) findViewById(R.id.tabhostActions);
+		tabHost = (TabHost) findViewById(R.id.tabhostActions);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tab1IntervalAction);
@@ -112,6 +117,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 		tabSpecs.setContent(R.id.tab2VirtualPartner);
 		tabSpecs.setIndicator(getResources().getString(R.string.virtual_partner));
 		tabHost.addTab(tabSpecs);
+		
 	}
 	
 	private void initFields()
@@ -212,28 +218,13 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 			switch (v.getId())
 			{
 				case R.id.tabButtonDistanceTime:
-					scrollViewActual.setVisibility(View.GONE);
-					buttonDistanceTime.setSelected(true);
-					buttonActual.setSelected(false);
-					scrollViewDistanceTime.setVisibility(View.VISIBLE);
-					buttonActual = buttonDistanceTime;
-					scrollViewActual = scrollViewDistanceTime;
+					setCurrentVirtualPartnerTab(TAB1);
 					break;
 				case R.id.tabButtonDistancePace:
-					scrollViewActual.setVisibility(View.GONE);
-					buttonActual.setSelected(false);
-					buttonDistancePace.setSelected(true);
-					scrollViewDistancePace.setVisibility(View.VISIBLE);
-					buttonActual = buttonDistancePace;
-					scrollViewActual = scrollViewDistancePace;
+					setCurrentVirtualPartnerTab(TAB2);
 					break;
 				case R.id.tabButtonTimePace:
-					scrollViewActual.setVisibility(View.GONE);
-					buttonActual.setSelected(false);
-					buttonTimePace.setSelected(true);
-					scrollViewTimePace.setVisibility(View.VISIBLE);
-					buttonActual = buttonTimePace;
-					scrollViewActual = scrollViewTimePace;
+					setCurrentVirtualPartnerTab(TAB3);
 					break;
 				case R.id.buttonTab1Add:
 					WorkoutActionAdvanced action = new WorkoutActionAdvanced(timeTab1, distanceTab1 * 1000);
@@ -272,18 +263,10 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 					buttonSpeedTypeActual = buttonActionSpeedTypeFast;
 					break;
 				case R.id.buttonDistance:
-					buttonActionTypeActual.setSelected(false);
-					buttonActionTypeDistance.setSelected(true);
-					buttonActionTypeActual = buttonActionTypeDistance;
-					distanceChooser.setVisibility(View.VISIBLE);
-					timeChooser.setVisibility(View.GONE);
+					setIntervalValueType(WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE);
 					break;
 				case R.id.buttonTime:
-					buttonActionTypeActual.setSelected(false);
-					buttonActionTypeTime.setSelected(true);
-					buttonActionTypeActual = buttonActionTypeTime;
-					distanceChooser.setVisibility(View.GONE);
-					timeChooser.setVisibility(View.VISIBLE);
+					setIntervalValueType(WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME);
 					break;
 				case R.id.buttonAddIntervalWorkout:
 					int speedType = 0;
@@ -293,7 +276,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 					{
 						case R.id.buttonDistance:
 							valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE;
-							value = pickerKm.getValue() * 1000 + (double) (pickerM.getValue());
+							value = pickerKm.getValue() * 1000 + (pickerM.getValue());
 							break;
 						case R.id.buttonTime:
 							valueType = WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME;
@@ -388,6 +371,171 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 				}
 				break;
 		}
+	}
+	
+	private void setIntervalValueType(int type)
+	{
+		switch (type)
+		{
+			case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
+				buttonActionTypeActual.setSelected(false);
+				buttonActionTypeDistance.setSelected(true);
+				buttonActionTypeActual = buttonActionTypeDistance;
+				distanceChooser.setVisibility(View.VISIBLE);
+				timeChooser.setVisibility(View.GONE);
+				break;
+			case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME:
+				buttonActionTypeActual.setSelected(false);
+				buttonActionTypeTime.setSelected(true);
+				buttonActionTypeActual = buttonActionTypeTime;
+				distanceChooser.setVisibility(View.GONE);
+				timeChooser.setVisibility(View.VISIBLE);
+				break;
+		}
+	}
+	
+	//set privious data if we are editing view
+	private void setDataIfEdit()
+	{
+		Intent intent = getIntent();
+		if (intent.hasExtra(WorkoutAction.TAG))
+		{
+			WorkoutAction workoutAction = intent.getParcelableExtra(WorkoutAction.TAG);
+			setTab(workoutAction);
+		}
+	}
+	
+	private void setTab(WorkoutAction action)
+	{
+		if (action.isSimple())
+		{
+			setIntervalTab((WorkoutActionSimple) action);
+		}
+		else if (action.isAdvanced())
+		{
+			setVirtualPartnerTab((WorkoutActionAdvanced) action);
+		}
+		
+	}
+	
+	private void setVirtualPartnerTab(WorkoutActionAdvanced actionAdvanced)
+	{
+		tabHost.setCurrentTab(1);
+		switch (actionAdvanced.getType())
+		{
+		
+			case WorkoutAction.ACTION_ADVANCED_TYPE_TIME_DISTANCE:
+				setCurrentVirtualPartnerTab(TAB1);
+				setDistance(actionAdvanced.getDistance(), pickerTab1DistanceKm, pickerTab1DistanceM);
+				setTime(actionAdvanced.getTime(), pickerTab1TimeHours, pickerTab1TimeMin, pickerTab1TimeSec);
+				editTextTab1Pace.setText(TimeFormatter.formatTimeMMSSorHHMMSS(actionAdvanced.getPace()));
+				break;
+			case WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE:
+				setCurrentVirtualPartnerTab(TAB2);
+				setDistance(actionAdvanced.getDistance(), pickerTab2DistanceKm, pickerTab2DistanceM);
+				setPace(actionAdvanced.getPace(), pickerTab2PaceMin, pickerTab2PaceSec);
+				editTextTab2Time.setText(TimeFormatter.formatTimeHHMMSS(actionAdvanced.getTime()));
+				break;
+			case WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME:
+				setCurrentVirtualPartnerTab(TAB3);
+				setTime(actionAdvanced.getTime(), pickerTab3TimeHours, pickerTab3TimeMin, pickerTab3TimeSec);
+				setPace(actionAdvanced.getPace(), pickerTab3PaceMin, pickerTab3TimeSec);
+				editTextTab3Distance.setText(String.format("%.3f", actionAdvanced.getDistance() / 1000));
+				break;
+		
+		}
+		
+	}
+	
+	private void setCurrentVirtualPartnerTab(int tab)
+	{
+		switch (tab) {
+			case TAB1:
+				scrollViewActual.setVisibility(View.GONE);
+				buttonDistanceTime.setSelected(true);
+				buttonActual.setSelected(false);
+				scrollViewDistanceTime.setVisibility(View.VISIBLE);
+				buttonActual = buttonDistanceTime;
+				scrollViewActual = scrollViewDistanceTime;
+				break;
+			case TAB2:
+				scrollViewActual.setVisibility(View.GONE);
+				buttonActual.setSelected(false);
+				buttonDistancePace.setSelected(true);
+				scrollViewDistancePace.setVisibility(View.VISIBLE);
+				buttonActual = buttonDistancePace;
+				scrollViewActual = scrollViewDistancePace;
+				break;
+			case TAB3:
+				scrollViewActual.setVisibility(View.GONE);
+				buttonActual.setSelected(false);
+				buttonTimePace.setSelected(true);
+				scrollViewTimePace.setVisibility(View.VISIBLE);
+				buttonActual = buttonTimePace;
+				scrollViewActual = scrollViewTimePace;
+				break;
+		}
+	}
+	
+	private void setIntervalTab(WorkoutActionSimple actionSimple)
+	{
+		tabHost.setCurrentTab(0);
+		buttonSpeedTypeActual.setSelected(false);
+		switch (actionSimple.getSpeedType())
+		{
+			case WorkoutAction.ACTION_SIMPLE_SPEED_SLOW:
+				buttonSpeedTypeActual = buttonActionSpeedTypeSlow;
+				break;
+			case WorkoutAction.ACTION_SIMPLE_SPEED_STEADY:
+				buttonSpeedTypeActual = buttonActionSpeedTypeSteady;
+				break;
+			case WorkoutAction.ACTION_SIMPLE_SPEED_FAST:
+				buttonSpeedTypeActual = buttonActionSpeedTypeFast;
+				break;
+		}
+		buttonSpeedTypeActual.setSelected(true);
+		switch (actionSimple.getValueType())
+		{
+			case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
+				setIntervalValueType(WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE);
+				double distance = actionSimple.getValue();
+				setDistance(distance, pickerKm, pickerM);
+				break;
+			case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME:
+				setIntervalValueType(WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME);
+				long time = (long) actionSimple.getValue();
+				setTime(time, pickerHours, pickerMinutes, pickerSec);
+				break;
+		}
+		
+	}
+	
+	private void setTime(long time, CustomPicker pickerHour, CustomPicker pickerMinute, CustomPicker pickerSecond)
+	{
+		int hours = (int) (time / MILINSECONDS_IN_HOUR);
+		int min = (int) ((time % MILINSECONDS_IN_HOUR) / MILINSECONDS_IN_MINUTE);
+		int sec = (int) ((int) (time % MILINSECONDS_IN_MINUTE) / MILINSECONDS_IN_SECOND);
+		pickerHour.setValue(hours);
+		pickerMinute.setValue(min);
+		pickerSecond.setValue(sec);
+	}
+	
+	private void setDistance(double distance, CustomPicker pickerKm, CustomPicker pickerM)
+	{
+		int km = (int) (distance / 1000);
+		int m = (int) distance % 1000;
+		pickerKm.setValue(km);
+		pickerM.setValue(m);
+	}
+	
+	private void setPace(double pace, CustomPicker pickerMinute, CustomPicker pickerSecond)
+	{
+		
+		int min = (int) (pace);
+		int sec = (int) ((pace - (int) pace) * 60);
+		pickerMinute.setValue(min);
+		pickerSecond.setValue(sec);
+		
 	}
 	
 	@Override

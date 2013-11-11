@@ -67,7 +67,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public double getDistance() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME && pace != 0) {
-			distance = time / (pace * 60 * 1000);
+			distance = time / 60 / (pace);
 		}
 		return distance;
 	}
@@ -84,7 +84,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public double getPace() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_TIME_DISTANCE && distance != 0) {
-			pace = time / 1000 / 60 / distance;
+			pace = time / 60 / (distance);
 		}
 		return pace;
 	}
@@ -101,7 +101,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public long getTime() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE) {
-			time = (long) (pace * distance * 60 * 1000);
+			time = (long) (pace * distance * 60);
 		}
 		return time;
 	}
