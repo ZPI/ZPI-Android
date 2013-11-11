@@ -102,4 +102,19 @@
 	<string name="colon">:</string>
 	<string name="workout_actions">Workout actions</string>
 	<string name="done">Done</string>
+	
+	<!-- settings string -->
+	<string name="settings_title">Application settings</string>
+	<string name="key_aplication_sound">sound_app_key</string>
+	<string name="aplication_sound">Enable application sounds</string>
+	<string name="aplication_sound_description">enabled voices on workout</string>
+	<string name="key_auto_pause">auto_pause_key</string>
+	<string name="auto_pause">Enable auto pause</string>
+	<string name="auto_pause_description">enabled auto pause when speed is about zero</string>
+	<string name="key_countdown_before_start">countdown_key</string>
+	<string name="countdown_before_start">Enable countdown before start</string>
+	<string name="countdown_before_start_description">enabled count down before start</string>
+	<string name="key_map_3d">map_key</string>
+	<string name="map_3d">Enable map 3D mode</string>
+	<string name="map_3d_description">enabled 3d mode view or use 2d if not enabled</string>
 </resources>

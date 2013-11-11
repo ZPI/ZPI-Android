@@ -1,7 +1,7 @@
 package com.pwr.zpi;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,7 +9,7 @@ import android.view.View;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
-public class SettingsActivity extends Activity implements GestureListener {
+public class SettingsActivity extends PreferenceActivity implements GestureListener {
 	
 	GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -17,7 +17,10 @@ public class SettingsActivity extends Activity implements GestureListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings_activity);
+		//		setContentView(R.layout.settings_activity);
+		
+		addPreferencesFromResource(R.xml.settings);
+		
 		prepareGestureListener();
 		addListeners();
 	}
@@ -70,7 +73,7 @@ public class SettingsActivity extends Activity implements GestureListener {
 	}
 	
 	private void addListeners() {
-		
+		getListView().setOnTouchListener(gestureListener);
 	}
 	
 }

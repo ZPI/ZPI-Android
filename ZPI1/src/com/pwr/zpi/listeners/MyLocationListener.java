@@ -26,9 +26,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.pwr.zpi.MainScreenActivity;
 
 public class MyLocationListener extends Service implements LocationListener,
-	GooglePlayServicesClient.ConnectionCallbacks,
-	GooglePlayServicesClient.OnConnectionFailedListener,
-	android.location.GpsStatus.Listener {
+GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener,
+android.location.GpsStatus.Listener {
 	
 	// private ActivityActivity activityActivity;
 	// private MainScreenActivity mainScreenActivity;
@@ -73,7 +73,7 @@ public class MyLocationListener extends Service implements LocationListener,
 		}
 		else if (isConnected
 			&& (mLastRecordedLocation == null || mLastRecordedLocation
-				.getAccuracy() > MyLocationListener.REQUIRED_ACCURACY)) {
+			.getAccuracy() > MyLocationListener.REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -168,7 +168,7 @@ public class MyLocationListener extends Service implements LocationListener,
 					intent.putExtra(MESSAGE, MSG_ASK_FOR_GPS);
 					intent.putExtra("gpsStatus", gpsStatus);
 					LocalBroadcastManager.getInstance(MyLocationListener.this)
-						.sendBroadcast(intent);
+					.sendBroadcast(intent);
 					break;
 				default:
 					super.handleMessage(msg);

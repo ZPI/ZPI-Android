@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/settings_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_aplication_sound"
+            android:summary="@string/aplication_sound_description"
+            android:title="@string/aplication_sound" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_auto_pause"
+            android:summary="@string/auto_pause_description"
+            android:title="@string/auto_pause" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_map_3d"
+            android:summary="@string/map_3d_description"
+            android:title="@string/map_3d" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_countdown_before_start"
+            android:summary="@string/countdown_before_start_description"
+            android:title="@string/countdown_before_start" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
