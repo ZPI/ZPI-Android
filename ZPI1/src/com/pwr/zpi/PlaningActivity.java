@@ -57,11 +57,11 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tab1);
-		tabSpecs.setIndicator("Workouts");
+		tabSpecs.setIndicator(getResources().getString(R.string.workouts));
 		tabHost.addTab(tabSpecs);
 		tabSpecs = tabHost.newTabSpec(TAB_SPEC_2_TAG);
 		tabSpecs.setContent(R.id.tab2);
-		tabSpecs.setIndicator("Workouts");
+		tabSpecs.setIndicator(getResources().getString(R.string.trening_plans));
 		tabHost.addTab(tabSpecs);
 		
 		workoutsList = getWorkoutsFromDB();

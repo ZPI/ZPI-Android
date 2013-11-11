@@ -18,6 +18,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.Database;
@@ -37,6 +38,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private View mCurrent;
 	private View.OnTouchListener gestureListener;
 	private Button addThisWorkoutButton;
+	private TextView workoutNameTextView;
 	private AdapterContextMenuInfo info;
 	
 	@Override
@@ -56,7 +58,8 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workout.getActions());
 		actionsListView.setAdapter(actionsAdapter);
 		addThisWorkoutButton = (Button) findViewById(R.id.ButtonChooseWorkout);
-		
+		workoutNameTextView = (TextView) findViewById(R.id.textViewWorkoutName);
+		workoutNameTextView.setText(workout.getName());
 		registerForContextMenu(actionsListView);
 	}
 	
