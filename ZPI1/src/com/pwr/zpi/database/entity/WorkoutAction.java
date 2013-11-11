@@ -31,6 +31,7 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction> {
 	 */
 	public WorkoutAction(int actionType) {
 		this.actionType = actionType;
+		this.ID = -1;
 	}
 	
 	public long getID() {

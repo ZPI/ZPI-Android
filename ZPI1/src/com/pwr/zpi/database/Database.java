@@ -300,20 +300,8 @@ public class Database extends SQLiteOpenHelper {
 			List<WorkoutAction> actions = workout.getActions();
 			int index = 0;
 			for (WorkoutAction workoutAction : actions) {
-				long actionID = -1;
-				int workoutType = -1;
-				if (workoutAction instanceof WorkoutActionSimple) {
-					workoutType = WorkoutAction.ACTION_SIMPLE;
-					actionID = insertSimpleWorkoutAction(db, (WorkoutActionSimple) workoutAction, index);
-				}
-				else if (workoutAction instanceof WorkoutActionAdvanced) {
-					workoutType = WorkoutAction.ACTION_ADVANCED;
-					actionID = insertAdvancedWorkoutAction(db, (WorkoutActionAdvanced) workoutAction, index);
-				}
-				isInsertOK = isInsertOK && actionID != -1;
-				if (isInsertOK) {
-					isInsertOK = insertWorkoutIDActionID(db, workoutID, actionID, workoutType);
-				}
+				
+				isInsertOK = isInsertOK && insertWorkoutAction(db, workoutAction, workoutID, index) != -1;
 				index++;
 			}
 		}
@@ -325,13 +313,39 @@ public class Database extends SQLiteOpenHelper {
 		return isInsertOK;
 	}
 	
+	private long insertWorkoutAction(SQLiteDatabase db, WorkoutAction workoutAction, long workoutID, int index) {
+		long actionID = -1;
+		int workoutType = -1;
+		if (workoutAction instanceof WorkoutActionSimple) {
+			workoutType = WorkoutAction.ACTION_SIMPLE;
+			actionID = insertSimpleWorkoutAction(db, (WorkoutActionSimple) workoutAction, index);
+		}
+		else if (workoutAction instanceof WorkoutActionAdvanced) {
+			workoutType = WorkoutAction.ACTION_ADVANCED;
+			actionID = insertAdvancedWorkoutAction(db, (WorkoutActionAdvanced) workoutAction, index);
+		}
+		boolean isInsertOK = actionID != -1;
+		if (isInsertOK) {
+			isInsertOK = insertWorkoutIDActionID(db, workoutID, actionID, workoutType);
+		}
+		if (!isInsertOK) {
+			actionID = -1;
+		}
+		return actionID;
+	}
+	
 	private long insertWorkoutPart(SQLiteDatabase db, Workout workout) {
+		ContentValues cv = workoutToContentValues(workout);
+		
+		return db.insert(WORKOUTS, null, cv);
+	}
+	
+	private ContentValues workoutToContentValues(Workout workout) {
 		ContentValues cv = new ContentValues();
 		cv.put(WORKOUTS_NAME, workout.getName());
 		cv.put(WORKOUTS_REPEATS, workout.getRepeatCount());
 		cv.put(WORKOUTS_WARM_UP, booleanToInt(workout.isWarmUp()));
-		
-		return db.insert(WORKOUTS, null, cv);
+		return cv;
 	}
 	
 	private int booleanToInt(boolean value) {
@@ -343,24 +357,34 @@ public class Database extends SQLiteOpenHelper {
 	}
 	
 	private long insertSimpleWorkoutAction(SQLiteDatabase db, WorkoutActionSimple workoutAction, int index) {
+		ContentValues cv = simpleWorkoutActionToContentValues(workoutAction, index);
+		
+		return db.insert(ACTIONS_SIMPLE, null, cv);
+	}
+	
+	private ContentValues simpleWorkoutActionToContentValues(WorkoutActionSimple workoutAction, int index) {
 		ContentValues cv = new ContentValues();
 		cv.put(AS_SPEED_TYPE, workoutAction.getSpeedType());
 		cv.put(AS_VALUE_TYPE, workoutAction.getValueType());
 		cv.put(AS_VALUE, workoutAction.getValue());
 		cv.put(AS_ORDER_NUMBER, index);
-		
-		return db.insert(ACTIONS_SIMPLE, null, cv);
+		return cv;
 	}
 	
 	private long insertAdvancedWorkoutAction(SQLiteDatabase db, WorkoutActionAdvanced workoutAction, int index) {
+		ContentValues cv = advancedWorkoutActionToContentValues(workoutAction, index);
+		
+		return db.insert(ACTIONS_ADVANCED, null, cv);
+	}
+	
+	private ContentValues advancedWorkoutActionToContentValues(WorkoutActionAdvanced workoutAction, int index) {
 		ContentValues cv = new ContentValues();
 		cv.put(AA_TYPE, workoutAction.getType());
 		cv.put(AA_DISTANCE_VALUE, workoutAction.getDistance());
 		cv.put(AA_TIME_VALUE, workoutAction.getTime());
 		cv.put(AA_PACE_VALUE, workoutAction.getPace());
 		cv.put(AA_ORDER_NUMBER, index);
-		
-		return db.insert(ACTIONS_ADVANCED, null, cv);
+		return cv;
 	}
 	
 	private boolean insertWorkoutIDActionID(SQLiteDatabase db, long workoutID, long actionID, int workoutType) {
@@ -529,6 +553,76 @@ public class Database extends SQLiteOpenHelper {
 		
 		db.delete(WORKOUTS_ACTIONS, WA_WORKOUT_ID + "=?", new String[] { workoutID + "" });
 		isOK = db.delete(WORKOUTS, WORKOUTS_ID + "=?", new String[] { workoutID + "" }) != 0;
+		db.close();
+		return isOK;
+	}
+	
+	public boolean updateWorkout(Workout workout) {
+		SQLiteDatabase db = getWritableDatabase();
+		boolean isOK;
+		
+		db.beginTransaction();
+		isOK = updateBasicWorkoutInfo(db, workout);
+		isOK = isOK && updateWorkoutActions(db, workout);
+		
+		if (isOK) {
+			db.setTransactionSuccessful();
+		}
+		db.endTransaction();
+		db.close();
+		return isOK;
+	}
+	
+	private boolean updateBasicWorkoutInfo(SQLiteDatabase db, Workout workout) {
+		ContentValues cv = workoutToContentValues(workout);
+		return db.update(WORKOUTS, cv, WORKOUTS_ID + "=?", new String[]{workout.getID()+""}) != 0;
+	}
+	
+	private boolean updateWorkoutActions(SQLiteDatabase db, Workout workout) {
+		boolean isOK = true;
+		int index = 0;
+		for (WorkoutAction action : workout.getActions()) {
+			if (action.getID() == -1) { // new action
+				long actionID = insertWorkoutAction(db, action, workout.getID(), index);
+				isOK = isOK && actionID != -1;
+				isOK = isOK && insertWorkoutIDActionID(db, workout.getID(), actionID, action.getActionType());
+			} else { // updated action
+				isOK = isOK && updateWorkoutAction(db, workout.getID(), action, index);
+			}
+			index++;
+		}
+		return isOK;
+	}
+	
+	private boolean updateWorkoutAction(SQLiteDatabase db, long workoutId, WorkoutAction action, int index) {
+		boolean isOK;
+		switch (action.getActionType()) {
+			case WorkoutAction.ACTION_SIMPLE:
+				isOK = updateWorkoutActionSimple(db, workoutId, (WorkoutActionSimple) action, index);
+				break;
+			case WorkoutAction.ACTION_ADVANCED:
+				isOK = updateWorkoutActionAdvanced(db, workoutId, (WorkoutActionAdvanced) action, index);
+				break;
+			default:
+				isOK = false;
+				break;
+		}
+		return isOK;
+	}
+	
+	private boolean updateWorkoutActionSimple(SQLiteDatabase db, long workoutId, WorkoutActionSimple action, int index) {
+		ContentValues cv = simpleWorkoutActionToContentValues(action, index);
+		return db.update(ACTIONS_SIMPLE, cv, AS_ID + "=?", new String[]{action.getID() + ""}) != 0;
+	}
+	
+	private boolean updateWorkoutActionAdvanced(SQLiteDatabase db, long workoutId, WorkoutActionAdvanced action, int index) {
+		ContentValues cv = advancedWorkoutActionToContentValues(action, index);
+		return db.update(ACTIONS_ADVANCED, cv, AA_ID + "=?", new String[]{action.getID() + ""}) != 0;
+	}
+	
+	public boolean updateWorkoutAction(long workoutID, WorkoutAction action, int index) {
+		SQLiteDatabase db = getWritableDatabase();
+		boolean isOK = updateWorkoutAction(db, workoutID, action, index);
 		db.close();
 		return isOK;
 	}
