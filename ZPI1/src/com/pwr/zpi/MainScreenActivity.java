@@ -489,35 +489,37 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		switch (mCurrent.getId())
+		if (mCurrent != null)
 		{
-			case R.id.textViewGPSIndicator:
-				// if gps is not running
-				if (gpsStatus == GPS_NOT_ENABLED) {
-					Intent intent = new Intent(
-						Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					startActivity(intent);
-				}
-				break;
-			case R.id.buttonStart:
-				startActivityIfPossible();
-				break;
-			case R.id.buttonHistory:
-				startActivity(HistoryActivity.class, LEFT);
-				break;
-			case R.id.buttonSettings:
-				startActivity(SettingsActivity.class, UP);
-				break;
-			case R.id.buttonPlans:
-				startActivity(PlaningActivity.class, RIGHT);
-				break;
-			case R.id.buttonMusic:
-				startSystemMusicPlayer();
-				break;
-			default:
-				break;
+			switch (mCurrent.getId())
+			{
+				case R.id.textViewGPSIndicator:
+					// if gps is not running
+					if (gpsStatus == GPS_NOT_ENABLED) {
+						Intent intent = new Intent(
+							Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivity(intent);
+					}
+					break;
+				case R.id.buttonStart:
+					startActivityIfPossible();
+					break;
+				case R.id.buttonHistory:
+					startActivity(HistoryActivity.class, LEFT);
+					break;
+				case R.id.buttonSettings:
+					startActivity(SettingsActivity.class, UP);
+					break;
+				case R.id.buttonPlans:
+					startActivity(PlaningActivity.class, RIGHT);
+					break;
+				case R.id.buttonMusic:
+					startSystemMusicPlayer();
+					break;
+				default:
+					break;
+			}
 		}
-		
 	}
 	
 }
