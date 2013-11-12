@@ -20,4 +20,6 @@
 	<dimen name="drawer_launcher_icon">50dp</dimen>
 	<dimen name="drawer_icon_size">60dp</dimen>
 	<dimen name="drawer_icon_size_bigger">80dp</dimen>
+	<dimen name="medium_text_size">17dp</dimen>
+	<dimen name="small_text_size">11dp</dimen>
 </resources>

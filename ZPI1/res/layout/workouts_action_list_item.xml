@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/start" />
+
+    <LinearLayout
+        android:id ="@+id/linearLayoutAdvancedActionData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:baselineAligned="false"
+        android:visibility="gone"
+        android:layout_toRightOf="@+id/imageView1" >
+
+        <RelativeLayout
+            android:id="@+id/dataRelativeLayoutActionDistance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/main_color"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/dataTextViewActionDistanceDiscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/buttons_padding"
+                android:text="@string/distance" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataTextViewActionDistanceDiscription"
+                android:layout_below="@+id/dataTextViewActionDistanceDiscription"
+                android:layout_toLeftOf="@+id/dataTextViewActionDistanceUnit"
+                android:gravity="center"
+                android:text="0.0"
+                android:textSize="@dimen/medium_text_size" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionDistanceUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dataTextViewActionDistance"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/dataTextViewActionDistance"
+                android:gravity="bottom"
+                android:text="@string/km"
+                android:textSize="@dimen/small_text_size"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/dataRelativeLayoutActionTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/main_color"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/dataTextViewActionTimeDiscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/buttons_padding"
+                android:text="@string/time" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataTextViewActionTimeDiscription"
+                android:layout_below="@+id/dataTextViewActionTimeDiscription"
+                android:layout_toLeftOf="@+id/dataTextViewActionTimeUnit"
+                android:gravity="center"
+                android:text="00:00:00"
+                android:textSize="@dimen/medium_text_size" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionTimeUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dataTextViewActionTime"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/dataTextViewActionTime"
+                android:gravity="bottom"
+                android:text="@string/empty_string"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/dataRelativeLayoutActionPace"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/main_color"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/dataTextViewActionPaceDiscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/buttons_padding"
+                android:text="@string/pace" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionPace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataTextViewActionPaceDiscription"
+                android:layout_below="@+id/dataTextViewActionPaceDiscription"
+                android:layout_toLeftOf="@+id/dataTextViewActionPaceUnit"
+                android:gravity="center"
+                android:text="0.0"
+                android:textSize="@dimen/medium_text_size" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionPaceUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dataTextViewActionPace"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/dataTextViewActionPace"
+                android:gravity="bottom"
+                android:text="@string/minutes_per_km"
+                android:textSize="@dimen/small_text_size"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id ="@+id/linearLayoutSimpleActionData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:baselineAligned="false"
+        android:visibility="gone"
+        android:layout_toRightOf="@+id/imageView1" >
+        
+        
+        <RelativeLayout
+            android:id="@+id/dataRelativeLayoutActionSpeedString"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/main_color"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/dataTextViewActionSpeedStringDiscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/buttons_padding"
+                android:text="@string/empty_string" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionSpeedString"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataTextViewActionSpeedStringDiscription"
+                android:layout_below="@+id/dataTextViewActionSpeedStringDiscription"
+                android:layout_toLeftOf="@+id/dataTextViewActionSpeedStringUnit"
+                android:gravity="center"
+                android:textSize="@dimen/medium_text_size" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionSpeedStringUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dataTextViewActionSpeedString"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/dataTextViewActionSpeedString"
+                android:gravity="bottom"
+                android:text="@string/empty_string"
+                android:textSize="@dimen/small_text_size"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/dataRelativeLayoutActionTimeOrDistance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/main_color"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/dataTextViewActionTimeOrDistanceDiscription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/buttons_padding"
+                android:text="@string/time" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionTimeOrDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataTextViewActionTimeOrDistanceDiscription"
+                android:layout_below="@+id/dataTextViewActionTimeOrDistanceDiscription"
+                android:layout_toLeftOf="@+id/dataTextViewActionTimeOrDistanceUnit"
+                android:gravity="center"
+                android:text="00:00:00"
+                android:textSize="@dimen/medium_text_size" />
+
+            <TextView
+                android:id="@+id/dataTextViewActionTimeOrDistanceUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/dataTextViewActionTimeOrDistance"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/dataTextViewActionTimeOrDistance"
+                android:gravity="bottom"
+                android:text="@string/empty_string"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

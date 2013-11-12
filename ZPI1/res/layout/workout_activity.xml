@@ -11,6 +11,14 @@
         android:text="@string/name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <ListView
+        android:id="@+id/listViewWokoutActions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+    </ListView>
+
     <Button
         android:id="@+id/ButtonChooseWorkout"
         android:layout_width="match_parent"

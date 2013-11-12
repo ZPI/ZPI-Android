@@ -16,6 +16,8 @@ public class MyGestureDetector extends SimpleOnGestureListener {
 	
 	private final GestureListener listener;
 	
+	public boolean flingDetected;
+	
 	public MyGestureDetector(GestureListener listener, boolean enableDownToUpSwipe, boolean enableUpToDownSwipe,
 		boolean enableLeftToRightSwipe, boolean enableRightToLeftSwipe) {
 		this.enableDownToUpSwipe = enableDownToUpSwipe;
@@ -29,30 +31,51 @@ public class MyGestureDetector extends SimpleOnGestureListener {
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
 		float velocityY) {
 		try {
-			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) return false;
+			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
+				flingDetected = false;
+				return false;
+			}
 			// right to left swipe
 			if (enableRightToLeftSwipe && e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
 				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+				flingDetected = true;
 				listener.onRightToLeftSwipe();
 				// left to right swipe
 			}
 			else if (enableLeftToRightSwipe && e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
 				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+				flingDetected = true;
 				listener.onLeftToRightSwipe();
 				// down to up swipe
 			}
 			else if (enableDownToUpSwipe && e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE
 				&& Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+				flingDetected = true;
 				listener.onDownToUpSwipe();
 				// up to down swipe
 			}
 			else if (enableUpToDownSwipe && e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE
 				&& Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
+				flingDetected = true;
 				listener.onUpToDownSwipe();
+			}
+			else {
+				flingDetected = false;
 			}
 		}
 		catch (Exception e) {}
 		return false;
+	}
+	
+	public boolean isFlingDetected()
+	{
+		return flingDetected;
+	}
+	
+	@Override
+	public boolean onSingleTapConfirmed(MotionEvent e) {
+		listener.onSingleTapConfirmed(e);
+		return super.onSingleTapConfirmed(e);
 	}
 	
 }

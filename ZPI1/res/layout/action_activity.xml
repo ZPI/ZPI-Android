@@ -42,29 +42,37 @@
                         android:layout_alignParentTop="true" >
 
                         <Button
-                            android:id="@+id/ButtonSteady"
+                            android:id="@+id/buttonSteady"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
                             android:layout_centerVertical="true"
+                            android:layout_margin="@dimen/small_margin"
+                            android:background="@drawable/button_enabled_background"
+                            android:padding="@dimen/buttons_padding"
                             android:text="@string/steady" />
 
                         <Button
                             android:id="@+id/buttonFast"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/ButtonSteady"
-                            android:layout_toRightOf="@id/ButtonSteady"
+                            android:layout_alignBaseline="@+id/buttonSteady"
+                            android:layout_margin="@dimen/small_margin"
+                            android:layout_toRightOf="@id/buttonSteady"
+                            android:background="@drawable/button_enabled_background"
+                            android:padding="@dimen/buttons_padding"
                             android:text="@string/fast" />
 
                         <Button
                             android:id="@+id/buttonSlow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/ButtonSteady"
-                            android:layout_toLeftOf="@id/ButtonSteady"
+                            android:layout_alignBaseline="@+id/buttonSteady"
+                            android:layout_margin="@dimen/small_margin"
+                            android:layout_toLeftOf="@id/buttonSteady"
+                            android:background="@drawable/button_enabled_background"
+                            android:padding="@dimen/buttons_padding"
                             android:text="@string/slow" />
-
                     </RelativeLayout>
 
                     <Button
@@ -74,6 +82,9 @@
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentRight="true"
+                        android:layout_margin="@dimen/small_margin"
+                        android:background="@drawable/button_enabled_background"
+                        android:padding="@dimen/buttons_padding"
                         android:text="@string/add_action" />
 
                     <RelativeLayout
@@ -81,31 +92,94 @@
                         android:layout_height="wrap_content"
                         android:layout_above="@+id/buttonAddIntervalWorkout"
                         android:layout_below="@+id/LinearLayoutTimeDistance"
-                        android:layout_marginLeft="@dimen/big_text_size"
-                        android:layout_marginRight="@dimen/big_text_size">
+                        android:layout_centerHorizontal="true" >
 
-                        <com.pwr.zpi.views.CustomPicker
-                            android:id="@+id/customPickerIntervalPicker"
+                        <LinearLayout
+                            android:id="@+id/linearLayoutIntervalTimeChooser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentTop="false"
-                            android:layout_centerVertical="true"
-                            custom:maxValue="999"
-                            custom:minValue="0"
-                             >
-                        </com.pwr.zpi.views.CustomPicker>
+                            android:layout_centerVertical="true" >
 
-                        <TextView
-                            android:id="@+id/TextViewActionUnit"
+                            <com.pwr.zpi.views.CustomPicker
+                                android:id="@+id/customPickerIntervalHourPicker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                custom:digitNumber="2"
+                                custom:maxValue="999"
+                                custom:minValue="0" >
+                            </com.pwr.zpi.views.CustomPicker>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="@string/colon"
+                                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                            <com.pwr.zpi.views.CustomPicker
+                                android:id="@+id/customPickerIntervalMinutePicker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                custom:digitNumber="2"
+                                custom:maxValue="60"
+                                custom:minValue="0" >
+                            </com.pwr.zpi.views.CustomPicker>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="@string/colon"
+                                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                            <com.pwr.zpi.views.CustomPicker
+                                android:id="@+id/customPickerIntervalSecPicker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                custom:digitNumber="2"
+                                custom:maxValue="60"
+                                custom:minValue="0" >
+                            </com.pwr.zpi.views.CustomPicker>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayoutIntervalDistanceChooser"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginLeft="@dimen/big_text_size"
-                            android:text="@string/km"
-                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                            android:visibility="gone" >
 
+                            <com.pwr.zpi.views.CustomPicker
+                                android:id="@+id/customPickerIntervalKmPicker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                custom:maxValue="999"
+                                custom:minValue="0" >
+                            </com.pwr.zpi.views.CustomPicker>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="@string/km"
+                                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                            <com.pwr.zpi.views.CustomPicker
+                                android:id="@+id/customPickerIntervalMPicker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                custom:incrementValue="5"
+                                custom:maxValue="999"
+                                custom:minValue="0" >
+                            </com.pwr.zpi.views.CustomPicker>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="@string/m"
+                                android:textAppearance="?android:attr/textAppearanceLarge" />
+                        </LinearLayout>
                     </RelativeLayout>
 
                     <LinearLayout
@@ -120,14 +194,20 @@
                             android:id="@+id/buttonTime"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/small_margin"
                             android:layout_weight="1"
+                            android:background="@drawable/button_enabled_background"
+                            android:padding="@dimen/buttons_padding"
                             android:text="@string/time" />
 
                         <Button
                             android:id="@+id/buttonDistance"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/small_margin"
                             android:layout_weight="1"
+                            android:background="@drawable/button_enabled_background"
+                            android:padding="@dimen/buttons_padding"
                             android:text="@string/distance" />
                     </LinearLayout>
                 </RelativeLayout>
@@ -147,7 +227,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@color/list_transparent_color"
+                            android:background="@drawable/button_enabled_background"
                             android:text="@string/distansAndTime" />
 
                         <Button
@@ -155,7 +235,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@color/gray_color"
+                            android:background="@drawable/button_enabled_background"
                             android:text="@string/distansAndPace" />
 
                         <Button
@@ -163,7 +243,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@color/gray_color"
+                            android:background="@drawable/button_enabled_background"
                             android:text="@string/timeAndPace" />
                     </LinearLayout>
 
@@ -292,6 +372,9 @@
                                 android:id="@+id/buttonTab1Add"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/small_margin"
+                                android:background="@drawable/button_background"
+                                android:padding="@dimen/buttons_padding"
                                 android:text="@string/add_action" />
                         </LinearLayout>
                     </ScrollView>
@@ -414,6 +497,9 @@
                                 android:id="@+id/buttonTab2Add"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/small_margin"
+                                android:background="@drawable/button_background"
+                                android:padding="@dimen/buttons_padding"
                                 android:text="@string/add_action" />
                         </LinearLayout>
                     </ScrollView>
@@ -536,12 +622,16 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:ems="10"
+                                android:text="@string/dashes2"
                                 android:focusable="false" />
 
                             <Button
                                 android:id="@+id/buttonTab3Add"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/small_margin"
+                                android:background="@drawable/button_background"
+                                android:padding="@dimen/buttons_padding"
                                 android:text="@string/add_action" />
                         </LinearLayout>
                     </ScrollView>

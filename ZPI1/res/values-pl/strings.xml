@@ -15,6 +15,9 @@
     <string name="dialog_choose_what_to_display">Co wyświetlać w tym polu?</string>
     <string name="dialog_message_on_lost_gpsp">Oczekiwanie na sygnał GPS#8230;</string>
     <string name="dialog_message_romve">Czy na pewno chcesz usunąć tę aktywność?</string>
+    <string name="dialog_message_remove_action">Czy na pewno chcesz usunąć tę akcję?</string>
+    <string name="dialog_message_remove_workout">Czy na pewno chcesz usunąć ten trening?</string>
+ 
     <string name="gps_accuracy">Dokładność GPS</string>
 
     <!-- meassured values -->
@@ -54,7 +57,7 @@
     <string name="trening_plans">Plany \ntreningowe</string>
     <string name="new_workout">Nowy trening</string>
     <string name="add_workout">Dodaj trening</string>
-    <string name="zero_times">0 razy</string>
+    <string name="times">razy</string>
     <string name="repeat">Powtórzenia</string>
     <string name="wormup">Rozgrzewka</string>
     <string name="add_new">Dodaj nową</string>
