@@ -36,6 +36,7 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction>, Parcel
 	 */
 	public WorkoutAction(int actionType) {
 		this.actionType = actionType;
+		this.ID = -1;
 	}
 	
 	public WorkoutAction(Parcel in)
