@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.pwr.zpi.MainScreenActivity;
+import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class MyLocationListener extends Service implements LocationListener,
 GooglePlayServicesClient.ConnectionCallbacks,
@@ -218,6 +219,7 @@ android.location.GpsStatus.Listener {
 		}
 		
 		mLocationClient.disconnect();
+		SpeechSynthezator.getSyntezator().shutdown();
 		super.onDestroy();
 	}
 	

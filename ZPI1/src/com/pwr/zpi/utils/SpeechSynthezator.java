@@ -69,4 +69,8 @@ public class SpeechSynthezator implements OnInitListener {
 	public static SpeechSynthezator getSyntezator() {
 		return syntezator;
 	}
+	
+	public void shutdown() {
+		mTts.shutdown();
+	}
 }
