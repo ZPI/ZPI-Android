@@ -1,5 +1,8 @@
 package com.pwr.zpi.database.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public final class WorkoutActionAdvanced extends WorkoutAction {
 	
 	/**
@@ -21,6 +24,12 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 		this.distance = distance;
 		this.pace = pace;
 		this.time = time;
+	}
+	
+	public WorkoutActionAdvanced(Parcel in)
+	{
+		super(in);
+		readFromParcel(in);
 	}
 	
 	/**
@@ -58,7 +67,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public double getDistance() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME && pace != 0) {
-			distance = time / (pace * 60 * 1000);
+			distance = time / 60 / (pace);
 		}
 		return distance;
 	}
@@ -75,7 +84,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public double getPace() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_TIME_DISTANCE && distance != 0) {
-			pace = time / 1000 / 60 / distance;
+			pace = time / 60 / (distance);
 		}
 		return pace;
 	}
@@ -92,7 +101,7 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public long getTime() {
 		if (type == WorkoutAction.ACTION_ADVANCED_TYPE_DISTANCE_PACE) {
-			time = (long) (pace * distance * 60 * 1000);
+			time = (long) (pace * distance * 60);
 		}
 		return time;
 	}
@@ -118,5 +127,48 @@ public final class WorkoutActionAdvanced extends WorkoutAction {
 	 */
 	public void setType(int type) {
 		this.type = type;
+	}
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		super.writeToParcel(out, flags);
+		out.writeInt(type);
+		out.writeDouble(distance);
+		out.writeDouble(pace);
+		out.writeLong(time);
+		
+	}
+	
+	public void readFromParcel(Parcel in) {
+		
+		type = in.readInt();
+		distance = in.readDouble();
+		pace = in.readDouble();
+		time = in.readLong();
+		
+	}
+	
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+		@Override
+		public WorkoutActionAdvanced createFromParcel(Parcel in) {
+			return new WorkoutActionAdvanced(in);
+		}
+		
+		@Override
+		public WorkoutActionAdvanced[] newArray(int size) {
+			return new WorkoutActionAdvanced[size];
+		}
+	};
+	
+	@Override
+	public boolean isAdvanced()
+	{
+		return true;
 	}
 }

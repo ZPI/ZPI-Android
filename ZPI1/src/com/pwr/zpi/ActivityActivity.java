@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -146,16 +145,25 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		startTimerAfterCountDown();
 		Notifications
-		.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
+			.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
 	}
 	
 	// MOCK
 	private Workout getWorkoutData() {
 		//TODO get workout id from intent
-		Workout w;
-		w = prepareWorkout(30);
-		this.workout = w;
-		return w;
+		Intent i = getIntent();
+		Workout workout = new Workout();
+		
+		ArrayList<WorkoutAction> actions = i.getParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG);
+		workout.setActions(actions);
+		workout.setName(i.getStringExtra(NewWorkoutActivity.NAME_TAG));
+		workout.setRepeatCount(i.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
+		workout.setWarmUp(i.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
+		return workout;
+		//		Workout w;
+		//		w = prepareWorkout(30);
+		//		this.workout = w;
+		//		return w;
 	}
 	
 	//MOCK FIXME
@@ -256,12 +264,24 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		beepPlayer = new BeepPlayer(this);
 		
-		// drawer initialization
+		Intent i = getIntent();
 		expandableListView = (ExpandableListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		expandableListAdapter = new DrawerWorkoutsAdapter(this, getWorkoutData());
-		expandableListView.setAdapter(expandableListAdapter);
-		expandableListView.expandGroup(0);
+		if (i.hasExtra(PlaningActivity.ID_TAG))
+		{
+			// drawer initialization
+			
+			workout = getWorkoutData();
+			expandableListAdapter = new DrawerWorkoutsAdapter(this, workout);
+			expandableListView.setAdapter(expandableListAdapter);
+			expandableListView.expandGroup(0);
+			expandableListView.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			workoutDdrawerButton.setVisibility(View.GONE);
+			expandableListView.setVisibility(View.GONE);
+		}
 		
 		moveSystemControls(mapFragment);
 	}
@@ -270,34 +290,38 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		stopButton.setOnClickListener(this);
 		resumeButton.setOnClickListener(this);
 		pauseButton.setOnClickListener(this);
-		workoutDdrawerButton.setOnClickListener(this);
+		
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
-		
-		expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
+		if (workout != null)
+		{
+			workoutDdrawerButton.setOnClickListener(this);
+			expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
+				
+				@Override
+				public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+					return true;
+				}
+			});
 			
-			@Override
-			public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-				return true;
-			}
-		});
-		
-		drawerLayout.setDrawerListener(new DrawerListener() {
-			
-			@Override
-			public void onDrawerStateChanged(int arg0) {}
-			
-			@Override
-			public void onDrawerSlide(View arg0, float arg1) {}
-			
-			@Override
-			public void onDrawerOpened(View arg0) {
-				expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
-			}
-			
-			@Override
-			public void onDrawerClosed(View arg0) {}
-		});
+			drawerLayout.setDrawerListener(new DrawerListener() {
+				
+				@Override
+				public void onDrawerStateChanged(int arg0) {}
+				
+				@Override
+				public void onDrawerSlide(View arg0, float arg1) {}
+				
+				@Override
+				public void onDrawerOpened(View arg0) {
+					expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
+						.size());
+				}
+				
+				@Override
+				public void onDrawerClosed(View arg0) {}
+			});
+		}
 	}
 	
 	private void initDisplayedData() {
@@ -381,7 +405,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		synchronized (time) {
 			time = System.currentTimeMillis() - startTime - pauseTime;
-			processWorkout();
+			if (workout != null) {
+				processWorkout();
+			}
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -402,7 +428,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// end of timer methods
-	
+	//TODO przesun\B9\E6 \BFeby nie by\B3y pod innymi ikonami
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 		
 		View zoomControls = mapFragment.getView().findViewById(0x1);
@@ -513,6 +539,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				saveRun();
 				finish();
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				mConnection.sendMessage(MyLocationListener.MSG_STOP);
 			}
 		};
 		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
@@ -526,38 +553,53 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	@Override
 	public void onClick(View v) {
-		if (v == stopButton) {
-			// TODO finish and save activity
-			showAlertDialog();
-		}
-		else if (v == pauseButton) { // stop time
-			pauseRun();
-		}
-		else if (v == resumeButton) { // start time
-			resumeRun();
-		}
-		else if (v == dataRelativeLayout1) {
-			clickedContentTextView = DataTextView1;
-			clickedLabelTextView = LabelTextView1;
-			clickedUnitTextView = unitTextView1;
-			clickedField = 1;
-			showMeassuredValuesMenu();
-		}
-		else if (v == dataRelativeLayout2) {
-			clickedContentTextView = DataTextView2;
-			clickedLabelTextView = LabelTextView2;
-			clickedUnitTextView = unitTextView2;
-			clickedField = 2;
-			showMeassuredValuesMenu();
-		}
-		else if (v == workoutDdrawerButton) {
-			boolean isOpen = drawerLayout.isDrawerOpen(Gravity.LEFT);
-			if (!isOpen) {
-				drawerLayout.openDrawer(Gravity.LEFT);
-			}
-			else {
-				drawerLayout.closeDrawer(Gravity.LEFT);
-			}
+		
+		switch (v.getId())
+		{
+			case R.id.stopButton:
+				showAlertDialog();
+				break;
+			case R.id.pauseButton:
+				isPaused = true;
+				startStopLayout.setVisibility(View.INVISIBLE);
+				resumeButton.setVisibility(View.VISIBLE);
+				pauseStartTime = System.currentTimeMillis();
+				
+				handler.removeCallbacks(timeHandler);
+				mConnection.sendMessage(MyLocationListener.MSG_PAUSE);
+				break;
+			case R.id.resumeButton:
+				isPaused = false;
+				startStopLayout.setVisibility(View.VISIBLE);
+				resumeButton.setVisibility(View.GONE);
+				pauseTime += System.currentTimeMillis() - pauseStartTime;
+				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
+				handler.post(timeHandler);
+				mConnection.sendMessage(MyLocationListener.MSG_START);
+				break;
+			case R.id.dataRelativeLayout1:
+				clickedContentTextView = DataTextView1;
+				clickedLabelTextView = LabelTextView1;
+				clickedUnitTextView = unitTextView1;
+				clickedField = 1;
+				showMeassuredValuesMenu();
+				break;
+			case R.id.dataRelativeLayout2:
+				clickedContentTextView = DataTextView2;
+				clickedLabelTextView = LabelTextView2;
+				clickedUnitTextView = unitTextView2;
+				clickedField = 2;
+				showMeassuredValuesMenu();
+				break;
+			case R.id.imageButtonWorkoutDrawerButton:
+				boolean isOpen = drawerLayout.isDrawerOpen(Gravity.LEFT);
+				if (!isOpen) {
+					drawerLayout.openDrawer(Gravity.LEFT);
+				}
+				else {
+					drawerLayout.closeDrawer(Gravity.LEFT);
+				}
+				break;
 		}
 		
 	}
@@ -762,7 +804,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// SERVICE METHODS
-	private final ServiceConnection mConnection = new MyServiceConnection();
+	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.ACTIVITY);
 	
 	void doBindService() {
 		
@@ -788,7 +830,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("Service_info", "onReceive");
 			int messageType = intent.getIntExtra(MyLocationListener.MESSAGE, -1);
 			switch (messageType) {
 				case MyLocationListener.MSG_SEND_LOCATION:

@@ -519,11 +519,11 @@ public class Database extends SQLiteOpenHelper {
 	public boolean deleteWorkout(long workoutID) {
 		SQLiteDatabase db = getWritableDatabase();
 		boolean isOK;
-		String queryAdvanced = "DELETE * FROM " + ACTIONS_ADVANCED + " WHERE " + AA_ID + " IN " + "(SELECT "
+		String queryAdvanced = "DELETE FROM " + ACTIONS_ADVANCED + " WHERE " + AA_ID + " IN " + "(SELECT "
 			+ WA_ACTION_ID + " FROM " + WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID + "=? AND " + WA_ACTION_TYPE
 			+ "=?" + ")";
 		db.rawQuery(queryAdvanced, new String[] { workoutID + "", WorkoutAction.ACTION_ADVANCED + "" }).getCount();
-		String querySimple = "DELETE * FROM " + ACTIONS_SIMPLE + " WHERE " + AS_ID + " IN " + "(SELECT " + WA_ACTION_ID
+		String querySimple = "DELETE FROM " + ACTIONS_SIMPLE + " WHERE " + AS_ID + " IN " + "(SELECT " + WA_ACTION_ID
 			+ " FROM " + WORKOUTS_ACTIONS + " WHERE " + WA_WORKOUT_ID + "=? AND " + WA_ACTION_TYPE + "=?" + ")";
 		db.rawQuery(querySimple, new String[] { workoutID + "", WorkoutAction.ACTION_SIMPLE + "" });
 		

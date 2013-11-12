@@ -76,4 +76,9 @@ public class SettingsActivity extends PreferenceActivity implements GestureListe
 		getListView().setOnTouchListener(gestureListener);
 	}
 	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		
+	}
+	
 }
