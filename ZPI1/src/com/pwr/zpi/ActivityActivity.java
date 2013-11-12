@@ -563,21 +563,25 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void pauseRun() {
-		isPaused = true;
-		startStopLayout.setVisibility(View.INVISIBLE);
-		resumeButton.setVisibility(View.VISIBLE);
-		pauseStartTime = System.currentTimeMillis();
-		
-		handler.removeCallbacks(timeHandler);
+		if (!isPaused) {
+			isPaused = true;
+			startStopLayout.setVisibility(View.INVISIBLE);
+			resumeButton.setVisibility(View.VISIBLE);
+			pauseStartTime = System.currentTimeMillis();
+			
+			handler.removeCallbacks(timeHandler);
+		}
 	}
 	
 	private void resumeRun() {
-		isPaused = false;
-		startStopLayout.setVisibility(View.VISIBLE);
-		resumeButton.setVisibility(View.GONE);
-		pauseTime += System.currentTimeMillis() - pauseStartTime;
-		traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-		handler.post(timeHandler);
+		if (isPaused) {
+			isPaused = false;
+			startStopLayout.setVisibility(View.VISIBLE);
+			resumeButton.setVisibility(View.GONE);
+			pauseTime += System.currentTimeMillis() - pauseStartTime;
+			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
+			handler.post(timeHandler);
+		}
 	}
 	
 	private String getMyString(int stringId) {
@@ -728,16 +732,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void autoPauseIfEnabled(Location newLocation) {
-		if (newLocation.hasSpeed() && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_auto_pause), false)) {
-			Log.e(TAG, "Speed:" + newLocation.getSpeed());
-			if (newLocation.getSpeed() < MIN_SPEED_FOR_AUTO_PAUSE) {
-				pauseRun();
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_auto_pause), false)) {
+			if (newLocation.hasSpeed()) {
+				Log.e(TAG, "Speed:" + newLocation.getSpeed());
+				if (newLocation.getSpeed() < MIN_SPEED_FOR_AUTO_PAUSE) {
+					pauseRun();
+				} else {
+					resumeRun();
+				}
 			} else {
-				resumeRun();
+				Log.e(TAG, "No speed.. pausing anyway");
+				pauseRun();
 			}
-		} else {
-			Log.e(TAG, "No speed.. pausing anyway");
-			pauseRun();
 		}
 	}
 	
