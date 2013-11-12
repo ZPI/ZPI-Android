@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,8 +35,7 @@ import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.views.VerticalTextView;
 
-public class MainScreenActivity extends FragmentActivity implements
-	OnClickListener, GestureListener {
+public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
@@ -48,7 +46,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	private Button musicButton;
 	private LocationManager service;
 	private int gpsStatus = -1;
-	
+	private View mCurrent;
 	// TODO potem zmieni�
 	// public static MyLocationListener locationListener;
 	
@@ -105,14 +103,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	}
 	
 	private void addListeners() {
-		GPSStatusTextView.setOnClickListener(this);
-		settingsButton.setOnClickListener(this);
-		historyButton.setOnClickListener(this);
-		startButton.setOnClickListener(this);
-		planningButton.setOnClickListener(this);
-		musicButton.setOnClickListener(this);
-		// TODO add listeners to buttons so that swipe will work
-		
 		GPSStatusTextView.setOnTouchListener(gestureListener);
 		settingsButton.setOnTouchListener(gestureListener);
 		historyButton.setOnTouchListener(gestureListener);
@@ -128,6 +118,7 @@ public class MainScreenActivity extends FragmentActivity implements
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				mCurrent = v;
 				return gestureDetector.onTouchEvent(event);
 			}
 		};
@@ -136,7 +127,9 @@ public class MainScreenActivity extends FragmentActivity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+		if (!mIsBound) {
+			doBindService();
+		}
 		askForGpsStatus();
 	}
 	
@@ -155,7 +148,7 @@ public class MainScreenActivity extends FragmentActivity implements
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		return gestureListener.onTouch(null, event);
+		return gestureListener.onTouch(mCurrent, event);
 	}
 	
 	private void startActivity(Class<? extends Activity> activity,
@@ -163,18 +156,21 @@ public class MainScreenActivity extends FragmentActivity implements
 		Intent i = new Intent(MainScreenActivity.this, activity);
 		
 		startActivity(i);
-		if (swipeDirection == RIGHT) {
-			overridePendingTransition(R.anim.in_right_anim,
-				R.anim.out_right_anim);
-		}
-		else if (swipeDirection == LEFT) {
-			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
-		}
-		else if (swipeDirection == DOWN) {
-			overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
-		}
-		else if (swipeDirection == UP) {
-			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+		switch (swipeDirection)
+		{
+			case RIGHT:
+				overridePendingTransition(R.anim.in_right_anim,
+					R.anim.out_right_anim);
+				break;
+			case LEFT:
+				overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+				break;
+			case DOWN:
+				overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
+				break;
+			case UP:
+				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				break;
 		}
 	}
 	
@@ -200,37 +196,6 @@ public class MainScreenActivity extends FragmentActivity implements
 	public void onDownToUpSwipe() {
 		startActivity(SettingsActivity.class, UP);
 		
-	}
-	
-	@Override
-	public void onClick(View v) {
-		
-		if (v == GPSStatusTextView) {
-			// if gps is not running
-			if (gpsStatus == GPS_NOT_ENABLED) {
-				Intent intent = new Intent(
-					Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				startActivity(intent);
-			}
-		}
-		else if (v == startButton) {
-			startActivityIfPossible();
-			
-		}
-		else if (v == historyButton) {
-			startActivity(HistoryActivity.class, LEFT);
-			
-		}
-		else if (v == settingsButton) {
-			startActivity(SettingsActivity.class, UP);
-			
-		}
-		else if (v == planningButton) {
-			startActivity(PlaningActivity.class, RIGHT);
-		}
-		else if (v == musicButton) {
-			startSystemMusicPlayer();
-		}
 	}
 	
 	private void startSystemMusicPlayer() {
@@ -319,43 +284,47 @@ public class MainScreenActivity extends FragmentActivity implements
 	}
 	
 	private void startActivityIfPossible() {
-		if (gpsStatus == -1) {
-			// Shouldn't be here;
-			Log.e("Service_info", "no gps status info");
+		switch (gpsStatus)
+		{
+			case -1:
+				// Shouldn't be here;
+				Log.e("Service_info", "no gps status info");
+				break;
+			case GPS_NOT_ENABLED:
+				MyDialog dialog = new MyDialog();
+				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						Intent intent = new Intent(
+							android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivity(intent);
+					}
+				};
+				
+				dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
+					R.string.empty_string, android.R.string.yes,
+					android.R.string.no, positiveButtonHandler, null);
+				
+				break;
+			case NO_GPS_SIGNAL:
+				dialog = new MyDialog();
+				positiveButtonHandler = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						
+					}
+				};
+				dialog.showAlertDialog(this,
+					R.string.dialog_message_low_gps_accuracy,
+					R.string.empty_string, android.R.string.ok,
+					R.string.empty_string, positiveButtonHandler, null);
+				break;
+			default:
+				startActivity(ActivityActivity.class, DOWN);
+				break;
+		
 		}
-		else if (gpsStatus == GPS_NOT_ENABLED) {
-			MyDialog dialog = new MyDialog();
-			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					Intent intent = new Intent(
-						android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					startActivity(intent);
-				}
-			};
-			
-			dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
-				R.string.empty_string, android.R.string.yes,
-				android.R.string.no, positiveButtonHandler, null);
-			
-		}
-		else if (gpsStatus == NO_GPS_SIGNAL) {
-			MyDialog dialog = new MyDialog();
-			DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int id) {
-					
-				}
-			};
-			dialog.showAlertDialog(this,
-				R.string.dialog_message_low_gps_accuracy,
-				R.string.empty_string, android.R.string.ok,
-				R.string.empty_string, positiveButtonHandler, null);
-			
-		}
-		else {
-			startActivity(ActivityActivity.class, DOWN);
-		}
+		
 	}
 	
 	private void showGoogleServicesDialog(ConnectionResult connectionResult) {
@@ -407,20 +376,24 @@ public class MainScreenActivity extends FragmentActivity implements
 	
 	// SERVICE METHODS
 	private void askForGpsStatus() {
-		try {
-			Message msg = Message.obtain(null,
-				MyLocationListener.MSG_ASK_FOR_GPS);
-			if (mConnection.getmService() != null) {
-				mConnection.getmService().send(msg);
+		if (mIsBound)
+		{
+			try {
+				
+				Message msg = Message.obtain(null,
+					MyLocationListener.MSG_ASK_FOR_GPS);
+				if (mConnection.getmService() != null) {
+					mConnection.getmService().send(msg);
+				}
 			}
-		}
-		catch (RemoteException e) {
-			
+			catch (RemoteException e) {
+				
+			}
 		}
 		
 	}
 	
-	private final MyServiceConnection mConnection = new MyServiceConnection();
+	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.MAIN_SCREEN);
 	
 	void doStartService() {
 		Log.i("Service_info", "Main Screen --> start service");
@@ -461,50 +434,92 @@ public class MainScreenActivity extends FragmentActivity implements
 	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.i("Service_info", "onReceive");
-			
-			// Extract data included in the Intent
-			int message_type = intent.getIntExtra(MyLocationListener.MESSAGE,
-				-1);
-			
-			switch (message_type) {
-				case MyLocationListener.MSG_SEND_LOCATION:
-					Log.i("Service_info", "got Location");
-					isConnected = true;
-					mLastLocation = (Location) intent
-						.getParcelableExtra("Location");
-					showGPSAccuracy(mLastLocation.getAccuracy());
-					askForGpsStatus();
-					
-					break;
-				case MyLocationListener.MSG_ASK_FOR_GPS:
-					gpsStatus = intent.getIntExtra("gpsStatus", GPS_NOT_ENABLED);
-					Log.i("Service_info", "gotGpsStatus: " + gpsStatus);
-					switch (gpsStatus) {
-						case GPS_NOT_ENABLED:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_disabled));
-							break;
-						case NO_GPS_SIGNAL:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_enabled));
-							break;
-						case GPS_WORKING:
-							GPSStatusTextView.setText(getResources().getString(
-								R.string.gps_enabled));
-							break;
-					}
-					break;
-				case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
-					Log.i("Service_info", "show Google services dialog");
-					int errorCode = intent.getIntExtra("status_code", -1);
-					PendingIntent pendingIntent = intent
-						.getParcelableExtra("pending_intent");
-					showGoogleServicesDialog(new ConnectionResult(errorCode,
-						pendingIntent));
-					break;
+			if (mIsBound)
+			{
+				// Extract data included in the Intent
+				int message_type = intent.getIntExtra(MyLocationListener.MESSAGE,
+					-1);
+				
+				switch (message_type) {
+					case MyLocationListener.MSG_SEND_LOCATION:
+						Log.i("Service_info", "MainScreen-got Location");
+						isConnected = true;
+						mLastLocation = (Location) intent
+							.getParcelableExtra("Location");
+						showGPSAccuracy(mLastLocation.getAccuracy());
+						askForGpsStatus();
+						
+						break;
+					case MyLocationListener.MSG_ASK_FOR_GPS:
+						gpsStatus = intent.getIntExtra("gpsStatus", GPS_NOT_ENABLED);
+						Log.i("Service_info", "MainScreen-gotGpsStatus: " + gpsStatus);
+						switch (gpsStatus) {
+							case GPS_NOT_ENABLED:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_disabled));
+								break;
+							case NO_GPS_SIGNAL:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_enabled));
+								break;
+							case GPS_WORKING:
+								GPSStatusTextView.setText(getResources().getString(
+									R.string.gps_enabled));
+								break;
+						}
+						break;
+					case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
+						Log.i("Service_info", "show Google services dialog");
+						int errorCode = intent.getIntExtra("status_code", -1);
+						PendingIntent pendingIntent = intent
+							.getParcelableExtra("pending_intent");
+						showGoogleServicesDialog(new ConnectionResult(errorCode,
+							pendingIntent));
+						break;
+					case MyLocationListener.MSG_START:
+						doUnbindService();
+						break;
+					case MyLocationListener.MSG_STOP:
+						doBindService();
+						break;
+				}
 			}
 		}
 	};
+	
+	@Override
+	public void onSingleTapConfirmed(MotionEvent e) {
+		if (mCurrent != null)
+		{
+			switch (mCurrent.getId())
+			{
+				case R.id.textViewGPSIndicator:
+					// if gps is not running
+					if (gpsStatus == GPS_NOT_ENABLED) {
+						Intent intent = new Intent(
+							Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						startActivity(intent);
+					}
+					break;
+				case R.id.buttonStart:
+					startActivityIfPossible();
+					break;
+				case R.id.buttonHistory:
+					startActivity(HistoryActivity.class, LEFT);
+					break;
+				case R.id.buttonSettings:
+					startActivity(SettingsActivity.class, UP);
+					break;
+				case R.id.buttonPlans:
+					startActivity(PlaningActivity.class, RIGHT);
+					break;
+				case R.id.buttonMusic:
+					startSystemMusicPlayer();
+					break;
+				default:
+					break;
+			}
+		}
+	}
 	
 }

@@ -1,9 +1,14 @@
 package com.pwr.zpi.database.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * it's just a generalization class
  */
-public abstract class WorkoutAction implements Comparable<WorkoutAction> {
+public abstract class WorkoutAction implements Comparable<WorkoutAction>, Parcelable {
+	
+	public static final String TAG = "WorkoutAction";
 	
 	public static final int ACTION_SIMPLE = 0x1;
 	public static final int ACTION_ADVANCED = 0x2;
@@ -34,6 +39,11 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction> {
 		this.ID = -1;
 	}
 	
+	public WorkoutAction(Parcel in)
+	{
+		readFromfarcel(in);
+	}
+	
 	public long getID() {
 		return ID;
 	}
@@ -61,5 +71,36 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction> {
 	@Override
 	public int compareTo(WorkoutAction another) {
 		return getOrderNumber() - another.getOrderNumber();
+	}
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeLong(ID);
+		out.writeInt(actionType);
+		out.writeInt(orderNumber);
+		
+	}
+	
+	private void readFromfarcel(Parcel in)
+	{
+		ID = in.readLong();
+		actionType = in.readInt();
+		orderNumber = in.readInt();
+	}
+	
+	public boolean isAdvanced()
+	{
+		return false;
+	}
+	
+	public boolean isSimple()
+	{
+		return false;
 	}
 }

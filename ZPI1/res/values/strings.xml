@@ -16,6 +16,9 @@
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
     <string name="dialog_message_romve">Are you sure, you want to remove this activity?</string>
+     <string name="dialog_message_remove_action">Are you sure, you want to remove this action?</string>
+     <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
+ 
     <string name="gps_accuracy">GPS Accuracy:</string>
 
     <!-- meassured values -->
@@ -50,13 +53,14 @@
     <string name="km">km</string>
     <string name="km_per_hour">km/\nh</string>
     <string name="m">m</string>
+    <string name="minutes">min</string>
 
     <!-- workouts -->
     <string name="workouts">Workout</string>
     <string name="trening_plans">Trening \nplans</string>
     <string name="new_workout">New workout</string>
     <string name="add_workout">Add this workout</string>
-    <string name="zero_times">0 times</string>
+    <string name="times">times</string>
     <string name="repeat">Repeat</string>
     <string name="wormup">Worm up</string>
     <string name="add_new">Add new</string>

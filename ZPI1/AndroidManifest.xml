@@ -79,6 +79,10 @@
             android:name=".SplitsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".WorkoutActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity android:name="org.achartengine.GraphicalActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />

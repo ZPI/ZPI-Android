@@ -18,6 +18,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 	
 	private final Context context;
 	private final int layoutResourceId;
+	private SingleRun mCurrent;
 	
 	public RunAdapter(Context context, int layoutResourceId, List<SingleRun> data) {
 		super(context, layoutResourceId, data);
@@ -27,6 +28,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		
 		View row = convertView;
 		RunHolder holder = null;
 		
@@ -76,4 +78,5 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 		TextView distance;
 		TextView time;
 	}
+	
 }

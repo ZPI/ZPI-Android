@@ -1,5 +1,8 @@
 package com.pwr.zpi.database.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public final class WorkoutActionSimple extends WorkoutAction {
 	
 	private int speedType;
@@ -11,6 +14,12 @@ public final class WorkoutActionSimple extends WorkoutAction {
 		this.speedType = speedType;
 		this.valueType = valueType;
 		this.value = value;
+	}
+	
+	public WorkoutActionSimple(Parcel in)
+	{
+		super(in);
+		readFromParcel(in);
 	}
 	
 	/**
@@ -57,6 +66,46 @@ public final class WorkoutActionSimple extends WorkoutAction {
 	 */
 	public void setValue(double value) {
 		this.value = value;
+	}
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		super.writeToParcel(out, flags);
+		out.writeInt(speedType);
+		out.writeInt(valueType);
+		out.writeDouble(value);
+		
+	}
+	
+	private void readFromParcel(Parcel in)
+	{
+		speedType = in.readInt();
+		valueType = in.readInt();
+		value = in.readDouble();
+	}
+	
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+		@Override
+		public WorkoutActionSimple createFromParcel(Parcel in) {
+			return new WorkoutActionSimple(in);
+		}
+		
+		@Override
+		public WorkoutActionSimple[] newArray(int size) {
+			return new WorkoutActionSimple[size];
+		}
+	};
+	
+	@Override
+	public boolean isSimple()
+	{
+		return true;
 	}
 	
 }

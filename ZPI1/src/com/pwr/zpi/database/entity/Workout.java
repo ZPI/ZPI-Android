@@ -5,7 +5,8 @@ import java.util.List;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class Workout {
-	
+	public final static String TAG = "Workout";
+	public static final String LIST_TAG = "List";
 	private long ID;
 	private String name;
 	private List<WorkoutAction> actions;
@@ -24,6 +25,7 @@ public class Workout {
 		this.lastActionDistance = 0;
 		this.lastActionTime = 0;
 		this.howMuchLeft = 0;
+		this.ID = -1;
 	}
 	
 	public long getID() {
@@ -126,7 +128,8 @@ public class Workout {
 				actionDone = currentDistance >= actionDistanceToCover;
 				if (actionDone) {
 					deltaDistance = currentDistance - actionDistanceToCover;
-				} else {
+				}
+				else {
 					this.howMuchLeft = actionDistanceToCover - currentDistance;
 				}
 				break;
@@ -135,7 +138,8 @@ public class Workout {
 				actionDone = currentTime >= actionTimeToCover;
 				if (actionDone) {
 					deltaTime = currentTime - actionTimeToCover;
-				} else {
+				}
+				else {
 					this.howMuchLeft = actionTimeToCover - currentTime;
 				}
 				break;
@@ -165,7 +169,8 @@ public class Workout {
 			lastActionDistance += currentDistance - deltaDistance;
 			lastActionTime += currentTime;
 			initHowMuchLeft(getActions(), currentAction, deltaDistance, 0);
-		} else {
+		}
+		else {
 			this.howMuchLeft = distanceBetweenUserAndVirutalPartner;
 		}
 	}
@@ -190,17 +195,19 @@ public class Workout {
 			if (getValue) {
 				value = ((WorkoutActionAdvanced) action).getDistance();
 			}
-			sb.append(String.format("%.3f", value / 1000));
-			sb.append("km");
-		} else {
+			sb.append(String.format("%.0f", value));
+			sb.append("m");
+		}
+		else {
 			WorkoutActionSimple simple = (WorkoutActionSimple) action;
 			if (getValue) {
 				value = simple.getValue();
 			}
 			if (simple.getValueType() == WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE) {
-				sb.append(String.format("%.3f", value / 1000));
-				sb.append("km");
-			} else {
+				sb.append(String.format("%.0f", value));
+				sb.append("m");
+			}
+			else {
 				sb.append(TimeFormatter.formatTimeHHMMSS(value.longValue()));
 				sb.append("h");
 			}
@@ -211,4 +218,5 @@ public class Workout {
 	public boolean hasNextAction() {
 		return currentAction < getActions().size();
 	}
+	
 }

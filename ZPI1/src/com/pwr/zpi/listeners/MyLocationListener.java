@@ -37,10 +37,13 @@ public class MyLocationListener extends Service implements LocationListener,
 	private LocationRequest mLocationRequest;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
+	private static final int STOPED = 1;
+	private static final int STARTED = 2;
+	private static final int PAUSED = 3;
 	public static final int REQUIRED_ACCURACY = 300; // in meters //TODO change
+	private int activityState; //started, paused, stoped
 	private GoogleMap mMap;
-	private boolean isStarted;
-	private boolean isPaused;
+	
 	private boolean isGpsFix;
 	private boolean isConnected;
 	private Location mLastRecordedLocation;
@@ -54,6 +57,9 @@ public class MyLocationListener extends Service implements LocationListener,
 	public static final int MSG_SEND_LOCATION = 3;
 	public static final int MSG_ASK_FOR_GPS = 4;
 	public static final int MSG_SHOW_GOOGLE_SERVICES_DIALOG = 5;
+	public static final int MSG_START = 6;
+	public static final int MSG_STOP = 7;
+	public static final int MSG_PAUSE = 8;
 	public static final String MESSAGE = "Message";
 	public static final int MESSAGE_FROM_MAIN_SCREEN = 1;
 	public static final int MESSAGE_FROM_ACTIVITY = 2;
@@ -170,6 +176,20 @@ public class MyLocationListener extends Service implements LocationListener,
 					LocalBroadcastManager.getInstance(MyLocationListener.this)
 						.sendBroadcast(intent);
 					break;
+				case MSG_START:	//send info (to unbind main screen)
+					intent = new Intent(
+						MyLocationListener.class.getSimpleName());
+					// Add data
+					intent.putExtra(MESSAGE, MSG_START);
+					LocalBroadcastManager.getInstance(MyLocationListener.this)
+						.sendBroadcast(intent);
+					break;
+				case MSG_STOP:
+					//TODO jesli przenieœæ obliczenia do serwisu to trzeba obs³u¿yæ zmiany
+					break;
+				case MSG_PAUSE:
+					//TODO jesli przenieœæ obliczenia do serwisu to trzeba obs³u¿yæ zmiany
+					break;
 				default:
 					super.handleMessage(msg);
 			}
@@ -189,14 +209,13 @@ public class MyLocationListener extends Service implements LocationListener,
 	
 	@Override
 	public void onCreate() {
-		Log.i("Service_info", "Service created");
+		Log.i("Service_info2", "Service created");
 		mLocationClient = new LocationClient(getApplicationContext(), this,
 			this);
 		mLocationRequest = LocationRequest.create();
 		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		isStarted = false;
-		isPaused = false;
+		activityState = STOPED;
 		isGpsFix = false;
 		isConnected = false;
 		mLocationClient.connect();
