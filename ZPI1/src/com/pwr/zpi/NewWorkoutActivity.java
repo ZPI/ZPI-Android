@@ -25,8 +25,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	public static final String REPEAT_TAG = "repeat";
 	public static final String WORMUP_TAG = "wormup";
 	
-	public static final int MY_RESULT_CODE_ADD = 1;
-	public static final int MY_RESULT_CODE_EDIT = 2;
+	public static final int MY_REQUEST_CODE_ADD = 1;
+	public static final int MY_REQUEST_CODE_EDIT = 2;
 	private Button addActionButton;
 	private Button addThisWorkoutButton;
 	private EditText workautNameEditText;
@@ -79,7 +79,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	public void onClick(View v) {
 		if (v == addActionButton)
 		{
-			startActivityForResult(new Intent(this, NewWorkoutActionActivity.class), MY_RESULT_CODE_ADD);
+			startActivityForResult(new Intent(this, NewWorkoutActionActivity.class), MY_REQUEST_CODE_ADD);
 		}
 		else if (v == addThisWorkoutButton)
 		{
@@ -98,7 +98,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
 		switch (requestCode) {
-			case MY_RESULT_CODE_ADD:
+			case MY_REQUEST_CODE_ADD:
 				
 				if (resultCode == RESULT_OK) {
 					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
@@ -109,7 +109,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 					//Write your code if there's no result
 				}
 				break;
-			case MY_RESULT_CODE_EDIT:
+			case MY_REQUEST_CODE_EDIT:
 				if (resultCode == RESULT_OK) {
 					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
 					workoutsActionList.set(editedPos, workoutAction);
@@ -126,7 +126,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		Intent intent = new Intent(this, NewWorkoutActionActivity.class);
 		WorkoutAction action = (WorkoutAction) adapter.getItemAtPosition(position);
 		intent.putExtra(WorkoutAction.TAG, action);
-		startActivityForResult(intent, MY_RESULT_CODE_EDIT);
+		startActivityForResult(intent, MY_REQUEST_CODE_EDIT);
 		
 	}
 	

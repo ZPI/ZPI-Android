@@ -33,7 +33,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 {
 	public static final String ID_TAG = "id";
 	public static final String IS_NEW_TAG = "is_new";
-	public static final int MY_RESULT_CODE = 2;
+	public static final int MY_REQUEST_CODE = 2;
 	public static final String WORKOUTS_NUMBER_TAG = "work_count";
 	GestureDetector gestureDetector;
 	MyGestureDetector myGestureDetector;
@@ -172,7 +172,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
-		if (requestCode == MY_RESULT_CODE) {
+		if (requestCode == MY_REQUEST_CODE) {
 			
 			if (resultCode == RESULT_OK) {
 				Workout workout = new Workout();
@@ -249,7 +249,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		{
 			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
 			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
-			startActivityForResult(intent, MY_RESULT_CODE);
+			startActivityForResult(intent, MY_REQUEST_CODE);
 		}
 		
 	}
