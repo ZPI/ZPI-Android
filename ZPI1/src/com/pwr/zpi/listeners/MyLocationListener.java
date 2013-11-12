@@ -24,11 +24,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.pwr.zpi.MainScreenActivity;
+import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class MyLocationListener extends Service implements LocationListener,
-	GooglePlayServicesClient.ConnectionCallbacks,
-	GooglePlayServicesClient.OnConnectionFailedListener,
-	android.location.GpsStatus.Listener {
+GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener,
+android.location.GpsStatus.Listener {
 	
 	// private ActivityActivity activityActivity;
 	// private MainScreenActivity mainScreenActivity;
@@ -79,7 +80,7 @@ public class MyLocationListener extends Service implements LocationListener,
 		}
 		else if (isConnected
 			&& (mLastRecordedLocation == null || mLastRecordedLocation
-				.getAccuracy() > MyLocationListener.REQUIRED_ACCURACY)) {
+			.getAccuracy() > MyLocationListener.REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -174,7 +175,7 @@ public class MyLocationListener extends Service implements LocationListener,
 					intent.putExtra(MESSAGE, MSG_ASK_FOR_GPS);
 					intent.putExtra("gpsStatus", gpsStatus);
 					LocalBroadcastManager.getInstance(MyLocationListener.this)
-						.sendBroadcast(intent);
+					.sendBroadcast(intent);
 					break;
 				case MSG_START:	//send info (to unbind main screen)
 					intent = new Intent(
@@ -237,6 +238,7 @@ public class MyLocationListener extends Service implements LocationListener,
 		}
 		
 		mLocationClient.disconnect();
+		SpeechSynthezator.getSyntezator().shutdown();
 		super.onDestroy();
 	}
 	

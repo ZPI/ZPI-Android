@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CameraPosition.Builder;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -59,6 +61,8 @@ import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
+	
+	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 2f;
 	
 	private GoogleMap mMap;
 	
@@ -182,7 +186,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		//				actions.add(prepareAdvancedAction(number, i));
 		//			}
 		//		}
-		actions.add(new WorkoutActionAdvanced(10000L, 1000D));
+		actions.add(new WorkoutActionAdvanced(12 * 60 * 1000L, 1000D));
 		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
 			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 3000));
 		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
@@ -346,7 +350,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		handler = new Handler();
 		prepareTimeCountingHandler();
 		pauseButton.setClickable(false);
-		handler.post(new CounterRunnable(COUNT_DOWN_TIME));
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_countdown_before_start), true)) {
+			handler.post(new CounterRunnable(COUNT_DOWN_TIME));
+		} else {
+			startTimeCouting();
+		}
 	}
 	
 	private class CounterRunnable implements Runnable {
@@ -364,10 +372,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				@Override
 				public void run() {
 					if (x == 0) {
-						countDownTextView.setVisibility(View.GONE);
-						startTime = System.currentTimeMillis();
-						pauseButton.setClickable(true);
-						handler.post(timeHandler);
+						startTimeCouting();
 					}
 					else {
 						countDownTextView.setText(x + "");
@@ -377,6 +382,13 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				}
 			});
 		}
+	}
+	
+	private void startTimeCouting() {
+		countDownTextView.setVisibility(View.GONE);
+		startTime = System.currentTimeMillis();
+		pauseButton.setClickable(true);
+		handler.post(timeHandler);
 	}
 	
 	private void prepareTimeCountingHandler() {
@@ -416,7 +428,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// end of timer methods
-	//TODO przesun¹æ ¿eby nie by³y pod innymi ikonami
+	//TODO przesun\B9\E6 \BFeby nie by\B3y pod innymi ikonami
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 		
 		View zoomControls = mapFragment.getView().findViewById(0x1);
@@ -592,6 +604,28 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 	}
 	
+	private void pauseRun() {
+		if (!isPaused) {
+			isPaused = true;
+			startStopLayout.setVisibility(View.INVISIBLE);
+			resumeButton.setVisibility(View.VISIBLE);
+			pauseStartTime = System.currentTimeMillis();
+			
+			handler.removeCallbacks(timeHandler);
+		}
+	}
+	
+	private void resumeRun() {
+		if (isPaused) {
+			isPaused = false;
+			startStopLayout.setVisibility(View.VISIBLE);
+			resumeButton.setVisibility(View.GONE);
+			pauseTime += System.currentTimeMillis() - pauseStartTime;
+			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
+			handler.post(timeHandler);
+		}
+	}
+	
 	private String getMyString(int stringId) {
 		return getResources().getString(stringId);
 	}
@@ -661,11 +695,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		traceOnMap.add(latLng);
 		traceOnMapObject.setPoints(traceOnMap.getPoints());
 		
-		CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(17)
-			// Sets the zoom
-			.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
-			// camera to east
-			.tilt(60).build(); // Creates a CameraPosition from the builder
+		CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
 		mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 		
 		// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -689,6 +719,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 	}
 	
+	private CameraPosition buildCameraPosition(LatLng latLng, Location location, Location lastLocation) {
+		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
+			builder
+			.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
+			// camera to east
+			.tilt(60); // Creates a CameraPosition from the builder
+		}
+		return builder.build();
+	}
+	
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
 			new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km"));
@@ -697,6 +738,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	// this runs on every update
 	private void updateGpsInfo(Location newLocation) {
+		autoPauseIfEnabled(newLocation);
+		
 		// no pause and good gps
 		if (!isPaused && newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
 			// not first point after start or resume
@@ -728,6 +771,22 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			showLostGpsSignalDialog();
 		}
 		mLastLocation = newLocation;
+	}
+	
+	private void autoPauseIfEnabled(Location newLocation) {
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_auto_pause), false)) {
+			if (newLocation.hasSpeed()) {
+				Log.e(TAG, "Speed:" + newLocation.getSpeed());
+				if (newLocation.getSpeed() < MIN_SPEED_FOR_AUTO_PAUSE) {
+					pauseRun();
+				} else {
+					resumeRun();
+				}
+			} else {
+				Log.e(TAG, "No speed.. pausing anyway");
+				pauseRun();
+			}
+		}
 	}
 	
 	@Override

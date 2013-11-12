@@ -5,7 +5,10 @@ import java.io.IOException;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.pwr.zpi.R;
 
 public class BeepPlayer {
 	
@@ -13,6 +16,7 @@ public class BeepPlayer {
 	
 	private final MediaPlayer player;
 	private AssetFileDescriptor afd;
+	private final boolean canPlay;
 	
 	public BeepPlayer(Context context) {
 		player = new MediaPlayer();
@@ -27,11 +31,13 @@ public class BeepPlayer {
 			Log.e(context.getClass().getSimpleName(), "error reading beep file from assets");
 			e.printStackTrace();
 		}
-		
+		canPlay = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.key_aplication_sound), false);
 	}
 	
 	public void playBeep() {
-		player.start();
+		if (canPlay) {
+			player.start();
+		}
 	}
 	
 	public void stopPlayer() {

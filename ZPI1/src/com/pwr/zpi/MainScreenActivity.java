@@ -16,6 +16,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -33,6 +34,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
+import com.pwr.zpi.utils.SpeechSynthezator;
 import com.pwr.zpi.views.VerticalTextView;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
@@ -100,7 +102,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			mMyServiceReceiver,
 			new IntentFilter(MyLocationListener.class.getSimpleName()));
 		
+		ss = new SpeechSynthezator(this);
+		
 	}
+	SpeechSynthezator ss;
 	
 	private void addListeners() {
 		GPSStatusTextView.setOnTouchListener(gestureListener);
@@ -253,7 +258,24 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 						 * Try the request again
 						 */
 						break;
+					default:
+						break;
 				}
+				break;
+			case SpeechSynthezator.TTS_DATA_CHECK_CODE:
+				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+					// success, create the TTS instance
+					ss.mTts = new TextToSpeech(this, ss);
+				} else {
+					// missing data, install it
+					Intent installIntent = new Intent();
+					installIntent.setAction(
+						TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+					startActivity(installIntent);
+				}
+				break;
+			default:
+				break;
 		}
 	}
 	
@@ -358,7 +380,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
 				connectionResult.getErrorCode(), this,
 				REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
-												// dokumentacji :/
+			// dokumentacji :/
 			
 			// If Google Play services can provide an error dialog
 			if (errorDialog != null) {
