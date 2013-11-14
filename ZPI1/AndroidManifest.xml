@@ -94,7 +94,6 @@
                 <action android:name="com.pwr.zpi.services.LocationService" />
             </intent-filter>
         </service>
-        <service android:name="com.pwr.zpi.listeners.MyLocationListener" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
