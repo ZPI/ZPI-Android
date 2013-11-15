@@ -1,35 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     android:id="@+id/customPicker"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:layout_margin="5dp"
-     android:gravity="center"
-     android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customPicker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:gravity="center"
+    android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/picker_plus"
-            android:layout_width="@dimen/picker_button_width"
-            android:layout_height="@dimen/picker_button_height"
-            android:layout_gravity="center"
-            android:background="@drawable/button_background"
-            android:text="+" />
- 
-        <EditText
-            android:id="@+id/picker_display"
-            android:layout_width="@dimen/picker_edit_text_width"
-            android:layout_height="@dimen/picker_edit_text_height"
-            android:focusable="false"
-            android:gravity="center"
-            android:singleLine="true">
-        </EditText>
+    <Button
+        android:id="@+id/picker_plus"
+        android:layout_width="@dimen/picker_button_height"
+        android:layout_height="@dimen/picker_button_height"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/plus_sign_drawable" />
 
-        <Button
-            android:id="@+id/picker_minus"
-            android:layout_width="@dimen/picker_button_width"
-            android:layout_height="@dimen/picker_button_height"
-            android:layout_gravity="center"
-            android:background="@drawable/button_background"
-            android:text="-" />
+    <EditText
+        android:id="@+id/picker_display"
+        android:layout_width="@dimen/picker_edit_text_width"
+        android:layout_height="@dimen/picker_edit_text_height"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/picker_plus"
+        android:focusable="false"
+        android:gravity="center"
+        android:singleLine="true" >
+    </EditText>
 
-    </LinearLayout>
+    <Button
+        android:id="@+id/picker_minus"
+        android:layout_width="@dimen/picker_button_height"
+        android:layout_height="@dimen/picker_button_height"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/picker_display"
+        android:background="@drawable/minus_sign_drawable" />
+
+</RelativeLayout>

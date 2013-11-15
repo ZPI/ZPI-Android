@@ -16,14 +16,12 @@ import com.pwr.zpi.utils.TimeFormatter;
 
 public class SplitsAdapter extends ArrayAdapter<Pair<Integer, Pair<Long, Long>>> {
 	
-	private final Context context;
 	private final int layoutResourceId;
 	
 	public SplitsAdapter(Context context, int textViewResourceId,
 		List<Pair<Integer, Pair<Long, Long>>> objects) {
 		super(context, textViewResourceId, objects);
 		this.layoutResourceId = textViewResourceId;
-		this.context = context;
 	}
 	
 	@Override
@@ -35,7 +33,7 @@ public class SplitsAdapter extends ArrayAdapter<Pair<Integer, Pair<Long, Long>>>
 			holder = (RowHolder) row.getTag();
 		}
 		else {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+			LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 			
 			holder = new RowHolder();

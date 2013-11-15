@@ -32,11 +32,13 @@ import com.pwr.zpi.RunListener;
 import com.pwr.zpi.RunListenerApi;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-	OnConnectionFailedListener {
+OnConnectionFailedListener {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -62,12 +64,15 @@ public class LocationService extends Service implements LocationListener, Connec
 	private Runnable timeHandler;
 	public static final String CONNECTION_FIAILED_TAG = "connectionFailed";
 	
+	private SpeechSynthezator speechSynthezator;
+	
 	long startTime;
 	long pauseStartTime;
 	long pauseTime;
 	//saved here in case of activity closing
 	Long time;
 	double distance;
+	Workout workout;
 	private boolean connectionFailed;
 	private boolean isConnected;
 	private final RunListenerApi.Stub apiEndpoint = new RunListenerApi.Stub() {
@@ -110,11 +115,12 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		
 		@Override
-		public void setStarted() throws RemoteException {
+		public void setStarted(Workout workout) throws RemoteException {
 			if (state == STOPED)
 			{
 				locationList = new ArrayList<Location>();
 				state = STARTED;
+				prepareWorkout(workout);
 				initActivityRecording();
 				Notification note = Notifications.createNotification(LocationService.this, ActivityActivity.class,
 					R.string.app_name, R.string.notification_message);
@@ -136,7 +142,6 @@ public class LocationService extends Service implements LocationListener, Connec
 			state = STARTED;
 			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
 			handler.post(timeHandler);
-			
 		}
 		
 		@Override
@@ -154,9 +159,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		public void addListener(RunListener listener) throws RemoteException {
 			synchronized (listeners) {
 				listeners.add(listener);
-				
 			}
-			
 		}
 		
 		@Override
@@ -166,13 +169,17 @@ public class LocationService extends Service implements LocationListener, Connec
 				listeners.clear();
 			}
 			//we dont need more then one listener at once
-			
 		}
 		
 		@Override
 		public int getGPSStatus() throws RemoteException {
 			
 			return checkGPS();
+		}
+		
+		@Override
+		public void prepareTextToSpeech() throws RemoteException {
+			speechSynthezator = new SpeechSynthezator(getApplicationContext());
 		}
 		
 	};
@@ -184,6 +191,13 @@ public class LocationService extends Service implements LocationListener, Connec
 			return apiEndpoint;
 		}
 		else return null;
+	}
+	
+	private void prepareWorkout(Workout workout) {
+		this.workout = workout;
+		if (workout != null) {
+			workout.getOnNextActionListener().setConext(getApplicationContext());
+		}
 	}
 	
 	@Override
@@ -207,7 +221,6 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
 		
 		if (mLocationClient.isConnected()) {
 			mLocationClient.removeLocationUpdates(this);
@@ -215,6 +228,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 		mLocationClient.disconnect();
 		Log.i(TAG, "Service destroying");
+		super.onDestroy();
 	}
 	
 	@Override
@@ -303,7 +317,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-				.getAccuracy() > REQUIRED_ACCURACY)) {
+			.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -345,6 +359,11 @@ public class LocationService extends Service implements LocationListener, Connec
 		{
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
+				boolean changeWorkout = false;
+				if (workout != null) {
+					processWorkout();
+					changeWorkout = true;
+				}
 				Log.i(TAG, time + "");
 				Iterator<RunListener> it = listeners.iterator();
 				while (it.hasNext())
@@ -352,6 +371,10 @@ public class LocationService extends Service implements LocationListener, Connec
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();
+						if (changeWorkout) {
+							listener.handleWorkoutChange(workout);
+						}
+						Log.i(TAG, listeners.size() + "");
 					}
 					catch (RemoteException e) {
 						Log.w(TAG, "Failed to tell listener about new Time ", e);
@@ -364,6 +387,13 @@ public class LocationService extends Service implements LocationListener, Connec
 			handler.postDelayed(timeHandler, 1000);
 		}
 		
+	}
+	
+	private void processWorkout() {
+		if (workout.hasNextAction()) {
+			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+			workout.progressWorkout(distance, time);
+		}
 	}
 	
 	// invoke when finishing activity

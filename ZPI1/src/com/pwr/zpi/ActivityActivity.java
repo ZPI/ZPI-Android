@@ -25,10 +25,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -46,13 +45,14 @@ import com.pwr.zpi.adapters.DrawerWorkoutsAdapter;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
+import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.BeepPlayer;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
-	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 2f;
+	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
 	
 	private GoogleMap mMap;
 	
@@ -121,8 +121,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private ProgressDialog lostGPSDialog;
 	
 	// workout drawer fields
-	private DrawerWorkoutsAdapter expandableListAdapter;
-	private ExpandableListView expandableListView;
+	private DrawerWorkoutsAdapter drawerListAdapter;
+	private ListView listView;
 	private Workout workout;
 	private DrawerLayout drawerLayout;
 	
@@ -150,7 +150,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		workout.setRepeatCount(i.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
 		workout.setWarmUp(i.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
 		return workout;
-		
 	}
 	
 	private void initFields() {
@@ -198,23 +197,25 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		beepPlayer = new BeepPlayer(this);
 		
-		Intent i = getIntent();
-		expandableListView = (ExpandableListView) findViewById(R.id.left_drawer);
+		Intent intent = getIntent();
+		listView = (ListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (i.hasExtra(PlaningActivity.ID_TAG))
-		{
+		if (intent.hasExtra(PlaningActivity.ID_TAG)) {
 			// drawer initialization
-			
+			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
 			workout = getWorkoutData();
-			expandableListAdapter = new DrawerWorkoutsAdapter(this, workout);
-			expandableListView.setAdapter(expandableListAdapter);
-			expandableListView.expandGroup(0);
-			expandableListView.setVisibility(View.VISIBLE);
+			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+			for (int i = 0; i < workout.getRepeatCount(); i++) {
+				actions.addAll(workout.getActions());
+			}
+			workout.setActions(actions);
+			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item, workout.getActions(), workout);
+			listView.setAdapter(drawerListAdapter);
+			listView.setVisibility(View.VISIBLE);
 		}
-		else
-		{
+		else {
 			workoutDdrawerButton.setVisibility(View.GONE);
-			expandableListView.setVisibility(View.GONE);
+			listView.setVisibility(View.GONE);
 		}
 		
 		moveSystemControls(mapFragment);
@@ -227,16 +228,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
-		if (workout != null)
-		{
+		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
-			expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
-				
-				@Override
-				public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-					return true;
-				}
-			});
 			
 			drawerLayout.setDrawerListener(new DrawerListener() {
 				
@@ -248,13 +241,20 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				
 				@Override
 				public void onDrawerOpened(View arg0) {
-					expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
-						.size());
+					if (workout == null) {
+						drawerLayout.closeDrawer(Gravity.LEFT);
+					}
+					else {
+						listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
+							.size());
+					}
 				}
 				
 				@Override
 				public void onDrawerClosed(View arg0) {}
 			});
+			
+			workout.setOnNextActionListener(new OnNextActionListener());
 		}
 	}
 	
@@ -299,7 +299,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		if (isServiceConnected)
 		{
 			try {
-				api.setStarted();
+				api.setStarted(workout);
 			}
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to start activity", e);
@@ -332,14 +332,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					}
 				}
 			});
-		}
-	}
-	
-	private void processWorkout() {
-		if (workout.hasNextAction()) {
-			workout.progressWorkout(distance, time);
-			expandableListAdapter.notifyDataSetChanged();
-			expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 		}
 	}
 	
@@ -475,8 +467,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		
-		switch (v.getId())
-		{
+		switch (v.getId()) {
 			case R.id.stopButton:
 				showAlertDialog();
 				break;
@@ -657,9 +648,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-				// camera to east
-				.tilt(60); // Creates a CameraPosition from the builder
+			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			// camera to east
+			.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
@@ -817,6 +808,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		public void handleTimeChange() throws RemoteException {
 			handleTimeUpdates();
 		}
+		
+		@Override
+		public void handleWorkoutChange(Workout workout) throws RemoteException {
+			handleWorkoutUpdate(workout);
+		}
+		
 	};
 	
 	private void setTracefromServer(final List<Location> locationList)
@@ -856,9 +853,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				updateData(DataTextView1, dataTextView1Content);
 				updateData(DataTextView2, dataTextView2Content);
-				if (workout != null) {
-					processWorkout();
-				}
 			}
 		});
 	}
@@ -873,6 +867,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	private void handleWorkoutUpdate(final Workout newWorkout) {
+		handlerForService.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				ActivityActivity.this.workout.updateWorkoutData(newWorkout);
+				drawerListAdapter.notifyDataSetChanged();
+				listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+			}
+		});
 	}
 }

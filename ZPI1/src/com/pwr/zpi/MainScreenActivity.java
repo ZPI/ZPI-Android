@@ -22,17 +22,17 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.services.LocationService;
-import com.pwr.zpi.utils.SpeechSynthezator;
-import com.pwr.zpi.views.VerticalTextView;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
@@ -40,9 +40,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
-	private Button settingsButton;
-	private VerticalTextView historyButton;
-	private VerticalTextView planningButton;
+	private ImageButton settingsButton;
+	private ImageButton historyButton;
+	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
 	
@@ -64,6 +64,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private static final short DOWN = 3;
 	
 	public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	public static final int TTS_DATA_CHECK_CODE_REQUEST = 0x1;
 	public final static int REQUEST_GOOGLE_PLAY_SERVICES = 7;
 	
 	public boolean isConnected;
@@ -79,9 +80,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		isServiceConnected = false;
 		GPSStatusTextView = (TextView) findViewById(R.id.textViewGPSIndicator);
 		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
-		settingsButton = (Button) findViewById(R.id.buttonSettings);
-		historyButton = (VerticalTextView) findViewById(R.id.buttonHistory);
-		planningButton = (VerticalTextView) findViewById(R.id.buttonPlans);
+		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
+		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
+		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
 		startButton = (Button) findViewById(R.id.buttonStart);
 		musicButton = (Button) findViewById(R.id.buttonMusic);
 		
@@ -94,12 +95,13 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		// locationListener.getmLocationClient().connect();
 		
 		isConnected = false;
-		
-		ss = new SpeechSynthezator(this);
-		
 	}
 	
-	SpeechSynthezator ss;
+	private void checkSpeechSynthezator() {
+		Intent checkIntent = new Intent();
+		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+		startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE_REQUEST);
+	}
 	
 	private void addListeners() {
 		GPSStatusTextView.setOnTouchListener(gestureListener);
@@ -246,10 +248,15 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 						break;
 				}
 				break;
-			case SpeechSynthezator.TTS_DATA_CHECK_CODE:
+			case TTS_DATA_CHECK_CODE_REQUEST:
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
-					ss.mTts = new TextToSpeech(this, ss);
+					try {
+						api.prepareTextToSpeech();
+					}
+					catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}
 				else {
 					// missing data, install it
@@ -336,7 +343,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			default:
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-		
+				
 		}
 		
 	}
@@ -488,6 +495,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to add listener", e);
 			}
+			
+			checkSpeechSynthezator();
 		}
 		
 		@Override
@@ -514,10 +523,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 		
 		@Override
-		public void handleTimeChange() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
+		public void handleTimeChange() throws RemoteException {}
+		
+		@Override
+		public void handleWorkoutChange(Workout workout) throws RemoteException {}
 	};
 	
 	private void getConnectionResult()

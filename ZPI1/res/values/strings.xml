@@ -81,6 +81,7 @@
 	<string name="add_action">Add this action</string>
     <string name="interval">Interval</string>
 	<string name="virtual_partner">Virtual \npartner</string>
+	<string name="edit_workout">Edit Workout</string>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -123,5 +124,13 @@
 	<string name="key_map_3d">map_key</string>
 	<string name="map_3d">Enable map 3D mode</string>
 	<string name="map_3d_description">enabled 3d mode view or use 2d if not enabled</string>
-	<string name="edit_workout">Edit Workout</string>
+	
+	<!-- speech strings -->
+	<string name="action">Action</string>
+	<string name="run_fast">Speed fast!</string>
+	<string name="run_steady">Speed steady!</string>
+	<string name="run_slow">Speed slow!</string>
+	<string name="for_how_much">For</string>
+	<string name="chase_virtual_partner">Chase virtual partner!</string>
+	
 </resources>

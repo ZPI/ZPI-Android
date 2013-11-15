@@ -75,7 +75,7 @@ public class MyGestureDetector extends SimpleOnGestureListener {
 	@Override
 	public boolean onSingleTapConfirmed(MotionEvent e) {
 		listener.onSingleTapConfirmed(e);
-		return super.onSingleTapConfirmed(e);
+		return true;
 	}
 	
 }

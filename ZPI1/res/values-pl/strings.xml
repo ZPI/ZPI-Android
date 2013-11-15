@@ -101,5 +101,13 @@
     <string name="no_history_info">Brak historii aktywności</string>
 	<string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
 	<string name="colon">:</string>
+	
+	<!-- speech strings -->
+	<string name="action">Akcja</string>
+	<string name="run_fast">Szybki bieg!</string>
+	<string name="run_steady">Średni bieg!</string>
+	<string name="run_slow">Powolny bieg!</string>
+	<string name="for_how_much">Przez</string>
+	<string name="chase_virtual_partner">Goń wirtualnego partnera!</string>
 
 </resources>

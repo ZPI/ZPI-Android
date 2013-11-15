@@ -2,11 +2,11 @@ package com.pwr.zpi.utils;
 
 import java.util.Locale;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.util.Log;
 
 import com.pwr.zpi.R;
 
@@ -15,21 +15,17 @@ import com.pwr.zpi.R;
  */
 public class SpeechSynthezator implements OnInitListener {
 	
-	public static final int TTS_DATA_CHECK_CODE = 0x1;
+	private static final String TAG = SpeechSynthezator.class.getSimpleName();
+	
 	public TextToSpeech mTts;
 	private boolean initialized = false;
 	private boolean canSpeak = true;
 	
-	private static SpeechSynthezator syntezator;
 	
-	public SpeechSynthezator(Activity activity) {
+	public SpeechSynthezator(Context context) {
 		
-		Intent checkIntent = new Intent();
-		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		activity.startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE);
-		
-		canSpeak = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(activity.getResources().getString(R.string.key_aplication_sound), false);
-		syntezator = this;
+		canSpeak = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.key_aplication_sound), false);
+		mTts = new TextToSpeech(context, this);
 	}
 	
 	@Override
@@ -43,6 +39,7 @@ public class SpeechSynthezator implements OnInitListener {
 			}
 			
 			String text = "cześć jestem Twoją superową aplikacją do biegania. Trenuj wytrwale, może kiedyś zostaniesz mistrzem świata! Wierzę w Twoje umiejętności biegaczu! Razem zwyciężymy wszystkie zawody! Wciśniij start, by zacząć Naszą przygodę z bieganiem.";
+			text = " test ";
 			if (canSpeak) {
 				mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
 			}
@@ -53,7 +50,9 @@ public class SpeechSynthezator implements OnInitListener {
 	}
 	
 	public void say(String textToSay) {
+		Log.i(TAG, "realy almost there to say");
 		if (canSpeak()) {
+			Log.i(TAG, "Should say now!");
 			mTts.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
@@ -63,11 +62,7 @@ public class SpeechSynthezator implements OnInitListener {
 	}
 	
 	public boolean canSpeak() {
-		return syntezator != null && canSpeak && isInitialized();
-	}
-	
-	public static SpeechSynthezator getSyntezator() {
-		return syntezator;
+		return canSpeak && isInitialized();
 	}
 	
 	public void shutdown() {
