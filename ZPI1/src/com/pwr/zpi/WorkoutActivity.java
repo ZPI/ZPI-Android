@@ -40,6 +40,8 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private Button addThisWorkoutButton;
 	private TextView workoutNameTextView;
 	private AdapterContextMenuInfo info;
+	private TextView repeatsTextView;
+	private TextView warmUpTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +58,22 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		long ID = getIntent().getLongExtra(PlaningActivity.ID_TAG, -1);
 		workout = readData(ID);
 		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workout.getActions());
+		
+		View header = getLayoutInflater().inflate(R.layout.workout_header, null);
+		View footer = getLayoutInflater().inflate(R.layout.workout_footer, null);
+		actionsListView.addHeaderView(header);
+		actionsListView.addFooterView(footer);
 		actionsListView.setAdapter(actionsAdapter);
-		addThisWorkoutButton = (Button) findViewById(R.id.ButtonChooseWorkout);
-		workoutNameTextView = (TextView) findViewById(R.id.textViewWorkoutName);
+		actionsListView.setAdapter(actionsAdapter);
+		
+		addThisWorkoutButton = (Button) header.findViewById(R.id.ButtonChooseWorkout);
+		workoutNameTextView = (TextView) header.findViewById(R.id.textViewWorkoutName);
+		repeatsTextView = (TextView) footer.findViewById(R.id.textViewWrokoutActivityRepeat);
+		warmUpTextView = (TextView) footer.findViewById(R.id.textViewWorkoutActivityWarmUp);
+		
 		workoutNameTextView.setText(workout.getName());
+		repeatsTextView.setText(workout.getRepeatCount() + "");
+		warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
 		registerForContextMenu(actionsListView);
 	}
 	
