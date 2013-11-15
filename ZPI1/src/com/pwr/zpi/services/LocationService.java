@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,6 +32,7 @@ import com.pwr.zpi.RunListener;
 import com.pwr.zpi.RunListenerApi;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
@@ -116,17 +116,8 @@ public class LocationService extends Service implements LocationListener, Connec
 				locationList = new ArrayList<Location>();
 				state = STARTED;
 				initActivityRecording();
-				// Make sure the launch mode of the activity is singleTask, otherwise it will create a new one
-				Intent intent = new Intent(LocationService.this, ActivityActivity.class);
-				PendingIntent pIntent = PendingIntent.getActivity(LocationService.this, 0, intent, 0);
-				
-				// Build notification
-				Notification note = new NotificationCompat.Builder(LocationService.this)
-					.setContentTitle(getApplicationContext().getResources().getString(R.string.app_name))
-					.setSmallIcon(R.drawable.ic_launcher)
-					.setContentText(getApplicationContext().getResources().getString(R.string.notification_message))
-					.setContentIntent(pIntent).build();
-				
+				Notification note = Notifications.createNotification(LocationService.this, ActivityActivity.class,
+					R.string.app_name, R.string.notification_message);
 				startForeground(1, note);
 			}
 			
