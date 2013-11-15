@@ -3,22 +3,20 @@ package com.pwr.zpi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Message;
+import android.os.Handler;
+import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -33,12 +31,13 @@ import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
-import com.pwr.zpi.listeners.MyLocationListener;
-import com.pwr.zpi.services.MyServiceConnection;
+import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
+	private RunListenerApi api;
+	private static final String TAG = MainScreenActivity.class.getSimpleName();
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
 	private ImageButton settingsButton;
@@ -46,11 +45,11 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
-	private LocationManager service;
+	
+	private boolean isServiceConnected;
 	private int gpsStatus = -1;
 	private View mCurrent;
-	// TODO potem zmieni�
-	// public static MyLocationListener locationListener;
+	private Handler handler;
 	
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
@@ -72,13 +71,12 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	// service data
 	boolean mIsBound;
 	
-	// final Messenger mMessenger = new Messenger(new IncomingHandler());
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		handler = new Handler();
 		setContentView(R.layout.main_screen_activity);
-		
+		isServiceConnected = false;
 		GPSStatusTextView = (TextView) findViewById(R.id.textViewGPSIndicator);
 		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
 		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
@@ -91,21 +89,17 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		prepareGestureListener();
 		addListeners();
-		
+		doStartService();
+		doBindService();
 		// locationListener.getmLocationClient().connect();
 		
 		isConnected = false;
-		doStartService();
-		doBindService();
-		
-		LocalBroadcastManager.getInstance(this).registerReceiver(
-			mMyServiceReceiver,
-			new IntentFilter(MyLocationListener.class.getSimpleName()));
 		
 		ss = new SpeechSynthezator(this);
 		ZPIApplication app = (ZPIApplication) getApplicationContext();
 		app.setSyntezator(ss);
 	}
+	
 	SpeechSynthezator ss;
 	
 	private void addListeners() {
@@ -136,20 +130,42 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		if (!mIsBound) {
 			doBindService();
 		}
-		askForGpsStatus();
+		else
+		{
+			try {
+				if (isServiceConnected) {
+					gpsStatus = api.getGPSStatus();
+					handleGPSStatusChange();
+				}
+			}
+			catch (RemoteException e) {
+				Log.w(TAG, "Failed to get gpsStatus ", e);
+			}
+		}
+		
 	}
 	
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		askForGpsStatus();
+		try {
+			if (isServiceConnected) {
+				gpsStatus = api.getGPSStatus();
+			}
+			
+		}
+		catch (RemoteException e) {
+			Log.w(TAG, "Failed to get gpsStatus ", e);
+		}
+		handleGPSStatusChange();
+		//	askForGpsStatus();
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		askForGpsStatus();
+		//		askForGpsStatus();
 	}
 	
 	@Override
@@ -210,38 +226,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		startActivity(i);
 	}
 	
-	// TODO wywolac
-	private boolean servicesConnected() {
-		// Check that Google Play services is available
-		int resultCode = GooglePlayServicesUtil
-			.isGooglePlayServicesAvailable(this);
-		// If Google Play services is available
-		if (ConnectionResult.SUCCESS == resultCode) {
-			// In debug mode, log the status
-			Log.d("Location Updates", "Google Play services is available.");
-			// Continue
-			return true;
-			// Google Play services was not available for some reason
-		}
-		else {
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-				resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-			
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-					"Location Updates");
-			}
-			return false;
-		}
-	}
-	
 	/*
 	 * Handle results returned to the FragmentActivity by Google Play services
 	 */
@@ -267,7 +251,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
 					ss.mTts = new TextToSpeech(this, ss);
-				} else {
+				}
+				else {
 					// missing data, install it
 					Intent installIntent = new Intent();
 					installIntent.setAction(
@@ -280,29 +265,36 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 	}
 	
-	public void showGPSAccuracy(double accuracy) {
-		GPSSignalTextView.setText(String.format("%s: %.2fm", getResources()
-			.getString(R.string.gps_accuracy), accuracy));
-	}
-	
-	@Override
-	protected void onStop() {
-		// LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyServiceReceiver);
-		super.onStop();
-	}
-	
-	@Override
-	protected void onStart() {
-		
-		super.onStart();
+	public void showGPSAccuracy() {
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GPSSignalTextView.setText(String.format("%s: %.2fm", getResources()
+						.getString(R.string.gps_accuracy), mLastLocation.getAccuracy()));
+				}
+				catch (Throwable t) {
+					Log.e(TAG, "Error while updating the UI with tweets", t);
+				}
+			}
+		});
 	}
 	
 	@Override
 	protected void onDestroy() {
-		doUnbindService();
+		
+		try {
+			api.removeListener(runListener);
+			unbindService(serviceConnection);
+			
+		}
+		catch (Throwable t) {
+			// catch any issues, typical for destroy routines
+			// even if we failed to destroy something, we need to continue destroying
+			Log.w(TAG, "Failed to unbind from the service", t);
+		}
 		doStopService();
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(
-			mMyServiceReceiver);
+		Log.i(TAG, "Activity destroyed");
 		super.onDestroy();
 	}
 	
@@ -350,165 +342,100 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 	}
 	
-	private void showGoogleServicesDialog(ConnectionResult connectionResult) {
+	private void showGoogleServicesDialog(final ConnectionResult connectionResult) {
 		/*
 		 * Google Play services can resolve some errors it detects. If the error
 		 * has a resolution, try sending an Intent to start a Google Play
 		 * services activity that can resolve error.
 		 */
-		
-		if (connectionResult.hasResolution()) {
-			try {
-				// Start an Activity that tries to resolve the error
-				connectionResult.startResolutionForResult(this,
-					CONNECTION_FAILURE_RESOLUTION_REQUEST);
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-			}
-			catch (IntentSender.SendIntentException e) {
-				// Log the error
-				e.printStackTrace();
-			}
-		}
-		else {
-			/*
-			 * If no resolution is available, display a dialog to the user with
-			 * the error.
-			 */
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-				connectionResult.getErrorCode(), this,
-				REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
-			// dokumentacji :/
+		handler.post(new Runnable() {
 			
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-					"Location Updates");
-			}
-		}
-		
-	}
-	
-	// SERVICE METHODS
-	private void askForGpsStatus() {
-		if (mIsBound)
-		{
-			try {
-				
-				Message msg = Message.obtain(null,
-					MyLocationListener.MSG_ASK_FOR_GPS);
-				if (mConnection.getmService() != null) {
-					mConnection.getmService().send(msg);
+			@Override
+			public void run() {
+				if (connectionResult.hasResolution()) {
+					try {
+						// Start an Activity that tries to resolve the error
+						connectionResult.startResolutionForResult(MainScreenActivity.this,
+							CONNECTION_FAILURE_RESOLUTION_REQUEST);
+						/*
+						 * Thrown if Google Play services canceled the original
+						 * PendingIntent
+						 */
+					}
+					catch (IntentSender.SendIntentException e) {
+						// Log the error
+						e.printStackTrace();
+					}
 				}
-			}
-			catch (RemoteException e) {
+				else {
+					/*
+					 * If no resolution is available, display a dialog to the user with
+					 * the error.
+					 */
+					// Get the error dialog from Google Play services
+					Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+						connectionResult.getErrorCode(), MainScreenActivity.this,
+						REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
+					// dokumentacji :/
+					
+					// If Google Play services can provide an error dialog
+					if (errorDialog != null) {
+						// Create a new DialogFragment for the error dialog
+						ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+						// Set the dialog in the DialogFragment
+						errorFragment.setDialog(errorDialog);
+						// Show the error dialog in the DialogFragment
+						errorFragment.show(getSupportFragmentManager(),
+							"Location Updates");
+					}
+				}
 				
 			}
-		}
+		});
 		
 	}
-	
-	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.MAIN_SCREEN);
 	
 	void doStartService() {
 		Log.i("Service_info", "Main Screen --> start service");
-		Intent intent = new Intent(MainScreenActivity.this,
-			MyLocationListener.class);
-		intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		
+		Intent intent = new Intent(LocationService.class.getName());
+		//intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		startService(intent);
+		
 	}
 	
 	void doStopService() {
 		Log.i("Service_info", "Main Screen --> stop service");
-		Intent intent = new Intent(MainScreenActivity.this,
-			MyLocationListener.class);
+		Intent intent = new Intent(LocationService.class.getName());
 		stopService(intent);
 	}
 	
 	void doBindService() {
 		Log.i("Service_info", "Main Screen Binding");
-		Intent i = new Intent(MainScreenActivity.this, MyLocationListener.class);
-		i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+		Intent intent = new Intent(LocationService.class.getName());
+		//intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		bindService(intent, serviceConnection, 0);
 		mIsBound = true;
 	}
 	
 	void doUnbindService() {
 		Log.i("Service_info", "Main Screen Unbinding");
 		if (mIsBound) {
-			// Detach our existing connection.
-			unbindService(mConnection);
+			try {
+				api.removeListener(runListener);
+				unbindService(serviceConnection);
+			}
+			catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			mIsBound = false;
 			
 		}
 	}
-	
-	// handler for the events launched by the service
-	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (mIsBound)
-			{
-				// Extract data included in the Intent
-				int message_type = intent.getIntExtra(MyLocationListener.MESSAGE,
-					-1);
-				
-				switch (message_type) {
-					case MyLocationListener.MSG_SEND_LOCATION:
-						Log.i("Service_info", "MainScreen-got Location");
-						isConnected = true;
-						mLastLocation = (Location) intent
-							.getParcelableExtra("Location");
-						showGPSAccuracy(mLastLocation.getAccuracy());
-						askForGpsStatus();
-						
-						break;
-					case MyLocationListener.MSG_ASK_FOR_GPS:
-						gpsStatus = intent.getIntExtra("gpsStatus", GPS_NOT_ENABLED);
-						Log.i("Service_info", "MainScreen-gotGpsStatus: " + gpsStatus);
-						switch (gpsStatus) {
-							case GPS_NOT_ENABLED:
-								GPSStatusTextView.setText(getResources().getString(
-									R.string.gps_disabled));
-								break;
-							case NO_GPS_SIGNAL:
-								GPSStatusTextView.setText(getResources().getString(
-									R.string.gps_enabled));
-								break;
-							case GPS_WORKING:
-								GPSStatusTextView.setText(getResources().getString(
-									R.string.gps_enabled));
-								break;
-						}
-						break;
-					case MyLocationListener.MSG_SHOW_GOOGLE_SERVICES_DIALOG:
-						Log.i("Service_info", "show Google services dialog");
-						int errorCode = intent.getIntExtra("status_code", -1);
-						PendingIntent pendingIntent = intent
-							.getParcelableExtra("pending_intent");
-						showGoogleServicesDialog(new ConnectionResult(errorCode,
-							pendingIntent));
-						break;
-					case MyLocationListener.MSG_START:
-						doUnbindService();
-						break;
-					case MyLocationListener.MSG_STOP:
-						doBindService();
-						break;
-				}
-			}
-		}
-	};
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
@@ -545,4 +472,97 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 	}
 	
+	private final ServiceConnection serviceConnection = new ServiceConnection() {
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.i(TAG, "Service connection established");
+			isServiceConnected = true;
+			// that's how we get the client side of the IPC connection
+			api = RunListenerApi.Stub.asInterface(service);
+			try {
+				api.addListener(runListener);
+				gpsStatus = api.getGPSStatus();
+				handleGPSStatusChange();
+				getConnectionResult();
+			}
+			catch (RemoteException e) {
+				Log.e(TAG, "Failed to add listener", e);
+			}
+		}
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Log.i(TAG, "Service connection closed");
+		}
+	};
+	
+	private final RunListener.Stub runListener = new RunListener.Stub() {
+		
+		@Override
+		public void handleLocationUpdate() throws RemoteException {
+			Location location = api.getLatestLocation();
+			
+			gpsStatus = api.getGPSStatus();
+			mLastLocation = location;
+			showGPSAccuracy();
+		}
+		
+		@Override
+		public void handleConnectionResult() throws RemoteException {
+			getConnectionResult();
+			
+		}
+		
+		@Override
+		public void handleTimeChange() throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	private void getConnectionResult()
+	{
+		Intent intent;
+		try {
+			intent = api.getConnectionResult();
+			boolean connectionFailed = intent.getBooleanExtra(LocationService.CONNECTION_FIAILED_TAG, true);
+			if (connectionFailed)
+			{
+				int errorCode = intent.getIntExtra("status_code", -1);
+				PendingIntent pendingIntent = intent
+					.getParcelableExtra("pending_intent");
+				showGoogleServicesDialog(new ConnectionResult(errorCode,
+					pendingIntent));
+			}
+		}
+		catch (RemoteException e) {
+			Log.e(TAG, "Failed to get connectionResult", e);
+		}
+		
+	}
+	
+	private void handleGPSStatusChange()
+	{
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				switch (gpsStatus) {
+					case GPS_NOT_ENABLED:
+						GPSStatusTextView.setText(getResources().getString(
+							R.string.gps_disabled));
+						break;
+					case NO_GPS_SIGNAL:
+						GPSStatusTextView.setText(getResources().getString(
+							R.string.gps_enabled));
+						break;
+					case GPS_WORKING:
+						GPSStatusTextView.setText(getResources().getString(
+							R.string.gps_enabled));
+						break;
+				}
+			}
+			
+		});
+	}
 }

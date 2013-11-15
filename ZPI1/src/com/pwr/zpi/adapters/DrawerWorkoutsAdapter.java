@@ -1,6 +1,5 @@
 package com.pwr.zpi.adapters;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -22,37 +21,22 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 	private static final int ACTIVE_HEIGHT = 200;
 	private static final int NOT_ACTIVE_HEIGHT = 100;
 	
-	private final Context context;
+	private final int layoutResourceID;
 	private final Workout workout;
 	
-	//TODO change to list adapter
-	public DrawerWorkoutsAdapter(Context context, Workout workout) {
-		this.context = context;
+	public DrawerWorkoutsAdapter(Context context, int layoutResourceID, List<WorkoutAction> actions, Workout workout) {
+		super(context, layoutResourceID, actions);
+		this.layoutResourceID = layoutResourceID;
 		this.workout = workout;
-		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
-		for (int i = 0; i < workout.getRepeatCount(); i++) {
-			actions.addAll(workout.getActions());
-		}
-		workout.setActions(actions);
 	}
 	
 	@Override
-	public Object getChild(int groupPosition, int childPosition) {
-		return workout.getActions().get(childPosition);
-	}
-	
-	@Override
-	public long getChildId(int groupPosition, int childPosition) {
-		return childPosition;
-	}
-	
-	@Override
-	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		RowHolder rowHolder;
 		if (row == null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			row = inflater.inflate(R.layout.workout_drawer_list_item, parent, false);
+			LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
+			row = inflater.inflate(layoutResourceID, parent, false);
 			
 			rowHolder = new RowHolder();
 			rowHolder.icon = (ImageView) row.findViewById(R.id.imageViewWorkoutActionIcon);
@@ -65,7 +49,7 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 		}
 		
 		int textColor = android.R.color.black;
-		WorkoutAction action = workout.getActions().get(childPosition);
+		WorkoutAction action = getItem(position);
 		switch (action.getActionType()) {
 			case WorkoutAction.ACTION_SIMPLE:
 				rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
@@ -82,26 +66,26 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 				break;
 		}
 		
-		if (childPosition < workout.getCurrentAction()){
+		if (position < workout.getCurrentAction()){
 			textColor = R.color.workout_action_text_not_active;
-			rowHolder.layout.setBackgroundColor(context.getResources().getColor(R.color.workout_drawer_not_active));
-			rowHolder.text.setText(context.getResources().getString(R.string.done));
+			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
+			rowHolder.text.setText(getContext().getResources().getString(R.string.done));
 			
 			row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
-		} else if (childPosition == workout.getCurrentAction()) {
+		} else if (position == workout.getCurrentAction()) {
 			//TODO text from how much left and color
-			rowHolder.layout.setBackgroundColor(context.getResources().getColor(R.color.workout_drawer_active));
+			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_active));
 			rowHolder.text.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
 			
 			row.setMinimumHeight(ACTIVE_HEIGHT);
 		} else {
 			textColor = R.color.workout_action_text_not_active;
-			rowHolder.layout.setBackgroundColor(context.getResources().getColor(R.color.workout_drawer_not_active));
+			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
 			rowHolder.text.setText(Workout.formatActionValue(action, null));
 			
 			row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
 		}
-		rowHolder.text.setTextColor(context.getResources().getColor(textColor));
+		rowHolder.text.setTextColor(getContext().getResources().getColor(textColor));
 		return row;
 	}
 	

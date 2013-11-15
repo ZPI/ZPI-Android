@@ -1,22 +1,21 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
+import java.util.List;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
@@ -26,7 +25,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -44,18 +42,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.adapters.DrawerWorkoutsAdapter;
-import com.pwr.zpi.database.Database;
-import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
-import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
-import com.pwr.zpi.services.MyServiceConnection;
+import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.BeepPlayer;
-import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.Notifications;
-import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
@@ -84,9 +77,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private RelativeLayout dataRelativeLayout2;
 	private Location mLastLocation;
 	private boolean isPaused;
-	private SingleRun singleRun;
-	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
-	private Calendar calendar;
+	//private SingleRun singleRun;
+	//private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
+	//private Calendar calendar;
 	private PolylineOptions traceOnMap;
 	private Polyline traceOnMapObject;
 	private static final float traceThickness = 5;
@@ -96,6 +89,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	double pace;
 	double avgPace;
 	double distance;
+	double lastDistance;
 	Long time = 0L;
 	long startTime;
 	long pauseTime;
@@ -112,10 +106,14 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	// service data
 	boolean mIsBound;
+	boolean isServiceConnected;
+	boolean canStart;
+	private RunListenerApi api;
+	private Handler handlerForService;
 	
 	// time counting fields
 	private Handler handler;
-	private Runnable timeHandler;
+	//	private Runnable timeHandler;
 	private static final int COUNT_DOWN_TIME = 5;
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	BeepPlayer beepPlayer;
@@ -124,7 +122,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private ProgressDialog lostGPSDialog;
 	
 	// workout drawer fields
-	private DrawerWorkoutsAdapter expandableListAdapter;
+	private DrawerWorkoutsAdapter drawerListAdapter;
 	private ListView listView;
 	private Workout workout;
 	private DrawerLayout drawerLayout;
@@ -141,15 +139,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		prepareServiceAndStart();
 		
-		startTimerAfterCountDown();
 		Notifications
 		.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
 		
 	}
 	
-	// MOCK
 	private Workout getWorkoutData() {
-		//TODO get workout id from intent
 		Intent i = getIntent();
 		Workout workout = new Workout();
 		
@@ -173,9 +168,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
+		//mMap.setMyLocationEnabled(true);
 		
-		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
-		pauseTime = 0;
+		//		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
+		//		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
 		traceOnMap.color(traceColor);
@@ -196,24 +192,29 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView2Content = timeID;
 		
 		// make single run object
-		singleRun = new SingleRun();
-		calendar = Calendar.getInstance();
+		//	singleRun = new SingleRun();
+		//	calendar = Calendar.getInstance();
 		
-		singleRun.setStartDate(calendar.getTime());
+		//	singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
+		canStart = false;
 		
 		beepPlayer = new BeepPlayer(this);
 		
-		Intent i = getIntent();
-		listView = (ExpandableListView) findViewById(R.id.left_drawer);
+		Intent intent = getIntent();
+		listView = (ListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (i.hasExtra(PlaningActivity.ID_TAG)) {
+		if (intent.hasExtra(PlaningActivity.ID_TAG)) {
 			// drawer initialization
-			
-			workout = getWorkoutData();
-			expandableListAdapter = new DrawerWorkoutsAdapter(this, workout);
-			listView.setAdapter(expandableListAdapter);
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
+			workout = getWorkoutData();
+			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+			for (int i = 0; i < workout.getRepeatCount(); i++) {
+				actions.addAll(workout.getActions());
+			}
+			workout.setActions(actions);
+			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item, workout.getActions(), workout);
+			listView.setAdapter(drawerListAdapter);
 			listView.setVisibility(View.VISIBLE);
 		}
 		else {
@@ -270,29 +271,43 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private void prepareServiceAndStart() {
 		doBindService();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMyServiceReceiver,
-			new IntentFilter(MyLocationListener.class.getSimpleName()));
+		handlerForService = new Handler();
 	}
 	
 	@Override
 	protected void onDestroy() {
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMyServiceReceiver);
 		doUnbindService();
 		Notifications.destroyNotification(this);
+		
 		super.onDestroy();
 	}
 	
-	// start of timer methods
-	private void startTimerAfterCountDown() {
+	//TODO set pause and stop clickable
+	
+	private void startCountDown()
+	{
 		handler = new Handler();
-		prepareTimeCountingHandler();
-		pauseButton.setClickable(false);
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
 			getString(R.string.key_countdown_before_start), true)) {
 			handler.post(new CounterRunnable(COUNT_DOWN_TIME));
 		}
 		else {
-			startTimeCouting();
+			canStart = true;
+		}
+	}
+	
+	private void startRecording()
+	{
+		pauseButton.setClickable(true);
+		countDownTextView.setVisibility(View.GONE);
+		if (isServiceConnected)
+		{
+			try {
+				api.setStarted();
+			}
+			catch (RemoteException e) {
+				Log.e(TAG, "Failed to start activity", e);
+			}
 		}
 	}
 	
@@ -311,7 +326,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				@Override
 				public void run() {
 					if (x == 0) {
-						startTimeCouting();
+						canStart = true;
+						startRecording();
 					}
 					else {
 						countDownTextView.setText(x + "");
@@ -323,45 +339,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 	}
 	
-	private void startTimeCouting() {
-		countDownTextView.setVisibility(View.GONE);
-		startTime = System.currentTimeMillis();
-		pauseButton.setClickable(true);
-		handler.post(timeHandler);
-	}
-	
-	private void prepareTimeCountingHandler() {
-		timeHandler = new Runnable() {
-			
-			@Override
-			public void run() {
-				runTimerTask();
-			}
-		};
-	}
-	
-	protected void runTimerTask() {
-		
-		synchronized (time) {
-			time = System.currentTimeMillis() - startTime - pauseTime;
-			if (workout != null) {
-				processWorkout();
-			}
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					updateData(DataTextView1, dataTextView1Content);
-					updateData(DataTextView2, dataTextView2Content);
-				}
-			});
-		}
-		handler.postDelayed(timeHandler, 1000);
-	}
-	
 	private void processWorkout() {
 		if (workout.hasNextAction()) {
 			workout.progressWorkout(distance, time);
-			expandableListAdapter.notifyDataSetChanged();
+			drawerListAdapter.notifyDataSetChanged();
 			listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 		}
 	}
@@ -457,28 +438,22 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		showAlertDialog();
 	}
 	
-	// invoke when finishing activity
-	private void saveRun() {
-		// add last values
-		singleRun.setEndDate(calendar.getTime());
-		singleRun.setRunTime(time);
-		singleRun.setDistance(distance);
-		singleRun.setTraceWithTime(traceWithTime);
-		
-		// store in DB
-		Database db = new Database(this);
-		db.insertSingleRun(singleRun);
-	}
-	
 	private void showAlertDialog() {
 		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				saveRun();
+				
+				try {
+					if (isServiceConnected) {
+						api.setStoped();
+					}
+				}
+				catch (RemoteException e) {
+					Log.e(TAG, "Failed to tell that activity is stoped", e);
+				}
 				finish();
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
-				mConnection.sendMessage(MyLocationListener.MSG_STOP);
 			}
 		};
 		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
@@ -486,8 +461,19 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void showLostGpsSignalDialog() {
-		lostGPSDialog = ProgressDialog.show(this, getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
-		lostGPSDialog.setCancelable(true);
+		handlerForService.post(new Runnable() {
+			@Override
+			public void run() {
+				if (isServiceConnected)
+				{
+					
+					lostGPSDialog = ProgressDialog.show(ActivityActivity.this, getResources()
+						.getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
+					lostGPSDialog.setCancelable(true);
+					
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -498,22 +484,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				showAlertDialog();
 				break;
 			case R.id.pauseButton:
-				isPaused = true;
-				startStopLayout.setVisibility(View.INVISIBLE);
-				resumeButton.setVisibility(View.VISIBLE);
-				pauseStartTime = System.currentTimeMillis();
-				
-				handler.removeCallbacks(timeHandler);
-				mConnection.sendMessage(MyLocationListener.MSG_PAUSE);
+				pauseRun();
 				break;
 			case R.id.resumeButton:
-				isPaused = false;
-				startStopLayout.setVisibility(View.VISIBLE);
-				resumeButton.setVisibility(View.GONE);
-				pauseTime += System.currentTimeMillis() - pauseStartTime;
-				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-				handler.post(timeHandler);
-				mConnection.sendMessage(MyLocationListener.MSG_START);
+				resumeRun();
 				break;
 			case R.id.dataRelativeLayout1:
 				clickedContentTextView = DataTextView1;
@@ -543,25 +517,45 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void pauseRun() {
-		if (!isPaused) {
-			isPaused = true;
-			startStopLayout.setVisibility(View.INVISIBLE);
-			resumeButton.setVisibility(View.VISIBLE);
-			pauseStartTime = System.currentTimeMillis();
-			
-			handler.removeCallbacks(timeHandler);
-		}
+		handlerForService.post(new Runnable() {
+			@Override
+			public void run() {
+				if (!isPaused) {
+					isPaused = true;
+					startStopLayout.setVisibility(View.INVISIBLE);
+					resumeButton.setVisibility(View.VISIBLE);
+					try {
+						if (isServiceConnected) {
+							api.setPaused();
+						}
+					}
+					catch (RemoteException e) {
+						Log.e(TAG, "Failed to tell that activity is paused", e);
+					}
+				}
+			}
+		});
 	}
 	
 	private void resumeRun() {
-		if (isPaused) {
-			isPaused = false;
-			startStopLayout.setVisibility(View.VISIBLE);
-			resumeButton.setVisibility(View.GONE);
-			pauseTime += System.currentTimeMillis() - pauseStartTime;
-			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-			handler.post(timeHandler);
-		}
+		handlerForService.post(new Runnable() {
+			@Override
+			public void run() {
+				if (isPaused) {
+					isPaused = false;
+					startStopLayout.setVisibility(View.VISIBLE);
+					resumeButton.setVisibility(View.GONE);
+					try {
+						if (isServiceConnected) {
+							api.setResumed();
+						}
+					}
+					catch (RemoteException e) {
+						Log.e(TAG, "Failed to tell that activity is resumed", e);
+					}
+				}
+			}
+		});
 	}
 	
 	private String getMyString(int stringId) {
@@ -596,7 +590,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// update display
-	protected void updateData(TextView textBox, int meassuredValue) {
+	protected void updateData(final TextView textBox, final int meassuredValue) {
 		
 		switch (meassuredValue) {
 			case distanceID:
@@ -622,45 +616,51 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				textBox.setText(TimeFormatter.formatTimeHHMMSS(time));
 				break;
 		}
+		
 	}
 	
 	// count everything with 2 last location points
-	private void countData(Location location, Location lastLocation) {
+	private void countData(final Location location, final Location lastLocation) {
 		
 		Log.i("ActivityActivity", "countData: " + location);
-		LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-		
-		traceOnMap.add(latLng);
-		traceOnMapObject.setPoints(traceOnMap.getPoints());
-		
-		CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
-		mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-		
-		// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-		
-		float speed = location.getSpeed();
-		GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
-		
-		pace = (double) 1 / (speed * 60 / 1000);
-		
-		double lastDistance = distance / 1000;
-		distance += lastLocation.distanceTo(location);
-		
-		int distancetoShow = (int) (distance / 1000);
-		// new km
-		if (distancetoShow - (int) lastDistance > 0) {
-			addMarker(location, distancetoShow);
-		}
-		
-		synchronized (time) {
-			avgPace = ((double) time / 60) / distance;
-		}
+		handlerForService.post(new Runnable() {
+			@Override
+			public void run() {
+				LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+				
+				traceOnMap.add(latLng);
+				traceOnMapObject.setPoints(traceOnMap.getPoints());
+				
+				CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
+				mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+				
+				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+				
+				float speed = location.getSpeed();
+				GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
+				
+				pace = (double) 1 / (speed * 60 / 1000);
+				
+				double lastDistance = ActivityActivity.this.lastDistance / 1000;
+				
+				int distancetoShow = (int) (distance / 1000);
+				// new km
+				if (distancetoShow - (int) lastDistance > 0) {
+					addMarker(location, distancetoShow);
+				}
+				
+				synchronized (time) {
+					avgPace = ((double) time / 60) / distance;
+				}
+			}
+		});
 	}
 	
 	private CameraPosition buildCameraPosition(LatLng latLng, Location location, Location lastLocation) {
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
-			builder.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
+			builder
+			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
 			// camera to east
 			.tilt(60); // Creates a CameraPosition from the builder
 		}
@@ -674,40 +674,34 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// this runs on every update
-	private void updateGpsInfo(Location newLocation) {
+	private void updateGpsInfo(final Location newLocation) {
 		autoPauseIfEnabled(newLocation);
-		
-		// no pause and good gps
-		if (!isPaused && newLocation.getAccuracy() < MyLocationListener.REQUIRED_ACCURACY) {
-			// not first point after start or resume
+		handlerForService.post(new Runnable() {
 			
-			if (lostGPSDialog != null) {
-				lostGPSDialog.dismiss();
-				lostGPSDialog = null;
-			}
-			
-			if (!traceWithTime.isEmpty() && !traceWithTime.getLast().isEmpty()) {
-				
-				if (mLastLocation == null) {
-					Log.e("Location_info", "Shouldn't be here, mLastLocation is null");
+			@Override
+			public void run() {
+				if (!isPaused && newLocation.getAccuracy() < LocationService.REQUIRED_ACCURACY) {
+					// not first point after start or resume
+					
+					if (lostGPSDialog != null) {
+						lostGPSDialog.dismiss();
+						lostGPSDialog = null;
+					}
+					if (mLastLocation != null) {
+						countData(newLocation, mLastLocation);
+					}
+					
+					updateData(DataTextView1, dataTextView1Content);
+					updateData(DataTextView2, dataTextView2Content);
 				}
-				
-				countData(newLocation, mLastLocation);
+				else if (newLocation.getAccuracy() >= LocationService.REQUIRED_ACCURACY) {
+					// TODO make progress dialog, waiting for gps
+					showLostGpsSignalDialog();
+				}
+				mLastLocation = newLocation;
 			}
-			if (traceWithTime.isEmpty()) {
-				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-			}
-			updateData(DataTextView1, dataTextView1Content);
-			updateData(DataTextView2, dataTextView2Content);
-			synchronized (time) {
-				traceWithTime.getLast().add(new Pair<Location, Long>(newLocation, time));
-			}
-		}
-		else if (newLocation.getAccuracy() >= MyLocationListener.REQUIRED_ACCURACY) {
-			// TODO make progress dialog, waiting for gps
-			showLostGpsSignalDialog();
-		}
-		mLastLocation = newLocation;
+		});
+		
 	}
 	
 	private void autoPauseIfEnabled(Location newLocation) {
@@ -743,43 +737,145 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	// SERVICE METHODS
-	private final MyServiceConnection mConnection = new MyServiceConnection(this, MyServiceConnection.ACTIVITY);
 	
-	void doBindService() {
+	private void doBindService() {
 		
 		Log.i("Service_info", "ActivityActivity Binding");
-		Intent i = new Intent(ActivityActivity.this, MyLocationListener.class);
-		i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		i.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+		Intent intent = new Intent(LocationService.class.getName());
+		//intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		bindService(intent, serviceConnection, 0);
 		mIsBound = true;
 		
 	}
 	
-	void doUnbindService() {
+	private void doUnbindService() {
 		Log.i("Service_info", "Activity Unbinding");
 		if (mIsBound) {
-			unbindService(mConnection);
+			try {
+				api.removeListener(runListener);
+				unbindService(serviceConnection);
+			}
+			catch (RemoteException e) {
+				
+				e.printStackTrace();
+			}
+			
 			mIsBound = false;
 			
 		}
 	}
 	
-	// handler for the events launched by the service
-	private final BroadcastReceiver mMyServiceReceiver = new BroadcastReceiver() {
+	private final ServiceConnection serviceConnection = new ServiceConnection() {
+		
 		@Override
-		public void onReceive(Context context, Intent intent) {
-			int messageType = intent.getIntExtra(MyLocationListener.MESSAGE, -1);
-			switch (messageType) {
-				case MyLocationListener.MSG_SEND_LOCATION:
-					Log.i("Service_info", "ActivityActivity: got Location");
-					
-					Location newLocation = (Location) intent.getParcelableExtra("Location");
-					
-					updateGpsInfo(newLocation);
-					
-					break;
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.i(TAG, "Service connection established");
+			isServiceConnected = true;
+			// that's how we get the client side of the IPC connection
+			api = RunListenerApi.Stub.asInterface(service);
+			try {
+				api.addListener(runListener);
+				List<Location> locationList = api.getWholeRun();
+				if (locationList == null) {
+					startCountDown();
+				}
+				else {
+					setTracefromServer(locationList);
+				}
+				
+				if (canStart) {
+					startRecording();
+				}
+			}
+			catch (RemoteException e) {
+				Log.e(TAG, "Failed to add listener", e);
 			}
 		}
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			isServiceConnected = false;
+			Log.i(TAG, "Service connection closed");
+		}
+		
 	};
+	private final RunListener.Stub runListener = new RunListener.Stub() {
+		
+		@Override
+		public void handleLocationUpdate() throws RemoteException {
+			Location location = api.getLatestLocation();
+			lastDistance = distance;
+			distance = api.getDistance();
+			updateGpsInfo(location);
+		}
+		
+		@Override
+		public void handleConnectionResult() throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void handleTimeChange() throws RemoteException {
+			handleTimeUpdates();
+		}
+	};
+	
+	private void setTracefromServer(final List<Location> locationList)
+	{
+		handlerForService.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (locationList != null)
+				{
+					LatLng latLng = null;
+					for (Location location : locationList)
+					{
+						latLng = new LatLng(location.getLatitude(), location.getLongitude());
+						traceOnMap.add(latLng);
+					}
+					traceOnMapObject.setPoints(traceOnMap.getPoints());
+					int size = locationList.size();
+					if (size > 1)
+					{
+						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 2),
+							locationList.get(size - 1));
+						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+						
+					}
+				}
+			}
+		});
+		
+	}
+	
+	private void updateViewsAfterTimeChange()
+	{
+		handlerForService.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				updateData(DataTextView1, dataTextView1Content);
+				updateData(DataTextView2, dataTextView2Content);
+				if (workout != null) {
+					processWorkout();
+				}
+			}
+		});
+	}
+	
+	private void handleTimeUpdates()
+	{
+		try {
+			time = api.getTime();
+			updateViewsAfterTimeChange();
+		}
+		catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
