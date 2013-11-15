@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -24,11 +25,14 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.pwr.zpi.ActivityActivity;
 import com.pwr.zpi.MainScreenActivity;
+import com.pwr.zpi.R;
 import com.pwr.zpi.RunListener;
 import com.pwr.zpi.RunListenerApi;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
@@ -112,6 +116,9 @@ public class LocationService extends Service implements LocationListener, Connec
 				locationList = new ArrayList<Location>();
 				state = STARTED;
 				initActivityRecording();
+				Notification note = Notifications.createNotification(LocationService.this, ActivityActivity.class,
+					R.string.app_name, R.string.notification_message);
+				startForeground(1, note);
 			}
 			
 		}
@@ -139,6 +146,7 @@ public class LocationService extends Service implements LocationListener, Connec
 			distance = 0;
 			pauseTime = 0;
 			locationList = null;
+			stopForeground(true);
 			
 		}
 		
@@ -155,7 +163,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		public void removeListener(RunListener listener) throws RemoteException {
 			
 			synchronized (listeners) {
-				listeners.removeAll(listeners);
+				listeners.clear();
 			}
 			//we dont need more then one listener at once
 			
@@ -211,7 +219,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.i(TAG, "new Location");
+		Log.i(TAG, "new Location state: " + state);
 		
 		if (state == STARTED) {
 			locationList.add(location);
@@ -279,8 +287,6 @@ public class LocationService extends Service implements LocationListener, Connec
 				Log.w(TAG, "Failed to tell listener about connaction failed ", e);
 			}
 		}
-		//TODO tell listeners to show dialog
-		
 	}
 	
 	private int checkGPS() {
@@ -339,13 +345,13 @@ public class LocationService extends Service implements LocationListener, Connec
 		{
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
+				Log.i(TAG, time + "");
 				Iterator<RunListener> it = listeners.iterator();
 				while (it.hasNext())
 				{
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();
-						Log.i(TAG, listeners.size() + "");
 					}
 					catch (RemoteException e) {
 						Log.w(TAG, "Failed to tell listener about new Time ", e);
