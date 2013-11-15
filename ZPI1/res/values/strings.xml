@@ -132,5 +132,10 @@
 	<string name="run_slow">Speed slow!</string>
 	<string name="for_how_much">For</string>
 	<string name="chase_virtual_partner">Chase virtual partner!</string>
+	<string name="meters">meters.</string>
+	<string name="minutes_speak">minutes.</string>
+	<string name="seconds_speak">seconds</string>
+	<string name="over_kilometer">over kilometer.</string>
+	<string name="with_pace">With pace</string>
 	
 </resources>

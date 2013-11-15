@@ -109,5 +109,10 @@
 	<string name="run_slow">Powolny bieg!</string>
 	<string name="for_how_much">Przez</string>
 	<string name="chase_virtual_partner">Goń wirtualnego partnera!</string>
+	<string name="meters">metrów.</string>
+	<string name="minutes_speak">minut.</string>
+	<string name="seconds_speak">sekund</string>
+	<string name="over_kilometer">na kilometr.</string>
+	<string name="with_pace">Tempem</string>
 
 </resources>
