@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.util.Log;
 
 import com.pwr.zpi.R;
 
@@ -15,12 +16,13 @@ import com.pwr.zpi.R;
  */
 public class SpeechSynthezator implements OnInitListener {
 	
+	private static final String TAG = SpeechSynthezator.class.getSimpleName();
+	
 	public static final int TTS_DATA_CHECK_CODE = 0x1;
 	public TextToSpeech mTts;
 	private boolean initialized = false;
 	private boolean canSpeak = true;
 	
-	private static SpeechSynthezator syntezator;
 	
 	public SpeechSynthezator(Activity activity) {
 		
@@ -29,7 +31,6 @@ public class SpeechSynthezator implements OnInitListener {
 		activity.startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE);
 		
 		canSpeak = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(activity.getResources().getString(R.string.key_aplication_sound), false);
-		syntezator = this;
 	}
 	
 	@Override
@@ -54,7 +55,9 @@ public class SpeechSynthezator implements OnInitListener {
 	}
 	
 	public void say(String textToSay) {
+		Log.i(TAG, "realy almost there to say");
 		if (canSpeak()) {
+			Log.i(TAG, "Should say now!");
 			mTts.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
 		}
 	}
@@ -64,18 +67,10 @@ public class SpeechSynthezator implements OnInitListener {
 	}
 	
 	public boolean canSpeak() {
-		return syntezator != null && canSpeak && isInitialized();
-	}
-	
-	public static SpeechSynthezator getSyntezator() {
-		return syntezator;
+		return canSpeak && isInitialized();
 	}
 	
 	public void shutdown() {
 		mTts.shutdown();
-	}
-	
-	public static boolean hasSyntezator() {
-		return syntezator != null;
 	}
 }

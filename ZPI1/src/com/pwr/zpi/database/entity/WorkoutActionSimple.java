@@ -90,7 +90,7 @@ public final class WorkoutActionSimple extends WorkoutAction {
 		value = in.readDouble();
 	}
 	
-	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+	public static final Parcelable.Creator<WorkoutActionSimple> CREATOR = new Parcelable.Creator<WorkoutActionSimple>() {
 		@Override
 		public WorkoutActionSimple createFromParcel(Parcel in) {
 			return new WorkoutActionSimple(in);

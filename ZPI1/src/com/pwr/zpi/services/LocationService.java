@@ -27,12 +27,14 @@ import com.google.android.gms.location.LocationRequest;
 import com.pwr.zpi.MainScreenActivity;
 import com.pwr.zpi.RunListener;
 import com.pwr.zpi.RunListenerApi;
+import com.pwr.zpi.ZPIApplication;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.utils.Pair;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-	OnConnectionFailedListener {
+OnConnectionFailedListener {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -64,6 +66,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	//saved here in case of activity closing
 	Long time;
 	double distance;
+	Workout workout;
 	private boolean connectionFailed;
 	private boolean isConnected;
 	private final RunListenerApi.Stub apiEndpoint = new RunListenerApi.Stub() {
@@ -106,11 +109,12 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		
 		@Override
-		public void setStarted() throws RemoteException {
+		public void setStarted(Workout workout) throws RemoteException {
 			if (state == STOPED)
 			{
 				locationList = new ArrayList<Location>();
 				state = STARTED;
+				prepareWorkout(workout);
 				initActivityRecording();
 			}
 			
@@ -129,7 +133,6 @@ public class LocationService extends Service implements LocationListener, Connec
 			state = STARTED;
 			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
 			handler.post(timeHandler);
-			
 		}
 		
 		@Override
@@ -146,9 +149,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		public void addListener(RunListener listener) throws RemoteException {
 			synchronized (listeners) {
 				listeners.add(listener);
-				
 			}
-			
 		}
 		
 		@Override
@@ -158,7 +159,6 @@ public class LocationService extends Service implements LocationListener, Connec
 				listeners.removeAll(listeners);
 			}
 			//we dont need more then one listener at once
-			
 		}
 		
 		@Override
@@ -176,6 +176,13 @@ public class LocationService extends Service implements LocationListener, Connec
 			return apiEndpoint;
 		}
 		else return null;
+	}
+	
+	private void prepareWorkout(Workout workout) {
+		this.workout = workout;
+		if (workout != null) {
+			workout.getOnNextActionListener().setConext(getApplicationContext());
+		}
 	}
 	
 	@Override
@@ -199,14 +206,16 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
 		
 		if (mLocationClient.isConnected()) {
 			mLocationClient.removeLocationUpdates(this);
 		}
+		ZPIApplication app = (ZPIApplication) getApplicationContext();
+		app.getSyntezator().shutdown();
 		
 		mLocationClient.disconnect();
 		Log.i(TAG, "Service destroying");
+		super.onDestroy();
 	}
 	
 	@Override
@@ -297,7 +306,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-				.getAccuracy() > REQUIRED_ACCURACY)) {
+			.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -339,12 +348,20 @@ public class LocationService extends Service implements LocationListener, Connec
 		{
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
+				boolean changeWorkout = false;
+				if (workout != null) {
+					processWorkout();
+					changeWorkout = true;
+				}
 				Iterator<RunListener> it = listeners.iterator();
 				while (it.hasNext())
 				{
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();
+						if (changeWorkout) {
+							listener.handleWorkoutChange(workout);
+						}
 						Log.i(TAG, listeners.size() + "");
 					}
 					catch (RemoteException e) {
@@ -358,6 +375,12 @@ public class LocationService extends Service implements LocationListener, Connec
 			handler.postDelayed(timeHandler, 1000);
 		}
 		
+	}
+	
+	private void processWorkout() {
+		if (workout.hasNextAction()) {
+			workout.progressWorkout(distance, time);
+		}
 	}
 	
 	// invoke when finishing activity

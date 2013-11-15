@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
@@ -250,7 +251,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			case SpeechSynthezator.TTS_DATA_CHECK_CODE:
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
-					ss.mTts = new TextToSpeech(this, ss);
+					ss.mTts = new TextToSpeech(this, ss); //FIXME call service method to init textToSpeech there.
 				}
 				else {
 					// missing data, install it
@@ -515,10 +516,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 		
 		@Override
-		public void handleTimeChange() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
+		public void handleTimeChange() throws RemoteException {}
+		
+		@Override
+		public void handleWorkoutChange(Workout workout) throws RemoteException {}
 	};
 	
 	private void getConnectionResult()

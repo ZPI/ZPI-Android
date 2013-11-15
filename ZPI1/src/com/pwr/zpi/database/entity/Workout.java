@@ -2,10 +2,14 @@ package com.pwr.zpi.database.entity;
 
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import com.pwr.zpi.listeners.IOnNextActionListener;
 import com.pwr.zpi.utils.TimeFormatter;
 
-public class Workout {
+public class Workout implements Parcelable {
 	public final static String TAG = "Workout";
 	public static final String LIST_TAG = "List";
 	private long ID;
@@ -28,6 +32,10 @@ public class Workout {
 		this.lastActionTime = 0;
 		this.howMuchLeft = 0;
 		this.ID = -1;
+	}
+	
+	public Workout(Parcel in) {
+		readFromParcel(in);
 	}
 	
 	public long getID() {
@@ -187,6 +195,7 @@ public class Workout {
 	}
 	
 	private void notifyListeners(WorkoutAction action) {
+		Log.i(TAG, "Notifing listeners");
 		switch (action.getActionType()) {
 			case WorkoutAction.ACTION_SIMPLE:
 				onNextActionListener.onNextActionSimple((WorkoutActionSimple) action);
@@ -250,4 +259,66 @@ public class Workout {
 	public void setOnNextActionListener(IOnNextActionListener onNextActionListener) {
 		this.onNextActionListener = onNextActionListener;
 	}
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel out, int flag) {
+		out.writeLong(ID);
+		out.writeString(name);
+		out.writeList(actions);
+		out.writeByte((byte) (isWarmUp ? 1 : 0));
+		out.writeInt(repeatCount);
+		out.writeParcelable(onNextActionListener, flag);
+		out.writeInt(currentAction);
+		out.writeDouble(howMuchLeft);
+		out.writeDouble(lastActionDistance);
+		out.writeLong(lastActionTime);
+	}
+	
+	public static final Parcelable.Creator<Workout> CREATOR = new Parcelable.Creator<Workout>() {
+		@Override
+		public Workout createFromParcel(Parcel in) {
+			return new Workout(in);
+		}
+		
+		@Override
+		public Workout[] newArray(int size) {
+			return new Workout[size];
+		}
+	};
+	
+	public void updateWorkoutData(Workout newWorkout) {
+		this.actions = newWorkout.getActions();
+		this.currentAction = newWorkout.getCurrentAction();
+		this.howMuchLeft = newWorkout.getHowMuchLeft();
+		this.lastActionDistance = newWorkout.getLastActionDistance();
+		this.lastActionTime = newWorkout.getLastActionTime();
+	}
+	
+	public double getLastActionDistance() {
+		return lastActionDistance;
+	}
+	
+	public long getLastActionTime() {
+		return lastActionTime;
+	}
+	
+	public void readFromParcel(Parcel in) {
+		ID = in.readLong();
+		name = in.readString();
+		actions = in.readArrayList(WorkoutAction.class.getClassLoader());
+		isWarmUp = in.readByte() == 1;
+		repeatCount = in.readInt();
+		onNextActionListener = in.readParcelable(IOnNextActionListener.class.getClassLoader());
+		currentAction = in.readInt();
+		howMuchLeft = in.readDouble();
+		lastActionDistance = in.readDouble();
+		lastActionTime = in.readLong();
+	}
+	
 }

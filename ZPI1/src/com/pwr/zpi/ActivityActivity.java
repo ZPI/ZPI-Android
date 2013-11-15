@@ -258,7 +258,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				public void onDrawerClosed(View arg0) {}
 			});
 			
-			workout.setOnNextActionListener(new OnNextActionListener(this));
+			workout.setOnNextActionListener(new OnNextActionListener());
 		}
 	}
 	
@@ -303,7 +303,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		if (isServiceConnected)
 		{
 			try {
-				api.setStarted();
+				api.setStarted(workout);
 			}
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to start activity", e);
@@ -336,14 +336,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					}
 				}
 			});
-		}
-	}
-	
-	private void processWorkout() {
-		if (workout.hasNextAction()) {
-			workout.progressWorkout(distance, time);
-			drawerListAdapter.notifyDataSetChanged();
-			listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 		}
 	}
 	
@@ -820,6 +812,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		public void handleTimeChange() throws RemoteException {
 			handleTimeUpdates();
 		}
+		
+		@Override
+		public void handleWorkoutChange(Workout workout) throws RemoteException {
+			handleWorkoutUpdate(workout);
+		}
+		
 	};
 	
 	private void setTracefromServer(final List<Location> locationList)
@@ -859,9 +857,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				updateData(DataTextView1, dataTextView1Content);
 				updateData(DataTextView2, dataTextView2Content);
-				if (workout != null) {
-					processWorkout();
-				}
 			}
 		});
 	}
@@ -876,6 +871,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	private void handleWorkoutUpdate(final Workout newWorkout) {
+		handlerForService.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				ActivityActivity.this.workout.updateWorkoutData(newWorkout);
+				drawerListAdapter.notifyDataSetChanged();
+				listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+			}
+		});
 	}
 }

@@ -1,6 +1,8 @@
 package com.pwr.zpi;
 
 import com.pwr.zpi.RunListener;
+import com.pwr.zpi.database.entity.Workout;
+
 interface RunListenerApi {
  
 	List<Location> getWholeRun();
@@ -9,7 +11,7 @@ interface RunListenerApi {
 	Location getLatestLocation();
 	Intent getConnectionResult();
 	int getGPSStatus();
-	void setStarted();
+	void setStarted(in Workout workout);
 	void setPaused();
 	void setResumed();
 	void setStoped();
