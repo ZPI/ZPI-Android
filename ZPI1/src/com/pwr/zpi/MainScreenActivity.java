@@ -65,6 +65,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private static final short DOWN = 3;
 	
 	public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	public static final int TTS_DATA_CHECK_CODE_REQUEST = 0x1;
 	public final static int REQUEST_GOOGLE_PLAY_SERVICES = 7;
 	
 	public boolean isConnected;
@@ -96,12 +97,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		isConnected = false;
 		
-		ss = new SpeechSynthezator(this);
-		ZPIApplication app = (ZPIApplication) getApplicationContext();
-		app.setSyntezator(ss);
+		checkSpeechSynthezator();
 	}
 	
-	SpeechSynthezator ss;
+	private void checkSpeechSynthezator() {
+		Intent checkIntent = new Intent();
+		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+		startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE_REQUEST);
+	}
 	
 	private void addListeners() {
 		GPSStatusTextView.setOnTouchListener(gestureListener);
@@ -251,7 +254,12 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			case SpeechSynthezator.TTS_DATA_CHECK_CODE:
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
-					ss.mTts = new TextToSpeech(this, ss); //FIXME call service method to init textToSpeech there.
+					try {
+						api.prepareTextToSpeech();
+					}
+					catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}
 				else {
 					// missing data, install it

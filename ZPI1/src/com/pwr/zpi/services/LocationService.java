@@ -30,7 +30,6 @@ import com.pwr.zpi.MainScreenActivity;
 import com.pwr.zpi.R;
 import com.pwr.zpi.RunListener;
 import com.pwr.zpi.RunListenerApi;
-import com.pwr.zpi.ZPIApplication;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
@@ -175,6 +174,11 @@ OnConnectionFailedListener {
 			return checkGPS();
 		}
 		
+		@Override
+		public void prepareTextToSpeech() throws RemoteException {
+			
+		}
+		
 	};
 	
 	@Override
@@ -218,8 +222,6 @@ OnConnectionFailedListener {
 		if (mLocationClient.isConnected()) {
 			mLocationClient.removeLocationUpdates(this);
 		}
-		ZPIApplication app = (ZPIApplication) getApplicationContext();
-		app.getSyntezator().shutdown();
 		
 		mLocationClient.disconnect();
 		Log.i(TAG, "Service destroying");
