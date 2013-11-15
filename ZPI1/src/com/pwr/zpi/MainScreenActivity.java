@@ -33,7 +33,6 @@ import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.services.LocationService;
-import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
@@ -96,8 +95,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		// locationListener.getmLocationClient().connect();
 		
 		isConnected = false;
-		
-		checkSpeechSynthezator();
 	}
 	
 	private void checkSpeechSynthezator() {
@@ -251,7 +248,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 						break;
 				}
 				break;
-			case SpeechSynthezator.TTS_DATA_CHECK_CODE:
+			case TTS_DATA_CHECK_CODE_REQUEST:
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
 					try {
@@ -498,6 +495,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to add listener", e);
 			}
+			
+			checkSpeechSynthezator();
 		}
 		
 		@Override

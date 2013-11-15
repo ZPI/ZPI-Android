@@ -2,8 +2,7 @@ package com.pwr.zpi.utils;
 
 import java.util.Locale;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -18,19 +17,15 @@ public class SpeechSynthezator implements OnInitListener {
 	
 	private static final String TAG = SpeechSynthezator.class.getSimpleName();
 	
-	public static final int TTS_DATA_CHECK_CODE = 0x1;
 	public TextToSpeech mTts;
 	private boolean initialized = false;
 	private boolean canSpeak = true;
 	
 	
-	public SpeechSynthezator(Activity activity) {
+	public SpeechSynthezator(Context context) {
 		
-		Intent checkIntent = new Intent();
-		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		activity.startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE);
-		
-		canSpeak = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(activity.getResources().getString(R.string.key_aplication_sound), false);
+		canSpeak = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getResources().getString(R.string.key_aplication_sound), false);
+		mTts = new TextToSpeech(context, this);
 	}
 	
 	@Override

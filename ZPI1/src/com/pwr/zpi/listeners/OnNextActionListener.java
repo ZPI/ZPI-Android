@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.pwr.zpi.R;
-import com.pwr.zpi.ZPIApplication;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
@@ -17,6 +16,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 	private static final String TAG = OnNextActionListener.class.getSimpleName();
 	
 	private Context context;
+	private SpeechSynthezator speechSynthezator;
 	
 	public OnNextActionListener(Parcel in) {}
 	public OnNextActionListener() {}
@@ -29,9 +29,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 	@Override
 	public void onNextActionSimple(WorkoutActionSimple simple) {
 		Log.i(TAG, "simple action");
-		SpeechSynthezator ss = ((ZPIApplication) context.getApplicationContext()).getSyntezator();
-		Log.i(TAG, "context: " + context + " syntezator: " + ss);
-		if (context != null && ss != null) {
+		if (context != null && speechSynthezator != null) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(context.getString(R.string.action));
 			builder.append(" ");
@@ -55,23 +53,21 @@ public class OnNextActionListener implements IOnNextActionListener {
 			// time - how to say - 6 hours 5 minutes or 6,5 hours
 			
 			Log.i(TAG, "almost said");
-			ss.say(builder.toString());
+			speechSynthezator.say(builder.toString());
 		}
 	}
 	
 	@Override
 	public void onNextActionAdvanced(WorkoutActionAdvanced advanced) {
 		Log.i(TAG, "advanced action");
-		SpeechSynthezator ss = ((ZPIApplication) context.getApplicationContext()).getSyntezator();
-		Log.i(TAG, "context: " + context + " syntezator: " + ss);
-		if (context != null && ss != null) {
+		if (context != null && speechSynthezator != null) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(context.getString(R.string.action));
 			builder.append(" ");
 			builder.append(context.getString(R.string.chase_virtual_partner));
 			
 			Log.i(TAG, "almost said");
-			ss.say(builder.toString());
+			speechSynthezator.say(builder.toString());
 		}
 	}
 	
@@ -94,5 +90,10 @@ public class OnNextActionListener implements IOnNextActionListener {
 			return new OnNextActionListener[size];
 		}
 	};
+	
+	@Override
+	public void setSyntezator(SpeechSynthezator speechSynthezator) {
+		this.speechSynthezator = speechSynthezator;
+	}
 	
 }

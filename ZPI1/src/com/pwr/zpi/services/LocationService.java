@@ -35,6 +35,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
 OnConnectionFailedListener {
@@ -62,6 +63,8 @@ OnConnectionFailedListener {
 	private Handler handler;
 	private Runnable timeHandler;
 	public static final String CONNECTION_FIAILED_TAG = "connectionFailed";
+	
+	private SpeechSynthezator speechSynthezator;
 	
 	long startTime;
 	long pauseStartTime;
@@ -176,7 +179,7 @@ OnConnectionFailedListener {
 		
 		@Override
 		public void prepareTextToSpeech() throws RemoteException {
-			
+			speechSynthezator = new SpeechSynthezator(getApplicationContext());
 		}
 		
 	};
@@ -388,6 +391,7 @@ OnConnectionFailedListener {
 	
 	private void processWorkout() {
 		if (workout.hasNextAction()) {
+			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
 			workout.progressWorkout(distance, time);
 		}
 	}
