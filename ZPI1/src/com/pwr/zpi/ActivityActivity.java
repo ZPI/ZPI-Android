@@ -48,7 +48,6 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.BeepPlayer;
-import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
@@ -139,8 +138,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		prepareServiceAndStart();
 		
-		Notifications
-			.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
 	}
 	
 	private Workout getWorkoutData() {
@@ -270,13 +267,13 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private void prepareServiceAndStart() {
 		doBindService();
+		
 		handlerForService = new Handler();
 	}
 	
 	@Override
 	protected void onDestroy() {
 		doUnbindService();
-		Notifications.destroyNotification(this);
 		
 		super.onDestroy();
 	}
@@ -746,6 +743,16 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		bindService(intent, serviceConnection, 0);
 		mIsBound = true;
+		
+	}
+	
+	private void doStartService() {
+		Log.i("Service_info", "Main Screen --> start service");
+		
+		Intent intent = new Intent(LocationService.class.getName());
+		//intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+		startService(intent);
 		
 	}
 	
