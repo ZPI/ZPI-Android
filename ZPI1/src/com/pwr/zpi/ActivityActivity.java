@@ -746,16 +746,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 	}
 	
-	private void doStartService() {
-		Log.i("Service_info", "Main Screen --> start service");
-		
-		Intent intent = new Intent(LocationService.class.getName());
-		//intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-		startService(intent);
-		
-	}
-	
 	private void doUnbindService() {
 		Log.i("Service_info", "Activity Unbinding");
 		if (mIsBound) {
