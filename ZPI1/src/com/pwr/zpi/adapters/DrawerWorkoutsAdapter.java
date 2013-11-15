@@ -1,11 +1,14 @@
 package com.pwr.zpi.adapters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,7 +17,7 @@ import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 
-public class DrawerWorkoutsAdapter extends BaseExpandableListAdapter {
+public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 	
 	private static final int ACTIVE_HEIGHT = 200;
 	private static final int NOT_ACTIVE_HEIGHT = 100;
@@ -22,9 +25,15 @@ public class DrawerWorkoutsAdapter extends BaseExpandableListAdapter {
 	private final Context context;
 	private final Workout workout;
 	
+	//TODO change to list adapter
 	public DrawerWorkoutsAdapter(Context context, Workout workout) {
 		this.context = context;
 		this.workout = workout;
+		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+		for (int i = 0; i < workout.getRepeatCount(); i++) {
+			actions.addAll(workout.getActions());
+		}
+		workout.setActions(actions);
 	}
 	
 	@Override
@@ -94,45 +103,6 @@ public class DrawerWorkoutsAdapter extends BaseExpandableListAdapter {
 		}
 		rowHolder.text.setTextColor(context.getResources().getColor(textColor));
 		return row;
-	}
-	
-	@Override
-	public int getChildrenCount(int groupPosition) {
-		return workout.getActions().size();
-	}
-	
-	@Override
-	public Object getGroup(int groupPosition) {
-		return workout.getActions();
-	}
-	
-	@Override
-	public int getGroupCount() {
-		return 1;
-	}
-	
-	@Override
-	public long getGroupId(int groupPosition) {
-		return groupPosition;
-	}
-	
-	@Override
-	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			convertView = inflater.inflate(R.layout.workout_drawer_list_header, parent, false);
-		}
-		return convertView;
-	}
-	
-	@Override
-	public boolean hasStableIds() {
-		return true;
-	}
-	
-	@Override
-	public boolean isChildSelectable(int groupPosition, int childPosition) {
-		return false;
 	}
 	
 	private class RowHolder {

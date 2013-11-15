@@ -172,7 +172,7 @@
         <include layout="@layout/count_down_timer_layer" />
     </FrameLayout>
     
-    <ExpandableListView
+    <ListView
         android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"

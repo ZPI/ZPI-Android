@@ -2,54 +2,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white" >
+    android:background="@android:color/white"
+    android:orientation="vertical" >
 
     <Button
         android:id="@+id/buttonStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/triangle"
         android:text="@string/start"
-        android:textColor="@android:color/white"
-        android:background="@drawable/triangle" />
+        android:textColor="@android:color/white" />
 
-    <com.pwr.zpi.views.VerticalTextView
+    <ImageButton
         android:id="@+id/buttonPlans"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:text="Plany treningowe"
-        android:focusable="true"
-        android:clickable="true"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding" />
-    
-    <com.pwr.zpi.views.VerticalTextView
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_workout" />
+
+    <ImageButton
         android:id="@+id/buttonHistory"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:text="Historia"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        android:gravity="bottom"
-        android:focusable="true"
-        android:clickable="true"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding" />
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_history" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/ustawienia"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding" />
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_settings" />
 
     <TextView
         android:id="@+id/textViewGPSIndicator"
@@ -60,21 +49,22 @@
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/buttonMusic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonPlans"
-        android:layout_centerHorizontal="true"
-        android:text="Muzyka"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding" />
-
     <TextView
         android:id="@+id/GPSSignalTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewGPSIndicator"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonHistory"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="52dp"
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding"
+        android:text="Muzyka" />
 
 </RelativeLayout>

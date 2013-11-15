@@ -22,4 +22,6 @@
 	<dimen name="drawer_icon_size_bigger">80dp</dimen>
 	<dimen name="medium_text_size">17dp</dimen>
 	<dimen name="small_text_size">11dp</dimen>
+	<dimen name="switch_screen_button_size">55dp</dimen>
+	<dimen name="switch_screen_button_corner_radius">15dp</dimen>
 </resources>

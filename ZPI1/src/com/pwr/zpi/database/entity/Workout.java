@@ -2,6 +2,7 @@ package com.pwr.zpi.database.entity;
 
 import java.util.List;
 
+import com.pwr.zpi.listeners.IOnNextActionListener;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class Workout {
@@ -12,6 +13,7 @@ public class Workout {
 	private List<WorkoutAction> actions;
 	private boolean isWarmUp;
 	private int repeatCount;
+	private IOnNextActionListener onNextActionListener;
 	
 	// progressing workout fields
 	private int currentAction;
@@ -148,11 +150,18 @@ public class Workout {
 		}
 		if (actionDone) {
 			currentAction++;
-			//TODO you can use here observator design pattern to notify something
 			lastActionDistance += currentDistance - deltaDistance;
 			lastActionTime += currentTime - deltaTime;
 			initHowMuchLeft(getActions(), currentAction, deltaDistance, deltaTime);
+			if (hasOnNextActionListener()) {
+				WorkoutAction action = getActions().get(currentAction);
+				notifyListeners(action);
+			}
 		}
+	}
+	
+	private boolean hasOnNextActionListener() {
+		return onNextActionListener != null;
 	}
 	
 	private void progressAdvancedAction(WorkoutActionAdvanced advanced, double currentDistance, long currentTime) {
@@ -161,17 +170,32 @@ public class Workout {
 		double distanceBetweenUserAndVirutalPartner = currentDistance - virtualPartnerDistance;
 		
 		if (virtualPartnerDistance >= advanced.getDistance()) {
-			double deltaDistance = 0;
-			deltaDistance = virtualPartnerDistance - advanced.getDistance();
+			double deltaDistance = virtualPartnerDistance - advanced.getDistance();;
 			
 			currentAction++;
-			//TODO you can use here observator design pattern to notify something
 			lastActionDistance += currentDistance - deltaDistance;
 			lastActionTime += currentTime;
 			initHowMuchLeft(getActions(), currentAction, deltaDistance, 0);
+			if (hasNextAction() && hasOnNextActionListener()) {
+				WorkoutAction action = getActions().get(currentAction);
+				notifyListeners(action);
+			}
 		}
 		else {
 			this.howMuchLeft = distanceBetweenUserAndVirutalPartner;
+		}
+	}
+	
+	private void notifyListeners(WorkoutAction action) {
+		switch (action.getActionType()) {
+			case WorkoutAction.ACTION_SIMPLE:
+				onNextActionListener.onNextActionSimple((WorkoutActionSimple) action);
+				break;
+			case WorkoutAction.ACTION_ADVANCED:
+				onNextActionListener.onNextActionAdvanced((WorkoutActionAdvanced) action);
+				break;
+			default:
+				break;
 		}
 	}
 	
@@ -219,4 +243,11 @@ public class Workout {
 		return currentAction < getActions().size();
 	}
 	
+	public IOnNextActionListener getOnNextActionListener() {
+		return onNextActionListener;
+	}
+	
+	public void setOnNextActionListener(IOnNextActionListener onNextActionListener) {
+		this.onNextActionListener = onNextActionListener;
+	}
 }

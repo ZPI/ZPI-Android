@@ -24,6 +24,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,15 +36,14 @@ import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.listeners.MyLocationListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.SpeechSynthezator;
-import com.pwr.zpi.views.VerticalTextView;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
-	private Button settingsButton;
-	private VerticalTextView historyButton;
-	private VerticalTextView planningButton;
+	private ImageButton settingsButton;
+	private ImageButton historyButton;
+	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
 	private LocationManager service;
@@ -81,9 +81,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		GPSStatusTextView = (TextView) findViewById(R.id.textViewGPSIndicator);
 		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
-		settingsButton = (Button) findViewById(R.id.buttonSettings);
-		historyButton = (VerticalTextView) findViewById(R.id.buttonHistory);
-		planningButton = (VerticalTextView) findViewById(R.id.buttonPlans);
+		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
+		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
+		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
 		startButton = (Button) findViewById(R.id.buttonStart);
 		musicButton = (Button) findViewById(R.id.buttonMusic);
 		
@@ -103,7 +103,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			new IntentFilter(MyLocationListener.class.getSimpleName()));
 		
 		ss = new SpeechSynthezator(this);
-		
+		ZPIApplication app = (ZPIApplication) getApplicationContext();
+		app.setSyntezator(ss);
 	}
 	SpeechSynthezator ss;
 	
@@ -344,7 +345,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			default:
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-		
+				
 		}
 		
 	}

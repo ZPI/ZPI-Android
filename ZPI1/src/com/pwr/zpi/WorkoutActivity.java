@@ -155,7 +155,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		switch (ID)
 		{
 			case R.id.ButtonChooseWorkout:
-				//TODO check GPS like in MainScreen 
+				//TODO check GPS like in MainScreen
 				Intent i = new Intent(WorkoutActivity.this, ActivityActivity.class);
 				i.putExtra(PlaningActivity.ID_TAG, workout.getID());
 				ArrayList<WorkoutAction> actions = (ArrayList<WorkoutAction>) workout.getActions();

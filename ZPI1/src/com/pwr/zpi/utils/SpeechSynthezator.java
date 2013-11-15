@@ -43,6 +43,7 @@ public class SpeechSynthezator implements OnInitListener {
 			}
 			
 			String text = "cześć jestem Twoją superową aplikacją do biegania. Trenuj wytrwale, może kiedyś zostaniesz mistrzem świata! Wierzę w Twoje umiejętności biegaczu! Razem zwyciężymy wszystkie zawody! Wciśniij start, by zacząć Naszą przygodę z bieganiem.";
+			text = " test ";
 			if (canSpeak) {
 				mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
 			}
@@ -72,5 +73,9 @@ public class SpeechSynthezator implements OnInitListener {
 	
 	public void shutdown() {
 		mTts.shutdown();
+	}
+	
+	public static boolean hasSyntezator() {
+		return syntezator != null;
 	}
 }

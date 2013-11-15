@@ -3,7 +3,6 @@ package com.pwr.zpi;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
-import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -28,9 +27,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -49,10 +48,9 @@ import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
-import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
-import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.MyLocationListener;
+import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.MyServiceConnection;
 import com.pwr.zpi.utils.BeepPlayer;
 import com.pwr.zpi.utils.GeographicalEvaluations;
@@ -62,7 +60,7 @@ import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
-	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 2f;
+	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
 	
 	private GoogleMap mMap;
 	
@@ -127,7 +125,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	// workout drawer fields
 	private DrawerWorkoutsAdapter expandableListAdapter;
-	private ExpandableListView expandableListView;
+	private ListView listView;
 	private Workout workout;
 	private DrawerLayout drawerLayout;
 	
@@ -145,7 +143,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		startTimerAfterCountDown();
 		Notifications
-			.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
+		.createNotification(this, ActivityActivity.class, R.string.app_name, R.string.notification_message);
+		
 	}
 	
 	// MOCK
@@ -160,66 +159,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		workout.setRepeatCount(i.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
 		workout.setWarmUp(i.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
 		return workout;
-		//		Workout w;
-		//		w = prepareWorkout(30);
-		//		this.workout = w;
-		//		return w;
 	}
-	
-	//MOCK FIXME
-	private Workout prepareWorkout(int number) {
-		Workout workout = new Workout();
-		workout.setName("Workout " + number);
-		workout.setRepeatCount(number);
-		workout.setWarmUp(number % 2 == 0);
-		workout.setActions(prepareActions(number));
-		return workout;
-	}
-	
-	private List<WorkoutAction> prepareActions(int number) {
-		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
-		//		for (int i = 0; i < number; i++) {
-		//			if (i % 2 == 0) {
-		//				actions.add(prepareSimpleAction(number, i));
-		//			}
-		//			else {
-		//				actions.add(prepareAdvancedAction(number, i));
-		//			}
-		//		}
-		actions.add(new WorkoutActionAdvanced(12 * 60 * 1000L, 1000D));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 3000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 5000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 1000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		//		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 1000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW,
-			WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 2000));
-		return actions;
-	}
-	
-	//END MOCK
 	
 	private void initFields() {
 		stopButton = (Button) findViewById(R.id.stopButton);
@@ -265,22 +205,20 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		beepPlayer = new BeepPlayer(this);
 		
 		Intent i = getIntent();
-		expandableListView = (ExpandableListView) findViewById(R.id.left_drawer);
+		listView = (ExpandableListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (i.hasExtra(PlaningActivity.ID_TAG))
-		{
+		if (i.hasExtra(PlaningActivity.ID_TAG)) {
 			// drawer initialization
 			
 			workout = getWorkoutData();
 			expandableListAdapter = new DrawerWorkoutsAdapter(this, workout);
-			expandableListView.setAdapter(expandableListAdapter);
-			expandableListView.expandGroup(0);
-			expandableListView.setVisibility(View.VISIBLE);
+			listView.setAdapter(expandableListAdapter);
+			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
+			listView.setVisibility(View.VISIBLE);
 		}
-		else
-		{
+		else {
 			workoutDdrawerButton.setVisibility(View.GONE);
-			expandableListView.setVisibility(View.GONE);
+			listView.setVisibility(View.GONE);
 		}
 		
 		moveSystemControls(mapFragment);
@@ -293,16 +231,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
-		if (workout != null)
-		{
+		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
-			expandableListView.setOnGroupClickListener(new OnGroupClickListener() {
-				
-				@Override
-				public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-					return true;
-				}
-			});
 			
 			drawerLayout.setDrawerListener(new DrawerListener() {
 				
@@ -314,13 +244,20 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				
 				@Override
 				public void onDrawerOpened(View arg0) {
-					expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
-						.size());
+					if (workout == null) {
+						drawerLayout.closeDrawer(Gravity.LEFT);
+					}
+					else {
+						listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
+							.size());
+					}
 				}
 				
 				@Override
 				public void onDrawerClosed(View arg0) {}
 			});
+			
+			workout.setOnNextActionListener(new OnNextActionListener(this));
 		}
 	}
 	
@@ -350,9 +287,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		handler = new Handler();
 		prepareTimeCountingHandler();
 		pauseButton.setClickable(false);
-		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_countdown_before_start), true)) {
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+			getString(R.string.key_countdown_before_start), true)) {
 			handler.post(new CounterRunnable(COUNT_DOWN_TIME));
-		} else {
+		}
+		else {
 			startTimeCouting();
 		}
 	}
@@ -423,7 +362,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		if (workout.hasNextAction()) {
 			workout.progressWorkout(distance, time);
 			expandableListAdapter.notifyDataSetChanged();
-			expandableListView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+			listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 		}
 	}
 	
@@ -554,8 +493,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	@Override
 	public void onClick(View v) {
 		
-		switch (v.getId())
-		{
+		switch (v.getId()) {
 			case R.id.stopButton:
 				showAlertDialog();
 				break;
@@ -722,8 +660,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private CameraPosition buildCameraPosition(LatLng latLng, Location location, Location lastLocation) {
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
-			builder
-			.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
+			builder.bearing(GeographicalEvaluations.countBearing(location, lastLocation)) // Sets the orientation of the
 			// camera to east
 			.tilt(60); // Creates a CameraPosition from the builder
 		}
@@ -779,10 +716,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				Log.e(TAG, "Speed:" + newLocation.getSpeed());
 				if (newLocation.getSpeed() < MIN_SPEED_FOR_AUTO_PAUSE) {
 					pauseRun();
-				} else {
+				}
+				else {
 					resumeRun();
 				}
-			} else {
+			}
+			else {
 				Log.e(TAG, "No speed.. pausing anyway");
 				pauseRun();
 			}
