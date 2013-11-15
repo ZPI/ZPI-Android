@@ -44,8 +44,8 @@
         <activity
             android:name=".ActivityActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" 
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryActivity"
             android:configChanges="orientation"
@@ -66,7 +66,6 @@
             android:name=".NewWorkoutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        
         <activity
             android:name=".NewWorkoutActionActivity"
             android:configChanges="orientation"
@@ -83,11 +82,18 @@
             android:name=".WorkoutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        <activity android:name="org.achartengine.GraphicalActivity"
+        <activity
+            android:name="org.achartengine.GraphicalActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        
-        <service android:name="com.pwr.zpi.listeners.MyLocationListener" />
+
+        <service
+            android:name="com.pwr.zpi.services.LocationService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="com.pwr.zpi.services.LocationService" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
