@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textViewWorkoutName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/name"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ListView
         android:id="@+id/listViewWokoutActions"
         android:layout_width="match_parent"
@@ -19,10 +12,5 @@
 
     </ListView>
 
-    <Button
-        android:id="@+id/ButtonChooseWorkout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/select_workout" />
 
 </LinearLayout>

@@ -81,6 +81,7 @@
 	<string name="add_action">Add this action</string>
     <string name="interval">Interval</string>
 	<string name="virtual_partner">Virtual \npartner</string>
+	<string name="edit_workout">Edit Workout</string>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -106,6 +107,8 @@
 	<string name="colon">:</string>
 	<string name="workout_actions">Workout actions</string>
 	<string name="done">Done</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
 	
 	<!-- settings string -->
 	<string name="settings_title">Application settings</string>
