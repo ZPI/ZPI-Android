@@ -135,7 +135,7 @@
 	<string name="meters">meters.</string>
 	<string name="minutes_speak">minutes.</string>
 	<string name="seconds_speak">seconds</string>
-	<string name="over_kilometer">over kilometer.</string>
+	<string name="over_kilometer">per kilometer.</string>
 	<string name="with_pace">With pace</string>
 	
 </resources>
