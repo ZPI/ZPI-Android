@@ -10,6 +10,7 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.utils.SpeechSynthezator;
+import com.pwr.zpi.utils.TimeFormatter;
 
 public class OnNextActionListener implements IOnNextActionListener {
 	
@@ -49,14 +50,29 @@ public class OnNextActionListener implements IOnNextActionListener {
 			builder.append(" ");
 			builder.append(context.getString(R.string.for_how_much));
 			builder.append(" ");
-			//TODO			builder.append(String.format("//TODO%", args)simple.getValue())
-			// time - how to say - 6 hours 5 minutes or 6,5 hours
+			switch (simple.getValueType()) {
+				case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME:
+					builder.append(toMinutes(simple.getValue()));
+					builder.append(context.getString(R.string.minutes_speak));
+					break;
+				case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
+					builder.append(simple.getValue());
+					builder.append(context.getString(R.string.meters));
+					break;
+				default:
+					break;
+			}
 			
 			Log.i(TAG, "almost said");
 			speechSynthezator.say(builder.toString());
 		}
 	}
 	
+	private String toMinutes(double value) {
+		long minutes = (long) (value / 1000);
+		minutes /= 60;
+		return minutes + "";
+	}
 	@Override
 	public void onNextActionAdvanced(WorkoutActionAdvanced advanced) {
 		Log.i(TAG, "advanced action");
@@ -65,6 +81,27 @@ public class OnNextActionListener implements IOnNextActionListener {
 			builder.append(context.getString(R.string.action));
 			builder.append(" ");
 			builder.append(context.getString(R.string.chase_virtual_partner));
+			builder.append(" ");
+			builder.append(context.getString(R.string.with_pace));
+			builder.append(" ");
+			String pace = TimeFormatter.formatTimeMMSSorHHMMSS(advanced.getPace());
+			String[] splitedPace = pace.split(":");
+			int minutes = 0;
+			int seconds = 0;
+			if (splitedPace.length == 3) {
+				minutes = Integer.valueOf(splitedPace[0]) * 60 + Integer.valueOf(splitedPace[1]);
+				seconds = Integer.valueOf(splitedPace[2]);
+			} else {
+				minutes = Integer.valueOf(splitedPace[0]);
+				seconds = Integer.valueOf(splitedPace[1]);
+			}
+			builder.append(minutes);
+			builder.append(context.getString(R.string.minutes_speak));
+			builder.append(" ");
+			builder.append(seconds);
+			builder.append(context.getString(R.string.seconds_speak));
+			builder.append(" ");
+			builder.append(context.getString(R.string.over_kilometer));
 			
 			Log.i(TAG, "almost said");
 			speechSynthezator.say(builder.toString());
