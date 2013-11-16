@@ -343,7 +343,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 				distanceTab2 = distanceInKm;
 				long paceInMilisecondsPerKm = pickerTab2PaceMin.getValue() * MILINSECONDS_IN_MINUTE
 					+ pickerTab2PaceSec.getValue() * MILINSECONDS_IN_SECOND;
-				paceTab2 = paceInMilisecondsPerKm / MILINSECONDS_IN_MINUTE;
+				paceTab2 = (double) paceInMilisecondsPerKm / MILINSECONDS_IN_MINUTE;
 				long timeInMiliseconds = (long) (paceInMilisecondsPerKm * distanceInKm);
 				//timeTab2 = timeInMiliseconds;
 				editTextTab2Time.setText(TimeFormatter.formatTimeHHMMSS(timeInMiliseconds));
@@ -439,7 +439,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 			case WorkoutAction.ACTION_ADVANCED_TYPE_PACE_TIME:
 				setCurrentVirtualPartnerTab(TAB3);
 				setTime(actionAdvanced.getTime(), pickerTab3TimeHours, pickerTab3TimeMin, pickerTab3TimeSec);
-				setPace(actionAdvanced.getPace(), pickerTab3PaceMin, pickerTab3TimeSec);
+				setPace(actionAdvanced.getPace(), pickerTab3PaceMin, pickerTab3PaceSec);
 				editTextTab3Distance.setText(String.format("%.3f", actionAdvanced.getDistance() / 1000));
 				break;
 		
@@ -514,7 +514,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 	{
 		int hours = (int) (time / MILINSECONDS_IN_HOUR);
 		int min = (int) ((time % MILINSECONDS_IN_HOUR) / MILINSECONDS_IN_MINUTE);
-		int sec = (int) ((int) (time % MILINSECONDS_IN_MINUTE) / MILINSECONDS_IN_SECOND);
+		int sec = (int) Math.round(((double) (time % MILINSECONDS_IN_MINUTE) / MILINSECONDS_IN_SECOND));
 		pickerHour.setValue(hours);
 		pickerMinute.setValue(min);
 		pickerSecond.setValue(sec);
@@ -523,7 +523,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 	private void setDistance(double distance, CustomPicker pickerKm, CustomPicker pickerM)
 	{
 		int km = (int) (distance / 1000);
-		int m = (int) distance % 1000;
+		int m = (int) Math.round(distance % 1000);
 		pickerKm.setValue(km);
 		pickerM.setValue(m);
 	}
@@ -532,7 +532,7 @@ public class NewWorkoutActionActivity extends Activity implements OnClickListene
 	{
 		
 		int min = (int) (pace);
-		int sec = (int) ((pace - (int) pace) * 60);
+		int sec = (int) Math.round(((pace - (int) pace) * 60));
 		pickerMinute.setValue(min);
 		pickerSecond.setValue(sec);
 		
