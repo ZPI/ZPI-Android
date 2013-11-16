@@ -36,6 +36,8 @@ import com.pwr.zpi.services.LocationService;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
+	public static final boolean REDUCED_VERSION = false;
+	
 	private RunListenerApi api;
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
 	private TextView GPSStatusTextView;
@@ -343,7 +345,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			default:
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-				
+		
 		}
 		
 	}

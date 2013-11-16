@@ -82,6 +82,10 @@
     <string name="interval">Interval</string>
 	<string name="virtual_partner">Virtual \npartner</string>
 	<string name="edit_workout">Edit Workout</string>
+	<string-array name="choose_action">
+	    <item >New Interval Action</item>
+	    <item >New Virtual Partner Action</item>
+	</string-array>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -132,5 +136,6 @@
 	<string name="run_slow">Speed slow!</string>
 	<string name="for_how_much">For</string>
 	<string name="chase_virtual_partner">Chase virtual partner!</string>
+	
 	
 </resources>

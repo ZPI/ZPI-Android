@@ -3,6 +3,7 @@ package com.pwr.zpi;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.ToggleButton;
 
 import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.views.CustomPicker;
 
 public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener {
@@ -75,11 +77,43 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workoutsListView.setOnItemClickListener(this);
 	}
 	
+	private void showActionChooseDialog()
+	{
+		final CharSequence[] items = getResources().getStringArray(R.array.choose_action);
+		MyDialog dialog = new MyDialog();
+		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int item) {
+				switch (item)
+				{
+					case 0:
+						startActivityForResult(
+							new Intent(NewWorkoutActivity.this, NewWorkoutActionSimpleActivity.class),
+							MY_REQUEST_CODE_ADD);
+						break;
+					case 1:
+						startActivityForResult(new Intent(NewWorkoutActivity.this,
+							NewWorkoutActionAdvancedActivity.class), MY_REQUEST_CODE_ADD);
+						break;
+				}
+				
+			}
+		};
+		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
+			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
+		
+	}
+	
 	@Override
 	public void onClick(View v) {
 		if (v == addActionButton)
 		{
-			startActivityForResult(new Intent(this, NewWorkoutActionActivity.class), MY_REQUEST_CODE_ADD);
+			if (MainScreenActivity.REDUCED_VERSION) {
+				startActivityForResult(new Intent(this, NewWorkoutActionSimpleActivity.class), MY_REQUEST_CODE_ADD);
+			}
+			else {
+				showActionChooseDialog();
+			}
 		}
 		else if (v == addThisWorkoutButton)
 		{
@@ -123,8 +157,16 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
 		// TODO Auto-generated method stub
 		editedPos = position - 1;
-		Intent intent = new Intent(this, NewWorkoutActionActivity.class);
+		
 		WorkoutAction action = (WorkoutAction) adapter.getItemAtPosition(position);
+		Intent intent = new Intent();
+		if (action.isSimple()) {
+			intent = new Intent(this, NewWorkoutActionSimpleActivity.class);
+		}
+		else if (action.isAdvanced()) {
+			intent = new Intent(this, NewWorkoutActionAdvancedActivity.class);
+		}
+		
 		intent.putExtra(WorkoutAction.TAG, action);
 		startActivityForResult(intent, MY_REQUEST_CODE_EDIT);
 		
