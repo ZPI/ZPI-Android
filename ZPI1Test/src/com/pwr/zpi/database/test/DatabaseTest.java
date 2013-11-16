@@ -123,7 +123,7 @@ public class DatabaseTest extends AndroidTestCase {
 	}
 	
 	public void testInsertWorkout() {
-		boolean isOK = db.insertWorkout(prepareWorkout(13));
+		boolean isOK = db.insertWorkout(prepareWorkout(13)) != -1;
 		assertTrue(isOK);
 	}
 	
@@ -142,7 +142,7 @@ public class DatabaseTest extends AndroidTestCase {
 	private void insertWorkouts(int TESTS_NUMBER_ITEMS) {
 		boolean isOK = true;
 		for (int i = 0; i < TESTS_NUMBER_ITEMS; i++) {
-			isOK = isOK && db.insertWorkout(prepareWorkout(i + 1));
+			isOK = isOK && db.insertWorkout(prepareWorkout(i + 1)) != -1;
 		}
 		assertTrue(isOK);
 	}

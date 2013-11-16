@@ -278,7 +278,6 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 	
 	private void setVirtualPartnerTab(WorkoutActionAdvanced actionAdvanced)
 	{
-		tabHost.setCurrentTab(1);
 		switch (actionAdvanced.getType())
 		{
 		
@@ -300,8 +299,10 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 				setPace(actionAdvanced.getPace(), pickerTab3PaceMin, pickerTab3PaceSec);
 				editTextTab3Distance.setText(String.format("%.3f", actionAdvanced.getDistance() / 1000));
 				break;
-		
 		}
+		buttonTab1Add.setText(R.string.edit_action);
+		buttonTab2Add.setText(R.string.edit_action);
+		buttonTab3Add.setText(R.string.edit_action);
 		
 	}
 	

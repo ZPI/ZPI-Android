@@ -21,16 +21,13 @@ import android.widget.ListView;
 import android.widget.ToggleButton;
 
 import com.pwr.zpi.adapters.WorkoutActionsAdapter;
+import com.pwr.zpi.database.Database;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.views.CustomPicker;
 
 public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener {
-	
-	public static final String NAME_TAG = "name";
-	public static final String LIST_TAG = "list";
-	public static final String REPEAT_TAG = "repeat";
-	public static final String WORMUP_TAG = "wormup";
 	
 	public static final int MY_REQUEST_CODE_ADD = 1;
 	public static final int MY_REQUEST_CODE_EDIT = 2;
@@ -44,6 +41,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private WorkoutActionsAdapter workoutActionAdapter;
 	private ListView workoutsListView;
 	private AdapterContextMenuInfo info;
+	private Workout workout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +49,14 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		setContentView(R.layout.new_workout_activity);
 		initFields();
 		addListeners();
+		boolean isEdited = setDataIfEdit();
+		if (!isEdited) {
+			workautNameEditText.findFocus();
+			workautNameEditText.selectAll();
+		}
+		else {
+			//TODO remove focus from edit text, nie dziala mi google i nie moge sprawdzic jak to zrobic....
+		}
 	}
 	
 	private void initFields()
@@ -71,7 +77,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workautNameEditText = (EditText) header.findViewById(R.id.editTextWorkoutName);
 		int nr = getIntent().getIntExtra(PlaningActivity.WORKOUTS_NUMBER_TAG, 0);
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
-		workautNameEditText.selectAll();
+		
 		repeatPicker = (CustomPicker) footer.findViewById(R.id.customPickerRepeat);
 		isWarmUpToggleButton = (ToggleButton) footer.findViewById(R.id.ToggleButtonWormUp);
 		registerForContextMenu(workoutsListView);
@@ -106,7 +112,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				
 			}
 		};
-		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
+		dialog.showAlertDialog(this, R.string.add_action, R.string.empty_string,
 			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
 		
 	}
@@ -125,10 +131,16 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		else if (v == addThisWorkoutButton)
 		{
 			Intent returnIntent = new Intent();
-			returnIntent.putExtra(NAME_TAG, workautNameEditText.getText().toString());
-			returnIntent.putParcelableArrayListExtra(LIST_TAG, workoutsActionList);
-			returnIntent.putExtra(WORMUP_TAG, isWarmUpToggleButton.isChecked());	//TODO przetestowaæ czy dzia³a ok
-			returnIntent.putExtra(REPEAT_TAG, repeatPicker.getValue());
+			if (workout == null)
+			{
+				workout = new Workout();
+			}
+			workout.setName(workautNameEditText.getText().toString());
+			workout.setRepeatCount(repeatPicker.getValue());
+			workout.setWarmUp(isWarmUpToggleButton.isChecked());
+			workout.setActions(workoutsActionList);
+			
+			returnIntent.putExtra(Workout.TAG, workout);
 			setResult(RESULT_OK, returnIntent);
 			finish();
 		}
@@ -152,9 +164,17 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				break;
 			case MY_REQUEST_CODE_EDIT:
 				if (resultCode == RESULT_OK) {
+					long ID = workoutsActionList.get(editedPos).getID();
+					int index = workoutsActionList.get(editedPos).getOrderNumber();
 					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
 					workoutsActionList.set(editedPos, workoutAction);
 					workoutActionAdapter.notifyDataSetChanged();
+					if (workout != null)
+					{
+						Database db = new Database(this);
+						db.deleteWorkoutAction(workout.getID(), ID);
+						db.updateWorkoutAction(ID, workoutAction, index);
+					}
 				}
 				break;
 		}
@@ -195,6 +215,12 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 							
 							WorkoutAction toDelete = workoutActionAdapter.getItem(info.position - 1);
 							workoutActionAdapter.remove(toDelete);
+							if (workout != null)
+							{
+								Database db = new Database(NewWorkoutActivity.this);
+								db.deleteWorkoutAction(workout.getID(), toDelete.getID());
+								db.close();
+							}
 						}
 					};
 					dialog.showAlertDialog(this, R.string.dialog_message_remove_action,
@@ -222,5 +248,23 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				break;
 		}
 		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	
+	//set privious data if we are editing view
+	private boolean setDataIfEdit()
+	{
+		Intent intent = getIntent();
+		if (intent.hasExtra(Workout.TAG))
+		{
+			workout = intent.getParcelableExtra(Workout.TAG);
+			workautNameEditText.setText(workout.getName());
+			isWarmUpToggleButton.setChecked(workout.isWarmUp());
+			repeatPicker.setValue(workout.getRepeatCount());
+			workoutsActionList.addAll(workout.getActions());
+			workoutActionAdapter.notifyDataSetChanged();
+			addThisWorkoutButton.setText(R.string.edit_workout);
+			return true;
+		}
+		return false;
 	}
 }

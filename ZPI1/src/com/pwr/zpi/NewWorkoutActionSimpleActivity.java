@@ -195,7 +195,6 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 	
 	private void setIntervalTab(WorkoutActionSimple actionSimple)
 	{
-		tabHost.setCurrentTab(0);
 		buttonSpeedTypeActual.setSelected(false);
 		switch (actionSimple.getSpeedType())
 		{
@@ -223,7 +222,7 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 				setTime(time, pickerHours, pickerMinutes, pickerSec);
 				break;
 		}
-		
+		buttonAddInterval.setText(R.string.edit_action);
 	}
 	
 	private void setTime(long time, CustomPicker pickerHour, CustomPicker pickerMinute, CustomPicker pickerSecond)
