@@ -199,7 +199,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		if (intent.hasExtra(PlaningActivity.ID_TAG)) {
+		if (intent.hasExtra(Workout.TAG)) {
 			// drawer initialization
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
 			workout = getWorkoutData();
