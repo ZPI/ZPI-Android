@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
@@ -59,6 +60,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
+	private ImageButton musicPlayer;
 	private ImageButton workoutDdrawerButton;
 	private TextView DataTextView1;
 	private TextView DataTextView2;
@@ -156,6 +158,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		stopButton = (Button) findViewById(R.id.stopButton);
 		pauseButton = (Button) findViewById(R.id.pauseButton);
 		resumeButton = (Button) findViewById(R.id.resumeButton);
+		musicPlayer = (ImageButton) findViewById(R.id.buttonMusicDuringActivity);
 		workoutDdrawerButton = (ImageButton) findViewById(R.id.imageButtonWorkoutDrawerButton);
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
@@ -228,6 +231,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
+		
+		musicPlayer.setOnClickListener(this);
+		
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
 			
@@ -499,6 +505,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				else {
 					drawerLayout.closeDrawer(Gravity.LEFT);
 				}
+				break;
+			case R.id.buttonMusicDuringActivity:
+				startSystemMusicPlayer();
 				break;
 		}
 		
@@ -879,5 +888,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 			}
 		});
+	}
+	
+	private void startSystemMusicPlayer() {
+		Intent i;
+		i = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
+		startActivity(i);
 	}
 }
