@@ -6,9 +6,14 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,9 +40,10 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private ToggleButton isWarmUpToggleButton;
 	private CustomPicker repeatPicker;
 	private int editedPos;
-	ArrayList<WorkoutAction> workoutsActionList;
-	WorkoutActionsAdapter workoutActionAdapter;
-	ListView workoutsListView;
+	private ArrayList<WorkoutAction> workoutsActionList;
+	private WorkoutActionsAdapter workoutActionAdapter;
+	private ListView workoutsListView;
+	private AdapterContextMenuInfo info;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +74,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workautNameEditText.selectAll();
 		repeatPicker = (CustomPicker) footer.findViewById(R.id.customPickerRepeat);
 		isWarmUpToggleButton = (ToggleButton) footer.findViewById(R.id.ToggleButtonWormUp);
+		registerForContextMenu(workoutsListView);
 	}
 	
 	private void addListeners()
@@ -172,4 +179,48 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		
 	}
 	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.delete_action_menuitem:
+				info = (AdapterContextMenuInfo) item.getMenuInfo();
+				
+				if (workoutActionAdapter != null) {
+					MyDialog dialog = new MyDialog();
+					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+						
+						// romove
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							
+							WorkoutAction toDelete = workoutActionAdapter.getItem(info.position - 1);
+							workoutActionAdapter.remove(toDelete);
+						}
+					};
+					dialog.showAlertDialog(this, R.string.dialog_message_remove_action,
+						R.string.empty_string, android.R.string.yes,
+						android.R.string.no, positiveButtonHandler, null);
+					
+				}
+				break;
+			default:
+				break;
+		}
+		return super.onContextItemSelected(item);
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+		ContextMenuInfo menuInfo) {
+		switch (v.getId()) {
+			case R.id.listViewActions:
+				MenuInflater inflater = getMenuInflater();
+				inflater.inflate(R.menu.context_menu, menu);
+				menu.setHeaderTitle(R.string.menu_ctx_actions);
+				break;
+			default:
+				break;
+		}
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
 }

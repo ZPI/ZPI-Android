@@ -207,7 +207,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							WorkoutAction toDelete = actionsAdapter.getItem(info.position);
+							WorkoutAction toDelete = actionsAdapter.getItem(info.position - 1);
 							actionsAdapter.remove(toDelete);
 							Database db = new Database(WorkoutActivity.this);
 							db.deleteWorkoutAction(workout.getID(), toDelete.getID());
