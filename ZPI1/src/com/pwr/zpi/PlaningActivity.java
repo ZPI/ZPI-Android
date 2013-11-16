@@ -24,7 +24,6 @@ import android.widget.TabHost.TabSpec;
 import com.pwr.zpi.adapters.WorkoutAdapter;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.Workout;
-import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
@@ -33,7 +32,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 {
 	public static final String ID_TAG = "id";
 	public static final String IS_NEW_TAG = "is_new";
-	public static final int MY_REQUEST_CODE = 2;
+	public static final int MY_REQUEST_CODE_ADD = 1;
+	public static final int MY_REQUEST_CODE_EDIT = 2;
 	public static final String WORKOUTS_NUMBER_TAG = "work_count";
 	GestureDetector gestureDetector;
 	MyGestureDetector myGestureDetector;
@@ -146,21 +146,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 			Intent intent = new Intent(PlaningActivity.this, WorkoutActivity.class);
 			Workout workout = (Workout) adapter.getItemAtPosition(position);
 			//new workout
-			if (workout.getID() == -1)
-			{
-				intent.putExtra(IS_NEW_TAG, true);
-				ArrayList<WorkoutAction> actions = (ArrayList<WorkoutAction>) workout.getActions();
-				intent.putParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG, actions);
-				intent.putExtra(NewWorkoutActivity.WORMUP_TAG, workout.isWarmUp());
-				intent.putExtra(NewWorkoutActivity.REPEAT_TAG, workout.getRepeatCount());
-				intent.putExtra(NewWorkoutActivity.NAME_TAG, workout.getName());
-				
-			}
-			else
-			{
-				intent.putExtra(IS_NEW_TAG, false);
-				intent.putExtra(ID_TAG, workout.getID());
-			}
+			
+			intent.putExtra(IS_NEW_TAG, false);
+			intent.putExtra(ID_TAG, workout.getID());
+			
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 			
@@ -172,24 +161,16 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
-		if (requestCode == MY_REQUEST_CODE) {
+		if (requestCode == MY_REQUEST_CODE_ADD) {
 			
 			if (resultCode == RESULT_OK) {
-				Workout workout = new Workout();
-				ArrayList<WorkoutAction> actions = data.getParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG);
-				workout.setActions(actions);
+				Workout workout = data.getParcelableExtra(Workout.TAG);
 				
-				workout.setRepeatCount(data.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
-				workout.setName(data.getStringExtra(NewWorkoutActivity.NAME_TAG));
-				workout.setWarmUp(data.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
 				Database database = new Database(this);
-				database.insertWorkout(workout);
+				workout.setID(database.insertWorkout(workout));
 				database.close();
 				workoutsList.add(workout);
 				workoutAdapter.notifyDataSetChanged();
-			}
-			if (resultCode == RESULT_CANCELED) {
-				//Write your code if there's no result
 			}
 		}
 	}
@@ -249,7 +230,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		{
 			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
 			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
-			startActivityForResult(intent, MY_REQUEST_CODE);
+			startActivityForResult(intent, MY_REQUEST_CODE_ADD);
 		}
 		
 	}

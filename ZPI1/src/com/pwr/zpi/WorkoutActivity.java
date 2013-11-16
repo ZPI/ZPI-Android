@@ -38,10 +38,13 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private View mCurrent;
 	private View.OnTouchListener gestureListener;
 	private Button addThisWorkoutButton;
+	private Button editThisWorkoutButton;
 	private TextView workoutNameTextView;
 	private AdapterContextMenuInfo info;
 	private TextView repeatsTextView;
 	private TextView warmUpTextView;
+	private ArrayList<WorkoutAction> actions;
+	private static final int MY_REQUEST_CODE_EDIT = 1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,8 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		actionsListView = (ListView) findViewById(R.id.listViewWokoutActions);
 		long ID = getIntent().getLongExtra(PlaningActivity.ID_TAG, -1);
 		workout = readData(ID);
-		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workout.getActions());
+		actions = (ArrayList<WorkoutAction>) workout.getActions();
+		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, actions);
 		
 		View header = getLayoutInflater().inflate(R.layout.workout_header, null);
 		View footer = getLayoutInflater().inflate(R.layout.workout_footer, null);
@@ -70,10 +74,12 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		workoutNameTextView = (TextView) header.findViewById(R.id.textViewWorkoutName);
 		repeatsTextView = (TextView) footer.findViewById(R.id.textViewWrokoutActivityRepeat);
 		warmUpTextView = (TextView) footer.findViewById(R.id.textViewWorkoutActivityWarmUp);
+		editThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutEdit);
 		
 		workoutNameTextView.setText(workout.getName());
 		repeatsTextView.setText(workout.getRepeatCount() + "");
 		warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
+		
 		registerForContextMenu(actionsListView);
 	}
 	
@@ -95,6 +101,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	{
 		addThisWorkoutButton.setOnTouchListener(gestureListener);
 		actionsListView.setOnTouchListener(gestureListener);
+		editThisWorkoutButton.setOnTouchListener(gestureListener);
 		actionsListView.setOnItemClickListener(this);
 	}
 	
@@ -107,27 +114,14 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	{
 		Workout workout;
 		Intent i = getIntent();
-		if (i.getBooleanExtra(PlaningActivity.IS_NEW_TAG, false))
+		
+		Database database = new Database(this);
+		workout = database.getWholeSingleWorkout(ID);
+		database.close();
+		if (workout.getActions() == null)
 		{
-			workout = new Workout();
-			ArrayList<WorkoutAction> actions = i.getParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG);
-			workout.setActions(actions);
-			
-			workout.setRepeatCount(i.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
-			workout.setName(i.getStringExtra(NewWorkoutActivity.NAME_TAG));
-			workout.setWarmUp(i.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
-			
-		}
-		else
-		{
-			Database database = new Database(this);
-			workout = database.getWholeSingleWorkout(ID);
-			database.close();
-			if (workout.getActions() == null)
-			{
-				ArrayList<WorkoutAction> emptyList = new ArrayList<WorkoutAction>();
-				workout.setActions(emptyList);
-			}
+			ArrayList<WorkoutAction> emptyList = new ArrayList<WorkoutAction>();
+			workout.setActions(emptyList);
 		}
 		return workout;
 		
@@ -171,18 +165,42 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 			case R.id.ButtonChooseWorkout:
 				//TODO check GPS like in MainScreen
 				Intent i = new Intent(WorkoutActivity.this, ActivityActivity.class);
-				i.putExtra(PlaningActivity.ID_TAG, workout.getID());
-				ArrayList<WorkoutAction> actions = (ArrayList<WorkoutAction>) workout.getActions();
-				i.putParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG, actions);
-				i.putExtra(NewWorkoutActivity.WORMUP_TAG, workout.isWarmUp());
-				i.putExtra(NewWorkoutActivity.REPEAT_TAG, workout.getRepeatCount());
-				i.putExtra(NewWorkoutActivity.NAME_TAG, workout.getName());
+				i.putExtra(Workout.TAG, workout);
 				startActivity(i);
+				break;
+			case R.id.buttonWorkoutEdit:
+				Intent intent = new Intent(WorkoutActivity.this, NewWorkoutActivity.class);
+				
+				intent.putExtra(Workout.TAG, workout);
+				startActivityForResult(intent, MY_REQUEST_CODE_EDIT);
 				break;
 			default:
 				break;
 		}
 		
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		switch (requestCode) {
+			case MY_REQUEST_CODE_EDIT:
+				if (resultCode == RESULT_OK) {
+					workout = data.getParcelableExtra(Workout.TAG);
+					
+					workoutNameTextView.setText(workout.getName());
+					actions.clear();
+					actions.addAll(workout.getActions());
+					actionsAdapter.notifyDataSetChanged();
+					repeatsTextView.setText(workout.getRepeatCount() + "");
+					warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
+					Database db = new Database(this);
+					db.updateWorkout(workout);
+					db.close();
+					
+				}
+				break;
+		}
 	}
 	
 	@Override
@@ -207,7 +225,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							WorkoutAction toDelete = actionsAdapter.getItem(info.position);
+							WorkoutAction toDelete = actionsAdapter.getItem(info.position - 1);
 							actionsAdapter.remove(toDelete);
 							Database db = new Database(WorkoutActivity.this);
 							db.deleteWorkoutAction(workout.getID(), toDelete.getID());

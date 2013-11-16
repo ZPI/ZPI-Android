@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:editable="true"
-        android:selectAllOnFocus="true"
         android:ems="10" >
 
         <requestFocus />

@@ -142,13 +142,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private Workout getWorkoutData() {
 		Intent i = getIntent();
-		Workout workout = new Workout();
 		
-		ArrayList<WorkoutAction> actions = i.getParcelableArrayListExtra(NewWorkoutActivity.LIST_TAG);
-		workout.setActions(actions);
-		workout.setName(i.getStringExtra(NewWorkoutActivity.NAME_TAG));
-		workout.setRepeatCount(i.getIntExtra(NewWorkoutActivity.REPEAT_TAG, 1));
-		workout.setWarmUp(i.getBooleanExtra(NewWorkoutActivity.WORMUP_TAG, false));
+		Workout workout;
+		workout = i.getParcelableExtra(Workout.TAG);
 		return workout;
 	}
 	
@@ -209,7 +205,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				actions.addAll(workout.getActions());
 			}
 			workout.setActions(actions);
-			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item, workout.getActions(), workout);
+			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item,
+				workout.getActions(), workout);
 			listView.setAdapter(drawerListAdapter);
 			listView.setVisibility(View.VISIBLE);
 		}
@@ -648,9 +645,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-			// camera to east
-			.tilt(60); // Creates a CameraPosition from the builder
+				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+				// camera to east
+				.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
