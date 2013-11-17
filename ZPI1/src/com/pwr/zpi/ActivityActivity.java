@@ -124,6 +124,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private DrawerWorkoutsAdapter drawerListAdapter;
 	private ListView listView;
 	private Workout workout;
+	private Workout workoutCopy;
 	private DrawerLayout drawerLayout;
 	
 	@Override
@@ -198,17 +199,19 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			// drawer initialization
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
 			workout = getWorkoutData();
+			workoutCopy = new Workout();
 			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
 			if (workout.isWarmUp()) {
+				workoutCopy.setWarmUp(true);
 				int warmUpMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
 				actions.add(new WorkoutActionWarmUp(warmUpMinutes));
 			}
 			for (int i = 0; i < workout.getRepeatCount(); i++) {
 				actions.addAll(workout.getActions());
 			}
-			workout.setActions(actions);
+			workoutCopy.setActions(actions);
 			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item,
-				workout.getActions(), workout);
+				workoutCopy.getActions(), workoutCopy);
 			listView.setAdapter(drawerListAdapter);
 			listView.setVisibility(View.VISIBLE);
 		}
@@ -247,7 +250,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 						drawerLayout.closeDrawer(Gravity.LEFT);
 					}
 					else {
-						listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+						listView.smoothScrollToPosition(workoutCopy.getCurrentAction() + 4, workoutCopy.getActions().size());
 					}
 				}
 				
@@ -255,7 +258,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				public void onDrawerClosed(View arg0) {}
 			});
 			
-			workout.setOnNextActionListener(new OnNextActionListener());
+			workoutCopy.setOnNextActionListener(new OnNextActionListener());
 		}
 	}
 	
@@ -761,7 +764,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ActivityActivity.this).getString(
 					getString(R.string.key_countdown_before_start), "0"));
 				
-				api.setStarted(workout, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
+				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to add listener", e);
@@ -865,9 +868,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			
 			@Override
 			public void run() {
-				ActivityActivity.this.workout.updateWorkoutData(newWorkout);
+				ActivityActivity.this.workoutCopy.updateWorkoutData(newWorkout);
 				drawerListAdapter.notifyDataSetChanged();
-				listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+				listView.smoothScrollToPosition(workoutCopy.getCurrentAction() + 4, workoutCopy.getActions().size());
 			}
 		});
 	}
