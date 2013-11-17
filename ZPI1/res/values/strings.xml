@@ -119,13 +119,17 @@
 	<string name="auto_pause">Enable auto pause</string>
 	<string name="auto_pause_description">enabled auto pause when speed is about zero</string>
 	<string name="key_countdown_before_start">countdown_key</string>
-	<string name="countdown_before_start">Enable countdown before start</string>
-	<string name="countdown_before_start_description">enabled count down before start</string>
+	<string name="countdown_before_start">Set countdown before start</string>
+	<string name="countdown_before_start_description">set count down before start</string>
 	<string name="key_map_3d">map_key</string>
 	<string name="map_3d">Enable map 3D mode</string>
 	<string name="map_3d_description">enabled 3d mode view or use 2d if not enabled</string>
+	<string name="key_warm_up_time">warm_up_time</string>
+	<string name="warm_up_time">Set warm up time</string>
+	<string name="warm_up_time_description">set warm up time for every workout</string>
 	
 	<!-- speech strings -->
+	<string name="go">GO</string>
 	<string name="action">Action</string>
 	<string name="run_fast">Speed fast!</string>
 	<string name="run_steady">Speed steady!</string>
@@ -137,5 +141,6 @@
 	<string name="seconds_speak">seconds</string>
 	<string name="over_kilometer">per kilometer.</string>
 	<string name="with_pace">With pace</string>
+	<string name="warm_up_speak">Warm up!</string>
 	
 </resources>

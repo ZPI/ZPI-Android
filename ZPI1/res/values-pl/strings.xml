@@ -114,5 +114,6 @@
 	<string name="seconds_speak">sekund</string>
 	<string name="over_kilometer">na kilometr.</string>
 	<string name="with_pace">Tempem</string>
+	<string name="warm_up_speak">Rozgrzewka!</string>
 
 </resources>

@@ -123,6 +123,10 @@ public class Workout implements Parcelable {
 				WorkoutActionAdvanced advanced = (WorkoutActionAdvanced) action;
 				progressAdvancedAction(advanced, currentDistance, currentTime);
 				break;
+			case WorkoutAction.ACTION_WARM_UP:
+				WorkoutActionWarmUp warmUp = (WorkoutActionWarmUp) action;
+				progressWarmUpAction(warmUp, currentTime);
+				break;
 			default:
 				break;
 		}
@@ -194,6 +198,20 @@ public class Workout implements Parcelable {
 		}
 	}
 	
+	private void progressWarmUpAction(WorkoutActionWarmUp warmUp, long currentTime) {
+		double currentTimeMinutes = currentTime / 1000 / 60;
+		if (warmUp.getWorkoutTime() >= currentTimeMinutes) {
+			double deltaTime = currentTime - warmUp.getWorkoutTime() * 60 * 1000;
+			currentAction++;
+			lastActionTime += currentTime - deltaTime;
+			initHowMuchLeft(getActions(), currentAction, 0, deltaTime);
+			if (hasNextAction() && hasOnNextActionListener()) {
+				WorkoutAction action = getActions().get(currentAction);
+				notifyListeners(action);
+			}
+		}
+	}
+	
 	private void notifyListeners(WorkoutAction action) {
 		Log.i(TAG, "Notifing listeners");
 		switch (action.getActionType()) {
@@ -202,6 +220,9 @@ public class Workout implements Parcelable {
 				break;
 			case WorkoutAction.ACTION_ADVANCED:
 				onNextActionListener.onNextActionAdvanced((WorkoutActionAdvanced) action);
+				break;
+			case WorkoutAction.ACTION_WARM_UP:
+				onNextActionListener.onNextActionWarmUP((WorkoutActionWarmUp) action);
 				break;
 			default:
 				break;

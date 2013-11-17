@@ -527,6 +527,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		@Override
 		public void handleWorkoutChange(Workout workout) throws RemoteException {}
+		
+		@Override
+		public void handleCountDownChange(int countDownNumber) throws RemoteException {}
 	};
 	
 	private void getConnectionResult()

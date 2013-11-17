@@ -45,10 +45,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.adapters.DrawerWorkoutsAdapter;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
-import com.pwr.zpi.utils.BeepPlayer;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
@@ -108,16 +108,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	// service data
 	boolean mIsBound;
 	boolean isServiceConnected;
-	boolean canStart;
 	private RunListenerApi api;
 	private Handler handlerForService;
 	
 	// time counting fields
-	private Handler handler;
 	//	private Runnable timeHandler;
-	private static final int COUNT_DOWN_TIME = 5;
 	private static final String TAG = ActivityActivity.class.getSimpleName();
-	BeepPlayer beepPlayer;
 	
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
@@ -196,9 +192,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		//	singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
-		canStart = false;
-		
-		beepPlayer = new BeepPlayer(this);
 		
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
@@ -208,11 +201,16 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
 			workout = getWorkoutData();
 			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+			if (workout.isWarmUp()) {
+				int warmUpMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
+				actions.add(new WorkoutActionWarmUp(warmUpMinutes));
+			}
 			for (int i = 0; i < workout.getRepeatCount(); i++) {
 				actions.addAll(workout.getActions());
 			}
 			workout.setActions(actions);
-			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item, workout.getActions(), workout);
+			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item,
+				workout.getActions(), workout);
 			listView.setAdapter(drawerListAdapter);
 			listView.setVisibility(View.VISIBLE);
 		}
@@ -251,8 +249,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 						drawerLayout.closeDrawer(Gravity.LEFT);
 					}
 					else {
-						listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions()
-							.size());
+						listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
 					}
 				}
 				
@@ -284,62 +281,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		super.onDestroy();
 	}
 	
-	//TODO set pause and stop clickable
-	
-	private void startCountDown()
-	{
-		handler = new Handler();
-		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-			getString(R.string.key_countdown_before_start), true)) {
-			handler.post(new CounterRunnable(COUNT_DOWN_TIME));
-		}
-		else {
-			canStart = true;
-		}
-	}
-	
-	private void startRecording()
-	{
-		pauseButton.setClickable(true);
-		countDownTextView.setVisibility(View.GONE);
-		if (isServiceConnected)
-		{
-			try {
-				api.setStarted(workout);
-			}
-			catch (RemoteException e) {
-				Log.e(TAG, "Failed to start activity", e);
-			}
-		}
-	}
-	
-	private class CounterRunnable implements Runnable {
-		
-		final int x;
-		
-		public CounterRunnable(int x) {
-			this.x = x;
-		}
-		
-		@Override
-		public void run() {
-			runOnUiThread(new Runnable() {
-				
-				@Override
-				public void run() {
-					if (x == 0) {
-						canStart = true;
-						startRecording();
-					}
-					else {
-						countDownTextView.setText(x + "");
-						beepPlayer.playBeep();
-						handler.postDelayed(new CounterRunnable(x - 1), 1000);
-					}
-				}
-			});
-		}
-	}
+	//	private void startRecording() {
+	//		pauseButton.setClickable(true);
+	//		countDownTextView.setVisibility(View.GONE);
+	//		if (isServiceConnected) {
+	//			try {
+	//				api.setStarted(workout);
+	//			}
+	//			catch (RemoteException e) {
+	//				Log.e(TAG, "Failed to start activity", e);
+	//			}
+	//		}
+	//	}
 	
 	// end of timer methods
 	//TODO przesun\B9\E6 \BFeby nie by\B3y pod innymi ikonami
@@ -458,11 +411,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		handlerForService.post(new Runnable() {
 			@Override
 			public void run() {
-				if (isServiceConnected)
-				{
+				if (isServiceConnected) {
 					
-					lostGPSDialog = ProgressDialog.show(ActivityActivity.this, getResources()
-						.getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
+					lostGPSDialog = ProgressDialog.show(ActivityActivity.this,
+						getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
 					lostGPSDialog.setCancelable(true);
 					
 				}
@@ -656,8 +608,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private CameraPosition buildCameraPosition(LatLng latLng, Location location, Location lastLocation) {
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
-			builder
-			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			builder.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
 			// camera to east
 			.tilt(60); // Creates a CameraPosition from the builder
 		}
@@ -721,7 +672,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	@Override
 	protected void onPause() {
-		beepPlayer.stopPlayer();
 		super.onPause();
 	}
 	
@@ -774,16 +724,14 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			try {
 				api.addListener(runListener);
 				List<Location> locationList = api.getWholeRun();
-				if (locationList == null) {
-					startCountDown();
-				}
-				else {
+				if (locationList != null) {
 					setTracefromServer(locationList);
 				}
 				
-				if (canStart) {
-					startRecording();
-				}
+				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ActivityActivity.this).getString(
+					getString(R.string.key_countdown_before_start), "0"));
+				
+				api.setStarted(workout, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}
 			catch (RemoteException e) {
 				Log.e(TAG, "Failed to add listener", e);
@@ -797,6 +745,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 		
 	};
+	
 	private final RunListener.Stub runListener = new RunListener.Stub() {
 		
 		@Override
@@ -808,10 +757,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 		
 		@Override
-		public void handleConnectionResult() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
+		public void handleConnectionResult() throws RemoteException {}
 		
 		@Override
 		public void handleTimeChange() throws RemoteException {
@@ -823,26 +769,27 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			handleWorkoutUpdate(workout);
 		}
 		
+		@Override
+		public void handleCountDownChange(int countDownNumber) throws RemoteException {
+			handleCountDownUpdate(countDownNumber);
+		}
+		
 	};
 	
-	private void setTracefromServer(final List<Location> locationList)
-	{
+	private void setTracefromServer(final List<Location> locationList) {
 		handlerForService.post(new Runnable() {
 			
 			@Override
 			public void run() {
-				if (locationList != null)
-				{
+				if (locationList != null) {
 					LatLng latLng = null;
-					for (Location location : locationList)
-					{
+					for (Location location : locationList) {
 						latLng = new LatLng(location.getLatitude(), location.getLongitude());
 						traceOnMap.add(latLng);
 					}
 					traceOnMapObject.setPoints(traceOnMap.getPoints());
 					int size = locationList.size();
-					if (size > 1)
-					{
+					if (size > 1) {
 						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 2),
 							locationList.get(size - 1));
 						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -854,8 +801,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 	}
 	
-	private void updateViewsAfterTimeChange()
-	{
+	private void updateViewsAfterTimeChange() {
 		handlerForService.post(new Runnable() {
 			
 			@Override
@@ -866,8 +812,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		});
 	}
 	
-	private void handleTimeUpdates()
-	{
+	private void handleTimeUpdates() {
 		try {
 			time = api.getTime();
 			updateViewsAfterTimeChange();
@@ -886,6 +831,24 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				ActivityActivity.this.workout.updateWorkoutData(newWorkout);
 				drawerListAdapter.notifyDataSetChanged();
 				listView.smoothScrollToPosition(workout.getCurrentAction() + 4, workout.getActions().size());
+			}
+		});
+	}
+	
+	private void handleCountDownUpdate(final int countDownNumber) {
+		countDownTextView.setVisibility(View.VISIBLE);
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (countDownNumber == -1) {
+					countDownTextView.setVisibility(View.GONE);
+					//					startRecording();
+				} else if (countDownNumber == 0) {
+					countDownTextView.setText(ActivityActivity.this.getString(R.string.go));
+				} else {
+					countDownTextView.setText(countDownNumber + "");
+				}
 			}
 		});
 	}

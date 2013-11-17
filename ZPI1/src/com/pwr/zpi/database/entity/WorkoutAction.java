@@ -12,6 +12,7 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction>, Parcel
 	
 	public static final int ACTION_SIMPLE = 0x1;
 	public static final int ACTION_ADVANCED = 0x2;
+	public static final int ACTION_WARM_UP = 0x3;
 	
 	public static final int ACTION_SIMPLE_SPEED_FAST = 0x1;
 	public static final int ACTION_SIMPLE_SPEED_STEADY = 0x2;
