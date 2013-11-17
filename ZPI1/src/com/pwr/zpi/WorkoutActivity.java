@@ -129,6 +129,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onBackPressed() {
+		setResult(RESULT_CANCELED);
 		super.onBackPressed();
 		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 	}
@@ -164,9 +165,10 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		{
 			case R.id.ButtonChooseWorkout:
 				//TODO check GPS like in MainScreen
-				Intent i = new Intent(WorkoutActivity.this, ActivityActivity.class);
+				Intent i = new Intent();
 				i.putExtra(Workout.TAG, workout);
-				startActivity(i);
+				setResult(RESULT_OK, i);
+				finish();
 				break;
 			case R.id.buttonWorkoutEdit:
 				Intent intent = new Intent(WorkoutActivity.this, NewWorkoutActivity.class);
