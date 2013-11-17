@@ -54,6 +54,8 @@ import com.pwr.zpi.utils.TimeFormatter;
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
 	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
+	private static final int MY_REQUEST_CODE = 1;
+	public static final String SAVE_TAG = "save";
 	
 	private GoogleMap mMap;
 	
@@ -443,12 +445,43 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				catch (RemoteException e) {
 					Log.e(TAG, "Failed to tell that activity is stoped", e);
 				}
-				finish();
-				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				
+				startActivityForResult(new Intent(ActivityActivity.this, AfterActivityActivity.class), MY_REQUEST_CODE);
 			}
 		};
 		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
 			android.R.string.no, positiveButtonHandler, null);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		if (requestCode == MY_REQUEST_CODE) {
+			
+			if (isServiceConnected && resultCode == RESULT_OK)
+			{
+				try {
+					api.doSaveRun(data.getBooleanExtra(SAVE_TAG, false));
+				}
+				catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if (isServiceConnected) {
+				try {
+					api.doSaveRun(false);
+				}
+				catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			setResult(RESULT_OK);	//dont know why its needed, but it is...
+			finish();
+			overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+			
+		}
 	}
 	
 	private void showLostGpsSignalDialog() {
