@@ -34,6 +34,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	public static final String IS_NEW_TAG = "is_new";
 	public static final int MY_REQUEST_CODE_ADD = 1;
 	public static final int MY_REQUEST_CODE_EDIT = 2;
+	public static final int WORKOUT_REQUEST2 = 0x3;
 	public static final String WORKOUTS_NUMBER_TAG = "work_count";
 	GestureDetector gestureDetector;
 	MyGestureDetector myGestureDetector;
@@ -150,7 +151,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 			intent.putExtra(IS_NEW_TAG, false);
 			intent.putExtra(ID_TAG, workout.getID());
 			
-			startActivity(intent);
+			startActivityForResult(intent, WORKOUT_REQUEST2);
 			overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 			
 		}
@@ -160,19 +161,30 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		if (requestCode == MY_REQUEST_CODE_ADD) {
-			
-			if (resultCode == RESULT_OK) {
-				Workout workout = data.getParcelableExtra(Workout.TAG);
+		switch (requestCode)
+		{
+			case MY_REQUEST_CODE_ADD:
 				
-				Database database = new Database(this);
-				workout.setID(database.insertWorkout(workout));
-				database.close();
-				workoutsList.add(workout);
-				workoutAdapter.notifyDataSetChanged();
-			}
+				if (resultCode == RESULT_OK) {
+					Workout workout = data.getParcelableExtra(Workout.TAG);
+					
+					Database database = new Database(this);
+					workout.setID(database.insertWorkout(workout));
+					database.close();
+					workoutsList.add(workout);
+					workoutAdapter.notifyDataSetChanged();
+				}
+				break;
+			case WORKOUT_REQUEST2:
+				if (resultCode == RESULT_OK)
+				{
+					setResult(RESULT_OK, data);
+					finish();
+					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+				}
+				break;
 		}
+		
 	}
 	
 	@Override
