@@ -143,6 +143,8 @@
 	<string name="seconds_speak">seconds</string>
 	<string name="over_kilometer">per kilometer.</string>
 	<string name="with_pace">With pace</string>
+	<string name="save">Save</string>
+	<string name="discard">Discard</string>
 	
 	
 </resources>
