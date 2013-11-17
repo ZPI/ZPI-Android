@@ -111,6 +111,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 	
 	@Override
 	public void onNextActionWarmUP(WorkoutActionWarmUp action) {
+		Log.i(TAG, "warmu up listener");
 		if (context != null && speechSynthezator != null) {
 			StringBuilder builder = new StringBuilder();
 			
@@ -122,6 +123,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 			builder.append(" ");
 			builder.append(context.getString(R.string.minutes_speak));
 			
+			Log.i(TAG, "warmu up almost said");
 			speechSynthezator.say(builder.toString());
 		}
 	}

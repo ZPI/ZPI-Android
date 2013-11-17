@@ -638,9 +638,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-				// camera to east
-				.tilt(60); // Creates a CameraPosition from the builder
+			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			// camera to east
+			.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
@@ -797,6 +797,13 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		@Override
 		public void handleWorkoutChange(Workout workout) throws RemoteException {
 			handleWorkoutUpdate(workout);
+			for (WorkoutAction action : workout.getActions()) {
+				Log.i(TAG, action.getActionType() + ""); //TODO debug
+				if (action.isWarmUp()) {
+					WorkoutActionWarmUp wu = (WorkoutActionWarmUp) action;
+					Log.i(TAG, wu.getWorkoutTime() + "");
+				}
+			}
 		}
 		
 		@Override

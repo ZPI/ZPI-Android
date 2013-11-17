@@ -33,6 +33,7 @@ import com.pwr.zpi.RunListenerApi;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.listeners.ICountDownListner;
 import com.pwr.zpi.utils.AssetsPlayer;
 import com.pwr.zpi.utils.AssetsPlayer.AssetsMp3Files;
@@ -52,6 +53,8 @@ OnConnectionFailedListener, ICountDownListner {
 	public static final int STARTED = 1;
 	public static final int PAUSED = 2;
 	public static final int STOPED = 3;
+	public static final int COUNTER_COUNT_DOWN = 0x1;
+	public static final int COUNTER_WARM_UP = 0x2;
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
@@ -351,8 +354,10 @@ OnConnectionFailedListener, ICountDownListner {
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		
+		workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+		workout.notifyListeners(workout.getActions().get(0));
+		
 		startTimeEvaluation();
-		//startCountingTime();
 	}
 	
 	private void startTimeEvaluation() {
@@ -368,39 +373,80 @@ OnConnectionFailedListener, ICountDownListner {
 	}
 	
 	private void startWarmUp() {
-		// TODO Auto-generated method stub
-		
+		startTime = System.currentTimeMillis();
+		//		int minutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
+		int minutes = ((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime();
+		int seconds = minutes * 60;
+		handler.post(new CounterRunnable(COUNTER_WARM_UP, seconds, this));
 	}
 	
 	private void startRunAfterCountDown() {
 		soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Beep);
 		Log.i(TAG, "count down start " + countDownTime + " handler " + handler);
-		handler.post(new CounterRunnable(countDownTime, this));
+		handler.post(new CounterRunnable(COUNTER_COUNT_DOWN, countDownTime, this));
 	}
 	
 	@Override
-	public void onCountDownUpadte(int howMuchLeft) {
+	public void onCountDownUpadte(int counterID, int howMuchLeft) {
 		Log.i(TAG, "Count down update " + howMuchLeft);
-		handler.postDelayed(new CounterRunnable(howMuchLeft - 1, this), 1000);
-		listenersHandleCountDownChange(howMuchLeft);
-		soundsPlayer.play();
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				listenersHandleCountDownChange(howMuchLeft);
+				soundsPlayer.play();
+				break;
+			case COUNTER_WARM_UP:
+				processWorkout();
+				Iterator<RunListener> it = listeners.iterator();
+				time = System.currentTimeMillis() - startTime - pauseTime;
+				while (it.hasNext())
+				{
+					RunListener listener = it.next();
+					try {
+						listener.handleTimeChange();
+						listener.handleWorkoutChange(workout);
+						Log.i(TAG, listeners.size() + "");
+					}
+					catch (RemoteException e) {
+						Log.w(TAG, "Failed to tell listener about workout update", e);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		handler.postDelayed(new CounterRunnable(counterID, howMuchLeft - 1, this), 1000);
 	}
 	
 	@Override
-	public void onCountDownDone(int howMuchLeft) {
-		soundsPlayer.stopPlayer();
-		soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Go);
+	public void onCountDownDone(int counterID, int howMuchLeft) {
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				soundsPlayer.stopPlayer();
+				soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Go);
+				listenersHandleCountDownChange(howMuchLeft);
+				soundsPlayer.play();
+				break;
+			case COUNTER_WARM_UP:
+				startRunAfterCountDown();
+				break;
+			default:
+				break;
+		}
 		Log.i(TAG, "Count down done");
-		handler.postDelayed(new CounterRunnable(howMuchLeft - 1, this), 1000);
-		listenersHandleCountDownChange(howMuchLeft);
-		soundsPlayer.play();
+		handler.postDelayed(new CounterRunnable(counterID, howMuchLeft - 1, this), 1000);
 	}
 	
 	@Override
-	public void onCountDownPostAction(int howMuchLeft) {
-		soundsPlayer.stopPlayer();
-		listenersHandleCountDownChange(howMuchLeft);
-		startCountingTime();
+	public void onCountDownPostAction(int counterID, int howMuchLeft) {
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				soundsPlayer.stopPlayer();
+				listenersHandleCountDownChange(howMuchLeft);
+				startCountingTime();
+				break;
+			default:
+				break;
+		}
 	}
 	
 	private void listenersHandleCountDownChange(int howMuchLeft) {

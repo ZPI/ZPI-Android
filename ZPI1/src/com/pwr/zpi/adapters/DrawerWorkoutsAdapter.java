@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 
 public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 	
@@ -61,6 +62,9 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 				} else {
 					textColor = R.color.workout_action_text_bad;
 				}
+				break;
+			case WorkoutActionWarmUp.ACTION_WARM_UP:
+				rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
 				break;
 			default:
 				break;

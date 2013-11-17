@@ -103,4 +103,8 @@ public abstract class WorkoutAction implements Comparable<WorkoutAction>, Parcel
 	{
 		return false;
 	}
+	
+	public boolean isWarmUp() {
+		return false;
+	}
 }

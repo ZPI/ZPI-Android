@@ -6,8 +6,10 @@ public class CounterRunnable implements Runnable {
 	
 	final int x;
 	private final ICountDownListner listener;
+	private final int counterID;
 	
-	public CounterRunnable(int x, ICountDownListner listener) {
+	public CounterRunnable(int counterID, int x, ICountDownListner listener) {
+		this.counterID = counterID;
 		this.x = x;
 		this.listener = listener;
 	}
@@ -15,12 +17,16 @@ public class CounterRunnable implements Runnable {
 	@Override
 	public void run() {
 		if (x == -1) {
-			listener.onCountDownPostAction(x);
+			listener.onCountDownPostAction(counterID, x);
 		} else if (x == 0) {
-			listener.onCountDownDone(x);
+			listener.onCountDownDone(counterID, x);
 		}
 		else {
-			listener.onCountDownUpadte(x);
+			listener.onCountDownUpadte(counterID, x);
 		}
+	}
+	
+	public int getCounterID() {
+		return counterID;
 	}
 }

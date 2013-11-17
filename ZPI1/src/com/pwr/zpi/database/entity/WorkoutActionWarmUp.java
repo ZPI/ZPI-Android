@@ -49,4 +49,8 @@ public class WorkoutActionWarmUp extends WorkoutAction implements Parcelable  {
 		}
 	};
 	
+	@Override
+	public boolean isWarmUp() {
+		return true;
+	}
 }
