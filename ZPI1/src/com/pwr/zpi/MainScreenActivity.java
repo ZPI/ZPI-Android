@@ -187,7 +187,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 		else {
 			if (swipeDirection == DOWN) {
-				i.putExtra(Workout.TAG, workout);
+				if (workout != null) {
+					i.putExtra(Workout.TAG, workout);
+				}
 			}
 			startActivity(i);
 		}
