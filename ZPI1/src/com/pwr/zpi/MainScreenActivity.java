@@ -42,6 +42,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
 	private TextView GPSStatusTextView;
 	private TextView GPSSignalTextView;
+	private TextView workoutNameTextView;
 	private ImageButton settingsButton;
 	private ImageButton historyButton;
 	private ImageButton planningButton;
@@ -52,7 +53,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private int gpsStatus = -1;
 	private View mCurrent;
 	private Handler handler;
-	
+	private Workout workout;
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
 	
@@ -68,6 +69,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	public final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	public static final int TTS_DATA_CHECK_CODE_REQUEST = 0x1;
 	public final static int REQUEST_GOOGLE_PLAY_SERVICES = 7;
+	public static final int WORKOUT_REQUEST = 0x2;
 	
 	public boolean isConnected;
 	private Location mLastLocation;
@@ -87,6 +89,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
 		startButton = (Button) findViewById(R.id.buttonStart);
 		musicButton = (Button) findViewById(R.id.buttonMusic);
+		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
 		
 		// locationListener = new MyLocationListener(this);
 		
@@ -179,8 +182,17 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private void startActivity(Class<? extends Activity> activity,
 		short swipeDirection) {
 		Intent i = new Intent(MainScreenActivity.this, activity);
-		
-		startActivity(i);
+		if (swipeDirection == RIGHT) { //get workout
+			startActivityForResult(i, WORKOUT_REQUEST);
+		}
+		else {
+			if (swipeDirection == DOWN) {
+				if (workout != null) {
+					i.putExtra(Workout.TAG, workout);
+				}
+			}
+			startActivity(i);
+		}
 		switch (swipeDirection)
 		{
 			case RIGHT:
@@ -266,6 +278,16 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					installIntent.setAction(
 						TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
 					startActivity(installIntent);
+				}
+				break;
+			case WORKOUT_REQUEST:
+				if (resultCode == RESULT_OK)
+				{
+					workout = data.getParcelableExtra(Workout.TAG);
+					if (workout != null)
+					{
+						workoutNameTextView.setText(workout.getName());
+					}
 				}
 				break;
 			default:
@@ -436,7 +458,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				unbindService(serviceConnection);
 			}
 			catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
