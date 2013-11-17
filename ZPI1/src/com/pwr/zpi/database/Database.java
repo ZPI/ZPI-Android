@@ -291,7 +291,7 @@ public class Database extends SQLiteOpenHelper {
 		return deletedNumber != 0;
 	}
 	
-	public boolean insertWorkout(Workout workout) {
+	public long insertWorkout(Workout workout) {
 		SQLiteDatabase db = getWritableDatabase();
 		db.beginTransaction();
 		boolean isInsertOK = true;
@@ -310,7 +310,7 @@ public class Database extends SQLiteOpenHelper {
 		}
 		db.endTransaction();
 		db.close();
-		return isInsertOK;
+		return (isInsertOK) ? workoutID : -1;
 	}
 	
 	private long insertWorkoutAction(SQLiteDatabase db, WorkoutAction workoutAction, long workoutID, int index) {
@@ -575,7 +575,7 @@ public class Database extends SQLiteOpenHelper {
 	
 	private boolean updateBasicWorkoutInfo(SQLiteDatabase db, Workout workout) {
 		ContentValues cv = workoutToContentValues(workout);
-		return db.update(WORKOUTS, cv, WORKOUTS_ID + "=?", new String[]{workout.getID()+""}) != 0;
+		return db.update(WORKOUTS, cv, WORKOUTS_ID + "=?", new String[] { workout.getID() + "" }) != 0;
 	}
 	
 	private boolean updateWorkoutActions(SQLiteDatabase db, Workout workout) {
@@ -586,7 +586,8 @@ public class Database extends SQLiteOpenHelper {
 				long actionID = insertWorkoutAction(db, action, workout.getID(), index);
 				isOK = isOK && actionID != -1;
 				isOK = isOK && insertWorkoutIDActionID(db, workout.getID(), actionID, action.getActionType());
-			} else { // updated action
+			}
+			else { // updated action
 				isOK = isOK && updateWorkoutAction(db, workout.getID(), action, index);
 			}
 			index++;
@@ -612,12 +613,13 @@ public class Database extends SQLiteOpenHelper {
 	
 	private boolean updateWorkoutActionSimple(SQLiteDatabase db, long workoutId, WorkoutActionSimple action, int index) {
 		ContentValues cv = simpleWorkoutActionToContentValues(action, index);
-		return db.update(ACTIONS_SIMPLE, cv, AS_ID + "=?", new String[]{action.getID() + ""}) != 0;
+		return db.update(ACTIONS_SIMPLE, cv, AS_ID + "=?", new String[] { action.getID() + "" }) != 0;
 	}
 	
-	private boolean updateWorkoutActionAdvanced(SQLiteDatabase db, long workoutId, WorkoutActionAdvanced action, int index) {
+	private boolean updateWorkoutActionAdvanced(SQLiteDatabase db, long workoutId, WorkoutActionAdvanced action,
+		int index) {
 		ContentValues cv = advancedWorkoutActionToContentValues(action, index);
-		return db.update(ACTIONS_ADVANCED, cv, AA_ID + "=?", new String[]{action.getID() + ""}) != 0;
+		return db.update(ACTIONS_ADVANCED, cv, AA_ID + "=?", new String[] { action.getID() + "" }) != 0;
 	}
 	
 	public boolean updateWorkoutAction(long workoutID, WorkoutAction action, int index) {

@@ -145,20 +145,18 @@ OnConnectionFailedListener, ICountDownListner {
 		
 		@Override
 		public void setResumed() throws RemoteException {
-			pauseTime += System.currentTimeMillis() - pauseStartTime;
-			state = STARTED;
-			traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-			handler.post(timeHandler);
+			if (state == STARTED)
+			{
+				pauseTime += System.currentTimeMillis() - pauseStartTime;
+				state = STARTED;
+				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
+				handler.post(timeHandler);
+			}
 		}
 		
 		@Override
 		public void setStoped() throws RemoteException {
 			state = STOPED;
-			saveRun();
-			distance = 0;
-			pauseTime = 0;
-			locationList = null;
-			stopForeground(true);
 			
 		}
 		
@@ -187,6 +185,17 @@ OnConnectionFailedListener, ICountDownListner {
 		@Override
 		public void prepareTextToSpeech() throws RemoteException {
 			speechSynthezator = new SpeechSynthezator(getApplicationContext());
+		}
+		
+		@Override
+		public void doSaveRun(boolean save) throws RemoteException {
+			if (save) {
+				saveRun();
+			}
+			distance = 0;
+			pauseTime = 0;
+			locationList = null;
+			stopForeground(true);
 		}
 		
 	};

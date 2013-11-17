@@ -67,7 +67,11 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".NewWorkoutActionActivity"
+            android:name=".NewWorkoutActionSimpleActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewWorkoutActionAdvancedActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
@@ -80,6 +84,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".WorkoutActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AfterActivityActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity

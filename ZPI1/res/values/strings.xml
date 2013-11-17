@@ -82,6 +82,12 @@
     <string name="interval">Interval</string>
 	<string name="virtual_partner">Virtual \npartner</string>
 	<string name="edit_workout">Edit Workout</string>
+	<string name="edit_action">Edit Action</string>
+	<string name="edit">Edit</string>
+	<string-array name="choose_action">
+	    <item >New Interval Action</item>
+	    <item >New Virtual Partner Action</item>
+	</string-array>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -142,5 +148,9 @@
 	<string name="over_kilometer">per kilometer.</string>
 	<string name="with_pace">With pace</string>
 	<string name="warm_up_speak">Warm up!</string>
+
+	<!-- after end of acticity -->
+	<string name="save">Save</string>
+	<string name="discard">Discard</string>
 	
 </resources>
