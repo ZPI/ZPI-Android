@@ -11,7 +11,7 @@ interface RunListenerApi {
 	Location getLatestLocation();
 	Intent getConnectionResult();
 	int getGPSStatus();
-	void setStarted(in Workout workout);
+	void setStarted(in Workout workout, int countDownTime);
 	void setPaused();
 	void setResumed();
 	void setStoped();

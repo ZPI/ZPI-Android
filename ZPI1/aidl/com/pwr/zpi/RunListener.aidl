@@ -8,4 +8,5 @@ interface RunListener {
 	void handleConnectionResult();
 	void handleTimeChange();
 	void handleWorkoutChange(in Workout workout);
+	void handleCountDownChange(int countDownNumber);
 }

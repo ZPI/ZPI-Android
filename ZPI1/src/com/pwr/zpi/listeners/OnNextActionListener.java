@@ -9,6 +9,7 @@ import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.utils.SpeechSynthezator;
 import com.pwr.zpi.utils.TimeFormatter;
 
@@ -104,6 +105,25 @@ public class OnNextActionListener implements IOnNextActionListener {
 			builder.append(context.getString(R.string.over_kilometer));
 			
 			Log.i(TAG, "almost said");
+			speechSynthezator.say(builder.toString());
+		}
+	}
+	
+	@Override
+	public void onNextActionWarmUP(WorkoutActionWarmUp action) {
+		Log.i(TAG, "warmu up listener");
+		if (context != null && speechSynthezator != null) {
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append(context.getString(R.string.warm_up_speak));
+			builder.append(" ");
+			builder.append(context.getString(R.string.for_how_much));
+			builder.append(" ");
+			builder.append(action.getWorkoutTime());
+			builder.append(" ");
+			builder.append(context.getString(R.string.minutes_speak));
+			
+			Log.i(TAG, "warmu up almost said");
 			speechSynthezator.say(builder.toString());
 		}
 	}

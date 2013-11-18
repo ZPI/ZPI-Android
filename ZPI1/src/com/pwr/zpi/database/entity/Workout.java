@@ -123,6 +123,10 @@ public class Workout implements Parcelable {
 				WorkoutActionAdvanced advanced = (WorkoutActionAdvanced) action;
 				progressAdvancedAction(advanced, currentDistance, currentTime);
 				break;
+			case WorkoutAction.ACTION_WARM_UP:
+				WorkoutActionWarmUp warmUp = (WorkoutActionWarmUp) action;
+				progressWarmUpAction(warmUp, currentTime);
+				break;
 			default:
 				break;
 		}
@@ -161,7 +165,7 @@ public class Workout implements Parcelable {
 			lastActionDistance += currentDistance - deltaDistance;
 			lastActionTime += currentTime - deltaTime;
 			initHowMuchLeft(getActions(), currentAction, deltaDistance, deltaTime);
-			if (hasOnNextActionListener()) {
+			if (hasNextAction() && hasOnNextActionListener()) {
 				WorkoutAction action = getActions().get(currentAction);
 				notifyListeners(action);
 			}
@@ -194,7 +198,23 @@ public class Workout implements Parcelable {
 		}
 	}
 	
-	private void notifyListeners(WorkoutAction action) {
+	private void progressWarmUpAction(WorkoutActionWarmUp warmUp, long currentTime) {
+		double warmUpTime = warmUp.getWorkoutTime() * 60 * 1000;
+		if (warmUpTime <= currentTime) {
+			Log.i(TAG, warmUpTime + " " + currentTime);
+			currentAction++;
+			lastActionTime = 0;
+			initHowMuchLeft(getActions(), currentAction, 0, 0);
+			if (hasNextAction() && hasOnNextActionListener()) {
+				WorkoutAction action = getActions().get(currentAction);
+				notifyListeners(action);
+			}
+		} else {
+			this.howMuchLeft = warmUpTime - currentTime;
+		}
+	}
+	
+	public void notifyListeners(WorkoutAction action) {
 		Log.i(TAG, "Notifing listeners");
 		switch (action.getActionType()) {
 			case WorkoutAction.ACTION_SIMPLE:
@@ -202,6 +222,10 @@ public class Workout implements Parcelable {
 				break;
 			case WorkoutAction.ACTION_ADVANCED:
 				onNextActionListener.onNextActionAdvanced((WorkoutActionAdvanced) action);
+				break;
+			case WorkoutAction.ACTION_WARM_UP:
+				Log.i(TAG, "warm up listener say!");
+				onNextActionListener.onNextActionWarmUP((WorkoutActionWarmUp) action);
 				break;
 			default:
 				break;
@@ -224,14 +248,14 @@ public class Workout implements Parcelable {
 	public static CharSequence formatActionValue(WorkoutAction action, Double value) {
 		StringBuilder sb = new StringBuilder();
 		boolean getValue = value == null;
-		if (action.getActionType() == WorkoutAction.ACTION_ADVANCED) {
+		if (action.isAdvanced()) {
 			if (getValue) {
 				value = ((WorkoutActionAdvanced) action).getDistance();
 			}
 			sb.append(String.format("%.0f", value));
 			sb.append("m");
 		}
-		else {
+		else if (action.isSimple()) {
 			WorkoutActionSimple simple = (WorkoutActionSimple) action;
 			if (getValue) {
 				value = simple.getValue();
@@ -244,6 +268,13 @@ public class Workout implements Parcelable {
 				sb.append(TimeFormatter.formatTimeHHMMSS(value.longValue()));
 				sb.append("h");
 			}
+		} else if (action.isWarmUp()) {
+			WorkoutActionWarmUp warmUp = (WorkoutActionWarmUp) action;
+			if (getValue) {
+				value = (double) (warmUp.getWorkoutTime() * 60 * 1000);
+			}
+			sb.append(TimeFormatter.formatTimeHHMMSS(value.longValue()));
+			sb.append("h");
 		}
 		return sb.toString();
 	}

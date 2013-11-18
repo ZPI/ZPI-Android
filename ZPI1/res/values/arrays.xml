@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="countDownValuesNames">
+        <item name="disabled">Disabled</item>
+        <item name="threeSeconds">3 seconds</item>
+        <item name="fiveSeconds">5 seconds</item>
+    </string-array>
+    <string-array name="countDownValues">
+        <item name="disabled">0</item>
+        <item name="threeSeconds">3</item>
+        <item name="fiveSeconds">5</item>
+    </string-array>
+    <string-array name="warmUpValuesNames">
+        <item name="threeMinutes">3 minutes</item>
+        <item name="fiveMinutes">5 minutes</item>
+        <item name="tenMinutes">10 minutes</item>
+        <item name="twentyMinutes">20 minutes</item>
+    </string-array>
+    <string-array name="warmUpValues">
+        <item name="threeMinutes">3</item>
+        <item name="fiveMinutes">5</item>
+        <item name="tenMinutes">10</item>
+        <item name="twentyMinutes">20</item>
+    </string-array>
+</resources>

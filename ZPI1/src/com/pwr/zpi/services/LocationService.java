@@ -33,12 +33,17 @@ import com.pwr.zpi.RunListenerApi;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
+import com.pwr.zpi.listeners.ICountDownListner;
+import com.pwr.zpi.utils.AssetsPlayer;
+import com.pwr.zpi.utils.AssetsPlayer.AssetsMp3Files;
+import com.pwr.zpi.utils.CounterRunnable;
 import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-	OnConnectionFailedListener {
+OnConnectionFailedListener, ICountDownListner {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -48,6 +53,8 @@ public class LocationService extends Service implements LocationListener, Connec
 	public static final int STARTED = 1;
 	public static final int PAUSED = 2;
 	public static final int STOPED = 3;
+	public static final int COUNTER_COUNT_DOWN = 0x1;
+	public static final int COUNTER_WARM_UP = 0x2;
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
@@ -65,6 +72,8 @@ public class LocationService extends Service implements LocationListener, Connec
 	public static final String CONNECTION_FIAILED_TAG = "connectionFailed";
 	
 	private SpeechSynthezator speechSynthezator;
+	private AssetsPlayer soundsPlayer;
+	private int countDownTime;
 	
 	long startTime;
 	long pauseStartTime;
@@ -115,11 +124,12 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		
 		@Override
-		public void setStarted(Workout workout) throws RemoteException {
+		public void setStarted(Workout workout, int countDownTime) throws RemoteException {
 			if (state == STOPED)
 			{
 				locationList = new ArrayList<Location>();
 				state = STARTED;
+				LocationService.this.countDownTime = countDownTime;
 				prepareWorkout(workout);
 				initActivityRecording();
 				Notification note = Notifications.createNotification(LocationService.this, ActivityActivity.class,
@@ -231,6 +241,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	@Override
 	public void onDestroy() {
 		
+		soundsPlayer.stopPlayer();
 		if (mLocationClient.isConnected()) {
 			mLocationClient.removeLocationUpdates(this);
 		}
@@ -326,7 +337,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-				.getAccuracy() > REQUIRED_ACCURACY)) {
+			.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -343,13 +354,118 @@ public class LocationService extends Service implements LocationListener, Connec
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		
-		startCountingTime();
+		workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+		workout.notifyListeners(workout.getActions().get(0));
+		
+		startTimeEvaluation();
+	}
+	
+	private void startTimeEvaluation() {
+		Log.i(TAG, "starting time evaluation");
+		prepareTimeCountingHandler();
+		if (workout != null && workout.isWarmUp()) {
+			Log.i(TAG, "warm up count down");
+			startWarmUp();
+		} else {
+			Log.i(TAG, "count down without warm up");
+			startRunAfterCountDown();
+		}
+	}
+	
+	private void startWarmUp() {
+		startTime = System.currentTimeMillis();
+		//		int minutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
+		int minutes = ((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime();
+		int seconds = minutes * 60;
+		handler.post(new CounterRunnable(COUNTER_WARM_UP, seconds, this));
+	}
+	
+	private void startRunAfterCountDown() {
+		soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Beep);
+		Log.i(TAG, "count down start " + countDownTime + " handler " + handler);
+		handler.post(new CounterRunnable(COUNTER_COUNT_DOWN, countDownTime, this));
+	}
+	
+	@Override
+	public void onCountDownUpadte(int counterID, int howMuchLeft) {
+		Log.i(TAG, "Count down update " + howMuchLeft);
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				listenersHandleCountDownChange(howMuchLeft);
+				soundsPlayer.play();
+				break;
+			case COUNTER_WARM_UP:
+				processWorkout();
+				Iterator<RunListener> it = listeners.iterator();
+				time = System.currentTimeMillis() - startTime - pauseTime;
+				while (it.hasNext())
+				{
+					RunListener listener = it.next();
+					try {
+						listener.handleTimeChange();
+						listener.handleWorkoutChange(workout);
+						Log.i(TAG, listeners.size() + "");
+					}
+					catch (RemoteException e) {
+						Log.w(TAG, "Failed to tell listener about workout update", e);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+		handler.postDelayed(new CounterRunnable(counterID, howMuchLeft - 1, this), 1000);
+	}
+	
+	@Override
+	public void onCountDownDone(int counterID, int howMuchLeft) {
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				soundsPlayer.stopPlayer();
+				soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Go);
+				listenersHandleCountDownChange(howMuchLeft);
+				soundsPlayer.play();
+				break;
+			case COUNTER_WARM_UP:
+				startRunAfterCountDown();
+				break;
+			default:
+				break;
+		}
+		Log.i(TAG, "Count down done");
+		handler.postDelayed(new CounterRunnable(counterID, howMuchLeft - 1, this), 1000);
+	}
+	
+	@Override
+	public void onCountDownPostAction(int counterID, int howMuchLeft) {
+		switch (counterID) {
+			case COUNTER_COUNT_DOWN:
+				soundsPlayer.stopPlayer();
+				listenersHandleCountDownChange(howMuchLeft);
+				startCountingTime();
+				break;
+			default:
+				break;
+		}
+	}
+	
+	private void listenersHandleCountDownChange(int howMuchLeft) {
+		Iterator<RunListener> it = listeners.iterator();
+		while (it.hasNext())
+		{
+			RunListener listener = it.next();
+			try {
+				listener.handleCountDownChange(howMuchLeft);
+			}
+			catch (RemoteException e) {
+				Log.w(TAG, "Failed to tell listener about count down update ", e);
+			}
+		}
 	}
 	
 	private void startCountingTime()
 	{
 		startTime = System.currentTimeMillis();
-		prepareTimeCountingHandler();
 		handler.post(timeHandler);
 	}
 	
