@@ -840,7 +840,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private void reset()
 	{
 		distance = 0;
-		mMap.clear();
+		traceOnMap = new PolylineOptions();
+		traceOnMap.width(traceThickness);
+		traceOnMap.color(traceColor);
+		//mMap.clear();
 		time = 0L;
 	}
 	
