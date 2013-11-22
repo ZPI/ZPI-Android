@@ -1,5 +1,7 @@
 package com.pwr.zpi;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,21 +21,26 @@ import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.pwr.zpi.database.Database;
+import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.TimeFormatter;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
@@ -48,8 +56,12 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
+	private RelativeLayout runSummaryRelativeLayout;
+	private TextView runSummaryDistanceTextView;
+	private TextView runSummaryTotalTimeTextView;
+	private TextView runSummaryWorkoutsCountTextView;
+	private TextView GPSSignalTextViewValue;
 	
-	//DEBUG TODO remove 
 	long debugT1;
 	long debugT2;
 	long debugT3;
@@ -88,14 +100,18 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		setContentView(R.layout.main_screen_activity);
 		isServiceConnected = false;
 		
-		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
+		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
 		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
 		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
 		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
 		startButton = (Button) findViewById(R.id.buttonStart);
 		musicButton = (Button) findViewById(R.id.buttonMusic);
 		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
-		
+		runSummaryDistanceTextView = (TextView) findViewById(R.id.textViewMSDistance);
+		runSummaryTotalTimeTextView = (TextView) findViewById(R.id.textViewMSTotalTime);
+		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
+		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
+		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
 		// locationListener = new MyLocationListener(this);
 		
 		prepareGestureListener();
@@ -105,6 +121,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		// locationListener.getmLocationClient().connect();
 		
 		isConnected = false;
+		
+		new GetAllRunsFromDB().execute(new Void[0]);
 	}
 	
 	private void checkSpeechSynthezator() {
@@ -119,6 +137,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		startButton.setOnTouchListener(gestureListener);
 		planningButton.setOnTouchListener(gestureListener);
 		musicButton.setOnTouchListener(gestureListener);
+		runSummaryRelativeLayout.setOnTouchListener(gestureListener);
+		GPSSignalTextView.setOnTouchListener(gestureListener);
+		GPSSignalTextViewValue.setOnTouchListener(gestureListener);
 	}
 	
 	private void prepareGestureListener() {
@@ -584,6 +605,37 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 		catch (RemoteException e) {
 			Log.e(TAG, "Failed to get connectionResult", e);
+		}
+		
+	}
+	
+	private class GetAllRunsFromDB extends AsyncTask<Void, Void, Pair<Pair<Integer, Long>, Double>> {
+		@Override
+		protected Pair<Pair<Integer, Long>, Double> doInBackground(Void... params) {
+			Database db = new Database(MainScreenActivity.this);
+			ArrayList<SingleRun> runs = (ArrayList<SingleRun>) db.getAllRuns();
+			
+			long totalTime = 0;
+			double distance = 0;
+			int count = runs.size();
+			for (SingleRun run : runs)
+			{
+				totalTime += run.getRunTime();
+				distance += run.getDistance();
+				
+			}
+			Pair<Pair<Integer, Long>, Double> data = new Pair<Pair<Integer, Long>, Double>(new Pair<Integer, Long>(
+				count, totalTime), distance);
+			return data;
+		}
+		
+		@Override
+		protected void onPostExecute(Pair<Pair<Integer, Long>, Double> data) {
+			
+			runSummaryDistanceTextView.setText(String.format("%.3fkm", data.second / 1000));
+			runSummaryTotalTimeTextView.setText(TimeFormatter.formatTimeHHMMSS(data.first.second));
+			runSummaryWorkoutsCountTextView.setText(data.first.first + "");
+			
 		}
 		
 	}

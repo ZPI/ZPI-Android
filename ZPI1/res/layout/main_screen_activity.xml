@@ -32,12 +32,11 @@
             android:textColor="@color/white" />
 
         <TextView
-            android:id="@+id/GPSSignalTextView"
+            android:id="@+id/textViewGPSSignal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="0dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white" />
     </LinearLayout>
@@ -124,6 +123,7 @@
         android:background="#FFFFFF" />
 
     <RelativeLayout
+        android:id="@+id/relativeLayoutMSRunSummary"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@+id/buttonHistory"
@@ -139,39 +139,68 @@
             android:src="@drawable/agenda" />
 
         <TextView
-            android:id="@+id/TextViewSummaryWrokoutsLabel"
+            android:id="@+id/TextViewMSWrokoutsCountLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/small_margin"
             android:layout_toRightOf="@+id/imageViewRunSummaryImage"
             android:text="@string/workouts"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textViewMSTotalTimeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/imageViewRunSummaryImage"
-            android:text="totalTime"
+            android:textColor="@color/white"
+            android:text="@string/total_time"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/TextView02"
+            android:id="@+id/TextViewMSDistanceLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_toRightOf="@+id/imageViewRunSummaryImage"
+            android:layout_marginBottom="@dimen/small_margin"
             android:text="@string/distance"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textViewMSWorkoutsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextViewMSWrokoutsCountLabel"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="Medium Text"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:text="0"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewMSTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textViewMSTotalTimeLabel"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:layout_alignParentRight="true"
+            android:text="00:00:00"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textViewMSDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/TextViewMSDistanceLabel"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:text="0km"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         
     </RelativeLayout>
