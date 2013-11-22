@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/imageViewPull"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -19,7 +19,7 @@
         android:layout_centerVertical="true"
         android:baselineAligned="false"
         android:visibility="gone"
-        android:layout_toRightOf="@+id/imageView1" >
+        android:layout_toRightOf="@+id/imageViewPull" >
 
         <RelativeLayout
             android:id="@+id/dataRelativeLayoutActionDistance"
@@ -154,7 +154,7 @@
         android:layout_centerVertical="true"
         android:baselineAligned="false"
         android:visibility="gone"
-        android:layout_toRightOf="@+id/imageView1" >
+        android:layout_toRightOf="@+id/imageViewPull" >
         
         
         <RelativeLayout

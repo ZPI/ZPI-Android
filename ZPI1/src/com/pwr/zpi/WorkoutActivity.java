@@ -131,7 +131,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	public void onBackPressed() {
 		setResult(RESULT_CANCELED);
 		super.onBackPressed();
-		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+		//overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 	}
 	
 	@Override
@@ -143,7 +143,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	@Override
 	public void onRightToLeftSwipe() {
 		finish();
-		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+		//overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 	}
 	
 	@Override

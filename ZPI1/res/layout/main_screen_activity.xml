@@ -2,94 +2,243 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@drawable/bg_blue_translucent"
     android:orientation="vertical" >
 
     <Button
         android:id="@+id/buttonStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/triangle"
+        android:background="@drawable/start2"
         android:text="@string/start"
         android:textColor="@android:color/white" />
 
-    <ImageButton
-        android:id="@+id/buttonPlans"
-        android:layout_width="@dimen/switch_screen_button_size"
-        android:layout_height="@dimen/switch_screen_button_size"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/button_border_background"
-        android:src="@drawable/ic_workout" />
-
-    <ImageButton
-        android:id="@+id/buttonHistory"
-        android:layout_width="@dimen/switch_screen_button_size"
-        android:layout_height="@dimen/switch_screen_button_size"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/button_border_background"
-        android:src="@drawable/ic_history" />
-
-    <ImageButton
-        android:id="@+id/buttonSettings"
-        android:layout_width="@dimen/switch_screen_button_size"
-        android:layout_height="@dimen/switch_screen_button_size"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/button_border_background"
-        android:src="@drawable/ic_settings" />
-
-    <TextView
-        android:id="@+id/textViewGPSIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/GPSSignalTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewGPSIndicator"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:id="@+id/buttonMusic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonHistory"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="52dp"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding"
-        android:text="Muzyka" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/GPSBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/textViewGPSIndicator"
-        android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@+id/buttonHistory"
-        android:layout_toRightOf="@+id/buttonPlans" >
+        android:layout_below="@+id/imageViewPull"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textViewGPSIndicator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_weight="1"
+            android:text="@string/gps_accuracy"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/GPSSignalTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
+            android:text="0dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/GPSBar"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:background="#FFFFFF" />
+
+    <LinearLayout
+        android:id="@+id/workoutNameBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider1"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_weight="1"
             android:text="@string/workouts"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
 
         <TextView
             android:id="@+id/textViewMainScreenWorkout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/none"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/workoutNameBar"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:background="#FFFFFF" />
+
+    <Button
+        android:id="@+id/buttonMusic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider2"
+        android:background="@drawable/button_background"
+        android:padding="@dimen/buttons_padding"
+        android:text="Muzyka" />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/workoutNameBar"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:background="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/textViewRunsSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonMusic"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/runs_summary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/textViewRunsSummary"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:background="#FFFFFF" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/buttonHistory"
+        android:layout_alignLeft="@+id/divider4"
+        android:layout_below="@+id/divider4"
+        android:scaleType="fitStart" >
+
+        <ImageView
+            android:id="@+id/imageViewRunSummaryImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:src="@drawable/agenda" />
+
+        <TextView
+            android:id="@+id/TextViewSummaryWrokoutsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageViewRunSummaryImage"
+            android:text="@string/workouts"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imageViewRunSummaryImage"
+            android:text="totalTime"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/imageViewRunSummaryImage"
+            android:text="@string/distance"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageViewPlansDesc"
+        android:layout_width="@dimen/workouts_label_width"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonPlans"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/workouts_label" />
+
+    <ImageButton
+        android:id="@+id/buttonHistory"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/history_button_margin"
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_history" />
+
+    <ImageView
+        android:id="@+id/imageViewHistoryDesc"
+        android:layout_width="@dimen/history_label_width"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/buttonHistory"
+        android:layout_toLeftOf="@+id/buttonHistory"
+        android:src="@drawable/history_label" />
+
+    <ImageButton
+        android:id="@+id/buttonSettings"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/settings_button_margin"
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_settings" />
+
+    <ImageView
+        android:id="@+id/imageViewSettingsDesc"
+        android:layout_width="@dimen/history_label_width"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/buttonSettings"
+        android:layout_toLeftOf="@+id/buttonSettings"
+        android:src="@drawable/settings_label" />
+
+    <ImageView
+        android:id="@+id/imageViewPull"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="@dimen/small_text_size"
+        android:src="@drawable/pull1" />
+
+    <ImageButton
+        android:id="@+id/buttonPlans"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_workout" />
+
 
 </RelativeLayout>

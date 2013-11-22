@@ -82,9 +82,9 @@
     <!-- chart strings -->
     <string name="chart_title">Dane biegów</string>
     <string name="chart_ox_distance">Dystans</string>
-    <string name="chart_oy1_speed">Prędkość</string>
-    <string name="chart_oy2_altitude">Wysokość</string>
-    <string name="chart_legend_oy1">Przebyty Dystans</string>
+    <string name="chart_oy1_speed">Prędkość [km/h]</string>
+    <string name="chart_oy2_altitude">Wysokość [m]</string>
+    <string name="chart_legend_oy1">Prędkość</string>
     <string name="chart_legend_oy2">Wysokość</string>
 
     <!-- splits strings -->

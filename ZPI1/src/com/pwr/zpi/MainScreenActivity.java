@@ -40,7 +40,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	private RunListenerApi api;
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
-	private TextView GPSStatusTextView;
+	
 	private TextView GPSSignalTextView;
 	private TextView workoutNameTextView;
 	private ImageButton settingsButton;
@@ -48,6 +48,11 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
+	
+	//DEBUG TODO remove 
+	long debugT1;
+	long debugT2;
+	long debugT3;
 	
 	private boolean isServiceConnected;
 	private int gpsStatus = -1;
@@ -82,7 +87,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		handler = new Handler();
 		setContentView(R.layout.main_screen_activity);
 		isServiceConnected = false;
-		GPSStatusTextView = (TextView) findViewById(R.id.textViewGPSIndicator);
+		
 		GPSSignalTextView = (TextView) findViewById(R.id.GPSSignalTextView);
 		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
 		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
@@ -109,7 +114,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	}
 	
 	private void addListeners() {
-		GPSStatusTextView.setOnTouchListener(gestureListener);
 		settingsButton.setOnTouchListener(gestureListener);
 		historyButton.setOnTouchListener(gestureListener);
 		startButton.setOnTouchListener(gestureListener);
@@ -191,7 +195,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					i.putExtra(Workout.TAG, workout);
 				}
 			}
+			debugT3 = System.currentTimeMillis();
+			Log.i("time", (debugT3 - debugT2) + "");
 			startActivity(i);
+			
 		}
 		switch (swipeDirection)
 		{
@@ -203,7 +210,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 				break;
 			case DOWN:
+				
 				overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
+				
 				break;
 			case UP:
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
@@ -300,8 +309,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			@Override
 			public void run() {
 				try {
-					GPSSignalTextView.setText(String.format("%s: %.2fm", getResources()
-						.getString(R.string.gps_accuracy), mLastLocation.getAccuracy()));
+					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
 				}
 				catch (Throwable t) {
 					Log.e(TAG, "Error while updating the UI with tweets", t);
@@ -365,6 +373,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					R.string.empty_string, positiveButtonHandler, null);
 				break;
 			default:
+				debugT2 = System.currentTimeMillis();
+				Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
 		
@@ -481,6 +491,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					}
 					break;
 				case R.id.buttonStart:
+					debugT1 = System.currentTimeMillis();
+					Log.i("time", debugT1 + "");
 					startActivityIfPossible();
 					break;
 				case R.id.buttonHistory:
@@ -549,7 +561,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		public void handleTimeChange() throws RemoteException {}
 		
 		@Override
-		public void handleWorkoutChange(Workout workout) throws RemoteException {}
+		public void handleWorkoutChange(Workout workout, boolean firstTime) throws RemoteException {}
 		
 		@Override
 		public void handleCountDownChange(int countDownNumber) throws RemoteException {}
@@ -581,20 +593,20 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
-				switch (gpsStatus) {
-					case GPS_NOT_ENABLED:
-						GPSStatusTextView.setText(getResources().getString(
-							R.string.gps_disabled));
-						break;
-					case NO_GPS_SIGNAL:
-						GPSStatusTextView.setText(getResources().getString(
-							R.string.gps_enabled));
-						break;
-					case GPS_WORKING:
-						GPSStatusTextView.setText(getResources().getString(
-							R.string.gps_enabled));
-						break;
-				}
+				//				switch (gpsStatus) {
+				//					case GPS_NOT_ENABLED:
+				//						GPSStatusTextView.setText(getResources().getString(
+				//							R.string.gps_disabled));
+				//						break;
+				//					case NO_GPS_SIGNAL:
+				//						GPSStatusTextView.setText(getResources().getString(
+				//							R.string.gps_enabled));
+				//						break;
+				//					case GPS_WORKING:
+				//						GPSStatusTextView.setText(getResources().getString(
+				//							R.string.gps_enabled));
+				//						break;
+				//				}
 			}
 			
 		});

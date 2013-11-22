@@ -4,14 +4,14 @@
 
     <gradient
         android:angle="90"
-        android:endColor="@color/main_color_pressed"
-        android:startColor="@color/main_color_pressed" />
+        android:endColor="@color/transparent"
+        android:startColor="@color/transparent" />
 
-    <corners
+   <!-- <corners
         android:bottomLeftRadius="@dimen/switch_screen_button_corner_radius"
         android:bottomRightRadius="@dimen/switch_screen_button_corner_radius"
         android:topLeftRadius="@dimen/switch_screen_button_corner_radius"
-        android:topRightRadius="@dimen/switch_screen_button_corner_radius" />
+        android:topRightRadius="@dimen/switch_screen_button_corner_radius" />-->
 
     <stroke
         android:width="2px"

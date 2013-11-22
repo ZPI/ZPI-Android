@@ -5,9 +5,10 @@
     <dimen name="resume_button_margin">18dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="small_margin">2dp</dimen>
+    <dimen name="very_small_margin">1dp</dimen>
     <dimen name="big_text_size">32dp</dimen>
     <dimen name="buttons_padding">8dp</dimen>
-    <dimen name="zoom_buttons_margin">38dp</dimen>
+    <dimen name="zoom_buttons_margin">49dp</dimen>
     <dimen name="location_button_margin_top">55dp</dimen>
 	<dimen name="location_button_margin_right">5dp</dimen>
 	<dimen name="workout_big_margin">80dp</dimen>
@@ -22,6 +23,12 @@
 	<dimen name="drawer_icon_size_bigger">80dp</dimen>
 	<dimen name="medium_text_size">17dp</dimen>
 	<dimen name="small_text_size">11dp</dimen>
-	<dimen name="switch_screen_button_size">55dp</dimen>
+	<dimen name="switch_screen_button_size">45dp</dimen>
+	<dimen name="workouts_label_width">90dp</dimen>
+	<dimen name="history_label_width">72dp</dimen>
+	<dimen name="settings_button_margin">55dp</dimen>
+	<dimen name="history_button_margin">75dp</dimen>
+	<dimen name="activity_button_size">40dp</dimen>
 	<dimen name="switch_screen_button_corner_radius">15dp</dimen>
+	<dimen name="medium_margin">15dp</dimen>
 </resources>

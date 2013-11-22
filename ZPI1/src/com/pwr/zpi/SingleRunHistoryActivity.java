@@ -131,17 +131,17 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		
 		Marker start = mMap.addMarker(new MarkerOptions()
 			.position(startPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start)));
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_pin)));
 		Marker meta = mMap.addMarker(new MarkerOptions()
 			.position(finishPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.meta)));
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_pin)));
 		
 	}
 	
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
 			new LatLng(location.getLatitude(), location.getLongitude()))
-			.title(distance + "km"));
+			.title(distance + "km").icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
 		marker.showInfoWindow();
 	}
 	

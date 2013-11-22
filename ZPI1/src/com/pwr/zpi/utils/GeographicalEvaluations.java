@@ -48,7 +48,7 @@ public class GeographicalEvaluations {
 	 * @param lastTime in milliseconds
 	 * @return speed in km / h
 	 */
-	public static double calculateSpeedBetweenPoints(Location location, long time, Location lastLocation, long lastTime) {
-		return countDistance(location, lastLocation) / (time - lastTime) * 1000 * 60 * 60; //TODO check calculation?
+	public static double calculateSpeedBetweenPoints(double distance, long time, long lastTime) {
+		return distance / (time - lastTime) * 1000 * 60 * 60; //TODO check calculation?
 	}
 }

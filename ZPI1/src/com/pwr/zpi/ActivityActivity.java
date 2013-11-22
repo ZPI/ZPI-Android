@@ -35,6 +35,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CameraPosition.Builder;
 import com.google.android.gms.maps.model.LatLng;
@@ -59,6 +60,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private GoogleMap mMap;
 	
+	private View transparentButton;
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
@@ -131,14 +133,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view);
-		
+		long debugT = System.currentTimeMillis();
+		Log.i("time", debugT + "");
 		initFields();
 		addListeners();
-		
+		long debugT2 = System.currentTimeMillis();
+		Log.i("time", debugT2 + " \t" + (debugT2 - debugT));
 		initDisplayedData();
 		
 		prepareServiceAndStart();
-		
+		long debugT3 = System.currentTimeMillis();
+		Log.i("time", debugT3 + " \t" + (debugT3 - debugT2));
 	}
 	
 	private Workout getWorkoutData() {
@@ -160,10 +165,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
+		transparentButton = findViewById(R.id.transparentView);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		//mMap.setMyLocationEnabled(true);
-		
+		mMap.setMyLocationEnabled(true);
+		mMap.getUiSettings().setMyLocationButtonEnabled(false);
 		//		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		//		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
@@ -203,7 +209,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
 			if (workout.isWarmUp()) {
 				workoutCopy.setWarmUp(true);
-				int warmUpMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
+				int warmUpMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(
+					this.getString(R.string.key_warm_up_time), "3"));
 				actions.add(new WorkoutActionWarmUp(warmUpMinutes));
 			}
 			for (int i = 0; i < workout.getRepeatCount(); i++) {
@@ -232,7 +239,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataRelativeLayout2.setOnClickListener(this);
 		
 		musicPlayer.setOnClickListener(this);
-		
+		transparentButton.setVisibility(View.GONE);
+		transparentButton.setBackgroundColor(Color.BLACK);
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
 			
@@ -242,20 +250,33 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				public void onDrawerStateChanged(int arg0) {}
 				
 				@Override
-				public void onDrawerSlide(View arg0, float arg1) {}
+				public void onDrawerSlide(View arg0, float arg1) {
+					transparentButton.setVisibility(View.VISIBLE);
+					transparentButton.setBackgroundResource(R.color.transparent);
+					
+				}
 				
 				@Override
 				public void onDrawerOpened(View arg0) {
+					transparentButton.setVisibility(View.VISIBLE);
+					transparentButton.setBackgroundResource(R.color.transparent);
+					
 					if (workout == null) {
 						drawerLayout.closeDrawer(Gravity.LEFT);
 					}
 					else {
-						listView.smoothScrollToPosition(workoutCopy.getCurrentAction() + 4, workoutCopy.getActions().size());
+						listView.smoothScrollToPosition(workoutCopy.getCurrentAction() + 4, workoutCopy.getActions()
+							.size());
 					}
 				}
 				
 				@Override
-				public void onDrawerClosed(View arg0) {}
+				public void onDrawerClosed(View arg0) {
+					Log.i(TAG, "drawer closed");
+					transparentButton.setVisibility(View.GONE);
+					transparentButton.setBackgroundColor(Color.BLACK);
+					
+				}
 			});
 			
 			workoutCopy.setOnNextActionListener(new OnNextActionListener());
@@ -282,21 +303,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		super.onDestroy();
 	}
 	
-	//	private void startRecording() {
-	//		pauseButton.setClickable(true);
-	//		countDownTextView.setVisibility(View.GONE);
-	//		if (isServiceConnected) {
-	//			try {
-	//				api.setStarted(workout);
-	//			}
-	//			catch (RemoteException e) {
-	//				Log.e(TAG, "Failed to start activity", e);
-	//			}
-	//		}
-	//	}
-	
-	// end of timer methods
-	//TODO przesun\B9\E6 \BFeby nie by\B3y pod innymi ikonami
+	//TODO ikona kompasu
 	private void moveSystemControls(SupportMapFragment mapFragment) {
 		
 		View zoomControls = mapFragment.getView().findViewById(0x1);
@@ -309,9 +316,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			
-			// nie do ko�ca rozumiem t� metod�, trzeba zobaczy� czy u
-			// Ciebie
-			// jest to samo czy nie za bardzo
 			final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
 				.getDimension(R.dimen.zoom_buttons_margin), getResources().getDisplayMetrics());
 			params.setMargins(0, 0, 0, margin);
@@ -322,15 +326,15 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			// ZoomControl is inside of RelativeLayout
 			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls.getLayoutParams();
 			
-			// Align it to - parent top|left
-			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			// Align it to - parent bottom|left
+			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			//params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+			//params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
 			
-			// Update margins, set to 10dp
-			final int margin1 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
-				.getDimension(R.dimen.location_button_margin_top), getResources().getDisplayMetrics());
-			final int margin2 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
-				.getDimension(R.dimen.location_button_margin_right), getResources().getDisplayMetrics());
-			params.setMargins(0, margin1, margin2, 0);
+			final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
+				.getDimension(R.dimen.zoom_buttons_margin), getResources().getDisplayMetrics());
+			params.setMargins(0, 0, 0, margin);
 		}
 	}
 	
@@ -641,16 +645,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-			// camera to east
-			.tilt(60); // Creates a CameraPosition from the builder
+				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+				// camera to east
+				.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
 	
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
-			new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km"));
+			new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
 		marker.showInfoWindow();
 	}
 	
@@ -684,6 +689,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		});
 		
 	}
+	
+	//	private void drawUserPosition(LatLng position)
+	//	{
+	//		Marker positionMarker = mMap.addMarker(new MarkerOptions()
+	//        .position(position)
+	//        .flat(true));
+	//		
+	//		LatLng PERTH = new LatLng(-31.90, 115.86);
+	//		Marker perth = mMap.addMarker(new MarkerOptions()
+	//		                          .position(PERTH).
+	//		                          .flat(true));
+	//	}
 	
 	private void autoPauseIfEnabled(Location newLocation) {
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_auto_pause), false)) {
@@ -761,7 +778,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					setTracefromServer(locationList);
 				}
 				
-				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(ActivityActivity.this).getString(
+				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(
+					ActivityActivity.this).getString(
 					getString(R.string.key_countdown_before_start), "0"));
 				
 				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
@@ -798,12 +816,15 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 		
 		@Override
-		public void handleWorkoutChange(Workout workout) throws RemoteException {
+		public void handleWorkoutChange(Workout workout, boolean firtTime) throws RemoteException {
 			handleWorkoutUpdate(workout);
 			for (WorkoutAction action : workout.getActions()) {
 				Log.i(TAG, action.getActionType() + ""); //TODO debug
 				if (action.isWarmUp()) {
 					WorkoutActionWarmUp wu = (WorkoutActionWarmUp) action;
+					if (firtTime) {
+						setWormUpText();
+					}
 					Log.i(TAG, wu.getWorkoutTime() + "");
 				}
 			}
@@ -815,6 +836,25 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 		
 	};
+	
+	private void reset()
+	{
+		distance = 0;
+		mMap.clear();
+		time = 0L;
+	}
+	
+	private void setWormUpText()
+	{
+		handlerForService.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				countDownTextView.setText(R.string.wormup);
+				
+			}
+		});
+	}
 	
 	private void setTracefromServer(final List<Location> locationList) {
 		handlerForService.post(new Runnable() {
@@ -883,10 +923,13 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				if (countDownNumber == -1) {
 					countDownTextView.setVisibility(View.GONE);
+					reset();
 					//					startRecording();
-				} else if (countDownNumber == 0) {
+				}
+				else if (countDownNumber == 0) {
 					countDownTextView.setText(ActivityActivity.this.getString(R.string.go));
-				} else {
+				}
+				else {
 					countDownTextView.setText(countDownNumber + "");
 				}
 			}

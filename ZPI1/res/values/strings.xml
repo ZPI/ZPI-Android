@@ -18,7 +18,7 @@
     <string name="dialog_message_romve">Are you sure, you want to remove this activity?</string>
      <string name="dialog_message_remove_action">Are you sure, you want to remove this action?</string>
      <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
- 
+ 	<string name="runs_summary">Runs Summary</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
 
     <!-- meassured values -->
@@ -62,7 +62,7 @@
     <string name="add_workout">Add this workout</string>
     <string name="times">times</string>
     <string name="repeat">Repeat</string>
-    <string name="wormup">Worm up</string>
+    <string name="warmup">Warm up</string>
     <string name="add_new">Add new</string>
     <string name="actions">Actions</string>
     <string name="name">Name</string>
@@ -92,9 +92,9 @@
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
     <string name="chart_ox_distance">Distance</string>
-    <string name="chart_oy1_speed">Speed</string>
-    <string name="chart_oy2_altitude">Altitude</string>
-    <string name="chart_legend_oy1">Covered distance</string>
+    <string name="chart_oy1_speed">Speed [km/h]</string>
+    <string name="chart_oy2_altitude">Altitude [m]</string>
+    <string name="chart_legend_oy1">Speed</string>
     <string name="chart_legend_oy2">Altitude</string>
 
     <!-- splits strings -->

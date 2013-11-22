@@ -3,6 +3,7 @@ package com.pwr.zpi.utils;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.chart.PointStyle;
@@ -23,8 +24,9 @@ import com.pwr.zpi.database.entity.SingleRun;
 
 public class LineChart {
 	
+	private static final int AVRAGE_FROM_LAST = 200; // current speed is an avrage from this amount of seconds
 	private static Double speedMin, speedMax, distanceMin, distanceMax,
-	altitudeMin, altitudeMax;
+		altitudeMin, altitudeMax;
 	
 	public static Intent getChartForData(SingleRun run, Context context) {
 		
@@ -44,13 +46,34 @@ public class LineChart {
 		double cumulativeDistance = 0;
 		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
 			Pair<Location, Long> previous = subrun.removeFirst();
+			LinkedBlockingQueue<Pair<Double, Long>> pointsCountedQueue = new LinkedBlockingQueue<Pair<Double, Long>>();
 			
+			long timeSum = 0;
+			double distanceSum = 0;
 			for (Pair<Location, Long> current : subrun) {
-				speedValues[currentIndex] = GeographicalEvaluations
-					.calculateSpeedBetweenPoints(current.first,
-						current.second, previous.first, previous.second);
-				cumulativeDistance += GeographicalEvaluations.countDistance(
-					current.first, previous.first);
+				
+				double distance = current.first.distanceTo(previous.first);
+				
+				long time = current.second - previous.second;
+				if (distance > 0.5)
+				{
+					distanceSum += distance;
+					timeSum += time;
+					pointsCountedQueue.add(new Pair<Double, Long>(distance, time));
+				}
+				
+				while (timeSum > AVRAGE_FROM_LAST * 1000 && !pointsCountedQueue.isEmpty())
+				{
+					Pair<Double, Long> p = pointsCountedQueue.poll();
+					distanceSum -= p.first;
+					timeSum -= p.second;
+				}
+				
+				speedValues[currentIndex] = (distanceSum / timeSum * 3600);
+				//				speedValues[currentIndex] = GeographicalEvaluations
+				//					.calculateSpeedBetweenPoints(distance,
+				//						current.second, previous.second);
+				cumulativeDistance += distance / 1000;
 				distanceValues[currentIndex] = cumulativeDistance;
 				altitudeValues[currentIndex] = current.first.getAltitude();
 				findMinMax(speedValues[currentIndex],

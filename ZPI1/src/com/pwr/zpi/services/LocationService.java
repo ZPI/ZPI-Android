@@ -43,7 +43,7 @@ import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-OnConnectionFailedListener, ICountDownListner {
+	OnConnectionFailedListener, ICountDownListner {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -61,6 +61,8 @@ OnConnectionFailedListener, ICountDownListner {
 	public static final int REQUIRED_ACCURACY = 3000;
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
+	private boolean isWromUpInProgress;
+	private boolean isFirstTime;
 	private ConnectionResult connectionResult;
 	private Location latestLocation;
 	private ArrayList<Location> locationList;
@@ -129,6 +131,7 @@ OnConnectionFailedListener, ICountDownListner {
 			{
 				locationList = new ArrayList<Location>();
 				state = STARTED;
+				isFirstTime = true;
 				LocationService.this.countDownTime = countDownTime;
 				prepareWorkout(workout);
 				initActivityRecording();
@@ -143,17 +146,18 @@ OnConnectionFailedListener, ICountDownListner {
 		public void setPaused() throws RemoteException {
 			pauseStartTime = System.currentTimeMillis();
 			state = PAUSED;
-			handler.removeCallbacks(timeHandler);
+			//handler.removeCallbacks(timeHandler);
 		}
 		
 		@Override
 		public void setResumed() throws RemoteException {
-			if (state == STARTED)
+			if (state == PAUSED)
 			{
 				pauseTime += System.currentTimeMillis() - pauseStartTime;
 				state = STARTED;
+				Log.i(TAG, state + "");
 				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
-				handler.post(timeHandler);
+				//handler.post(timeHandler);
 			}
 		}
 		
@@ -227,6 +231,7 @@ OnConnectionFailedListener, ICountDownListner {
 		time = new Long(0);
 		isConnected = false;
 		connectionFailed = false;
+		isWromUpInProgress = false;
 		handler = new Handler();
 		mLocationClient = new LocationClient(getApplicationContext(), this,
 			this);
@@ -240,8 +245,9 @@ OnConnectionFailedListener, ICountDownListner {
 	
 	@Override
 	public void onDestroy() {
-		
-		soundsPlayer.stopPlayer();
+		if (soundsPlayer != null) {
+			soundsPlayer.stopPlayer();
+		}
 		if (mLocationClient.isConnected()) {
 			mLocationClient.removeLocationUpdates(this);
 		}
@@ -337,7 +343,7 @@ OnConnectionFailedListener, ICountDownListner {
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-			.getAccuracy() > REQUIRED_ACCURACY)) {
+				.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -349,13 +355,17 @@ OnConnectionFailedListener, ICountDownListner {
 	
 	private void initActivityRecording()
 	{
+		
 		singleRun = new SingleRun();
 		calendar = Calendar.getInstance();
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		
-		workout.getOnNextActionListener().setSyntezator(speechSynthezator);
-		workout.notifyListeners(workout.getActions().get(0));
+		if (workout != null)
+		{
+			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+			workout.notifyListeners(workout.getActions().get(0));
+		}
 		
 		startTimeEvaluation();
 	}
@@ -366,7 +376,8 @@ OnConnectionFailedListener, ICountDownListner {
 		if (workout != null && workout.isWarmUp()) {
 			Log.i(TAG, "warm up count down");
 			startWarmUp();
-		} else {
+		}
+		else {
 			Log.i(TAG, "count down without warm up");
 			startRunAfterCountDown();
 		}
@@ -403,7 +414,8 @@ OnConnectionFailedListener, ICountDownListner {
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();
-						listener.handleWorkoutChange(workout);
+						listener.handleWorkoutChange(workout, isFirstTime);
+						isFirstTime = false;
 						Log.i(TAG, listeners.size() + "");
 					}
 					catch (RemoteException e) {
@@ -427,7 +439,16 @@ OnConnectionFailedListener, ICountDownListner {
 				soundsPlayer.play();
 				break;
 			case COUNTER_WARM_UP:
+				singleRun = new SingleRun();
+				calendar = Calendar.getInstance();
+				singleRun.setStartDate(calendar.getTime());
+				traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
+				distance = 0;
+				pauseTime = 0;
+				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
+				isWromUpInProgress = false;
+				
 				break;
 			default:
 				break;
@@ -497,7 +518,7 @@ OnConnectionFailedListener, ICountDownListner {
 					try {
 						listener.handleTimeChange();
 						if (changeWorkout) {
-							listener.handleWorkoutChange(workout);
+							listener.handleWorkoutChange(workout, isFirstTime);
 						}
 						Log.i(TAG, listeners.size() + "");
 					}
@@ -507,11 +528,9 @@ OnConnectionFailedListener, ICountDownListner {
 						
 					}
 				}
-				
 			}
-			handler.postDelayed(timeHandler, 1000);
 		}
-		
+		handler.postDelayed(timeHandler, 1000);
 	}
 	
 	private void processWorkout() {

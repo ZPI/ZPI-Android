@@ -152,7 +152,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 			intent.putExtra(ID_TAG, workout.getID());
 			
 			startActivityForResult(intent, WORKOUT_REQUEST2);
-			overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
+			//overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 			
 		}
 		// TODO Auto-generated method stub

@@ -2,16 +2,20 @@
 <resources>
 
     <color name="main_color">#CC0077AA</color>
+	<color name="gray_color">#9F9F9F</color>
+    <color name="activity_blue">#8800AAFF</color>
+    <color name="activity_blue_pressed">#2000AAFF</color>
     <color name="main_color_drawer">#880077AA</color>
     <color name="main_color_pressed">#CC33AADD</color>
     <color name="count_down_timer_color">#EECC0000</color>
     <color name="list_transparent_color">#00000000</color>
     <color name="horizontal_line">#CC0077AA</color>
-    <color name="gray_color">#FFAAAAAA</color>
+ 
     <color name="transparent">#00000000</color>
 	<color name="workout_action_text_good">#007700</color>
 	<color name="workout_action_text_bad">#770000</color>
 	<color name="workout_action_text_not_active">#FFAAAAAA</color>
 	<color name="workout_drawer_active">#AAFFFFFF</color>
 	<color name="workout_drawer_not_active">#660077AA</color>
+	<color name="white">#FFFFFF</color>
 </resources>
