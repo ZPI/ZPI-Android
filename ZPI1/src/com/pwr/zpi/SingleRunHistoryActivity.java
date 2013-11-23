@@ -4,11 +4,13 @@ import java.util.LinkedList;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +45,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private TextView avgSpeedTextView;
 	private Button chartButton;
 	private Button splitsButton;
+	private ProgressBar progressBar;
 	
 	SingleRun run;
 	
@@ -51,20 +54,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.single_run_history_activity);
 		
-		init();
-		loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
+		//	loadData(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
 		initFields();
-		showData();
 		addListeners();
-		mapCenter();
-	}
-	
-	private void init() {
-		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-			.findFragmentById(R.id.map);
-		mMap = mapFragment.getMap();
-		chartButton = (Button) findViewById(R.id.buttonCharts);
-		splitsButton = (Button) findViewById(R.id.buttonSplits);
+		showData();
+		new GetRunFromDB().execute(getIntent().getLongExtra(HistoryActivity.ID_TAG, 0));
 	}
 	
 	private void mapCenter() {
@@ -102,6 +96,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			}
 			if (mMap != null) {
 				traceOnMapObject = mMap.addPolyline(polyLine);
+				
 			}
 		}
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
@@ -123,7 +118,9 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()),
 				new LatLng(finish.getLatitude(), finish.getLongitude()));
 		}
-		
+		progressBar.setVisibility(View.GONE);
+		LatLngBounds bounds = boundsBuilder.build();
+		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 	}
 	
 	private void addStartAndFinish(LatLng startPos, LatLng finishPos)
@@ -146,23 +143,32 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	}
 	
 	private void initFields() {
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+			.findFragmentById(R.id.map);
+		mMap = mapFragment.getMap();
+		chartButton = (Button) findViewById(R.id.buttonCharts);
+		splitsButton = (Button) findViewById(R.id.buttonSplits);
 		distanceTextView = (TextView) findViewById(R.id.TextView1History);
 		timeTextView = (TextView) findViewById(R.id.TextView2History);
 		avgPaceTextView = (TextView) findViewById(R.id.TextView3History);
 		avgSpeedTextView = (TextView) findViewById(R.id.TextView4History);
+		progressBar = (ProgressBar) findViewById(R.id.progressBarSingleRunHistory);
 	}
 	
 	private void showData() {
+		
+		Intent intent = getIntent();
+		double distance = intent.getDoubleExtra(HistoryActivity.DISTANCE_TAG, 0);
+		long time = intent.getLongExtra(HistoryActivity.TIME_TAG, 0);
 		// show distance
 		distanceTextView
-			.setText(String.format("%.3f", run.getDistance() / 1000));
+			.setText(String.format("%.3f", distance / 1000));
 		
 		// show time
-		long time = run.getRunTime();
 		timeTextView.setText(TimeFormatter.formatTimeHHMMSS(time));
 		
 		//show avg pace
-		double speed = run.getDistance() / 1000 / run.getRunTime() * 1000 * 60 * 60;
+		double speed = distance / 1000 / time * 1000 * 60 * 60;
 		double pace = 1 / speed * 60;
 		avgPaceTextView.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace));
 		
@@ -179,18 +185,6 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private void loadData(long runID) {
 		Database database = new Database(this);
 		run = database.getRun(runID);
-		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
-			.getTraceWithTime();
-		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
-			PolylineOptions polyLine = new PolylineOptions();
-			for (Pair<Location, Long> singlePoint : singleTrace) {
-				polyLine.add(new LatLng(singlePoint.first.getLatitude(),
-					singlePoint.first.getLongitude()));
-			}
-			if (mMap != null) {
-				mMap.addPolyline(polyLine);
-			}
-		}
 		
 	}
 	
@@ -213,5 +207,23 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			i.putExtra(RUN_ID, run.getRunID());
 			startActivity(i);
 		}
+	}
+	
+	private class GetRunFromDB extends AsyncTask<Long, Void, SingleRun> {
+		@Override
+		protected SingleRun doInBackground(Long... id) {
+			Database db = new Database(SingleRunHistoryActivity.this);
+			SingleRun run = db.getRun(id[0]);
+			return run;
+		}
+		
+		@Override
+		protected void onPostExecute(SingleRun run) {
+			
+			SingleRunHistoryActivity.this.run = run;
+			
+			mapCenter();
+		}
+		
 	}
 }

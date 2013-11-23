@@ -47,6 +47,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	private static final String TAB_SPEC_3_TAG = "TabSpec3";
 	public static final String ID_TAG = "id";
+	public static final String DISTANCE_TAG = "dist";
+	public static final String TIME_TAG = "time";
 	List<SingleRun> run_data;
 	
 	private static final int FILTER_MONTH = 0;
@@ -229,6 +231,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 			SingleRun selectedValue = (SingleRun) adapter
 				.getItemAtPosition(position);
 			intent.putExtra(ID_TAG, selectedValue.getRunID());
+			intent.putExtra(DISTANCE_TAG, selectedValue.getDistance());
+			intent.putExtra(TIME_TAG, selectedValue.getRunTime());
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 		}
