@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <declare-styleable name="CustomPicker">
-       <attr name="minValue" format="integer" />
-       <attr name="maxValue" format="integer"/>
-       <attr name="digitNumber" format="integer"/>
-       <attr name="incrementValue" format="integer"/>
-   </declare-styleable>
+
+    <declare-styleable name="CustomPicker">
+        <attr name="minValue" format="integer" />
+        <attr name="maxValue" format="integer" />
+        <attr name="digitNumber" format="integer" />
+        <attr name="incrementValue" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="GPSSignalDisplayer">
+        <attr name="displayType" format="enum">
+            <enum name="wide" value="0"/>
+            <enum name="narrow" value="1"/>
+        </attr>
+    </declare-styleable>
+
 </resources>
