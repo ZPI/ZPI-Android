@@ -35,21 +35,21 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		RowHolder rowHolder;
-		if (row == null) {
-			LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
-			row = inflater.inflate(layoutResourceID, parent, false);
-			
-			rowHolder = new RowHolder();
-			rowHolder.actionType = (ImageView) row.findViewById(R.id.imageViewState);
-			rowHolder.actionTextAdvanced = (TextView) row.findViewById(R.id.textViewWorkoutActionText);
-			rowHolder.actionTextSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleText);
-			rowHolder.actionTypeSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleTypeText);
-			rowHolder.actionPointInTime = (TextView) row.findViewById(R.id.textViewState);
-			row.setTag(rowHolder);
-		}
-		else {
-			rowHolder = (RowHolder) row.getTag();
-		}
+		//	if (row == null) {
+		LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
+		row = inflater.inflate(layoutResourceID, parent, false);
+		
+		rowHolder = new RowHolder();
+		rowHolder.actionType = (ImageView) row.findViewById(R.id.imageViewState);
+		rowHolder.actionTextAdvanced = (TextView) row.findViewById(R.id.textViewWorkoutActionText);
+		rowHolder.actionTextSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleText);
+		rowHolder.actionTypeSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleTypeText);
+		rowHolder.actionPointInTime = (TextView) row.findViewById(R.id.textViewState);
+		row.setTag(rowHolder);
+		//	}
+		//	else {
+		//		rowHolder = (RowHolder) row.getTag();
+		//	}
 		
 		int textColor = android.R.color.white;
 		WorkoutAction action = getItem(position);
@@ -96,7 +96,8 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 		if (position < workout.getCurrentAction()) {
 			textColor = R.color.white;
 			//rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
-
+			rowHolder.actionType.setVisibility(View.VISIBLE);
+			rowHolder.actionPointInTime.setVisibility(View.VISIBLE);
 			rowHolder.actionType.setImageResource(R.drawable.done);
 			rowHolder.actionPointInTime.setText(R.string.done);
 			if (action.isSimple()) {
