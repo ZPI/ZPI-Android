@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 
 public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
@@ -40,62 +40,106 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 			row = inflater.inflate(layoutResourceID, parent, false);
 			
 			rowHolder = new RowHolder();
-			rowHolder.icon = (ImageView) row.findViewById(R.id.imageViewWorkoutActionIcon);
-			rowHolder.text = (TextView) row.findViewById(R.id.textViewWorkoutActionText);
-			rowHolder.layout = (LinearLayout) row.findViewById(R.id.linearLayoutDrawerItem);
-			
+			rowHolder.actionType = (ImageView) row.findViewById(R.id.imageViewState);
+			rowHolder.actionTextAdvanced = (TextView) row.findViewById(R.id.textViewWorkoutActionText);
+			rowHolder.actionTextSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleText);
+			rowHolder.actionTypeSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleTypeText);
+			rowHolder.actionPointInTime = (TextView) row.findViewById(R.id.textViewState);
 			row.setTag(rowHolder);
-		} else {
+		}
+		else {
 			rowHolder = (RowHolder) row.getTag();
 		}
 		
-		int textColor = android.R.color.black;
+		int textColor = android.R.color.white;
 		WorkoutAction action = getItem(position);
 		switch (action.getActionType()) {
 			case WorkoutAction.ACTION_SIMPLE:
-				rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
+				rowHolder.actionTextSimple.setVisibility(View.VISIBLE);
+				rowHolder.actionTypeSimple.setVisibility(View.VISIBLE);
+				rowHolder.actionTextAdvanced.setVisibility(View.GONE);
+				int speedType = ((WorkoutActionSimple) action).getSpeedType();
+				switch (speedType)
+				{
+					case WorkoutAction.ACTION_SIMPLE_SPEED_FAST:
+						rowHolder.actionTypeSimple.setText(R.string.fast);
+						
+						break;
+					case WorkoutAction.ACTION_SIMPLE_SPEED_STEADY:
+						rowHolder.actionTypeSimple.setText(R.string.steady);
+						break;
+					case WorkoutAction.ACTION_SIMPLE_SPEED_SLOW:
+						rowHolder.actionTypeSimple.setText(R.string.slow);
+						break;
+				}
+				
 				break;
 			case WorkoutAction.ACTION_ADVANCED:
-				rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
+				rowHolder.actionTextSimple.setVisibility(View.INVISIBLE);
+				rowHolder.actionTypeSimple.setVisibility(View.INVISIBLE);	//not gone because we still wont it to determine height
+				rowHolder.actionTextAdvanced.setVisibility(View.VISIBLE);
+				
 				if (workout.getHowMuchLeft() > 0) {
 					textColor = R.color.workout_action_text_good;
-				} else {
+				}
+				else {
 					textColor = R.color.workout_action_text_bad;
 				}
 				break;
 			case WorkoutActionWarmUp.ACTION_WARM_UP:
-				rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
+				//rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
 				break;
 			default:
 				break;
 		}
 		
-		if (position < workout.getCurrentAction()){
-			textColor = R.color.workout_action_text_not_active;
-			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
-			rowHolder.text.setText(getContext().getResources().getString(R.string.done));
-			
-			row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
-		} else if (position == workout.getCurrentAction()) {
-			//TODO text from how much left and color
-			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_active));
-			rowHolder.text.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
-			
-			row.setMinimumHeight(ACTIVE_HEIGHT);
-		} else {
-			textColor = R.color.workout_action_text_not_active;
-			rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
-			rowHolder.text.setText(Workout.formatActionValue(action, null));
-			
-			row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
+		if (position < workout.getCurrentAction()) {
+			textColor = R.color.white;
+			//rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
+
+			rowHolder.actionType.setImageResource(R.drawable.done);
+			rowHolder.actionPointInTime.setText(R.string.done);
+			if (action.isSimple()) {
+				rowHolder.actionTextSimple.setText(Workout.formatActionValue(action, null));
+			}
+			else {
+				rowHolder.actionTextAdvanced.setText(Workout.formatActionValue(action, null));
+			}
 		}
-		rowHolder.text.setTextColor(getContext().getResources().getColor(textColor));
+		else if (position == workout.getCurrentAction()) {
+			rowHolder.actionType.setImageResource(R.drawable.now);//setText(Workout.formatActionValue(action, null));
+			rowHolder.actionPointInTime.setText(R.string.now);
+			rowHolder.actionType.setVisibility(View.VISIBLE);
+			rowHolder.actionPointInTime.setVisibility(View.VISIBLE);
+			if (action.isSimple()) {
+				rowHolder.actionTextSimple.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
+			}
+			else {
+				rowHolder.actionTextAdvanced.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
+			}
+			//	row.setMinimumHeight(ACTIVE_HEIGHT);
+		}
+		else {
+			textColor = R.color.white;
+			if (action.isSimple()) {
+				rowHolder.actionTextSimple.setText(Workout.formatActionValue(action, null));
+			}
+			else {
+				rowHolder.actionTextAdvanced.setText(Workout.formatActionValue(action, null));
+			}		//rowHolder.layout
+			//	.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
+			
+			//	row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
+		}
+		rowHolder.actionTextAdvanced.setTextColor(getContext().getResources().getColor(textColor));
 		return row;
 	}
 	
 	private class RowHolder {
-		protected LinearLayout layout;
-		protected TextView text;
-		protected ImageView icon;
+		protected TextView actionTextSimple;
+		protected TextView actionTypeSimple;
+		protected TextView actionTextAdvanced;
+		protected TextView actionPointInTime;
+		protected ImageView actionType;
 	}
 }

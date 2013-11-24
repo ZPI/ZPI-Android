@@ -42,7 +42,7 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 			
 			holder = new WorkoutActionHolder();
 			
-			holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutActionIcon);
+			holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
 			
 			holder.pace = (TextView) row.findViewById(R.id.dataTextViewActionPace);
 			holder.distance = (TextView) row.findViewById(R.id.dataTextViewActionDistance);

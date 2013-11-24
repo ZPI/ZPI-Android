@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -144,6 +145,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		prepareServiceAndStart();
 		long debugT3 = System.currentTimeMillis();
 		Log.i("time", debugT3 + " \t" + (debugT3 - debugT2));
+		
+		Debug.stopMethodTracing();
 	}
 	
 	private Workout getWorkoutData() {

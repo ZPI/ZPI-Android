@@ -1,26 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- change pic dynamicly -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/linearLayoutDrawerItem"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/activity_blue"
     android:orientation="horizontal" >
 
-    <!-- change pic dynamicly -->
-    <ImageView
-        android:id="@+id/imageViewWorkoutActionIcon"
-        android:layout_width="@dimen/drawer_icon_size"
-        android:layout_height="@dimen/drawer_icon_size"
-        android:scaleType="fitXY"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_launcher" />
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6" >
+		<View
+            android:id="@+id/dividerActionItem3"
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:background="@color/white" />
+        <TextView
+            android:id="@+id/textViewWorkoutActionSimpleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_toLeftOf="@+id/dividerActionItem3"
+            android:layout_gravity="center|right"
+            android:gravity="right"
+            android:textColor="@color/white"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/textViewWorkoutActionText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|right"
-        android:text="Large Text"
-        android:gravity="right"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TextView
+            android:id="@+id/textViewWorkoutActionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center|right"
+            android:gravity="right"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <TextView
+            android:id="@+id/textViewWorkoutActionSimpleTypeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_toLeftOf="@+id/dividerActionItem3"
+            android:layout_below="@+id/textViewWorkoutActionSimpleText"
+            android:layout_gravity="center|right"
+            android:gravity="right"
+            android:text="Large Text"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <View
+            android:id="@+id/dividerActionItem"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:background="@color/white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" >
+
+        <ImageView
+            android:id="@+id/imageViewState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" 
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/textViewState"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/dividerActionItem2"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white" />
+    </RelativeLayout>
 
 </LinearLayout>

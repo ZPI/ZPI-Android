@@ -7,8 +7,8 @@
         android:id="@+id/textViewItemDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageViewRunner"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -16,8 +16,9 @@
         android:id="@+id/textViewItemDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignLeft="@+id/textViewItemDate"
         android:layout_below="@+id/textViewItemDate"
+        android:layout_alignParentBottom="true"
         android:text="TextView" />
 
     <TextView
@@ -28,5 +29,16 @@
         android:layout_alignBottom="@+id/textViewItemDistance"
         android:layout_alignParentRight="true"
         android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/imageViewRunner"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignTop="@+id/textViewItemDate"
+        android:layout_alignBottom="@+id/textViewItemTime"
+        android:layout_alignParentLeft="true"
+
+		
+        android:src="@drawable/runner" />
 
 </RelativeLayout>
