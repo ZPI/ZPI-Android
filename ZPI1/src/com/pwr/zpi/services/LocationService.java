@@ -43,7 +43,7 @@ import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-	OnConnectionFailedListener, ICountDownListner {
+OnConnectionFailedListener, ICountDownListner {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -58,7 +58,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
-	public static final int REQUIRED_ACCURACY = 3000;
+	public static final int REQUIRED_ACCURACY = 3000; //FIXME change to lower
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
 	private boolean isWromUpInProgress;
@@ -343,7 +343,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-				.getAccuracy() > REQUIRED_ACCURACY)) {
+			.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {

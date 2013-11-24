@@ -17,35 +17,30 @@
 
         <Button
             android:id="@+id/buttonSteady"
+            style="@style/MultipleButtonMiddleStyle"
+            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_margin="@dimen/small_margin"
-            android:background="@drawable/button_enabled_background"
-            android:padding="@dimen/buttons_padding"
             android:text="@string/steady" />
 
         <Button
             android:id="@+id/buttonFast"
+            style="@style/MultipleButtonRightStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/buttonSteady"
-            android:layout_margin="@dimen/small_margin"
             android:layout_toRightOf="@id/buttonSteady"
-            android:background="@drawable/button_enabled_background"
-            android:padding="@dimen/buttons_padding"
             android:text="@string/fast" />
 
         <Button
             android:id="@+id/buttonSlow"
+            style="@style/MultipleButtonLeftStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/buttonSteady"
-            android:layout_margin="@dimen/small_margin"
             android:layout_toLeftOf="@id/buttonSteady"
-            android:background="@drawable/button_enabled_background"
-            android:padding="@dimen/buttons_padding"
             android:text="@string/slow" />
     </RelativeLayout>
 
@@ -166,22 +161,20 @@
 
         <Button
             android:id="@+id/buttonTime"
+            style="@style/MultipleButtonLeftStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
+            android:layout_marginLeft="@dimen/small_margin"
             android:layout_weight="1"
-            android:background="@drawable/button_enabled_background"
-            android:padding="@dimen/buttons_padding"
             android:text="@string/time" />
 
         <Button
             android:id="@+id/buttonDistance"
+            style="@style/MultipleButtonRightStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
+            android:layout_marginRight="@dimen/small_margin"
             android:layout_weight="1"
-            android:background="@drawable/button_enabled_background"
-            android:padding="@dimen/buttons_padding"
             android:text="@string/distance" />
     </LinearLayout>
 

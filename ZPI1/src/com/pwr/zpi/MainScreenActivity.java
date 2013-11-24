@@ -42,6 +42,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.TimeFormatter;
+import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
@@ -50,7 +51,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private RunListenerApi api;
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
 	
-	private TextView GPSSignalTextView;
+	//	private TextView GPSSignalTextView;
+	private GPSSignalDisplayer gpsDisplayer;
 	private TextView workoutNameTextView;
 	private ImageButton settingsButton;
 	private ImageButton historyButton;
@@ -101,7 +103,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		setContentView(R.layout.main_screen_activity);
 		isServiceConnected = false;
 		
-		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
+		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
+		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
 		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
 		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
 		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
@@ -139,7 +142,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		planningButton.setOnTouchListener(gestureListener);
 		musicButton.setOnTouchListener(gestureListener);
 		runSummaryRelativeLayout.setOnTouchListener(gestureListener);
-		GPSSignalTextView.setOnTouchListener(gestureListener);
+		//		GPSSignalTextView.setOnTouchListener(gestureListener);
+		gpsDisplayer.setOnTouchListener(gestureListener);
 		GPSSignalTextViewValue.setOnTouchListener(gestureListener);
 	}
 	
@@ -331,7 +335,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			@Override
 			public void run() {
 				try {
-					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
+					//					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
+					gpsDisplayer.updateStrengthSignal(mLastLocation.getAccuracy());
 				}
 				catch (Throwable t) {
 					Log.e(TAG, "Error while updating the UI with tweets", t);
@@ -399,7 +404,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-		
+				
 		}
 		
 	}

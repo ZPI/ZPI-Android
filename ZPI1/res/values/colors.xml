@@ -20,4 +20,5 @@
 	<color name="workout_drawer_active">#AAFFFFFF</color>
 	<color name="workout_drawer_not_active">#660077AA</color>
 	<color name="white">#FFFFFF</color>
+	
 </resources>

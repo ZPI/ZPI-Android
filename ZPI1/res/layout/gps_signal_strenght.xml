@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayoutGPSSignal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/imageViewFirstCircle"
+            android:layout_width="13dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/circle_small" />
+
+        <ImageView
+            android:id="@+id/imageViewSecondCircle"
+            android:layout_width="13dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/circle_small" />
+
+        <ImageView
+            android:id="@+id/imageViewThirdCircle"
+            android:layout_width="13dp"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/circle_small" />
+    </LinearLayout>
+
+</RelativeLayout>
