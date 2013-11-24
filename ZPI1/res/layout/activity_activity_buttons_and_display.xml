@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gps="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <LinearLayout
         android:id="@+id/startStopLinearLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin" >
 
         <Button
@@ -22,8 +23,8 @@
             android:background="@drawable/activity_button_background"
             android:clickable="false"
             android:padding="@dimen/buttons_padding"
-            android:text="@string/pause" 
-            android:textColor="@color/white"/>
+            android:text="@string/pause"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/stopButton"
@@ -35,17 +36,17 @@
             android:background="@drawable/activity_button_background"
             android:clickable="false"
             android:padding="@dimen/buttons_padding"
-            android:text="@string/stop" 
-            android:textColor="@color/white"/>
+            android:text="@string/stop"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/activity_horizontal_margin" >
 
         <RelativeLayout
@@ -140,8 +141,8 @@
         android:id="@+id/buttonMusicDuringActivity"
         android:layout_width="@dimen/activity_button_size"
         android:layout_height="@dimen/activity_button_size"
-        android:layout_below="@id/linearLayout2"
         android:layout_alignRight="@id/linearLayout2"
+        android:layout_below="@id/linearLayout2"
         android:layout_marginTop="@dimen/very_small_margin"
         android:background="@drawable/activity_button_background"
         android:src="@drawable/ic_music" />
@@ -156,21 +157,31 @@
         android:background="@drawable/activity_button_background"
         android:padding="@dimen/buttons_padding"
         android:text="@string/resume"
-        android:visibility="gone"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/TextViewGPSAccuracy"
-        android:paddingLeft="@dimen/buttons_padding"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/startStopLinearLayout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-
         android:background="@drawable/activity_button_background"
-        android:text="@string/gps_accuracy" 
-        android:textColor="@color/white"/>
+        android:paddingLeft="@dimen/buttons_padding" >
+
+        <TextView
+            android:id="@+id/TextViewGPSAccuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gps_accuracy"
+            android:textColor="@color/white" />
+        
+        <com.pwr.zpi.views.GPSSignalDisplayer 
+            android:id="@+id/gpsDisplayerActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            gps:displayType="narrow" />
+    </LinearLayout>
 
     <!-- change icon -->
 
@@ -178,8 +189,8 @@
         android:id="@+id/imageButtonWorkoutDrawerButton"
         android:layout_width="@dimen/activity_button_size"
         android:layout_height="@dimen/activity_button_size"
-        android:layout_below="@id/linearLayout2"
         android:layout_alignLeft="@id/linearLayout2"
+        android:layout_below="@id/linearLayout2"
         android:layout_marginTop="@dimen/very_small_margin"
         android:background="@drawable/activity_button_background"
         android:src="@drawable/ic_workout" />

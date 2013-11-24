@@ -51,6 +51,7 @@ import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.TimeFormatter;
+import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
@@ -76,6 +77,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private TextView unitTextView2;
 	private TextView clickedUnitTextView;
 	private TextView GPSAccuracy;
+	private GPSSignalDisplayer gpsDisplayer;
 	private TextView countDownTextView;
 	private LinearLayout startStopLayout;
 	private RelativeLayout dataRelativeLayout1;
@@ -163,6 +165,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
 		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
+		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayerActivity);
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		transparentButton = findViewById(R.id.transparentView);
@@ -284,7 +287,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void initDisplayedData() {
-		GPSAccuracy.setText(getMyString(R.string.gps_accuracy) + " ?");
+		GPSAccuracy.setText(getMyString(R.string.gps_accuracy));
 		
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
@@ -622,7 +625,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				
 				float speed = location.getSpeed();
-				GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
+				//				GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
+				gpsDisplayer.updateStrengthSignal(location.getAccuracy());
 				
 				pace = (double) 1 / (speed * 60 / 1000);
 				
@@ -645,9 +649,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-				// camera to east
-				.tilt(60); // Creates a CameraPosition from the builder
+			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			// camera to east
+			.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
@@ -695,7 +699,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	//		Marker positionMarker = mMap.addMarker(new MarkerOptions()
 	//        .position(position)
 	//        .flat(true));
-	//		
+	//
 	//		LatLng PERTH = new LatLng(-31.90, 115.86);
 	//		Marker perth = mMap.addMarker(new MarkerOptions()
 	//		                          .position(PERTH).
@@ -780,7 +784,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				
 				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(
 					ActivityActivity.this).getString(
-					getString(R.string.key_countdown_before_start), "0"));
+						getString(R.string.key_countdown_before_start), "0"));
 				
 				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}
