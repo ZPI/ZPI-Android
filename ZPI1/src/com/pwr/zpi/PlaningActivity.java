@@ -1,11 +1,14 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -27,9 +30,10 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.roomorama.caldroid.CaldroidFragment;
+import com.roomorama.caldroid.CaldroidListener;
 
-public class PlaningActivity extends Activity implements GestureListener, OnItemClickListener
-{
+public class PlaningActivity extends FragmentActivity implements GestureListener, OnItemClickListener {
 	public static final String ID_TAG = "id";
 	public static final String IS_NEW_TAG = "is_new";
 	public static final int MY_REQUEST_CODE_ADD = 1;
@@ -47,6 +51,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	private WorkoutAdapter workoutAdapter;
 	private View mCurrent;
 	private AdapterContextMenuInfo info;
+	private CaldroidFragment caldroidFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +78,39 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		newWorkoutButton = (Button) findViewById(R.id.buttonNewWorkout);
 		//newWorkoutButton.setOnClickListener(this);
 		registerForContextMenu(workoutsListView);
+		
+		prepareCalendar(savedInstanceState);
+		
 		addListeners();
 	}
 	
-	private ArrayList<Workout> getWorkoutsFromDB()
-	{
+	private void prepareCalendar(Bundle savedInstanceState) {
+		caldroidFragment = new CaldroidFragment();
+		// If Activity is created after rotation
+		if (savedInstanceState != null) {
+			caldroidFragment.restoreStatesFromKey(savedInstanceState, "CALDROID_SAVED_STATE");
+		}
+		// If activity is created from fresh
+		else {
+			Bundle args = new Bundle();
+			Calendar cal = Calendar.getInstance();
+			args.putInt(CaldroidFragment.MONTH, cal.get(Calendar.MONTH) + 1);
+			args.putInt(CaldroidFragment.YEAR, cal.get(Calendar.YEAR));
+			args.putBoolean(CaldroidFragment.ENABLE_SWIPE, true);
+			args.putBoolean(CaldroidFragment.SIX_WEEKS_IN_CALENDAR, true);
+			
+			// Uncomment this to customize startDayOfWeek
+			// args.putInt(CaldroidFragment.START_DAY_OF_WEEK,
+			// CaldroidFragment.TUESDAY); // Tuesday
+			caldroidFragment.setArguments(args);
+		}
+		
+		FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+		t.replace(R.id.tab2, caldroidFragment);
+		t.commit();
+	}
+	
+	private ArrayList<Workout> getWorkoutsFromDB() {
 		ArrayList<Workout> workouts;
 		Database database = new Database(this);
 		workouts = (ArrayList<Workout>) database.getAllWorkoutNames();
@@ -93,8 +126,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		myGestureDetector = new MyGestureDetector(this,
-			false, false, false, true);
+		myGestureDetector = new MyGestureDetector(this, false, false, false, true);
 		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
@@ -138,12 +170,39 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		newWorkoutButton.setOnTouchListener(gestureListener);
 		workoutsListView.setOnTouchListener(gestureListener);
 		workoutsListView.setOnItemClickListener(this);
+		
+		//FIXME  do the listener...
+		caldroidFragment.setCaldroidListener(new CaldroidListener() {
+			
+			@Override
+			public void onSelectDate(Date date, View view) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onLongClickDate(Date date, View view) {
+				// TODO Auto-generated method stub
+				super.onLongClickDate(date, view);
+			}
+			
+			@Override
+			public void onChangeMonth(int month, int year) {
+				// TODO Auto-generated method stub
+				super.onChangeMonth(month, year);
+			}
+			
+			@Override
+			public void onCaldroidViewCreated() {
+				// TODO Auto-generated method stub
+				super.onCaldroidViewCreated();
+			}
+		});
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		if (!myGestureDetector.isFlingDetected())
-		{
+		if (!myGestureDetector.isFlingDetected()) {
 			Intent intent = new Intent(PlaningActivity.this, WorkoutActivity.class);
 			Workout workout = (Workout) adapter.getItemAtPosition(position);
 			//new workout
@@ -161,8 +220,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode)
-		{
+		switch (requestCode) {
 			case MY_REQUEST_CODE_ADD:
 				
 				if (resultCode == RESULT_OK) {
@@ -176,8 +234,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				}
 				break;
 			case WORKOUT_REQUEST2:
-				if (resultCode == RESULT_OK)
-				{
+				if (resultCode == RESULT_OK) {
 					setResult(RESULT_OK, data);
 					finish();
 					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
@@ -208,9 +265,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 							db.close();
 						}
 					};
-					dialog.showAlertDialog(this, R.string.dialog_message_remove_workout,
-						R.string.empty_string, android.R.string.yes,
-						android.R.string.no, positiveButtonHandler, null);
+					dialog.showAlertDialog(this, R.string.dialog_message_remove_workout, R.string.empty_string,
+						android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 					
 				}
 				break;
@@ -221,8 +277,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	}
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-		ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 			case R.id.listViewWorkouts:
 				MenuInflater inflater = getMenuInflater();
@@ -238,13 +293,22 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
 		View v = mCurrent;
-		if (v == newWorkoutButton)
-		{
+		if (v == newWorkoutButton) {
 			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
 			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
 			startActivityForResult(intent, MY_REQUEST_CODE_ADD);
 		}
 		
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+		if (caldroidFragment != null) {
+			caldroidFragment.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
+		}
 	}
 	
 }
