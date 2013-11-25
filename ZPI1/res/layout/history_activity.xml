@@ -92,5 +92,13 @@
             
         </RelativeLayout>
     </FrameLayout>
-
+  <ImageButton
+        android:id="@+id/buttonHistoryMainScreen"
+        android:layout_width="@dimen/switch_screen_button_size"
+        android:layout_height="@dimen/switch_screen_button_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="@dimen/history_button_margin"
+        android:background="@drawable/button_border_background"
+        android:src="@drawable/ic_main_screen" />
 </RelativeLayout>
