@@ -230,6 +230,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		}
 		else {
 			workoutDdrawerButton.setVisibility(View.GONE);
+			drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 			listView.setVisibility(View.GONE);
 		}
 		
