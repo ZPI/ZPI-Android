@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/textViewRunsSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/runs_summary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white" />
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_below="@id/textViewRunsSummary"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:background="#FFFFFF" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutMSRunSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/divider4"
+        android:layout_below="@id/divider4"
+        android:scaleType="fitStart" >
+
+        <ImageView
+            android:id="@+id/imageViewRunSummaryImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:src="@drawable/agenda" />
+
+        <TextView
+            android:id="@+id/TextViewMSWrokoutsCountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_toRightOf="@id/imageViewRunSummaryImage"
+            android:text="@string/workouts"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textViewMSWorkoutsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:layout_alignBottom="@id/TextViewMSWrokoutsCountLabel"
+            android:layout_alignParentRight="true"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textViewMSTotalTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/imageViewRunSummaryImage"
+            android:text="@string/total_time"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textViewMSTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:layout_alignBottom="@id/textViewMSTotalTimeLabel"
+            android:layout_alignParentRight="true"
+            android:text="00:00:00"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/TextViewMSDistanceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_toRightOf="@id/imageViewRunSummaryImage"
+            android:text="@string/distance"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/textViewMSDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/TextViewMSDistanceLabel"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:text="0km"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+</RelativeLayout>
