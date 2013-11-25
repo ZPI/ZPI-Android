@@ -25,9 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/tab1"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
@@ -35,34 +34,52 @@
                         android:id="@+id/listViewWorkouts"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" >
+                        android:layout_above="@+id/buttonNewWorkout" >
                     </ListView>
 
                     <Button
                         android:id="@+id/buttonNewWorkout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                       
                         android:layout_margin="@dimen/small_margin"
                         android:background="@drawable/button_background"
                         android:padding="@dimen/buttons_padding"
                         android:text="@string/new_workout" />
-                    
-                </LinearLayout>
 
-                <LinearLayout
+                    <ImageButton
+                        android:id="@+id/imageButtonPlaningActMainScreen"
+                        android:layout_width="@dimen/switch_screen_button_size"
+                        android:layout_height="@dimen/switch_screen_button_size"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/button_border_background"
+                        android:src="@drawable/ic_main_screen" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/tab2"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" >
 
-                    <TextView
-                        android:id="@+id/TextBoxGPSAccuracy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Small Text"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                    <ListView
+                        android:id="@+id/listViewPlaningActTraningPlans"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                    </ListView>
 
-                </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/imageButtonTraningPlansMainScreen"
+                        android:layout_width="@dimen/switch_screen_button_size"
+                        android:layout_height="@dimen/switch_screen_button_size"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/button_border_background"
+                        android:src="@drawable/ic_main_screen" />
+                </RelativeLayout>
             </FrameLayout>
         </LinearLayout>
     </TabHost>

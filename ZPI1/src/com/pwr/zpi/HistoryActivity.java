@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
@@ -42,6 +43,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	private ListView listViewThisWeek;
 	private ListView listViewThisMonth;
 	private ListView listViewAll;
+	private ImageButton mainSceenButton;
 	
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
@@ -69,7 +71,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		setContentView(R.layout.history_activity);
 		prepareGestureListener();
 		initTabs();
-		initList();
+		initFields();
 		addListeners();
 	}
 	
@@ -91,7 +93,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		tabHost.addTab(tabSpecs);
 	}
 	
-	private void initList()
+	private void initFields()
 	{
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
@@ -118,6 +120,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		registerForContextMenu(listViewThisMonth);
 		registerForContextMenu(listViewAll);
 		
+		mainSceenButton = (ImageButton) findViewById(R.id.buttonHistoryMainScreen);
 		//adapterThisWeek.getFilter().filter();
 	}
 	
@@ -170,7 +173,9 @@ public class HistoryActivity extends Activity implements GestureListener,
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				mCurrent = v;
 				return gestureDetector.onTouchEvent(event);
+				
 			}
 		};
 	}
@@ -219,6 +224,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewThisWeek.setOnTouchListener(gestureListener);
 		listViewThisMonth.setOnTouchListener(gestureListener);
 		listViewAll.setOnTouchListener(gestureListener);
+		mainSceenButton.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
@@ -306,8 +312,17 @@ public class HistoryActivity extends Activity implements GestureListener,
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		// TODO Auto-generated method stub
-		
+		if (mCurrent != null)
+		{
+			switch (mCurrent.getId())
+			{
+				case R.id.buttonHistoryMainScreen:
+					finish();
+					overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
+					
+					break;
+			}
+		}
 	}
 	
 }
