@@ -219,8 +219,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			if (swipeDirection == DOWN) {	//start recording
 				if (workout != null) {
 					i.putExtra(Workout.TAG, workout);
-					i.putExtra(ActivityActivity.RUN_NUMBER_TAG, runNumber);
+					
 				}
+				i.putExtra(ActivityActivity.RUN_NUMBER_TAG, runNumber);
 			}
 			//debugT3 = System.currentTimeMillis();
 			//Log.i("time", (debugT3 - debugT2) + "");
@@ -401,8 +402,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					R.string.empty_string, positiveButtonHandler, null);
 				break;
 			default:
-				debugT2 = System.currentTimeMillis();
-				Log.i("time", (debugT2 - debugT1) + " srodek");
+				//debugT2 = System.currentTimeMillis();
+				//Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
 		

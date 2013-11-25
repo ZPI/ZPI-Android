@@ -99,14 +99,15 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private static final int traceColor = Color.RED;
 	
 	// measured values
-	double pace;
-	double avgPace;
-	double distance;
-	double lastDistance;
-	Long time = 0L;
-	long startTime;
-	long pauseTime;
-	long pauseStartTime;
+	private double pace;
+	private double avgPace;
+	private double distance;
+	private double lastDistance;
+	private Long time = 0L;
+	private long startTime;
+	private long pauseTime;
+	private long pauseStartTime;
+	private int runNumber;
 	
 	private int dataTextView1Content;
 	private int dataTextView2Content;
@@ -202,16 +203,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
 		
-		// make single run object
-		//	singleRun = new SingleRun();
-		//	calendar = Calendar.getInstance();
-		
-		//	singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
 		
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		runNumber = intent.getIntExtra(RUN_NUMBER_TAG, 0);
 		if (intent.hasExtra(Workout.TAG)) {
 			// drawer initialization
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
@@ -421,7 +418,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				intent.putExtra(DISTANCE_TAG, distance);
 				double pace = avgPace = ((double) time / 60) / distance;
 				intent.putExtra(AVG_PACE_TAG, pace);
-				intent.putExtra(RUN_NUMBER_TAG, ActivityActivity.this.getIntent().getIntExtra(RUN_NUMBER_TAG, 0));
+				intent.putExtra(RUN_NUMBER_TAG, runNumber);
 				
 				startActivityForResult(intent, MY_REQUEST_CODE);
 			}
