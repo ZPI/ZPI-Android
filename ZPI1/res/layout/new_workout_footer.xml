@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray_background"
     android:orientation="vertical" >
 
     <Button
@@ -19,12 +20,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@color/gray_background"
         android:text="@string/ustawienia"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/white" >
 
         <TextView
             android:id="@+id/textViewWormUpLabel"
@@ -48,14 +51,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/white"  
+        >
 
         <TextView
             android:id="@+id/TextViewWorkoutRepeatLabel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:layout_weight="4"
+            android:gravity="center_vertical"
             android:text="@string/repeat"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -64,8 +69,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            app:minValue="1" 
-            app:maxValue="99">
+            app:maxValue="99"
+            app:minValue="1" >
         </com.pwr.zpi.views.CustomPicker>
 
         <TextView
@@ -75,7 +80,6 @@
             android:gravity="center_vertical"
             android:text="@string/times"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </LinearLayout>
 
     <Button

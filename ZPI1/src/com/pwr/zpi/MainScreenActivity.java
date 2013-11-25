@@ -13,6 +13,7 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -518,7 +519,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					break;
 				case R.id.buttonStart:
 					debugT1 = System.currentTimeMillis();
-					Log.i("time", debugT1 + "");
+					Debug.startMethodTracing("calc");
 					startActivityIfPossible();
 					break;
 				case R.id.buttonHistory:

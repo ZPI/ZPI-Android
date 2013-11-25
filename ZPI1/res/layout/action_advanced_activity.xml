@@ -4,7 +4,8 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@color/gray_background">
 
     <TabHost
         android:id="@+id/tabhostActions"
@@ -46,7 +47,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content" 
+                            android:background="@color/white">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab1Km"
@@ -89,7 +91,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content" 
+                            android:background="@color/white">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab1TimeHour"
@@ -146,7 +149,8 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:focusable="false"
-                            android:text="@string/dashes" />
+                            android:text="@string/dashes" 
+                            android:background="@color/white"/>
 
                         <Button
                             android:id="@+id/buttonTab1Add"
@@ -179,7 +183,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content"
+                            android:background="@color/white" >
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab2Km"
@@ -222,7 +227,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content" 
+                            android:background="@color/white">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab2PaceMin"
@@ -268,7 +274,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
-                            android:focusable="false" >
+                            android:focusable="false" 
+                            android:background="@color/white">
 
                             <requestFocus />
                         </EditText>
@@ -304,7 +311,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content" 
+                            android:background="@color/white">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab3TimeHour"
@@ -356,7 +364,8 @@
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" >
+                            android:layout_height="wrap_content"
+                            android:background="@color/white" >
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab3PaceMin"
@@ -403,7 +412,8 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:focusable="false"
-                            android:text="@string/dashes2" />
+                            android:text="@string/dashes2" 
+                            android:background="@color/white"/>
 
                         <Button
                             android:id="@+id/buttonTab3Add"

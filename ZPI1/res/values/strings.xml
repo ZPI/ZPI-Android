@@ -10,6 +10,8 @@
     <string name="ustawienia">Settings</string>
     <string name="gps_enabled">GPS enabled</string>
     <string name="gps_disabled">GPS not enabled \nenable it?</string>
+    <string name="now">NOW</string>
+    <string name="done">DONE</string>
     <string name="dialog_message_on_stop">Are you sure, you want to stop recording the activity?</string>
     <string name="dialog_message_low_gps_accuracy">Please wait for better gps signal</string>
     <string name="dialog_message_no_gps">Please enable gps</string>
@@ -112,7 +114,6 @@
 	<string name="notification_message">Activity recording. Click here to open.</string>
 	<string name="colon">:</string>
 	<string name="workout_actions">Workout actions</string>
-	<string name="done">Done</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
 	
