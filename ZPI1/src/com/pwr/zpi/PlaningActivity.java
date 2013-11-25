@@ -17,12 +17,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
+import com.pwr.zpi.adapters.TreningPlansAdapter;
 import com.pwr.zpi.adapters.WorkoutAdapter;
 import com.pwr.zpi.database.Database;
+import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
@@ -42,9 +45,14 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
 	private Button newWorkoutButton;
+	private ImageButton plansMainScreenButton;
+	private ImageButton workoutsMainScreenButton;
 	private ListView workoutsListView;
+	private ListView traningPlansListView;
+	private ArrayList<TreningPlan> plansList;
 	private ArrayList<Workout> workoutsList;
 	private WorkoutAdapter workoutAdapter;
+	private TreningPlansAdapter plansAdapter;
 	private View mCurrent;
 	private AdapterContextMenuInfo info;
 	
@@ -68,12 +76,24 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		workoutsList = getWorkoutsFromDB();
 		workoutAdapter = new WorkoutAdapter(this, R.layout.workouts_list_item, workoutsList);
 		
+		plansList = getTraningPlans();
+		plansAdapter = new TreningPlansAdapter(this, R.layout.workouts_list_item, plansList);
+		
 		workoutsListView = (ListView) findViewById(R.id.listViewWorkouts);
 		workoutsListView.setAdapter(workoutAdapter);
+		traningPlansListView = (ListView) findViewById(R.id.listViewPlaningActTraningPlans);
+		
 		newWorkoutButton = (Button) findViewById(R.id.buttonNewWorkout);
+		plansMainScreenButton = (ImageButton) findViewById(R.id.imageButtonTraningPlansMainScreen);
+		workoutsMainScreenButton = (ImageButton) findViewById(R.id.imageButtonPlaningActMainScreen);
 		//newWorkoutButton.setOnClickListener(this);
 		registerForContextMenu(workoutsListView);
 		addListeners();
+	}
+	
+	private ArrayList<TreningPlan> getTraningPlans() {
+		// TODO Auto-generated method stub
+		return new ArrayList<TreningPlan>();
 	}
 	
 	private ArrayList<Workout> getWorkoutsFromDB()
@@ -138,6 +158,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		newWorkoutButton.setOnTouchListener(gestureListener);
 		workoutsListView.setOnTouchListener(gestureListener);
 		workoutsListView.setOnItemClickListener(this);
+		plansMainScreenButton.setOnTouchListener(gestureListener);
+		workoutsMainScreenButton.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
@@ -237,12 +259,30 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		View v = mCurrent;
-		if (v == newWorkoutButton)
+		if (mCurrent != null)
 		{
-			Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
-			intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
-			startActivityForResult(intent, MY_REQUEST_CODE_ADD);
+			View v = mCurrent;
+			switch (v.getId())
+			
+			{
+				case R.id.buttonNewWorkout:
+					Intent intent = new Intent(PlaningActivity.this, NewWorkoutActivity.class);
+					intent.putExtra(WORKOUTS_NUMBER_TAG, workoutsList.size());
+					startActivityForResult(intent, MY_REQUEST_CODE_ADD);
+					break;
+				case R.id.imageButtonPlaningActMainScreen:
+					finish();
+					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+					
+					break;
+				case R.id.imageButtonTraningPlansMainScreen:
+					
+					finish();
+					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+					
+					break;
+			
+			}
 		}
 		
 	}
