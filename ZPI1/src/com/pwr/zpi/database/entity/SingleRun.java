@@ -13,7 +13,7 @@ public class SingleRun implements Comparable {
 	private LinkedList<Integer> runSubIDs; // when there are two or more subsequent runs ex o--(run)--o ..(space).. o--(run)--o
 	private Date startDate;
 	private Date endDate;
-	
+	private String name;
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private double distance;
 	private long runTime;
@@ -93,6 +93,14 @@ public class SingleRun implements Comparable {
 	public int compareTo(Object o) {
 		SingleRun run = (SingleRun) o;
 		return run.startDate.compareTo(getStartDate());
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }
