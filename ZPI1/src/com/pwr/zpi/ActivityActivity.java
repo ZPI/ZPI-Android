@@ -234,7 +234,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			listView.setVisibility(View.GONE);
 		}
 		
-		
 		moveSystemControls(mapFragment);
 	}
 	
