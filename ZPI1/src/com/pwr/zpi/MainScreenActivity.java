@@ -13,7 +13,6 @@ import android.content.ServiceConnection;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -95,6 +94,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private Location mLastLocation;
 	// service data
 	boolean mIsBound;
+	int runNumber;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +123,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		doStartService();
 		doBindService();
 		// locationListener.getmLocationClient().connect();
-		
+		runNumber = 0;
 		isConnected = false;
 		
-		new GetAllRunsFromDB().execute(new Void[0]);
 	}
 	
 	private void checkSpeechSynthezator() {
@@ -163,6 +162,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	@Override
 	protected void onResume() {
 		super.onResume();
+		new GetAllRunsFromDB().execute(new Void[0]);
 		if (!mIsBound) {
 			doBindService();
 		}
@@ -216,13 +216,15 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			startActivityForResult(i, WORKOUT_REQUEST);
 		}
 		else {
-			if (swipeDirection == DOWN) {
+			if (swipeDirection == DOWN) {	//start recording
 				if (workout != null) {
 					i.putExtra(Workout.TAG, workout);
+					
 				}
+				i.putExtra(ActivityActivity.RUN_NUMBER_TAG, runNumber);
 			}
-			debugT3 = System.currentTimeMillis();
-			Log.i("time", (debugT3 - debugT2) + "");
+			//debugT3 = System.currentTimeMillis();
+			//Log.i("time", (debugT3 - debugT2) + "");
 			startActivity(i);
 			
 		}
@@ -400,11 +402,11 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					R.string.empty_string, positiveButtonHandler, null);
 				break;
 			default:
-				debugT2 = System.currentTimeMillis();
-				Log.i("time", (debugT2 - debugT1) + " srodek");
+				//debugT2 = System.currentTimeMillis();
+				//Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-				
+		
 		}
 		
 	}
@@ -519,7 +521,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					break;
 				case R.id.buttonStart:
 					debugT1 = System.currentTimeMillis();
-					Debug.startMethodTracing("calc");
+					//					Debug.startMethodTracing("calc");
 					startActivityIfPossible();
 					break;
 				case R.id.buttonHistory:
@@ -615,32 +617,36 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 	}
 	
-	private class GetAllRunsFromDB extends AsyncTask<Void, Void, Pair<Pair<Integer, Long>, Double>> {
+	private class GetAllRunsFromDB extends AsyncTask<Void, Void, Pair<Pair<Integer, Long>, Pair<Double, Integer>>> {
 		@Override
-		protected Pair<Pair<Integer, Long>, Double> doInBackground(Void... params) {
+		protected Pair<Pair<Integer, Long>, Pair<Double, Integer>> doInBackground(Void... params) {
 			Database db = new Database(MainScreenActivity.this);
 			ArrayList<SingleRun> runs = (ArrayList<SingleRun>) db.getAllRuns();
 			
 			long totalTime = 0;
 			double distance = 0;
-			int count = runs.size();
-			for (SingleRun run : runs)
+			
+			int count = (runs == null) ? 0 : runs.size();
+			for (int i = 0; i < count; i++)
 			{
-				totalTime += run.getRunTime();
-				distance += run.getDistance();
+				
+				totalTime += runs.get(i).getRunTime();
+				distance += runs.get(i).getDistance();
 				
 			}
-			Pair<Pair<Integer, Long>, Double> data = new Pair<Pair<Integer, Long>, Double>(new Pair<Integer, Long>(
-				count, totalTime), distance);
+			Pair<Pair<Integer, Long>, Pair<Double, Integer>> data = new Pair<Pair<Integer, Long>, Pair<Double, Integer>>(
+				new Pair<Integer, Long>(
+					count, totalTime), new Pair<Double, Integer>(distance, count));
 			return data;
 		}
 		
 		@Override
-		protected void onPostExecute(Pair<Pair<Integer, Long>, Double> data) {
+		protected void onPostExecute(Pair<Pair<Integer, Long>, Pair<Double, Integer>> data) {
 			
-			runSummaryDistanceTextView.setText(String.format("%.3fkm", data.second / 1000));
+			runSummaryDistanceTextView.setText(String.format("%.3fkm", data.second.first / 1000));
 			runSummaryTotalTimeTextView.setText(TimeFormatter.formatTimeHHMMSS(data.first.second));
 			runSummaryWorkoutsCountTextView.setText(data.first.first + "");
+			runNumber = data.second.second;
 			
 		}
 		
