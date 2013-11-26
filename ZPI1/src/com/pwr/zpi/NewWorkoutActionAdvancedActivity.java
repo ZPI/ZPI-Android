@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -32,7 +33,9 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 	private final int TAB1 = 0;
 	private final int TAB2 = 1;
 	private final int TAB3 = 2;
-	
+	private Button tab1Button;
+	private Button tab2Button;
+	private Button tab3Button;
 	//Virtual Partner
 	
 	ScrollView scrollViewDistanceTime;
@@ -101,7 +104,16 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		tabSpecs.setContent(R.id.tab3TimePace);
 		tabSpecs.setIndicator(getResources().getString(R.string.timeAndPace));
 		tabHost.addTab(tabSpecs);
-		
+		LinearLayout tab1 = (LinearLayout) findViewById(R.id.linearLayoutActionAdvancedTab1);
+		LinearLayout tab2 = (LinearLayout) findViewById(R.id.linearLayoutActionAdvancedTab2);
+		LinearLayout tab3 = (LinearLayout) findViewById(R.id.linearLayoutActionAdvancedTab3);
+		tab1Button = (Button) tab1.findViewById(R.id.buttonTabLeft);
+		tab2Button = (Button) tab2.findViewById(R.id.buttonTabMiddle);
+		tab3Button = (Button) tab3.findViewById(R.id.buttonTabRight);
+		tab1Button.setText(getResources().getString(R.string.distansAndTime));
+		tab2Button.setText(getResources().getString(R.string.distansAndPace));
+		tab3Button.setText(getResources().getString(R.string.timeAndPace));
+		setTab(0);
 	}
 	
 	private void initFields()
@@ -137,6 +149,7 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		buttonTab3Add = (Button) findViewById(R.id.buttonTab3Add);
 		buttonTab3Add.setEnabled(false);
 		editTextTab3Distance = (EditText) findViewById(R.id.editTextTab3Distance);
+		
 	}
 	
 	private void addListeners()
@@ -144,6 +157,9 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		buttonTab1Add.setOnClickListener(this);
 		buttonTab2Add.setOnClickListener(this);
 		buttonTab3Add.setOnClickListener(this);
+		tab1Button.setOnClickListener(this);
+		tab2Button.setOnClickListener(this);
+		tab3Button.setOnClickListener(this);
 		
 		pickerTab1DistanceKm.getDisplayEditText().addTextChangedListener(this);
 		pickerTab1DistanceM.getDisplayEditText().addTextChangedListener(this);
@@ -188,6 +204,17 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 				returnIntent.putExtra(WorkoutAction.TAG, action);
 				setResult(RESULT_OK, returnIntent);
 				finish();
+				break;
+			default:
+				if (v == tab1Button) {
+					setTab(0);
+				}
+				else if (v == tab2Button) {
+					setTab(1);
+				}
+				if (v == tab3Button) {
+					setTab(2);
+				}
 				break;
 		}
 		
@@ -344,5 +371,37 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void setTab(int nr)
+	{
+		tabHost.setCurrentTab(nr);
+		switch (nr)
+		{
+			case 0:
+				tab1Button.setSelected(true);
+				tab2Button.setSelected(false);
+				tab3Button.setSelected(false);
+				tab1Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab2Button.setTextColor(getResources().getColor(R.color.white));
+				tab3Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+			case 1:
+				tab2Button.setSelected(true);
+				tab1Button.setSelected(false);
+				tab3Button.setSelected(false);
+				tab2Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab1Button.setTextColor(getResources().getColor(R.color.white));
+				tab3Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+			case 2:
+				tab3Button.setSelected(true);
+				tab2Button.setSelected(false);
+				tab1Button.setSelected(false);
+				tab3Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab2Button.setTextColor(getResources().getColor(R.color.white));
+				tab1Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+		}
 	}
 }

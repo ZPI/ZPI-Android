@@ -18,6 +18,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -39,8 +40,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	public static final int MY_REQUEST_CODE_EDIT = 2;
 	public static final int WORKOUT_REQUEST2 = 0x3;
 	public static final String WORKOUTS_NUMBER_TAG = "work_count";
-	GestureDetector gestureDetector;
-	MyGestureDetector myGestureDetector;
+	private GestureDetector gestureDetector;
+	private MyGestureDetector myGestureDetector;
 	private View.OnTouchListener gestureListener;
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
 	private static final String TAB_SPEC_2_TAG = "TabSpec2";
@@ -56,13 +57,18 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	private View mCurrent;
 	private AdapterContextMenuInfo info;
 	
+	private Button tab1Button;
+	private Button tab2Button;
+	private TabHost tabHost;
+	private Button currentTabButton;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.planing_activity);
 		prepareGestureListener();
 		
-		TabHost tabHost = (TabHost) findViewById(R.id.tabhost);
+		tabHost = (TabHost) findViewById(R.id.tabhost);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
 		tabSpecs.setContent(R.id.tab1);
@@ -87,6 +93,15 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		plansMainScreenButton = (ImageButton) findViewById(R.id.imageButtonTraningPlansMainScreen);
 		workoutsMainScreenButton = (ImageButton) findViewById(R.id.imageButtonPlaningActMainScreen);
 		//newWorkoutButton.setOnClickListener(this);
+		
+		LinearLayout tab1 = (LinearLayout) findViewById(R.id.linearLayoutPlansTab1);
+		LinearLayout tab2 = (LinearLayout) findViewById(R.id.linearLayoutPlansTab2);
+		tab1Button = (Button) tab1.findViewById(R.id.buttonTabLeft);
+		tab2Button = (Button) tab2.findViewById(R.id.buttonTabRight);
+		tab1Button.setText(getResources().getString(R.string.workouts));
+		tab2Button.setText(getResources().getString(R.string.trening_plans));
+		currentTabButton = tab1Button;
+		setTab(0);
 		registerForContextMenu(workoutsListView);
 		addListeners();
 	}
@@ -160,6 +175,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		workoutsListView.setOnItemClickListener(this);
 		plansMainScreenButton.setOnTouchListener(gestureListener);
 		workoutsMainScreenButton.setOnTouchListener(gestureListener);
+		tab1Button.setOnTouchListener(gestureListener);
+		tab2Button.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
@@ -281,10 +298,37 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 					
 					break;
+				case R.id.buttonTabLeft:
+					setTab(0);
+					break;
+				case R.id.buttonTabRight:
+					setTab(1);
+					break;
 			
 			}
 		}
 		
+	}
+	
+	private void setTab(int nr)
+	{
+		tabHost.setCurrentTab(nr);
+		currentTabButton.setSelected(false);
+		switch (nr)
+		{
+			case 0:
+				tab1Button.setSelected(true);
+				tab2Button.setSelected(false);
+				tab1Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab2Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+			case 1:
+				tab2Button.setSelected(true);
+				tab1Button.setSelected(false);
+				tab2Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab1Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+		}
 	}
 	
 }

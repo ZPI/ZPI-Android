@@ -21,7 +21,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
@@ -55,6 +57,10 @@ public class HistoryActivity extends Activity implements GestureListener,
 	
 	private static final int FILTER_MONTH = 0;
 	private static final int FILTER_WEEK = 1;
+	
+	private Button tab1Button;
+	private Button tab2Button;
+	private Button tab3Button;
 	
 	private TabHost tabHost;
 	private View mCurrent;
@@ -91,6 +97,18 @@ public class HistoryActivity extends Activity implements GestureListener,
 		tabSpecs.setContent(R.id.tabAll);
 		tabSpecs.setIndicator(getResources().getString(R.string.all));
 		tabHost.addTab(tabSpecs);
+		
+		LinearLayout tab1 = (LinearLayout) findViewById(R.id.linearLayoutHistoryTab1);
+		LinearLayout tab2 = (LinearLayout) findViewById(R.id.linearLayoutHistoryTab2);
+		LinearLayout tab3 = (LinearLayout) findViewById(R.id.linearLayoutHistoryTab3);
+		tab1Button = (Button) tab1.findViewById(R.id.buttonTabLeft);
+		tab2Button = (Button) tab2.findViewById(R.id.buttonTabMiddle);
+		tab3Button = (Button) tab3.findViewById(R.id.buttonTabRight);
+		tab1Button.setText(getResources().getString(R.string.this_week));
+		tab2Button.setText(getResources().getString(R.string.this_month));
+		tab3Button.setText(getResources().getString(R.string.all));
+		setTab(0);
+		
 	}
 	
 	private void initFields()
@@ -129,7 +147,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		Calendar cal = Calendar.getInstance();
 		switch (type) {
 			case FILTER_MONTH:
-				cal.add(Calendar.DATE, -31);	//czy 30? czy wyœwietlaæ tylko bie¿¹cy miesi¹c?
+				cal.add(Calendar.DATE, -31);        //czy 30? czy wyÅ“wietlaÃ¦ tylko bieÂ¿Â¹cy miesiÂ¹c?
 				break;
 			case FILTER_WEEK:
 				cal.add(Calendar.DATE, -7);
@@ -225,6 +243,9 @@ public class HistoryActivity extends Activity implements GestureListener,
 		listViewThisMonth.setOnTouchListener(gestureListener);
 		listViewAll.setOnTouchListener(gestureListener);
 		mainSceenButton.setOnTouchListener(gestureListener);
+		tab1Button.setOnTouchListener(gestureListener);
+		tab2Button.setOnTouchListener(gestureListener);
+		tab3Button.setOnTouchListener(gestureListener);
 	}
 	
 	@Override
@@ -321,7 +342,51 @@ public class HistoryActivity extends Activity implements GestureListener,
 					overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 					
 					break;
+				default:
+					if (mCurrent == tab1Button) {
+						setTab(0);
+					}
+					else if (mCurrent == tab2Button) {
+						setTab(1);
+					}
+					if (mCurrent == tab3Button) {
+						setTab(2);
+					}
+					break;
 			}
+		}
+		
+	}
+	
+	private void setTab(int nr)
+	{
+		tabHost.setCurrentTab(nr);
+		switch (nr)
+		{
+			case 0:
+				tab1Button.setSelected(true);
+				tab2Button.setSelected(false);
+				tab3Button.setSelected(false);
+				tab1Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab2Button.setTextColor(getResources().getColor(R.color.white));
+				tab3Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+			case 1:
+				tab2Button.setSelected(true);
+				tab1Button.setSelected(false);
+				tab3Button.setSelected(false);
+				tab2Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab1Button.setTextColor(getResources().getColor(R.color.white));
+				tab3Button.setTextColor(getResources().getColor(R.color.white));
+				break;
+			case 2:
+				tab3Button.setSelected(true);
+				tab2Button.setSelected(false);
+				tab1Button.setSelected(false);
+				tab3Button.setTextColor(getResources().getColor(R.color.main_color));
+				tab2Button.setTextColor(getResources().getColor(R.color.white));
+				tab1Button.setTextColor(getResources().getColor(R.color.white));
+				break;
 		}
 	}
 	
