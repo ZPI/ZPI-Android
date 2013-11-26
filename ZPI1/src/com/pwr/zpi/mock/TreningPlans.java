@@ -2,9 +2,13 @@ package com.pwr.zpi.mock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
+import com.pwr.zpi.database.entity.WorkoutActionSimple;
 
 public class TreningPlans {
 	
@@ -17,8 +21,8 @@ public class TreningPlans {
 		plan.setName("Name");
 		HashMap<Integer, Workout> w = new HashMap<Integer, Workout>();
 		w.put(2, new Workout()); // it means that 2 days from start of trening plan there's workout(empty)
-		w.put(4, new Workout());
-		w.put(6, new Workout());
+		w.put(4, getSimpleWorkout());
+		w.put(6, getSimpleWorkout2());
 		w.put(8, new Workout());
 		plan.setWorkouts(w);
 		plans.add(plan);
@@ -32,6 +36,28 @@ public class TreningPlans {
 			plan.setID(index);
 			index++;
 		}
+	}
+	
+	private static Workout getSimpleWorkout() {
+		Workout workout = new Workout();
+		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+		actions.add(new WorkoutActionAdvanced(23, 3D));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_FAST, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 5000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_SLOW, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME, 9000));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_STEADY, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 500));
+		workout.setActions(actions);
+		workout.setWarmUp(true);
+		return workout;
+	}
+	
+	private static Workout getSimpleWorkout2() {
+		Workout workout = new Workout();
+		List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
+		actions.add(new WorkoutActionAdvanced(10, 1D));
+		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_STEADY, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 32200));
+		workout.setActions(actions);
+		workout.setWarmUp(false);
+		return workout;
 	}
 	
 	public static ArrayList<TreningPlan> getPlans() {

@@ -2,7 +2,7 @@ package com.pwr.zpi;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TreeSet;
+import java.util.HashMap;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,10 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.entity.TreningPlan;
+import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.utils.Pair;
-import com.pwr.zpi.utils.TimeFormatter;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -29,11 +30,13 @@ public class PlansActivity extends FragmentActivity {
 	private ProgressBar progressLayout;
 	private ListView listViewPlanDayActions;
 	private TextView textViewIsWarmUp;
+	private TextView textViewPlanName;
+	private TextView textViewNoWorkoutActions;
 	private RelativeLayout noActionInDay;
 	private RelativeLayout actionInDay;
 	private TreningPlan plan;
 	
-	private TreeSet<Long> workoutDays;
+	private HashMap<Date, Workout> workoutDays;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +51,14 @@ public class PlansActivity extends FragmentActivity {
 	
 	private void init() {
 		progressLayout = (ProgressBar) findViewById(R.id.progressBarLayout);
-		listViewPlanDayActions = (ListView) findViewById(R.id.listViewActions);
 		noActionInDay = (RelativeLayout) findViewById(R.id.relativeLayoutNoActivityInCurrentDay);
 		actionInDay = (RelativeLayout) findViewById(R.id.relativeLayoutActivityInCurrentDay);
+		listViewPlanDayActions = (ListView) findViewById(R.id.listViewActions);
 		textViewIsWarmUp = (TextView) findViewById(R.id.textViewIsWarmUpSet);
+		textViewPlanName = (TextView) findViewById(R.id.textViewTreningPlanName);
+		textViewNoWorkoutActions = (TextView) findViewById(R.id.textViewNoWorkoutActions);
 		
-		workoutDays = new TreeSet<Long>();
+		workoutDays = new HashMap<Date, Workout>();
 	}
 	
 	private Long getPlanIDFromIntent() {
@@ -96,11 +101,40 @@ public class PlansActivity extends FragmentActivity {
 			
 			@Override
 			public void onSelectDate(Date date, View view) {
-				calendar.setSelectedDates(date, date);
-				Log.i(PlansActivity.class.getSimpleName(), date.toString());
+				calendar.clearSelectedDates();
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(date);
+				Date selected = cal.getTime();
+				calendar.setSelectedDates(selected, selected);
 				calendar.refreshView();
+				
+				Workout workoutForDay = workoutDays.get(selected);
+				setViewForWorkout(workoutForDay);
 			}
+			
 		});
+	}
+	
+	private void setViewForWorkout(Workout workoutForDay) {
+		if (workoutForDay == null) {
+			noActionInDay.setVisibility(View.VISIBLE);
+			actionInDay.setVisibility(View.GONE);
+		} else {
+			noActionInDay.setVisibility(View.GONE);
+			actionInDay.setVisibility(View.VISIBLE);
+			
+			textViewIsWarmUp.setText(workoutForDay.isWarmUp() ? getString(R.string.yes) : getString(R.string.no));
+			if (workoutForDay.getActions() != null) {
+				Log.i(PlansActivity.class.getSimpleName(), "has actions");
+				textViewNoWorkoutActions.setVisibility(View.GONE);
+				listViewPlanDayActions.setVisibility(View.VISIBLE);
+				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workoutForDay.getActions()));
+			} else {
+				Log.i(PlansActivity.class.getSimpleName(), "no actions");
+				listViewPlanDayActions.setVisibility(View.GONE);
+				textViewNoWorkoutActions.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 	
 	@Override
@@ -137,13 +171,17 @@ public class PlansActivity extends FragmentActivity {
 		@Override
 		protected Void doInBackground(TreningPlan... params) {
 			TreningPlan plan = params[0];
+			
 			Calendar cal;
 			for (Integer plusDays : plan.getWorkouts().keySet()) {
 				cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, plusDays);
+				
+				cal = zeroTimeInDate(cal);
+				
 				Date workoutDate = cal.getTime();
-				Log.i(PlansActivity.class.getSimpleName(), TimeFormatter.getDayOnly(workoutDate.getTime()) + "");
-				workoutDays.add(TimeFormatter.getDayOnly(workoutDate.getTime()));
+				workoutDays.put(workoutDate, plan.getWorkouts().get(plusDays));
+				
 				calendar.setBackgroundResourceForDate(R.color.calendar_event_color, workoutDate);
 				calendar.setTextColorForDate(R.color.calendar_event_text_color, workoutDate);
 			}
@@ -153,8 +191,21 @@ public class PlansActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
+			textViewPlanName.setText(plan.getName());
 			calendar.refreshView();
 			progressLayout.setVisibility(View.GONE);
+			Calendar cal = Calendar.getInstance();
+			cal = zeroTimeInDate(cal);
+			Workout workoutForDay = workoutDays.get(cal.getTime());
+			setViewForWorkout(workoutForDay);
 		}
+	}
+	
+	private Calendar zeroTimeInDate(Calendar cal) {
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
 	}
 }

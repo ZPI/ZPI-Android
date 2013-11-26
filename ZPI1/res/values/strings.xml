@@ -86,6 +86,7 @@
 	<string name="edit_workout">Edit Workout</string>
 	<string name="edit_action">Edit Action</string>
 	<string name="edit">Edit</string>
+	<string name="no_workout_actions">This workout has no actions.</string>
 	<string-array name="choose_action">
 	    <item >New Interval Action</item>
 	    <item >New Virtual Partner Action</item>

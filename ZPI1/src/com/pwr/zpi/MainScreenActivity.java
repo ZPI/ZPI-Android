@@ -623,12 +623,17 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			
 			long totalTime = 0;
 			double distance = 0;
-			int count = runs.size();
-			for (SingleRun run : runs)
-			{
-				totalTime += run.getRunTime();
-				distance += run.getDistance();
-				
+			int count;
+			if (runs != null) {
+				count = runs.size();
+				for (SingleRun run : runs)
+				{
+					totalTime += run.getRunTime();
+					distance += run.getDistance();
+					
+				}
+			} else {
+				count = 0;
 			}
 			Pair<Pair<Integer, Long>, Double> data = new Pair<Pair<Integer, Long>, Double>(new Pair<Integer, Long>(
 				count, totalTime), distance);

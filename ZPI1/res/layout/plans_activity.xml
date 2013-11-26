@@ -8,7 +8,6 @@
         android:id="@+id/textViewTreningPlanName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <RelativeLayout
@@ -45,7 +44,8 @@
         <RelativeLayout
             android:id="@+id/relativeLayoutActivityInCurrentDay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/textView1"
@@ -57,13 +57,26 @@
                 android:text="@string/actions"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <ListView
-                android:id="@+id/listViewActions"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textView2"
-                android:layout_below="@+id/textView1" >
-            </ListView>
+                android:layout_height="match_parent"
+                android:layout_below="@+id/textView1"
+                android:layout_above="@+id/textView2" >
+
+                <ListView
+                    android:id="@+id/listViewActions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                </ListView>
+
+                <TextView
+                    android:id="@+id/textViewNoWorkoutActions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/no_workout_actions"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/textView2"

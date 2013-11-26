@@ -43,11 +43,4 @@ public class TimeFormatter {
 		
 	}
 	
-	public static long getDayOnly(long time) {
-		int toDays = 1000 * 60 * 60 * 24;
-		long onlyDays = time / toDays;
-		onlyDays *= toDays;
-		return onlyDays;
-		
-	}
 }
