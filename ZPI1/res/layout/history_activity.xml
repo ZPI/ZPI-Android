@@ -22,8 +22,41 @@
                 <TabWidget
                     android:id="@android:id/tabs"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
                 </TabWidget>
+
+                <LinearLayout
+                    android:id="@+id/tabbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal" >
+
+                    <include
+                        android:id="@+id/linearLayoutHistoryTab1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        layout="@layout/left_tab"
+                        android:clickable="true" />
+
+                    <include
+                        android:id="@+id/linearLayoutHistoryTab2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        layout="@layout/middle_tab"
+                        android:clickable="true" />
+
+                    <include
+                        android:id="@+id/linearLayoutHistoryTab3"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        layout="@layout/right_tab"
+                        android:clickable="true" />
+                </LinearLayout>
 
                 <FrameLayout
                     android:id="@android:id/tabcontent"
@@ -89,10 +122,10 @@
                 android:gravity="center"
                 android:text="@string/no_history_info"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-            
         </RelativeLayout>
     </FrameLayout>
-  <ImageButton
+
+    <ImageButton
         android:id="@+id/buttonHistoryMainScreen"
         android:layout_width="@dimen/switch_screen_button_size"
         android:layout_height="@dimen/switch_screen_button_size"
@@ -101,4 +134,5 @@
         android:layout_marginBottom="@dimen/history_button_margin"
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_main_screen" />
+
 </RelativeLayout>

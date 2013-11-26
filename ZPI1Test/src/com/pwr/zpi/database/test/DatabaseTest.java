@@ -43,6 +43,7 @@ public class DatabaseTest extends AndroidTestCase {
 		singleRun.setEndDate(new Date(number * 13000L + 3532000000L));
 		singleRun.setRunTime(number * 130000L);
 		singleRun.setTraceWithTime(prepareTraceWithTime(number));
+		singleRun.setName("testSingleRun");
 		return singleRun;
 	}
 	

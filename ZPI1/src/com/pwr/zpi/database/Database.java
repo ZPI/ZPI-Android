@@ -41,6 +41,7 @@ public class Database extends SQLiteOpenHelper {
 	private static final String DATES_RUN_NUMBER = "d_id_biegu";
 	private static final String DATES_RUN_DISTANCE = "d_dystans_biegu";
 	private static final String DATES_RUN_TIME = "d_czas_biegu";
+	private static final String DATES_RUN_NAME = "d_nazwa_biegu";
 	// points_with_time
 	private static final String PWT_ID = "pwt_id";
 	private static final String PWT_RUN_NUMBER = "pwt_id_biegu";
@@ -76,7 +77,7 @@ public class Database extends SQLiteOpenHelper {
 	// Tables creation schemas
 	private static final String CREATE_TABLE_DATES = "CREATE TABLE " + DATES + "(" + DATES_RUN_NUMBER
 		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + DATES_START_HOUR + " INTEGER, " + DATES_END_HOUR + " INTEGER ,"
-		+ DATES_RUN_DISTANCE + " INTEGER, " + DATES_RUN_TIME + " INTEGER" + ")";
+		+ DATES_RUN_DISTANCE + " INTEGER, " + DATES_RUN_TIME + " INTEGER, " + DATES_RUN_NAME + " TEXT" + ")";
 	private static final String CREATE_TABLE_POINTS_WITH_TIME = "CREATE TABLE " + POINTS_WITH_TIME + "(" + PWT_ID
 		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + PWT_RUN_NUMBER + " INTEGER, " + PWT_SUB_RUN_NUMBER + " INTEGER, "
 		+ PWT_LONGITUDE + " DOUBLE, " + PWT_LATITUDE + " DOUBLE, " + PWT_ALTITUDE + " DOUBLE, " + PWT_TIME_FROM_START
@@ -157,6 +158,7 @@ public class Database extends SQLiteOpenHelper {
 		cv.put(DATES_END_HOUR, singleRun.getEndDate().getTime());
 		cv.put(DATES_RUN_DISTANCE, singleRun.getDistance());
 		cv.put(DATES_RUN_TIME, singleRun.getRunTime());
+		cv.put(DATES_RUN_NAME, singleRun.getName());
 		return db.insert(DATES, null, cv);
 	}
 	
@@ -176,7 +178,8 @@ public class Database extends SQLiteOpenHelper {
 	public SingleRun getRun(long runID) {
 		SQLiteDatabase db = getReadableDatabase();
 		
-		String[] columns = { DATES_START_HOUR, DATES_END_HOUR, DATES_RUN_NUMBER, DATES_RUN_DISTANCE, DATES_RUN_TIME };
+		String[] columns = { DATES_START_HOUR, DATES_END_HOUR, DATES_RUN_NUMBER, DATES_RUN_DISTANCE, DATES_RUN_TIME,
+			DATES_RUN_NAME };
 		
 		Cursor cursor = db
 			.query(DATES, columns, DATES_RUN_NUMBER + "=?", new String[] { runID + "" }, null, null, null);
@@ -193,7 +196,8 @@ public class Database extends SQLiteOpenHelper {
 	
 	public List<SingleRun> getAllRuns() {
 		SQLiteDatabase db = getReadableDatabase();
-		String[] columns = { DATES_START_HOUR, DATES_END_HOUR, DATES_RUN_NUMBER, DATES_RUN_DISTANCE, DATES_RUN_TIME };
+		String[] columns = { DATES_START_HOUR, DATES_END_HOUR, DATES_RUN_NUMBER, DATES_RUN_DISTANCE, DATES_RUN_TIME,
+			DATES_RUN_NAME };
 		ArrayList<SingleRun> runs = null;
 		
 		Cursor cursor = db.query(DATES, columns, null, null, null, null, DATES_START_HOUR + " ASC");
@@ -224,6 +228,8 @@ public class Database extends SQLiteOpenHelper {
 		readSingleRun.setRunID(cursor.getLong(2));
 		readSingleRun.setDistance(cursor.getDouble(3));
 		readSingleRun.setRunTime(cursor.getLong(4));
+		//	if (cursor.get)
+		readSingleRun.setName(cursor.getString(5));
 		if (needAllInfo) {
 			LinkedList<LinkedList<Pair<Location, Long>>> trace = getTraceForRunID(readSingleRun.getRunID(), db);
 			readSingleRun.setTraceWithTime(trace);

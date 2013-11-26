@@ -43,7 +43,7 @@ import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class LocationService extends Service implements LocationListener, ConnectionCallbacks,
-OnConnectionFailedListener, ICountDownListner {
+	OnConnectionFailedListener, ICountDownListner {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -195,13 +195,14 @@ OnConnectionFailedListener, ICountDownListner {
 		}
 		
 		@Override
-		public void doSaveRun(boolean save) throws RemoteException {
+		public void doSaveRun(boolean save, String name) throws RemoteException {
 			if (save) {
-				saveRun();
+				saveRun(name);
 			}
 			distance = 0;
 			pauseTime = 0;
 			locationList = null;
+			
 			stopForeground(true);
 		}
 		
@@ -343,7 +344,7 @@ OnConnectionFailedListener, ICountDownListner {
 		}
 		else if (isConnected
 			&& (latestLocation == null || latestLocation
-			.getAccuracy() > REQUIRED_ACCURACY)) {
+				.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -541,13 +542,13 @@ OnConnectionFailedListener, ICountDownListner {
 	}
 	
 	// invoke when finishing activity
-	private void saveRun() {
+	private void saveRun(String name) {
 		// add last values
 		singleRun.setEndDate(calendar.getTime());
 		singleRun.setRunTime(time);
 		singleRun.setDistance(distance);
 		singleRun.setTraceWithTime(traceWithTime);
-		
+		singleRun.setName(name);
 		// store in DB
 		Database db = new Database(this);
 		db.insertSingleRun(singleRun);

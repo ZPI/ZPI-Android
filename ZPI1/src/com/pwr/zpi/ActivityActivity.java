@@ -11,7 +11,6 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -59,6 +58,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
+	public static final String DISTANCE_TAG = "distance";
+	public static final String AVG_SPEED_TAG = "avg_speed";
+	public static final String AVG_PACE_TAG = "avg_pace";
+	public static final String DURATION_TAG = "duration";
+	public static final String RUN_NUMBER_TAG = "run_number";
+	public static final String NAME_TAG = "name_tag";
 	
 	private GoogleMap mMap;
 	
@@ -94,14 +99,15 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private static final int traceColor = Color.RED;
 	
 	// measured values
-	double pace;
-	double avgPace;
-	double distance;
-	double lastDistance;
-	Long time = 0L;
-	long startTime;
-	long pauseTime;
-	long pauseStartTime;
+	private double pace;
+	private double avgPace;
+	private double distance;
+	private double lastDistance;
+	private Long time = 0L;
+	private long startTime;
+	private long pauseTime;
+	private long pauseStartTime;
+	private int runNumber;
 	
 	private int dataTextView1Content;
 	private int dataTextView2Content;
@@ -148,7 +154,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		long debugT3 = System.currentTimeMillis();
 		Log.i("time", debugT3 + " \t" + (debugT3 - debugT2));
 		
-		Debug.stopMethodTracing();
+		//	Debug.stopMethodTracing();
 	}
 	
 	private Workout getWorkoutData() {
@@ -197,16 +203,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView1Content = distanceID;
 		dataTextView2Content = timeID;
 		
-		// make single run object
-		//	singleRun = new SingleRun();
-		//	calendar = Calendar.getInstance();
-		
-		//	singleRun.setStartDate(calendar.getTime());
 		isPaused = false;
 		
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		runNumber = intent.getIntExtra(RUN_NUMBER_TAG, 0);
 		if (intent.hasExtra(Workout.TAG)) {
 			// drawer initialization
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
@@ -411,8 +413,14 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				catch (RemoteException e) {
 					Log.e(TAG, "Failed to tell that activity is stoped", e);
 				}
+				Intent intent = new Intent(ActivityActivity.this, AfterActivityActivity.class);
+				intent.putExtra(DURATION_TAG, time);
+				intent.putExtra(DISTANCE_TAG, distance);
+				double pace = avgPace = ((double) time / 60) / distance;
+				intent.putExtra(AVG_PACE_TAG, pace);
+				intent.putExtra(RUN_NUMBER_TAG, runNumber);
 				
-				startActivityForResult(new Intent(ActivityActivity.this, AfterActivityActivity.class), MY_REQUEST_CODE);
+				startActivityForResult(intent, MY_REQUEST_CODE);
 			}
 		};
 		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
@@ -427,7 +435,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			if (isServiceConnected && resultCode == RESULT_OK)
 			{
 				try {
-					api.doSaveRun(data.getBooleanExtra(SAVE_TAG, false));
+					String name = data.getStringExtra(NAME_TAG);
+					api.doSaveRun(data.getBooleanExtra(SAVE_TAG, false), name);
 				}
 				catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -436,7 +445,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			}
 			else if (isServiceConnected) {
 				try {
-					api.doSaveRun(false);
+					api.doSaveRun(false, "");
 				}
 				catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -653,9 +662,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-			// camera to east
-			.tilt(60); // Creates a CameraPosition from the builder
+				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+				// camera to east
+				.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
@@ -788,7 +797,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				
 				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(
 					ActivityActivity.this).getString(
-						getString(R.string.key_countdown_before_start), "0"));
+					getString(R.string.key_countdown_before_start), "0"));
 				
 				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}

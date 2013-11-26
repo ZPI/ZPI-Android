@@ -22,6 +22,7 @@
      <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
  	<string name="runs_summary">Runs Summary</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
+    
 
     <!-- meassured values -->
     <string name="distance">Distance</string>
@@ -56,6 +57,7 @@
     <string name="km_per_hour">km/\nh</string>
     <string name="m">m</string>
     <string name="minutes">min</string>
+    <string name="duration">Duration</string>
 
     <!-- workouts -->
     <string name="workouts">Workout</string>
@@ -117,6 +119,7 @@
 	<string name="workout_actions">Workout actions</string>
 	<string name="yes">Yes</string>
 	<string name="no">No</string>
+	<string name="run">Run</string>
 	
 	<!-- settings string -->
 	<string name="settings_title">Application settings</string>
@@ -155,6 +158,10 @@
 	<string name="save">Save</string>
 	<string name="discard">Discard</string>
 	<string name="none">None</string>
+	<string name="remind">Remind me in</string>
+	<string name="set_remind">Set reminder</string>
+	<string name="run_summary">Run summary</string>
+	
 	
 	<string name="no_trening_plan_in_selected_day">No activity for selected day</string>
 	<string name="actions">Actions</string>

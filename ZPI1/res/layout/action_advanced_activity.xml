@@ -20,8 +20,39 @@
             <TabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
             </TabWidget>
+            <LinearLayout
+                android:id="@+id/tabbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal" >
+
+                <include
+                    android:id="@+id/linearLayoutActionAdvancedTab1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    layout="@layout/left_tab"
+                    android:clickable="true" />
+
+                <include
+                    android:id="@+id/linearLayoutActionAdvancedTab2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    layout="@layout/middle_tab"
+                    android:clickable="true" />
+                <include
+                    android:id="@+id/linearLayoutActionAdvancedTab3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    layout="@layout/right_tab"
+                    android:clickable="true" />
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
