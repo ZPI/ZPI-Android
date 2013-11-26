@@ -406,7 +406,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				//Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-		
+				
 		}
 		
 	}
