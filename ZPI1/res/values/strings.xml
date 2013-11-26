@@ -155,4 +155,7 @@
 	<string name="discard">Discard</string>
 	<string name="none">None</string>
 	
+	<string name="no_trening_plan_in_selected_day">No activity for selected day</string>
+	<string name="actions">Actions</string>
+	<string name="how">How</string>
 </resources>

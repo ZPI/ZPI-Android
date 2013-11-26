@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -30,6 +31,7 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.mock.TreningPlans;
 
 public class PlaningActivity extends Activity implements GestureListener, OnItemClickListener
 {
@@ -82,6 +84,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		workoutsListView = (ListView) findViewById(R.id.listViewWorkouts);
 		workoutsListView.setAdapter(workoutAdapter);
 		traningPlansListView = (ListView) findViewById(R.id.listViewPlaningActTraningPlans);
+		traningPlansListView.setAdapter(plansAdapter);
 		
 		newWorkoutButton = (Button) findViewById(R.id.buttonNewWorkout);
 		plansMainScreenButton = (ImageButton) findViewById(R.id.imageButtonTraningPlansMainScreen);
@@ -92,8 +95,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	}
 	
 	private ArrayList<TreningPlan> getTraningPlans() {
-		// TODO Auto-generated method stub
-		return new ArrayList<TreningPlan>();
+		// FIXME remove mock, change to read from db
+		return TreningPlans.getPlans();
 	}
 	
 	private ArrayList<Workout> getWorkoutsFromDB()
@@ -160,25 +163,33 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		workoutsListView.setOnItemClickListener(this);
 		plansMainScreenButton.setOnTouchListener(gestureListener);
 		workoutsMainScreenButton.setOnTouchListener(gestureListener);
+		traningPlansListView.setOnItemClickListener(this);
 	}
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		if (!myGestureDetector.isFlingDetected())
 		{
-			Intent intent = new Intent(PlaningActivity.this, WorkoutActivity.class);
-			Workout workout = (Workout) adapter.getItemAtPosition(position);
-			//new workout
-			
-			intent.putExtra(IS_NEW_TAG, false);
-			intent.putExtra(ID_TAG, workout.getID());
-			
-			startActivityForResult(intent, WORKOUT_REQUEST2);
-			//overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
-			
+			Log.i(PlaningActivity.class.getSimpleName(), "item clicked");
+			if (adapter == workoutsListView) {
+				Intent intent = new Intent(PlaningActivity.this, WorkoutActivity.class);
+				Workout workout = (Workout) adapter.getItemAtPosition(position);
+				//new workout
+				
+				intent.putExtra(IS_NEW_TAG, false);
+				intent.putExtra(ID_TAG, workout.getID());
+				
+				startActivityForResult(intent, WORKOUT_REQUEST2);
+				//overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
+			} else if (adapter == traningPlansListView) {
+				Log.i(PlaningActivity.class.getSimpleName(), "plan activity starting");
+				Intent intent = new Intent(PlaningActivity.this, PlansActivity.class);
+				TreningPlan plan = (TreningPlan) adapter.getItemAtPosition(position);
+				intent.putExtra(ID_TAG, plan.getID());
+				
+				startActivity(intent);
+			}
 		}
-		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
@@ -281,7 +292,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 					
 					break;
-			
+					
 			}
 		}
 		

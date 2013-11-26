@@ -42,4 +42,12 @@ public class TimeFormatter {
 		else return String.format("%02d:%02d:%02d", hours, (int) pace, Math.round(rest));
 		
 	}
+	
+	public static long getDayOnly(long time) {
+		int toDays = 1000 * 60 * 60 * 24;
+		long onlyDays = time / toDays;
+		onlyDays *= toDays;
+		return onlyDays;
+		
+	}
 }
