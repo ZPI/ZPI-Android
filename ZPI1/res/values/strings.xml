@@ -91,10 +91,6 @@
 	<string name="edit_action">Edit Action</string>
 	<string name="edit">Edit</string>
 	<string name="no_workout_actions">This workout has no actions.</string>
-	<string-array name="choose_action">
-	    <item >New Interval Action</item>
-	    <item >New Virtual Partner Action</item>
-	</string-array>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -163,7 +159,9 @@
 	<string name="remind">Remind me in</string>
 	<string name="set_remind">Set reminder</string>
 	<string name="run_summary">Run summary</string>
-	
+	<string name="reminder_dialog_title">Set reminder</string>
+	<string name="reminder_set">Reminder set for</string>
+	<string name="reminder_disable">Reminder disabled</string>
 	
 	<string name="no_trening_plan_in_selected_day">No activity for selected day</string>
 	<string name="actions">Actions</string>

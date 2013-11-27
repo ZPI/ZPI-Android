@@ -8,7 +8,7 @@ import com.pwr.zpi.R;
 
 public class MyDialog {
 	
-	public void showAlertDialog(Context context, int title, int message, int positiveButton, int negativeButton,
+	public AlertDialog showAlertDialog(Context context, int title, int message, int positiveButton, int negativeButton,
 		DialogInterface.OnClickListener positiveButtonHandler, DialogInterface.OnClickListener negativeButtonHandler,
 		CharSequence[] items, DialogInterface.OnClickListener itemsHandler) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -21,11 +21,11 @@ public class MyDialog {
 		}
 		if (!(positiveButton == R.string.empty_string)) {
 			builder
-				.setPositiveButton(positiveButton, positiveButtonHandler);
+			.setPositiveButton(positiveButton, positiveButtonHandler);
 		}
 		if (!(negativeButton == R.string.empty_string)) {
 			builder
-				.setNegativeButton(negativeButton, negativeButtonHandler);
+			.setNegativeButton(negativeButton, negativeButtonHandler);
 		}
 		builder.setItems(items, itemsHandler);
 		// Set other dialog properties
@@ -33,12 +33,12 @@ public class MyDialog {
 		// Create the AlertDialog
 		AlertDialog dialog = builder.create();
 		dialog.show();
-		
+		return dialog;
 	}
 	
-	public void showAlertDialog(Context context, int title, int message, int positiveButton, int negativeButton,
+	public AlertDialog showAlertDialog(Context context, int title, int message, int positiveButton, int negativeButton,
 		DialogInterface.OnClickListener positiveButtonHandler, DialogInterface.OnClickListener negativeButtonHandler) {
-		showAlertDialog(context, title, message, positiveButton, negativeButton, positiveButtonHandler,
+		return showAlertDialog(context, title, message, positiveButton, negativeButton, positiveButtonHandler,
 			negativeButtonHandler, null, null);
 	}
 	

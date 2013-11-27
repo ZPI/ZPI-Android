@@ -22,4 +22,20 @@
         <item name="tenMinutes">10</item>
         <item name="twentyMinutes">20</item>
     </string-array>
+    <string-array name="choose_action">
+	    <item >New Interval Action</item>
+	    <item >New Virtual Partner Action</item>
+	</string-array>
+    <string-array name="reminder_days">
+        <item name="noReminder">Disable reminder</item>
+        <item name="oneDay">1 day</item>
+        <item name="twoDays">2 days</item>
+        <item name="threeDays">3 days</item>
+    </string-array>
+    <string-array name="reminder_hours">
+        <item name="six">6:00</item>
+        <item name="eight">8:00</item>
+        <item name="sixteen">16:00</item>
+        <item name="twenty">20:00</item>
+    </string-array>
 </resources>

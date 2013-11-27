@@ -214,7 +214,7 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:text="@string/set_remind"
-            android:textColor="@color/text_grey"
+            android:textColor="@color/reminder_button_text_color"
             android:textStyle="bold" />
     </LinearLayout>
 
