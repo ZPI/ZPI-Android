@@ -5,6 +5,8 @@
 	<color name="gray_color">#C3D1DA</color>
     <color name="activity_blue">#8800AAFF</color>
     <color name="activity_blue_pressed">#2000AAFF</color>
+    <color name="single_run_text_blue">#023C85</color>
+    <color name="single_run_text_light_blue">#0077FF</color>
     <color name="main_color_drawer">#880077AA</color>
     <color name="main_color_pressed">#CC33AADD</color>
     <color name="count_down_timer_color">#EECC0000</color>
@@ -12,6 +14,8 @@
     <color name="horizontal_line">#CC0077AA</color>
  	<color name="gray_background">#EFEFF4</color>
  	<color name="gray_border">#E3E3E5</color>
+ 	<color name="gray_gradient_start">#C0C8CD</color>
+ 	<color name="gray_gradient_end">#DEE0E2</color>
     <color name="text_grey">#808080</color>
     <color name="discard_button">#d6dfe3</color>
     <color name="transparent">#00000000</color>

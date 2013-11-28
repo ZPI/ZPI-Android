@@ -10,6 +10,9 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -32,13 +35,16 @@ import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class SingleRunHistoryActivity extends FragmentActivity implements
-	OnClickListener {
+	OnClickListener, OnCheckedChangeListener {
 	
 	protected static final String RUN_ID = "runID";
 	
-	GoogleMap mMap;
-	LatLngBounds.Builder boundsBuilder;
-	Polyline traceOnMapObject;
+	private GoogleMap mMap;
+	private LatLngBounds.Builder boundsBuilder;
+	private Polyline traceOnMapObject;
+	
+	private LinkedList<Marker> allMarkers;
+	
 	private TextView distanceTextView;
 	private TextView timeTextView;
 	private TextView avgPaceTextView;
@@ -46,8 +52,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private Button chartButton;
 	private Button splitsButton;
 	private ProgressBar progressBar;
+	private TextView runNameTextView;
+	private CheckBox annotationsCheckBox;
 	
-	SingleRun run;
+	private SingleRun run;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -126,20 +134,21 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private void addStartAndFinish(LatLng startPos, LatLng finishPos)
 	{
 		
-		Marker start = mMap.addMarker(new MarkerOptions()
+		allMarkers.add(mMap.addMarker(new MarkerOptions()
 			.position(startPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_pin)));
-		Marker meta = mMap.addMarker(new MarkerOptions()
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_pin))));
+		allMarkers.add(mMap.addMarker(new MarkerOptions()
 			.position(finishPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_pin)));
-		
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_pin))));;
 	}
 	
 	private void addMarker(Location location, int distance) {
+		
 		Marker marker = mMap.addMarker(new MarkerOptions().position(
 			new LatLng(location.getLatitude(), location.getLongitude()))
 			.title(distance + "km").icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
 		marker.showInfoWindow();
+		allMarkers.add(marker);
 	}
 	
 	private void initFields() {
@@ -153,6 +162,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		avgPaceTextView = (TextView) findViewById(R.id.TextView3History);
 		avgSpeedTextView = (TextView) findViewById(R.id.TextView4History);
 		progressBar = (ProgressBar) findViewById(R.id.progressBarSingleRunHistory);
+		annotationsCheckBox = (CheckBox) findViewById(R.id.checkBoxSingleRunAnnotations);
+		runNameTextView = (TextView) findViewById(R.id.textViewSingleRunName);
+		annotationsCheckBox.setChecked(true);
+		allMarkers = new LinkedList<Marker>();
 	}
 	
 	private void showData() {
@@ -175,17 +188,14 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		//show avgSpeed
 		avgSpeedTextView.setText(String.format("%.2f", speed));
 		
+		runNameTextView.setText(intent.getStringExtra(HistoryActivity.NAME_TAG));
+		
 	}
 	
 	private void addListeners() {
 		chartButton.setOnClickListener(this);
 		splitsButton.setOnClickListener(this);
-	}
-	
-	private void loadData(long runID) {
-		Database database = new Database(this);
-		run = database.getRun(runID);
-		
+		annotationsCheckBox.setOnCheckedChangeListener(this);
 	}
 	
 	@Override
@@ -225,5 +235,18 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			mapCenter();
 		}
 		
+	}
+	
+	private void setMarkersVisibile(boolean areVisible)
+	{
+		for (Marker m : allMarkers)
+		{
+			m.setVisible(areVisible);
+		}
+	}
+	
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		setMarkersVisibile(isChecked);
 	}
 }
