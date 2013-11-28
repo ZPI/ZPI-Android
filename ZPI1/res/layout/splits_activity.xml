@@ -2,16 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/gradient_grey_backgroud" >
-
+    android:background="@drawable/gradient_grey_backgroud"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/big_text_size"
-        android:background="@drawable/view_grey_background"
-        android:cacheColorHint="@color/list_transparent_color" > >
+        android:background="@drawable/view_grey_background" >
 
         <TextView
             android:layout_width="0dp"
@@ -53,7 +51,8 @@
         <ListView
             android:id="@+id/listViewSplits"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:cacheColorHint="@color/list_transparent_color" >
         </ListView>
 
         <RelativeLayout
@@ -70,7 +69,6 @@
                 android:gravity="center"
                 android:text="@string/no_splits_info"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-            
         </RelativeLayout>
     </FrameLayout>
 

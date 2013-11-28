@@ -53,13 +53,17 @@
                 <RelativeLayout
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_background" >
 
                     <ListView
                         android:id="@+id/listViewWorkouts"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_above="@+id/buttonNewWorkout" >
+                        android:layout_above="@+id/buttonNewWorkout"
+                        android:layout_marginTop="@dimen/big_text_size"
+                        android:background="@drawable/view_background"
+                        android:cacheColorHint="@color/list_transparent_color" >
                     </ListView>
 
                     <Button
@@ -67,9 +71,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_margin="@dimen/small_margin"
-                        android:background="@drawable/button_background"
+                        android:background="@drawable/button_border_background_inverted"
+                        android:textColor="@color/main_color"
                         android:padding="@dimen/buttons_padding"
+                        android:textStyle="bold"
                         android:text="@string/new_workout" />
 
                     <ImageButton
@@ -86,12 +91,16 @@
                 <RelativeLayout
                     android:id="@+id/tab2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_background" >
 
                     <ListView
                         android:id="@+id/listViewPlaningActTraningPlans"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" >
+                        android:layout_height="wrap_content" 
+                        android:layout_marginTop="@dimen/big_text_size"
+                        android:background="@drawable/view_background"
+                        android:cacheColorHint="@color/list_transparent_color">
                     </ListView>
 
                     <ImageButton
