@@ -59,7 +59,9 @@
                 android:gravity="center"
                 android:padding="@dimen/buttons_padding"
                 android:text="@string/splits"
-                android:textColor="@color/single_run_text_light_blue" />
+
+     			android:focusable="false"
+                android:textColor="@color/text_grey" />
 
             <Button
                 android:id="@+id/buttonCharts"
@@ -71,7 +73,8 @@
                 android:gravity="center"
                 android:padding="@dimen/buttons_padding"
                 android:text="@string/charts"
-                android:textColor="@color/single_run_text_light_blue" />
+                android:focusable="false"
+                android:textColor="@color/text_grey" />
         </LinearLayout>
 
         <RelativeLayout

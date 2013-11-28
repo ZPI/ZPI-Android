@@ -207,15 +207,19 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	
 	@Override
 	public void onClick(View view) {
-		if (view == chartButton) {
-			Intent i = LineChart.getChartForData(run, this);
-			startActivity(i);
-		}
-		else if (view == splitsButton) {
-			Intent i = new Intent(SingleRunHistoryActivity.this,
-				SplitsActivity.class);
-			i.putExtra(RUN_ID, run.getRunID());
-			startActivity(i);
+		if (run != null) {
+			if (view == chartButton) {
+				Intent i = LineChart.getChartForData(run, this);
+				startActivity(i);
+			}
+			else if (view == splitsButton) {
+				Intent i = new Intent(SingleRunHistoryActivity.this,
+					SplitsActivity.class);
+				
+				i.putExtra(RUN_ID, run.getRunID());
+				startActivity(i);
+				
+			}
 		}
 	}
 	
@@ -233,6 +237,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			SingleRunHistoryActivity.this.run = run;
 			
 			mapCenter();
+			splitsButton.setFocusable(true);
+			chartButton.setFocusable(true);
+			splitsButton.setTextColor(getResources().getColor(R.color.single_run_text_light_blue));
+			chartButton.setTextColor(getResources().getColor(R.color.single_run_text_light_blue));
 		}
 		
 	}
