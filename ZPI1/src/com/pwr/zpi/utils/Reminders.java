@@ -13,17 +13,24 @@ public class Reminders {
 	
 	private static final int DEFAULT_REQUEST_CODE = 0;
 	
-	public static void setRemainder(Context activity, Date when) {
-		AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(activity, NotifyService.class);
-		PendingIntent pendingIntent = PendingIntent.getService(activity, DEFAULT_REQUEST_CODE, intent, 0);
-		alarmManager.set(AlarmManager.RTC, when.getTime(), pendingIntent);
+	private static PendingIntent getPendingIntent(Context context) {
+		Intent intent = new Intent(context, NotifyService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(context, DEFAULT_REQUEST_CODE, intent, 0);
+		return pendingIntent;
 	}
 	
-	public static void cancelAllReminders(Context activity) {
-		AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(activity, NotifyService.class);
-		PendingIntent pendingIntent = PendingIntent.getService(activity, DEFAULT_REQUEST_CODE, intent, 0);
-		alarmManager.cancel(pendingIntent);
+	public static void setRemainder(Context context, Date when) {
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarmManager.set(AlarmManager.RTC, when.getTime(), getPendingIntent(context));
+	}
+	
+	public static void setRemainderEvery(Context context, Date startDate, long repeatTime) {
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarmManager.setRepeating(AlarmManager.RTC, startDate.getTime(), repeatTime, getPendingIntent(context));
+	}
+	
+	public static void cancelAllReminders(Context context) {
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarmManager.cancel(getPendingIntent(context));
 	}
 }

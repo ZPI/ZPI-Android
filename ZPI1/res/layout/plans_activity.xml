@@ -4,6 +4,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main_color" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/strzalka" />
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="@string/workouts"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="@string/select"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/textViewTreningPlanName"
         android:layout_width="match_parent"
@@ -13,7 +42,8 @@
     <RelativeLayout
         android:id="@+id/calendarFragmentPlace"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
         <ProgressBar
             android:id="@+id/progressBarLayout"
@@ -60,8 +90,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/textView1"
-                android:layout_above="@+id/textView2" >
+                android:layout_above="@+id/textView2"
+                android:layout_below="@+id/textView1" >
 
                 <ListView
                     android:id="@+id/listViewActions"

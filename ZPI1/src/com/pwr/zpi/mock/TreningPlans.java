@@ -12,6 +12,10 @@ import com.pwr.zpi.database.entity.WorkoutActionSimple;
 
 public class TreningPlans {
 	
+	// for shared preferences
+	public static final String TRENING_PLANS_IS_ENABLED_KEY = "is_enabled_trening_plan";
+	public static final String TRENING_PLANS_ID_KEY = "trening_plan_key";
+	
 	static ArrayList<TreningPlan> plans;
 	
 	//TODO write plans here
