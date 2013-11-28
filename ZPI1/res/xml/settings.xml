@@ -1,36 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/settings_title" >
+    <PreferenceCategory
+        android:layout="@layout/setting_header"
+        android:title="@string/settings_title_reminder" >
+        
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/reminder_days"
+            android:entryValues="@array/reminder_days_values"
+            android:dialogTitle="@string/reminder_day_dialog_title"
+            android:key="@string/reminder_day_key"
+            android:title="@string/reminder_day" />
+        
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/reminder_hours"
+            android:entryValues="@array/reminder_hours_values"
+            android:dialogTitle="@string/reminder_hour_dialog_title"
+            android:key="@string/reminder_hour_key"
+            android:title="@string/reminder_hour" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:layout="@layout/setting_header"
+        android:title="@string/settings_title_application" >
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/key_aplication_sound"
-            android:summary="@string/aplication_sound_description"
             android:title="@string/aplication_sound" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_auto_pause"
-            android:summary="@string/auto_pause_description"
             android:title="@string/auto_pause" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/key_map_3d"
-            android:summary="@string/map_3d_description"
             android:title="@string/map_3d" />
+
         <ListPreference
             android:defaultValue="0"
-            android:key="@string/key_countdown_before_start"
-            android:summary="@string/countdown_before_start_description"
             android:entries="@array/countDownValuesNames"
             android:entryValues="@array/countDownValues"
+            android:key="@string/key_countdown_before_start"
             android:title="@string/countdown_before_start" />
         <ListPreference
             android:defaultValue="3"
-            android:key="@string/key_warm_up_time"
-            android:summary="@string/warm_up_time_description"
             android:entries="@array/warmUpValuesNames"
             android:entryValues="@array/warmUpValues"
+            android:key="@string/key_warm_up_time"
             android:title="@string/warm_up_time" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:layout="@layout/setting_header"
+        android:title="@string/settings_title_other" >
+        
+        <EditTextPreference 
+            android:title="@string/version_title"
+            android:negativeButtonText="@null"
+            android:dialogLayout="@layout/settings_edit_text_preference"
+            android:dialogMessage="@string/version" />
+        <EditTextPreference 
+            android:title="@string/about_title"
+            android:negativeButtonText="@null"
+            android:dialogLayout="@layout/settings_edit_text_preference"
+            android:dialogMessage="@string/about" />
+        
     </PreferenceCategory>
 
 </PreferenceScreen>

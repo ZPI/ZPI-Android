@@ -32,10 +32,22 @@
         <item name="twoDays">2 days</item>
         <item name="threeDays">3 days</item>
     </string-array>
+    <string-array name="reminder_days_values">
+        <item name="noReminder">0</item>
+        <item name="oneDay">1</item>
+        <item name="twoDays">2</item>
+        <item name="threeDays">3</item>
+    </string-array>
     <string-array name="reminder_hours">
         <item name="six">6:00</item>
         <item name="eight">8:00</item>
         <item name="sixteen">16:00</item>
         <item name="twenty">20:00</item>
+    </string-array>
+    <string-array name="reminder_hours_values">
+        <item name="six">6</item>
+        <item name="eight">8</item>
+        <item name="sixteen">16</item>
+        <item name="twenty">20</item>
     </string-array>
 </resources>

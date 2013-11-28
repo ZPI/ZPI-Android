@@ -120,22 +120,25 @@
 	<string name="run">Run</string>
 	
 	<!-- settings string -->
-	<string name="settings_title">Application settings</string>
+	<string name="settings_title_reminder">Workout reminder</string>
+	<string name="settings_title_application">Application settings</string>
+	<string name="settings_title_other">Other</string>
 	<string name="key_aplication_sound">sound_app_key</string>
-	<string name="aplication_sound">Enable application sounds</string>
-	<string name="aplication_sound_description">enabled voices on workout</string>
+	<string name="aplication_sound">In-App sounds</string>
 	<string name="key_auto_pause">auto_pause_key</string>
-	<string name="auto_pause">Enable auto pause</string>
-	<string name="auto_pause_description">enabled auto pause when speed is about zero</string>
+	<string name="auto_pause">Auto pause</string>
 	<string name="key_countdown_before_start">countdown_key</string>
-	<string name="countdown_before_start">Set countdown before start</string>
-	<string name="countdown_before_start_description">set count down before start</string>
+	<string name="countdown_before_start">Countdown</string>
 	<string name="key_map_3d">map_key</string>
-	<string name="map_3d">Enable map 3D mode</string>
-	<string name="map_3d_description">enabled 3d mode view or use 2d if not enabled</string>
+	<string name="map_3d">Map in 3D mode</string>
 	<string name="key_warm_up_time">warm_up_time</string>
-	<string name="warm_up_time">Set warm up time</string>
-	<string name="warm_up_time_description">set warm up time for every workout</string>
+	<string name="warm_up_time">Warm up</string>
+	<string name="reminder_day_key">reminder_day_key</string>
+	<string name="reminder_day">Reminder day</string>
+	<string name="reminder_day_dialog_title">Remind me every</string>
+	<string name="reminder_hour_key">reminder_hour_key</string>
+	<string name="reminder_hour">Reminder hour</string>
+	<string name="reminder_hour_dialog_title">Remind me at</string>
 	
 	<!-- speech strings -->
 	<string name="go">GO</string>
@@ -166,4 +169,11 @@
 	<string name="no_trening_plan_in_selected_day">No activity for selected day</string>
 	<string name="actions">Actions</string>
 	<string name="how">How</string>
+	<string name="select">Select</string>
+	
+	<!-- about application -->
+	<string name="version_title">Version</string>
+	<string name="version">2.1.3.4.5.6 LOL xD</string>
+	<string name="about_title">About</string>
+	<string name="about">This application was developed by \n Jakub Skuldarski and Marek Kresnicki. \n Run safe and beat all records.</string>
 </resources>
