@@ -406,7 +406,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				//Log.i("time", (debugT2 - debugT1) + " srodek");
 				startActivity(ActivityActivity.class, DOWN);
 				break;
-		
+				
 		}
 		
 	}
@@ -625,14 +625,17 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			
 			long totalTime = 0;
 			double distance = 0;
-			
-			int count = (runs == null) ? 0 : runs.size();
-			for (int i = 0; i < count; i++)
-			{
-				
-				totalTime += runs.get(i).getRunTime();
-				distance += runs.get(i).getDistance();
-				
+			int count;
+			if (runs != null) {
+				count = runs.size();
+				for (SingleRun run : runs)
+				{
+					totalTime += run.getRunTime();
+					distance += run.getDistance();
+					
+				}
+			} else {
+				count = 0;
 			}
 			Pair<Pair<Integer, Long>, Pair<Double, Integer>> data = new Pair<Pair<Integer, Long>, Pair<Double, Integer>>(
 				new Pair<Integer, Long>(

@@ -24,6 +24,7 @@
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -91,15 +92,28 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".PlansActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
             android:name="org.achartengine.GraphicalActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        
 
         <service
             android:name="com.pwr.zpi.services.LocationService"
             android:process=":remote" >
             <intent-filter>
                 <action android:name="com.pwr.zpi.services.LocationService" />
+            </intent-filter>
+        </service>
+        
+        <service
+            android:name="com.pwr.zpi.services.NotifyService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="com.pwr.zpi.services.NotifyService" />
             </intent-filter>
         </service>
 

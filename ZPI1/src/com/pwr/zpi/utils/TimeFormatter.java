@@ -42,4 +42,5 @@ public class TimeFormatter {
 		else return String.format("%02d:%02d:%02d", hours, (int) pace, Math.round(rest));
 		
 	}
+	
 }

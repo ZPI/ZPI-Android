@@ -1,6 +1,12 @@
 package com.pwr.zpi;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,7 +14,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.pwr.zpi.dialogs.MyDialog;
+import com.pwr.zpi.utils.Reminders;
+import com.pwr.zpi.utils.Time;
 import com.pwr.zpi.utils.TimeFormatter;
 
 public class AfterActivityActivity extends Activity implements OnClickListener {
@@ -30,8 +40,7 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 	}
 	
-	private void initFields()
-	{
+	private void initFields() {
 		buttonDiscard = (Button) findViewById(R.id.buttonAfterActivityDiscard);
 		buttonSave = (Button) findViewById(R.id.buttonAfterActivitySave);
 		runName = (EditText) findViewById(R.id.editTextAfterActivityRunName);
@@ -55,8 +64,7 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 		runName.setText(getResources().getString(R.string.run) + (runNumber + 1));
 	}
 	
-	private void addListeners()
-	{
+	private void addListeners() {
 		buttonDiscard.setOnClickListener(this);
 		buttonSave.setOnClickListener(this);
 		reminderBt.setOnClickListener(this);
@@ -65,8 +73,7 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		Intent returnIntent = new Intent();
-		switch (v.getId())
-		{
+		switch (v.getId()) {
 			case R.id.buttonAfterActivitySave:
 				returnIntent.putExtra(ActivityActivity.SAVE_TAG, true);
 				setResult(RESULT_OK, returnIntent);
@@ -79,9 +86,87 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 				finish();
 				break;
 			case R.id.buttonAfterActivityRemind:
-				//TODO
+				showReminderDialog();
 				break;
 		}
 		
+	}
+	
+	AlertDialog dayDialog;
+	AlertDialog hourDialog;
+	int plusDay;
+	int hour;
+	
+	private void showReminderDialog() {
+		CharSequence[] items = getResources().getStringArray(R.array.reminder_days);
+		MyDialog dialog = new MyDialog();
+		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0:
+						Reminders.cancelAllReminders(AfterActivityActivity.this.getApplicationContext());
+						Toast.makeText(AfterActivityActivity.this, getString(R.string.reminder_disable),
+							Toast.LENGTH_SHORT).show();
+						break;
+					case 1:
+					case 2:
+					case 3:
+						plusDay = which;
+						startHourDialog();
+						break;
+					default:
+						break;
+				}
+			}
+		};
+		dayDialog = dialog.showAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
+			R.string.empty_string, android.R.string.cancel, null, null, items, itemsHandler);
+	}
+	
+	private void startHourDialog() {
+		CharSequence[] items = getResources().getStringArray(R.array.reminder_hours);
+		MyDialog dialog = new MyDialog();
+		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+					case 0:
+						hour = 6;
+						break;
+					case 1:
+						hour = 8;
+						break;
+					case 2:
+						hour = 16;
+						break;
+					case 3:
+						hour = 20;
+						break;
+					default:
+						Reminders.cancelAllReminders(getApplicationContext());
+						return; //by intention
+				}
+				Date reminderDate = setReminderForSelectedDay(plusDay, hour);
+				Toast.makeText(
+					AfterActivityActivity.this,
+					getString(R.string.reminder_set) + " "
+						+ new SimpleDateFormat("HH:mm dd-MM-yyyy").format(reminderDate), Toast.LENGTH_LONG).show();
+			}
+			
+		};
+		dayDialog = dialog.showAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
+			R.string.empty_string, android.R.string.cancel, null, null, items, itemsHandler);
+	}
+	
+	private Date setReminderForSelectedDay(int plusDay, int hour) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, plusDay);
+		Date reminderDate = Time.getDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+			cal.get(Calendar.DAY_OF_MONTH), hour, 0, 0);
+		Reminders.setRemainder(getApplicationContext(), reminderDate);
+		return reminderDate;
 	}
 }

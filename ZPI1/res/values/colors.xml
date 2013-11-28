@@ -20,6 +20,8 @@
 	<color name="workout_drawer_active">#AAFFFFFF</color>
 	<color name="workout_drawer_not_active">#660077AA</color>
 	<color name="white">#FFFFFF</color>
+	<color name="calendar_event_color">#1313A213</color>
+	<color name="calendar_event_text_color">#FFFFFF</color>
 	<color name="save_button">#1eaff8</color>
 	<color name="red">#f61e1f</color>
 	

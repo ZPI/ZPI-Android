@@ -1,21 +1,18 @@
 package com.pwr.zpi.database.entity;
 
-import java.util.Date;
-import java.util.LinkedList;
-
-import com.pwr.zpi.utils.Pair;
+import java.util.HashMap;
 
 public class TreningPlan {
-	//TODO
 	
-	private LinkedList<Pair<Workout, Date>> workouts;
+	private long ID;
+	private HashMap<Integer, Workout> workouts;
 	private String name;
 	
-	public LinkedList<Pair<Workout, Date>> getWorkouts() {
+	public HashMap<Integer, Workout> getWorkouts() {
 		return workouts;
 	}
 	
-	public void setWorkouts(LinkedList<Pair<Workout, Date>> workouts) {
+	public void setWorkouts(HashMap<Integer, Workout> workouts) {
 		this.workouts = workouts;
 	}
 	
@@ -25,6 +22,14 @@ public class TreningPlan {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public long getID() {
+		return ID;
+	}
+	
+	public void setID(long id) {
+		this.ID = id;
 	}
 	
 }
