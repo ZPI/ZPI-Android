@@ -25,6 +25,7 @@ public class TreningPlans {
 		TreningPlan plan = new TreningPlan();
 		plan.setName("Name");
 		HashMap<Integer, Workout> w = new HashMap<Integer, Workout>();
+		w.put(0, getSimpleWorkout2());
 		w.put(2, new Workout()); // it means that 2 days from start of trening plan there's workout(empty)
 		w.put(4, getSimpleWorkout());
 		w.put(6, getSimpleWorkout2());
@@ -52,6 +53,7 @@ public class TreningPlans {
 		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_STEADY, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 500));
 		workout.setActions(actions);
 		workout.setWarmUp(true);
+		workout.setRepeatCount(1);
 		return workout;
 	}
 	
@@ -62,6 +64,9 @@ public class TreningPlans {
 		actions.add(new WorkoutActionSimple(WorkoutAction.ACTION_SIMPLE_SPEED_STEADY, WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE, 32200));
 		workout.setActions(actions);
 		workout.setWarmUp(false);
+		workout.setID(1212);
+		workout.setName("workout 1 ");
+		workout.setRepeatCount(1);
 		return workout;
 	}
 	

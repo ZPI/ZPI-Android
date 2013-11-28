@@ -10,33 +10,39 @@
         android:background="@color/main_color" >
 
         <ImageView
+            android:id="@+id/imageViewArrow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/strzalka" />
-        
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:text="@string/workouts"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white" />
 
-        <TextView
+        <Button
+            android:id="@+id/buttonLeftBarLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/medium_margin"
             android:layout_weight="1"
-            android:gravity="right"
+            android:background="@color/transparent"
+            android:gravity="left|center_vertical"
+            android:text="@string/workouts"
+            android:textColor="@color/clicable_text_color" />
+
+        <Button
+            android:id="@+id/buttonRightBarLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/medium_margin"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:gravity="right|center_vertical"
             android:text="@string/select"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white" />
+            android:textColor="@color/clicable_text_color" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/textViewTreningPlanName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/medium_margin"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <RelativeLayout
@@ -84,6 +90,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/medium_margin"
                 android:text="@string/actions"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -115,6 +122,7 @@
                 android:layout_above="@+id/linearLayout1"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/medium_margin"
                 android:text="@string/how"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -128,6 +136,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/medium_margin"
                     android:layout_weight="1"
                     android:text="@string/warmup"
                     android:textAppearance="?android:attr/textAppearanceMedium" />

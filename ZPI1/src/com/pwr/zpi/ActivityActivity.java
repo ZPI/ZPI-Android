@@ -662,9 +662,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
 			builder
-				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
-				// camera to east
-				.tilt(60); // Creates a CameraPosition from the builder
+			.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			// camera to east
+			.tilt(60); // Creates a CameraPosition from the builder
 		}
 		return builder.build();
 	}
@@ -797,7 +797,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				
 				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(
 					ActivityActivity.this).getString(
-					getString(R.string.key_countdown_before_start), "0"));
+						getString(R.string.key_countdown_before_start), "0"));
 				
 				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}

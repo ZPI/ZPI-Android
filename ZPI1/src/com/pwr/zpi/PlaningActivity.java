@@ -202,7 +202,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				Log.i(PlaningActivity.class.getSimpleName(), "plan activity starting");
 				Intent intent = new Intent(PlaningActivity.this, PlansActivity.class);
 				TreningPlan plan = (TreningPlan) adapter.getItemAtPosition(position);
-				intent.putExtra(ID_TAG, plan.getID());
+				intent.putExtra(PlansActivity.ID_KEY, plan.getID());
 				
 				startActivity(intent);
 			}
