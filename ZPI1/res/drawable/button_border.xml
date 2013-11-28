@@ -15,6 +15,6 @@
 
     <stroke
         android:width="2px"
-        android:color="@color/gray_color" />
+        android:color="@color/gray_border" />
 
 </shape>

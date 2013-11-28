@@ -53,6 +53,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	public static final String ID_TAG = "id";
 	public static final String DISTANCE_TAG = "dist";
 	public static final String TIME_TAG = "time";
+	public static final String NAME_TAG = "name";
 	List<SingleRun> run_data;
 	
 	private static final int FILTER_MONTH = 0;
@@ -260,6 +261,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 			intent.putExtra(ID_TAG, selectedValue.getRunID());
 			intent.putExtra(DISTANCE_TAG, selectedValue.getDistance());
 			intent.putExtra(TIME_TAG, selectedValue.getRunTime());
+			intent.putExtra(NAME_TAG, selectedValue.getName());
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 		}

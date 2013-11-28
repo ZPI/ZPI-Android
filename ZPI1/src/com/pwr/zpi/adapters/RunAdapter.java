@@ -38,9 +38,9 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 			row = inflater.inflate(layoutResourceId, parent, false);
 			
 			holder = new RunHolder();
-			holder.date = (TextView) row.findViewById(R.id.textViewItemDate);
-			holder.distance = (TextView) row.findViewById(R.id.textViewItemDistance);
-			holder.time = (TextView) row.findViewById(R.id.textViewItemTime);
+			holder.date = (TextView) row.findViewById(R.id.textViewHistoryItemDate);
+			holder.distance = (TextView) row.findViewById(R.id.textViewHistoryItemDistance);
+			holder.name = (TextView) row.findViewById(R.id.textViewHistoryItemName);
 			
 			row.setTag(holder);
 		}
@@ -51,7 +51,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 		
 		SingleRun run = getItem(position);
 		
-		holder.time.setText(convertTime(run.getRunTime()));
+		holder.name.setText(run.getName());
 		holder.date.setText(DateFormat.format("yyyy.MM.dd, kk:mm", run.getStartDate()));
 		holder.distance.setText(String.format("%.3fkm", run.getDistance() / 1000));
 		
@@ -76,7 +76,7 @@ public class RunAdapter extends ArrayAdapter<SingleRun> {
 	{
 		TextView date;
 		TextView distance;
-		TextView time;
+		TextView name;
 	}
 	
 }

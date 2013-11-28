@@ -92,6 +92,9 @@
 	<string name="edit">Edit</string>
 	<string name="no_workout_actions">This workout has no actions.</string>
 	
+	<!--history -->
+	<string name="Annotations">Annotations</string>
+	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
     <string name="chart_ox_distance">Distance</string>
