@@ -100,23 +100,23 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/small_margin"
-            android:layout_weight="1"
             android:text="@string/trening_plans"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/textViewMainScreenTreningPlans"
+        
+        <Button
+            android:id="@+id/buttonMainScreenTreningPlans"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="bottom|center"
+            android:background="@color/transparent"
             android:text="@string/none"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white" />
+            android:textColor="@color/main_screen_clicable_text_color"
+            android:textStyle="bold" />
     </LinearLayout>
     
     <View

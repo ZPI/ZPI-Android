@@ -1,6 +1,8 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -10,12 +12,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -34,11 +38,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
@@ -58,6 +64,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
+	private Button treningPlansButton;
 	private RelativeLayout runSummaryRelativeLayout;
 	private TextView runSummaryDistanceTextView;
 	private TextView runSummaryTotalTimeTextView;
@@ -75,6 +82,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private Workout workout;
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
+	private TreningPlan treningPlan;
 	
 	public static final short GPS_NOT_ENABLED = 0;
 	public static final short NO_GPS_SIGNAL = 1;
@@ -101,22 +109,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		super.onCreate(savedInstanceState);
 		handler = new Handler();
 		setContentView(R.layout.main_screen_activity);
-		isServiceConnected = false;
 		
-		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
-		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
-		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
-		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
-		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
-		startButton = (Button) findViewById(R.id.buttonStart);
-		musicButton = (Button) findViewById(R.id.buttonMusic);
-		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
-		runSummaryDistanceTextView = (TextView) findViewById(R.id.textViewMSDistance);
-		runSummaryTotalTimeTextView = (TextView) findViewById(R.id.textViewMSTotalTime);
-		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
-		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
-		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
-		// locationListener = new MyLocationListener(this);
+		init();
 		
 		prepareGestureListener();
 		addListeners();
@@ -126,6 +120,35 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		runNumber = 0;
 		isConnected = false;
 		
+	}
+	
+	private void init() {
+		isServiceConnected = false;
+		
+		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
+		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
+		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
+		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
+		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
+		startButton = (Button) findViewById(R.id.buttonStart);
+		musicButton = (Button) findViewById(R.id.buttonMusic);
+		treningPlansButton = (Button) findViewById(R.id.buttonMainScreenTreningPlans);
+		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
+		runSummaryDistanceTextView = (TextView) findViewById(R.id.textViewMSDistance);
+		runSummaryTotalTimeTextView = (TextView) findViewById(R.id.textViewMSTotalTime);
+		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
+		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
+		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
+		// locationListener = new MyLocationListener(this);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean isTrenignEnabled = prefs.getBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
+		isTrenignEnabled = true;
+		if (isTrenignEnabled) {
+			long treningPlanID = prefs.getLong(TreningPlans.TRENING_PLANS_ID_KEY, -1);
+			treningPlanID = 0;
+			new LoadTreningPlan().execute(treningPlanID);
+		}
 	}
 	
 	private void checkSpeechSynthezator() {
@@ -144,6 +167,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		//		GPSSignalTextView.setOnTouchListener(gestureListener);
 		gpsDisplayer.setOnTouchListener(gestureListener);
 		GPSSignalTextViewValue.setOnTouchListener(gestureListener);
+		treningPlansButton.setOnTouchListener(gestureListener);
 	}
 	
 	private void prepareGestureListener() {
@@ -536,6 +560,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				case R.id.buttonMusic:
 					startSystemMusicPlayer();
 					break;
+				case R.id.buttonMainScreenTreningPlans:
+					//FIXME
+					break;
 				default:
 					break;
 			}
@@ -653,6 +680,17 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			
 		}
 		
+	}
+	
+	private class LoadTreningPlan extends AsyncTask<Long, Void, HashMap<Date, Workout>> {
+		@Override
+		protected HashMap<Date, Workout> doInBackground(Long... params) {
+			long treningPlanID = params[0];
+			//FIXME change to read from db in future version
+			treningPlan = TreningPlans.getTreningPlan(treningPlanID);
+			treningPlansButton.setText(treningPlan.getName());
+			return null;
+		}
 	}
 	
 	private void handleGPSStatusChange()

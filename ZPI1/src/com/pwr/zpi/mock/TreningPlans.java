@@ -15,6 +15,7 @@ public class TreningPlans {
 	// for shared preferences
 	public static final String TRENING_PLANS_IS_ENABLED_KEY = "is_enabled_trening_plan";
 	public static final String TRENING_PLANS_ID_KEY = "trening_plan_key";
+	public static final String TRENING_PLANS_START_DATE_KEY = "trening_plan_start_date";
 	
 	static ArrayList<TreningPlan> plans;
 	
@@ -73,6 +74,6 @@ public class TreningPlans {
 	 * @return
 	 */
 	public static TreningPlan getTreningPlan(long id) {
-		return plans.get((int) id);
+		return id == -1 ? null : plans.get((int) id);
 	}
 }
