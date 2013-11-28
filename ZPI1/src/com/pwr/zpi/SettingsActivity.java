@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.utils.Reminders;
 import com.pwr.zpi.utils.Time;
 
@@ -32,6 +33,20 @@ public class SettingsActivity extends PreferenceActivity implements GestureListe
 		
 		prepareGestureListener();
 		addListeners();
+		
+		disableReminderIfPlanSet();
+	}
+	
+	private void disableReminderIfPlanSet() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean isTreningPlan = prefs.getBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
+		if (isTreningPlan) {
+			findPreference(getString(R.string.reminder_day_key)).setEnabled(false);
+			findPreference(getString(R.string.reminder_hour_key)).setEnabled(false);
+		} else {
+			findPreference(getString(R.string.reminder_day_key)).setEnabled(true);
+			setHourPreferencesIfDayIsSet(prefs, getString(R.string.reminder_day_key));
+		}
 	}
 	
 	@Override
@@ -95,18 +110,22 @@ public class SettingsActivity extends PreferenceActivity implements GestureListe
 	public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
 		Log.e("DDD", "changed");
 		if (key.equals(getString(R.string.reminder_day_key))) {
-			if (preferences.getString(key, "0").equals("0")) {
-				Log.e("DDD", "disable");
-				findPreference(getString(R.string.reminder_hour_key)).setEnabled(false);
-			}
-			else {
-				Log.e("DDD", "enable");
-				findPreference(getString(R.string.reminder_hour_key)).setEnabled(true);
-			}
+			setHourPreferencesIfDayIsSet(preferences, key);
 			setReminder(preferences);
 		}
 		else if (key.equals(getString(R.string.reminder_hour_key))) {
 			setReminder(preferences);
+		}
+	}
+	
+	private void setHourPreferencesIfDayIsSet(SharedPreferences preferences, String key) {
+		if (preferences.getString(key, "0").equals("0")) {
+			Log.e("DDD", "disable");
+			findPreference(getString(R.string.reminder_hour_key)).setEnabled(false);
+		}
+		else {
+			Log.e("DDD", "enable");
+			findPreference(getString(R.string.reminder_hour_key)).setEnabled(true);
 		}
 	}
 	
