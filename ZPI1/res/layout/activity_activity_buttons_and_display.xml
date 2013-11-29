@@ -193,6 +193,6 @@
         android:layout_below="@id/linearLayout2"
         android:layout_marginTop="@dimen/very_small_margin"
         android:background="@drawable/activity_button_background"
-        android:src="@drawable/ic_workout" />
+        android:src="@drawable/ic_drawer_icon" />
 
 </RelativeLayout>
