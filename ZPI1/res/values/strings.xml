@@ -188,5 +188,15 @@
     <string name="trening_plan_todays_workout_message">There\'s planned workout for today in selected trening plan.</string>
     <string name="trening_plan_todays_workout_positive_button">Start planned worokut</string>
     <string name="trening_plan_todays_workout_negative_button">Later</string>
-
+    <string name="trening_plan_select_title">Select training?</string>
+    <string name="trening_plan_select_message">Do you want to select this training plan?</string>
+    <string name="trening_plan_change_title">Change training?</string>
+    <string name="trening_plan_change_message">Do you want to change your current training to this training plan?</string>
+    <string name="trening_plan_confirm_title">Trening plan selected</string>
+    <string name="trening_plan_confirm_message">All reminders and workouts for selected trening plan have been set.</string>
+	<string name="trening_plan_disable_title">Disable training?</string>
+    <string name="trening_plan_disable_message">Do you want to disable this training plan?</string>
+    <string name="trening_plan_confirm_disable_title">Trening plan disabled</string>
+    <string name="trening_plan_confirm_disable_message">All reminders and workouts for selected trening plan have been disabled.</string>
+    
 </resources>

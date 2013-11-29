@@ -16,6 +16,7 @@ public class TreningPlans {
 	public static final String TRENING_PLANS_IS_ENABLED_KEY = "is_enabled_trening_plan";
 	public static final String TRENING_PLANS_ID_KEY = "trening_plan_key";
 	public static final String TRENING_PLANS_START_DATE_KEY = "trening_plan_start_date";
+	public static final String TRENING_PLAN_LAST_WORKOUT_DATE = "trening_plan_last_workout_date";
 	
 	static ArrayList<TreningPlan> plans;
 	

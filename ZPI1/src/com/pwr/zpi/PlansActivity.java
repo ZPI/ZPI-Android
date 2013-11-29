@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -24,6 +26,8 @@ import android.widget.TextView;
 import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.dialogs.DialogFactory;
+import com.pwr.zpi.dialogs.DialogsEnum;
 import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.Reminders;
@@ -110,7 +114,7 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 		
 		// If Activity is created after rotation
 		if (savedInstanceState != null) {
-			calendar.restoreStatesFromKey(savedInstanceState, "CALDROID_SAVED_STATE");
+			calendar.restoreStatesFromKey(savedInstanceState, "CALDROID_SAVED_STATE" + plan.getID());
 		}
 		// If activity is created from fresh
 		else {
@@ -127,12 +131,16 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 			calendar.setArguments(args);
 		}
 		
+		addCalendarListener();
+		
+		calendar.clearSelectedDates();
+		Date today = Calendar.getInstance().getTime();
+		calendar.setSelectedDates(today, today);
+		
 		// Attach to the activity
 		FragmentTransaction t = getSupportFragmentManager().beginTransaction();
 		t.replace(R.id.calendarFragmentPlace, calendar);
 		t.commit();
-		
-		addCalendarListener();
 	}
 	
 	private void addCalendarListener() {
@@ -182,13 +190,8 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
 		if (calendar != null) {
-			calendar.saveStatesToKey(outState, "CALDROID_SAVED_STATE");
-		}
-		
-		if (calendar != null) {
-			calendar.saveStatesToKey(outState, "DIALOG_CALDROID_SAVED_STATE");
+			calendar.saveStatesToKey(outState, "CALDROID_SAVED_STATE" + plan.getID());
 		}
 	}
 	
@@ -247,18 +250,18 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		if (view == leftBarButton) {
-			if (isFromMainScreen) {
+			if (isFromMainScreen) { // end training
 				endTraining();
 			}
-			else {
+			else { // back to workouts
 				finish();
 			}
 		}
 		else if (view == rightBarButton) {
-			if (isFromMainScreen) {
+			if (isFromMainScreen) { // dismiss
 				finish();
 			}
-			else {
+			else { // select training
 				selectTraining();
 			}
 		}
@@ -268,26 +271,56 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	}
 	
 	private void selectTraining() {
-		//FIXME show dialog are you sure
-		Log.i("TAG", "selecting this training");
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, true);
-		editor.putLong(TreningPlans.TRENING_PLANS_ID_KEY, plan.getID());
-		editor.putLong(TreningPlans.TRENING_PLANS_START_DATE_KEY, Calendar.getInstance().getTimeInMillis());
-		editor.commit();
-		setReminders();
-		//FIXME show dialog confirmation
-		startMainScreenActivity();
+		DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.i("TAG", "selecting this training");
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(PlansActivity.this);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, true);
+				editor.putLong(TreningPlans.TRENING_PLANS_ID_KEY, plan.getID());
+				editor.putLong(TreningPlans.TRENING_PLANS_START_DATE_KEY, Calendar.getInstance().getTimeInMillis());
+				editor.putLong(TreningPlans.TRENING_PLAN_LAST_WORKOUT_DATE, 0);
+				editor.commit();
+				setReminders();
+				showConfirmationAndStartMainActivity();
+			}
+		};
+		DialogsEnum dialogType = null;
+		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY,
+			false)) {
+			dialogType = DialogsEnum.ChangeTreningPlan;
+		}
+		else {
+			dialogType = DialogsEnum.SelectThisTraining;
+		}
+		AlertDialog dialog = DialogFactory.getDialog(dialogType, this, positive, null);
+		dialog.show();
+	}
+	
+	private void showConfirmationAndStartMainActivity() {
+		DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				startMainScreenActivity();
+			}
+		};
+		AlertDialog dialog = DialogFactory.getDialogSingleButton(DialogsEnum.Confirmation, this, listener);
+		dialog.setCancelable(false);
+		dialog.show();
 	}
 	
 	private void startMainScreenActivity() {
-		Intent i = new Intent(PlansActivity.this, MainScreenActivity.class);
-		startActivity(i);
+		Intent intent = new Intent(PlansActivity.this, MainScreenActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+		intent.putExtra(MainScreenActivity.NEW_PLAN_KEY, true);
+		startActivity(intent);
 	}
 	
 	private void setReminders() {
-		int hour = 12; // FIXME change to settings in future version
+		int hour = 10; // FIXME change to settings in future version
 		Calendar cal = Calendar.getInstance();
 		
 		for (Date date : workoutDays.keySet()) {
@@ -299,15 +332,29 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	}
 	
 	private void endTraining() {
-		//FIXME show dialog are you sure
-		Log.i("TAG", "ending this training");
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
-		editor.commit();
-		disableReminders();
-		//FIXME show dialog confirmation
-		finish();
+		DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.i("TAG", "ending this training");
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(PlansActivity.this);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
+				editor.commit();
+				disableReminders();
+				AlertDialog confirmDialog = DialogFactory.getDialogSingleButton(DialogsEnum.ConfirmationDisable,
+					PlansActivity.this, new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							startMainScreenActivity();
+						}
+					});
+				confirmDialog.setCancelable(false);
+				confirmDialog.show();
+			}
+		};
+		DialogFactory.getDialog(DialogsEnum.DisableThisTreningPlan, this, positive, null).show();
 	}
 	
 	private void disableReminders() {

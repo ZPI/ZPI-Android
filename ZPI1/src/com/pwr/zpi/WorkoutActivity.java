@@ -55,8 +55,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		super.onCreate(savedInstanceState);
 	}
 	
-	private void initFields()
-	{
+	private void initFields() {
 		actionsListView = (ListView) findViewById(R.id.listViewWokoutActions);
 		long ID = getIntent().getLongExtra(PlaningActivity.ID_TAG, -1);
 		workout = readData(ID);
@@ -85,8 +84,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		myGestureDetector = new MyGestureDetector(this,
-			false, false, false, true);
+		myGestureDetector = new MyGestureDetector(this, false, false, false, true);
 		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
@@ -97,8 +95,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		};
 	}
 	
-	private void addListeners()
-	{
+	private void addListeners() {
 		addThisWorkoutButton.setOnTouchListener(gestureListener);
 		actionsListView.setOnTouchListener(gestureListener);
 		editThisWorkoutButton.setOnTouchListener(gestureListener);
@@ -110,16 +107,14 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		return gestureListener.onTouch(null, event);
 	}
 	
-	private Workout readData(long ID)
-	{
+	private Workout readData(long ID) {
 		Workout workout;
 		Intent i = getIntent();
 		
 		Database database = new Database(this);
 		workout = database.getWholeSingleWorkout(ID);
 		database.close();
-		if (workout.getActions() == null)
-		{
+		if (workout.getActions() == null) {
 			ArrayList<WorkoutAction> emptyList = new ArrayList<WorkoutAction>();
 			workout.setActions(emptyList);
 		}
@@ -161,8 +156,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
 		int ID = mCurrent.getId();
-		switch (ID)
-		{
+		switch (ID) {
 			case R.id.ButtonChooseWorkout:
 				//TODO check GPS like in MainScreen
 				Intent i = new Intent();
@@ -207,8 +201,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		if (!myGestureDetector.isFlingDetected())
-		{
+		if (!myGestureDetector.isFlingDetected()) {
 			//TODO edit action
 		}
 	}
@@ -220,7 +213,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 				info = (AdapterContextMenuInfo) item.getMenuInfo();
 				
 				if (actionsAdapter != null) {
-					MyDialog dialog = new MyDialog();
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
 						// romove
@@ -234,9 +226,8 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 							db.close();
 						}
 					};
-					dialog.showAlertDialog(this, R.string.dialog_message_remove_action,
-						R.string.empty_string, android.R.string.yes,
-						android.R.string.no, positiveButtonHandler, null);
+					MyDialog.showAlertDialog(this, R.string.dialog_message_remove_action, R.string.empty_string,
+						android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 					
 				}
 				break;
@@ -247,8 +238,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	}
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-		ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 			case R.id.listViewWokoutActions:
 				MenuInflater inflater = getMenuInflater();
