@@ -129,7 +129,8 @@ public class PlansActivity extends FragmentActivity {
 				Log.i(PlansActivity.class.getSimpleName(), "has actions");
 				textViewNoWorkoutActions.setVisibility(View.GONE);
 				listViewPlanDayActions.setVisibility(View.VISIBLE);
-				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item,
+				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this,
+					R.layout.workouts_action_simple_list_item, R.layout.workout_action_advanced_list_item,
 					workoutForDay.getActions()));
 			}
 			else {

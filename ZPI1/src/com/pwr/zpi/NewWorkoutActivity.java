@@ -74,7 +74,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		View footer = getLayoutInflater().inflate(R.layout.new_workout_footer, null);
 		workoutsListView.addHeaderView(header);
 		workoutsListView.addFooterView(footer);
-		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workoutsActionList);
+		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_simple_list_item,
+			R.layout.workout_action_advanced_list_item, workoutsActionList);
 		workoutsListView.setAdapter(workoutActionAdapter);
 		
 		//all buttons are in header and footer

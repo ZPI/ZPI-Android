@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pwr.zpi.R;
@@ -21,12 +20,17 @@ import com.pwr.zpi.utils.TimeFormatter;
 public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 	
 	private final Context context;
-	private final int layoutResourceId;
+	
 	private static final long MILINSECONDS_IN_MINUTE = 60000;
 	
-	public WorkoutActionsAdapter(Context context, int layoutResourceId, List<WorkoutAction> data) {
-		super(context, layoutResourceId, data);
-		this.layoutResourceId = layoutResourceId;
+	private final int layoutResourceSimpleID;
+	private final int layoutResourceAdvancedID;
+	
+	public WorkoutActionsAdapter(Context context, int layoutResourceSimpleID, int layoutResourceAdvancedID,
+		List<WorkoutAction> data) {
+		super(context, layoutResourceSimpleID, data);
+		this.layoutResourceSimpleID = layoutResourceSimpleID;
+		this.layoutResourceAdvancedID = layoutResourceAdvancedID;
 		this.context = context;
 	}
 	
@@ -35,35 +39,33 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 		View row = convertView;
 		WorkoutActionHolder holder = null;
 		WorkoutAction action = getItem(position);
-		if (row == null)
-		{
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			row = inflater.inflate(layoutResourceId, parent, false);
+		// (row == null)
+		//	{
+		holder = new WorkoutActionHolder();
+		
+		LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+		if (action.isSimple()) {
+			row = inflater.inflate(layoutResourceSimpleID, parent, false);
+			holder.speedString = (TextView) row.findViewById(R.id.dataTextViewActionSpeedString);
+			holder.timeOrDistance = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistance);
 			
-			holder = new WorkoutActionHolder();
-			
-			holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
-			
+		}
+		else {
+			row = inflater.inflate(layoutResourceAdvancedID, parent, false);
 			holder.pace = (TextView) row.findViewById(R.id.dataTextViewActionPace);
 			holder.distance = (TextView) row.findViewById(R.id.dataTextViewActionDistance);
 			holder.time = (TextView) row.findViewById(R.id.dataTextViewActionTime);
-			holder.advancedActionData = (LinearLayout) row
-				.findViewById(R.id.linearLayoutAdvancedActionData);
-			
-			holder.speedString = (TextView) row.findViewById(R.id.dataTextViewActionSpeedString);
-			holder.timeOrDistance = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistance);
-			holder.timeOrDistanceDescription = (TextView) row
-				.findViewById(R.id.dataTextViewActionTimeOrDistanceDiscription);
-			holder.timeOrDistanceUnit = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistanceUnit);
-			holder.simpleActionData = (LinearLayout) row.findViewById(R.id.linearLayoutSimpleActionData);
-			
-			row.setTag(holder);
-			
 		}
-		else
-		{
-			holder = (WorkoutActionHolder) row.getTag();
-		}
+		
+		holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
+		
+		row.setTag(holder);
+		
+		//	}
+		//	else
+		//	{
+		//		holder = (WorkoutActionHolder) row.getTag();
+		//	}
 		
 		if (action.isAdvanced())
 		{
@@ -73,8 +75,6 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 			holder.time.setText(TimeFormatter.formatTimeHHMMSS(advancedAction.getTime()));
 			holder.pace.setText(TimeFormatter.formatTimeMMSSorHHMMSS(advancedAction.getPace()));
 			holder.distance.setText(String.format("%.3f", advancedAction.getDistance() / 1000));
-			holder.advancedActionData.setVisibility(View.VISIBLE);
-			holder.simpleActionData.setVisibility(View.GONE);
 			
 		}
 		else if (action.isSimple())
@@ -99,19 +99,14 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 			switch (valueType)
 			{
 				case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
-					holder.timeOrDistance.setText(String.format("%.3f", simpleAction.getValue() / 1000));
-					holder.timeOrDistanceDescription.setText(context.getResources().getString(R.string.distance));
-					holder.timeOrDistanceUnit.setText(context.getResources().getString(R.string.km));
+					holder.timeOrDistance.setText(String.format("%.3f%s", simpleAction.getValue() / 1000, context
+						.getResources().getString(R.string.km)));
 					break;
 				case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME:
 					holder.timeOrDistance
 						.setText(TimeFormatter.formatTimeHHMMSS((long) (simpleAction.getValue())));
-					holder.timeOrDistanceDescription.setText(context.getResources().getString(R.string.time));
-					holder.timeOrDistanceUnit.setText(context.getResources().getString(R.string.empty_string));
 					break;
 			}
-			holder.simpleActionData.setVisibility(View.VISIBLE);
-			holder.advancedActionData.setVisibility(View.GONE);
 			
 		}
 		
@@ -124,12 +119,9 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 		TextView distance;
 		TextView time;
 		TextView pace;
-		LinearLayout advancedActionData;
-		LinearLayout simpleActionData;
+		
 		TextView speedString;
 		TextView timeOrDistance;
-		TextView timeOrDistanceDescription;
-		TextView timeOrDistanceUnit;
 	}
 	
 }
