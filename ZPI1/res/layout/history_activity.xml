@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_color"
     android:orientation="vertical" >
 
     <FrameLayout
@@ -61,7 +60,8 @@
                 <FrameLayout
                     android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" >
+                    android:layout_height="match_parent" 
+                    android:background="@color/gray_background">
 
                     <LinearLayout
                         android:id="@+id/tabThisWeek"
@@ -72,7 +72,9 @@
                         <ListView
                             android:id="@+id/listViewThisWeek"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/big_text_size"
+                            android:background="@drawable/view_background"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
                     </LinearLayout>
@@ -86,7 +88,9 @@
                         <ListView
                             android:id="@+id/listViewThisMonth"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/view_background"
+                            android:layout_marginTop="@dimen/big_text_size"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
                     </LinearLayout>
@@ -100,7 +104,9 @@
                         <ListView
                             android:id="@+id/listViewAll"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/view_background"
+                            android:layout_marginTop="@dimen/big_text_size"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
                     </LinearLayout>

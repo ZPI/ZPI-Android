@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_background"
+    android:background="@drawable/gradient_grey_backgroud"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -19,19 +19,19 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/discard_button"
-            android:text="@string/discard" 
             android:padding="@dimen/buttons_padding"
-            android:textColor="@color/red"/>
+            android:text="@string/discard"
+            android:textColor="@color/red" />
 
         <Button
             android:id="@+id/buttonAfterActivitySave"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="@dimen/buttons_padding"
             android:background="@drawable/save_button"
-            android:textColor="@color/white"
-            android:text="@string/save" />
+            android:padding="@dimen/buttons_padding"
+            android:text="@string/save"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <EditText
@@ -41,11 +41,11 @@
         android:layout_below="@+id/textViewAterActivitySummary"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/big_text_size"
-        android:background="@color/white"
+        android:background="@drawable/view_background"
         android:ems="10"
         android:gravity="center" >
 
-        <requestFocus />
+        <requestFocus android:layout_width="match_parent" />
     </EditText>
 
     <TextView
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/white"
+        android:background="@drawable/view_background"
         android:gravity="center"
         android:text="@string/run_summary"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -67,143 +67,43 @@
         android:layout_below="@+id/editTextAfterActivityRunName"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/big_text_size"
-        android:background="@color/white"
-        android:orientation="horizontal" >
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/textViewAfterActivityDuration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="@string/duration"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey" />
-
-            <TextView
-                android:id="@+id/textViewAfterActivityDurationValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/textViewAfterActivityAvgPace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="@string/pace_avrage"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey" />
-
-            <TextView
-                android:id="@+id/textViewAfterActivityAvgPaceValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_centerHorizontal="true"
-        android:background="@color/white"
+        android:background="@drawable/view_background"
         android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
+        <!--
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/textViewAfterActivityDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="@string/distance"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey" />
-
-            <TextView
-                android:id="@+id/textViewAfterActivityDistanceValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey"
-                android:textStyle="bold" />
+            
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
+        -->
 
-            <TextView
-                android:id="@+id/textViewAfterActivityAvgSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:text="@string/speed_avrage"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey" />
-
-            <TextView
-                android:id="@+id/textViewAfterActivityAvgSpeedValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/text_grey"
-                android:textStyle="bold" />
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/linearLayout2"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_centerHorizontal="true"
-        android:background="@color/white" >
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:background="@drawable/view_background" >
 
         <TextView
             android:id="@+id/textViewAfterActivityRemind"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:text="@string/remind"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -211,11 +111,143 @@
             android:id="@+id/buttonAfterActivityRemind"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/buttons_padding"
             android:layout_weight="1"
             android:background="@color/white"
             android:text="@string/set_remind"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/reminder_button_text_color"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/linearLayout1"
+        android:layout_centerHorizontal="true" 
+        android:background="@drawable/view_background">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityDuration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:text="@string/duration"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey" />
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityDurationValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Large Text"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityAvgPace"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:text="@string/pace_avrage"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey" />
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityAvgPaceValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Large Text"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityDistance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:text="@string/distance"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey" />
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityDistanceValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:text="Large Text"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityAvgSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/activity_vertical_margin"
+                    android:text="@string/speed_avrage"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey" />
+
+                <TextView
+                    android:id="@+id/textViewAfterActivityAvgSpeedValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/activity_vertical_margin"
+                    android:text="Large Text"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_grey"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

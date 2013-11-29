@@ -446,6 +446,7 @@ public class LocationService extends Service implements LocationListener, Connec
 				traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 				distance = 0;
 				pauseTime = 0;
+				time = 0L;
 				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
 				isWromUpInProgress = false;

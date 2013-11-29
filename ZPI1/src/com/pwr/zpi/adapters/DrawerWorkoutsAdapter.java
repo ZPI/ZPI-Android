@@ -15,7 +15,6 @@ import com.pwr.zpi.R;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
-import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 
 public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 	
@@ -75,6 +74,7 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 				
 				break;
 			case WorkoutAction.ACTION_ADVANCED:
+				
 				rowHolder.actionTextSimple.setVisibility(View.INVISIBLE);
 				rowHolder.actionTypeSimple.setVisibility(View.INVISIBLE);	//not gone because we still wont it to determine height
 				rowHolder.actionTextAdvanced.setVisibility(View.VISIBLE);
@@ -86,8 +86,10 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 					textColor = R.color.workout_action_text_bad;
 				}
 				break;
-			case WorkoutActionWarmUp.ACTION_WARM_UP:
-				//rowHolder.icon.setBackgroundResource(R.drawable.ic_launcher);
+			case WorkoutAction.ACTION_WARM_UP:
+				rowHolder.actionTextSimple.setVisibility(View.INVISIBLE);
+				rowHolder.actionTypeSimple.setVisibility(View.INVISIBLE);	//not gone because we still wont it to determine height
+				rowHolder.actionTextAdvanced.setVisibility(View.VISIBLE);
 				break;
 			default:
 				break;

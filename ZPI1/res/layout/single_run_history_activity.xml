@@ -3,6 +3,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_grey_backgroud"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -29,35 +30,89 @@
         android:layout_height="0dp"
         android:layout_weight="1" >
 
+        <TextView
+            android:id="@+id/textViewSingleRunName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/linearLayoutSingleRunButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewSingleRunName"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true" >
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="vertical" >
 
             <Button
                 android:id="@+id/buttonSplits"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="@string/splits" />
+                android:background="@drawable/button_border_background_inverted"
+                android:gravity="center"
+                android:padding="@dimen/buttons_padding"
+                android:text="@string/splits"
+
+     			android:focusable="false"
+                android:textColor="@color/text_grey" />
 
             <Button
                 android:id="@+id/buttonCharts"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:text="@string/charts" />
+                android:background="@drawable/button_border_background_inverted"
+                android:gravity="center"
+                android:padding="@dimen/buttons_padding"
+                android:text="@string/charts"
+                android:focusable="false"
+                android:textColor="@color/text_grey" />
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/linearLayoutSingleRunButtons"
+            android:layout_alignTop="@+id/linearLayoutSingleRunButtons" 
+            android:layout_alignRight="@+id/textViewSingleRunName"
+            >
+
+            <TextView
+                android:id="@+id/textViewSingleRunAnnotations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity=""
+                android:layout_centerVertical="true"
+                android:text="@string/Annotations"
+                android:textAppearance="?android:attr/textAppearanceLarge" 
+                android:layout_toLeftOf="@+id/checkBoxSingleRunAnnotations"/>
+
+            <CheckBox
+                android:id="@+id/checkBoxSingleRunAnnotations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true" 
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/LinearLayoutFirstRow"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true" >
+            android:layout_alignLeft="@+id/textViewSingleRunName"
+            android:layout_alignRight="@+id/textViewSingleRunName"
+            android:layout_below="@+id/textViewSingleRunName" >
 
             <RelativeLayout
                 android:id="@+id/RelativeLayout1dataHistory"
@@ -65,17 +120,18 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="@color/main_color"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/TextView1HistoryDiscription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="@dimen/buttons_padding"
-                    android:text="@string/distance" />
+                    android:gravity="center"
+                    android:text="@string/distance"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/TextView1History"
@@ -85,7 +141,8 @@
                     android:layout_below="@+id/TextView1HistoryDiscription"
                     android:layout_toLeftOf="@+id/TextView1HistoryUnit"
                     android:gravity="center"
-                    android:textSize="@dimen/big_text_size" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/single_run_text_blue" />
 
                 <TextView
                     android:id="@+id/TextView1HistoryUnit"
@@ -96,7 +153,8 @@
                     android:layout_alignTop="@+id/TextView1History"
                     android:gravity="bottom"
                     android:text="@string/km"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/single_run_text_blue" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -105,17 +163,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="@color/main_color"
+                android:gravity="center"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/TextView2HistoryDiscription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="@dimen/buttons_padding"
-                    android:text="@string/time" />
+                    android:gravity="center"
+                    android:text="@string/time"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/TextView2History"
@@ -125,7 +185,8 @@
                     android:layout_below="@+id/TextView2HistoryDiscription"
                     android:layout_toLeftOf="@+id/TextView2HistoryUnit"
                     android:gravity="center"
-                    android:textSize="@dimen/big_text_size" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/single_run_text_blue" />
 
                 <TextView
                     android:id="@+id/TextView2HistoryUnit"
@@ -136,16 +197,18 @@
                     android:layout_alignTop="@+id/TextView2History"
                     android:gravity="bottom"
                     android:text=""
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/single_run_text_blue" />
             </RelativeLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/LinearLayoutFirstRow" >
+            android:layout_alignLeft="@+id/textViewSingleRunName"
+            android:layout_alignRight="@+id/textViewSingleRunName"
+            android:layout_below="@+id/LinearLayoutFirstRow"
+            android:baselineAligned="false" >
 
             <RelativeLayout
                 android:id="@+id/dataRelativeLayout3DataHistory"
@@ -153,17 +216,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="@color/main_color"
+                android:gravity="center"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/TextView3HistoryDiscription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="@dimen/buttons_padding"
-                    android:text="@string/pace_avrage" />
+                    android:gravity="center"
+                    android:text="@string/pace_avrage"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/TextView3History"
@@ -172,19 +237,21 @@
                     android:layout_alignLeft="@+id/TextView3HistoryDiscription"
                     android:layout_below="@+id/TextView3HistoryDiscription"
                     android:layout_toLeftOf="@+id/TextView3HistoryUnit"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:gravity="center"
-                    android:textSize="@dimen/big_text_size" />
+                    android:textColor="@color/single_run_text_blue" />
 
                 <TextView
                     android:id="@+id/TextView3HistoryUnit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/TextView3History"
+                    
                     android:layout_alignParentRight="true"
                     android:layout_alignTop="@+id/TextView3History"
                     android:gravity="bottom"
                     android:text="@string/minutes_per_km"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/single_run_text_blue" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -193,17 +260,19 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
                 android:layout_weight="1"
-                android:background="@color/main_color"
+                android:gravity="center"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/TextView4HistoryDiscription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="@dimen/buttons_padding"
-                    android:text="@string/speed_avrage" />
+                    android:gravity="center"
+                    android:text="@string/speed_avrage"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/TextView4History"
@@ -212,19 +281,21 @@
                     android:layout_alignLeft="@+id/TextView4HistoryDiscription"
                     android:layout_below="@+id/TextView4HistoryDiscription"
                     android:layout_toLeftOf="@+id/TextView4HistoryUnit"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:gravity="center"
-                    android:textSize="@dimen/big_text_size" />
+                    android:textColor="@color/single_run_text_blue" />
 
                 <TextView
                     android:id="@+id/TextView4HistoryUnit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/TextView4History"
+                    
                     android:layout_alignParentRight="true"
                     android:layout_alignTop="@+id/TextView4History"
                     android:gravity="bottom"
                     android:text="@string/km_per_hour"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/single_run_text_blue" />
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
