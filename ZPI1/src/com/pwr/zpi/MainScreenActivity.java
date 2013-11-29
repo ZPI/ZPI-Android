@@ -616,7 +616,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				int clickedIndex = which;
-				if (!isWorkoutToday) {
+				if (!isWorkoutToday || wasWorkoutAlreadyToday()) {
 					clickedIndex++; //added one to match next switch
 				}
 				switch (clickedIndex) {
