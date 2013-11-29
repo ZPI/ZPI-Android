@@ -13,12 +13,11 @@
         android:background="@drawable/right_tab_background"
         android:paddingTop="@dimen/buttons_padding"
         android:paddingBottom="@dimen/buttons_padding"
-        android:textColor="@color/white"
+        android:textColor="@color/tab_color"
         android:layout_marginRight="@dimen/medium_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:layout_marginBottom="@dimen/small_margin"
-        android:textSize="@dimen/small_text_size"
-        android:text="Button" />
+        android:textSize="@dimen/small_text_size" />
     
 
 </LinearLayout>

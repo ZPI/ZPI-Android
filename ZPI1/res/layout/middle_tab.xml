@@ -17,6 +17,6 @@
         android:paddingTop="@dimen/buttons_padding"
         android:text="Button"
         android:textSize="@dimen/small_text_size"
-        android:textColor="@color/white" />
+        android:textColor="@color/tab_color" />
 
 </LinearLayout>

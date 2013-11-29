@@ -74,12 +74,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" 
-                            android:background="@color/white">
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:background="@drawable/view_background">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab1Km"
@@ -118,12 +122,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/time"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" 
-                            android:background="@color/white">
+                            android:background="@drawable/view_background"
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:paddingLeft="@dimen/activity_vertical_margin">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab1TimeHour"
@@ -172,6 +180,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -181,15 +190,19 @@
                             android:ems="10"
                             android:focusable="false"
                             android:text="@string/dashes" 
-                            android:background="@color/white"/>
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background"/>
 
                         <Button
                             android:id="@+id/buttonTab1Add"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/small_margin"
-                            android:background="@drawable/button_background"
-                            android:padding="@dimen/buttons_padding"
+                            android:layout_marginTop="@dimen/big_text_size"
+                            android:background="@drawable/workouts_white_button_background"
+                            android:padding="@dimen/small_text_size"
+                            android:textColor="@color/main_color"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
                             android:text="@string/add_action" />
                     </LinearLayout>
                 </ScrollView>
@@ -210,12 +223,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/white" >
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background" >
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab2Km"
@@ -254,12 +271,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" 
-                            android:background="@color/white">
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab2PaceMin"
@@ -298,6 +319,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/time"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -306,7 +328,8 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:focusable="false" 
-                            android:background="@color/white">
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background">
 
                             <requestFocus />
                         </EditText>
@@ -315,9 +338,12 @@
                             android:id="@+id/buttonTab2Add"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/small_margin"
-                            android:background="@drawable/button_background"
-                            android:padding="@dimen/buttons_padding"
+                            android:layout_marginTop="@dimen/big_text_size"
+                            android:background="@drawable/workouts_white_button_background"
+                            android:padding="@dimen/small_text_size"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/main_color"
                             android:text="@string/add_action" />
                     </LinearLayout>
                 </ScrollView>
@@ -338,12 +364,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/time"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" 
-                            android:background="@color/white">
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background">
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab3TimeHour"
@@ -391,12 +421,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/white" >
+                            android:paddingTop="@dimen/small_margin"
+                            android:paddingBottom="@dimen/small_margin"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background" >
 
                             <com.pwr.zpi.views.CustomPicker
                                 android:id="@+id/customPickerTab3PaceMin"
@@ -435,6 +469,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
+                            android:paddingLeft="@dimen/activity_vertical_margin"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -444,15 +479,19 @@
                             android:ems="10"
                             android:focusable="false"
                             android:text="@string/dashes2" 
-                            android:background="@color/white"/>
+                            android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:background="@drawable/view_background"/>
 
                         <Button
                             android:id="@+id/buttonTab3Add"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/small_margin"
-                            android:background="@drawable/button_background"
-                            android:padding="@dimen/buttons_padding"
+                            android:layout_marginTop="@dimen/big_text_size"
+                            android:background="@drawable/workouts_white_button_background"
+                            android:padding="@dimen/small_text_size"
+                            android:textColor="@color/main_color"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
                             android:text="@string/add_action" />
                     </LinearLayout>
                 </ScrollView>

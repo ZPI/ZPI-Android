@@ -34,6 +34,12 @@ public class CustomPicker extends RelativeLayout implements OnClickListener, OnL
 	private boolean mAutoIncrement = false;
 	private boolean mAutoDecrement = false;
 	public static final int REP_DELAY = 50;
+	private static final int ORIENTATION_VERTICAL = 0;
+	private static final int ORIENTATION_HORIZONTAL = 1;
+	private int orientation;
+	private static final int VISIBILITY_VISIBLE = 0;
+	private static final int VISIBILITY_GONE = 1;
+	private int visibility;
 	
 	// Constructor start
 	public CustomPicker(Context context) {
@@ -59,6 +65,8 @@ public class CustomPicker extends RelativeLayout implements OnClickListener, OnL
 			max = typedArray.getInteger(R.styleable.CustomPicker_maxValue, 0);
 			digitsNumber = typedArray.getInteger(R.styleable.CustomPicker_digitNumber, 1);
 			incrementValue = typedArray.getInteger(R.styleable.CustomPicker_incrementValue, 1);
+			visibility = typedArray.getInteger(R.styleable.CustomPicker_editTextVisibility, VISIBILITY_VISIBLE);
+			orientation = typedArray.getInteger(R.styleable.CustomPicker_orientation, ORIENTATION_VERTICAL);
 		}
 		finally {
 			typedArray.recycle();
@@ -66,7 +74,16 @@ public class CustomPicker extends RelativeLayout implements OnClickListener, OnL
 		
 		LayoutInflater inflator = (LayoutInflater) context
 			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		myPickerView = inflator.inflate(R.layout.picker_control, null);
+		switch (orientation) {
+			case ORIENTATION_VERTICAL:
+				myPickerView = inflator.inflate(R.layout.picker_control, null);
+				break;
+			case ORIENTATION_HORIZONTAL:
+				myPickerView = inflator.inflate(R.layout.picker_control_horizontal, null);
+				break;
+		
+		}
+		
 		this.addView(myPickerView);
 		
 		initializeReference();
@@ -94,6 +111,12 @@ public class CustomPicker extends RelativeLayout implements OnClickListener, OnL
 		minusButton.setOnClickListener(this);
 		minusButton.setOnLongClickListener(this);
 		minusButton.setOnTouchListener(this);
+		
+		if (visibility == VISIBILITY_GONE)
+		{
+			displayEditText.setVisibility(View.GONE);
+		}
+		
 		initData();
 		
 	}
