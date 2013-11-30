@@ -6,6 +6,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
@@ -16,9 +18,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ToggleButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.pwr.zpi.adapters.WorkoutActionsAdapter;
 import com.pwr.zpi.database.Database;
@@ -27,21 +31,23 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.views.CustomPicker;
 
-public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener {
+public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener, TextWatcher {
 	
 	public static final int MY_REQUEST_CODE_ADD = 1;
 	public static final int MY_REQUEST_CODE_EDIT = 2;
-	private Button addActionButton;
+	private RelativeLayout addActionButton;
 	private Button addThisWorkoutButton;
 	private EditText workautNameEditText;
-	private ToggleButton isWarmUpToggleButton;
+	private CheckBox isWarmUpToggleButton;
 	private CustomPicker repeatPicker;
 	private int editedPos;
 	private ArrayList<WorkoutAction> workoutsActionList;
 	private WorkoutActionsAdapter workoutActionAdapter;
 	private ListView workoutsListView;
 	private AdapterContextMenuInfo info;
+	private TextView workoutsRepeatsTextView;
 	private Workout workout;
+	private EditText picerEditText;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +74,25 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		View footer = getLayoutInflater().inflate(R.layout.new_workout_footer, null);
 		workoutsListView.addHeaderView(header);
 		workoutsListView.addFooterView(footer);
-		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workoutsActionList);
+		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_simple_list_item,
+			R.layout.workout_action_advanced_list_item, workoutsActionList);
 		workoutsListView.setAdapter(workoutActionAdapter);
 		
 		//all buttons are in header and footer
-		addActionButton = (Button) footer.findViewById(R.id.buttonNewWorkoutAction);
+		addActionButton = (RelativeLayout) footer.findViewById(R.id.buttonNewWorkoutAction);
 		addThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutAdd);
 		workautNameEditText = (EditText) header.findViewById(R.id.editTextWorkoutName);
+		workoutsRepeatsTextView = (TextView) footer.findViewById(R.id.TextViewNewWorkoutRepeatValue);
 		int nr = getIntent().getIntExtra(PlaningActivity.WORKOUTS_NUMBER_TAG, 0);
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
 		
 		repeatPicker = (CustomPicker) footer.findViewById(R.id.customPickerRepeat);
-		isWarmUpToggleButton = (ToggleButton) footer.findViewById(R.id.ToggleButtonWormUp);
+		
+		workoutsRepeatsTextView.setText(repeatPicker.getValue() + " " + getResources().getString(R.string.times));
+		
+		isWarmUpToggleButton = (CheckBox) footer.findViewById(R.id.ToggleButtonWormUp);
+		
+		picerEditText = repeatPicker.getDisplayEditText();
 		registerForContextMenu(workoutsListView);
 	}
 	
@@ -88,6 +101,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addActionButton.setOnClickListener(this);
 		addThisWorkoutButton.setOnClickListener(this);
 		workoutsListView.setOnItemClickListener(this);
+		picerEditText.addTextChangedListener(this);
 	}
 	
 	private void showActionChooseDialog()
@@ -266,5 +280,23 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		workoutsRepeatsTextView.setText(s + " " + getResources().getString(R.string.times));
+		
+	}
+	
+	@Override
+	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 }

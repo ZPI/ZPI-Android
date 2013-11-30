@@ -91,7 +91,9 @@
 	<string name="edit_action">Edit Action</string>
 	<string name="edit">Edit</string>
 	<string name="no_workout_actions">This workout has no actions.</string>
-	
+	<string name="settings_caps">SETTINGS</string>
+	<string name="actions_caps">ACTIONS</string>
+	<string name="name_caps">NAME</string>
 	<!--history -->
 	<string name="Annotations">Annotations</string>
 	

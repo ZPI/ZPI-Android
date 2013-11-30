@@ -119,7 +119,8 @@ public class PlansActivity extends FragmentActivity {
 		if (workoutForDay == null) {
 			noActionInDay.setVisibility(View.VISIBLE);
 			actionInDay.setVisibility(View.GONE);
-		} else {
+		}
+		else {
 			noActionInDay.setVisibility(View.GONE);
 			actionInDay.setVisibility(View.VISIBLE);
 			
@@ -128,8 +129,11 @@ public class PlansActivity extends FragmentActivity {
 				Log.i(PlansActivity.class.getSimpleName(), "has actions");
 				textViewNoWorkoutActions.setVisibility(View.GONE);
 				listViewPlanDayActions.setVisibility(View.VISIBLE);
-				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, workoutForDay.getActions()));
-			} else {
+				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this,
+					R.layout.workouts_action_simple_list_item, R.layout.workout_action_advanced_list_item,
+					workoutForDay.getActions()));
+			}
+			else {
 				Log.i(PlansActivity.class.getSimpleName(), "no actions");
 				listViewPlanDayActions.setVisibility(View.GONE);
 				textViewNoWorkoutActions.setVisibility(View.VISIBLE);
@@ -167,7 +171,7 @@ public class PlansActivity extends FragmentActivity {
 		}
 	}
 	
-	private class LoadEvents extends AsyncTask<TreningPlan, Void, Void> {
+	private class LoadEvents extends AsyncTask<TreningPlan, Date, Void> {
 		@Override
 		protected Void doInBackground(TreningPlan... params) {
 			TreningPlan plan = params[0];
@@ -181,11 +185,17 @@ public class PlansActivity extends FragmentActivity {
 				
 				Date workoutDate = cal.getTime();
 				workoutDays.put(workoutDate, plan.getWorkouts().get(plusDays));
-				
-				calendar.setBackgroundResourceForDate(R.color.calendar_event_color, workoutDate);
-				calendar.setTextColorForDate(R.color.calendar_event_text_color, workoutDate);
+				publishProgress(workoutDate);
 			}
 			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Date... workoutDate) {
+			
+			calendar.setBackgroundResourceForDate(R.color.calendar_event_color, workoutDate[0]);
+			calendar.setTextColorForDate(R.color.calendar_event_text_color, workoutDate[0]);
+			super.onProgressUpdate(workoutDate);
 		}
 		
 		@Override

@@ -198,7 +198,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				
 				startActivityForResult(intent, WORKOUT_REQUEST2);
 				//overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
-			} else if (adapter == traningPlansListView) {
+			}
+			else if (adapter == traningPlansListView) {
 				Log.i(PlaningActivity.class.getSimpleName(), "plan activity starting");
 				Intent intent = new Intent(PlaningActivity.this, PlansActivity.class);
 				TreningPlan plan = (TreningPlan) adapter.getItemAtPosition(position);
@@ -329,14 +330,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 			case 0:
 				tab1Button.setSelected(true);
 				tab2Button.setSelected(false);
-				tab1Button.setTextColor(getResources().getColor(R.color.main_color));
-				tab2Button.setTextColor(getResources().getColor(R.color.white));
 				break;
 			case 1:
 				tab2Button.setSelected(true);
 				tab1Button.setSelected(false);
-				tab2Button.setTextColor(getResources().getColor(R.color.main_color));
-				tab1Button.setTextColor(getResources().getColor(R.color.white));
 				break;
 		}
 	}

@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/name"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:text="@string/name_caps"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
@@ -18,9 +19,11 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:editable="true"
-        android:background="@color/white" 
-        android:paddingLeft="@dimen/medium_margin"
-        android:paddingRight="@dimen/medium_margin"
+        android:paddingTop="@dimen/buttons_padding"
+        android:paddingBottom="@dimen/buttons_padding"
+        android:background="@drawable/view_background" 
+        android:paddingLeft="@dimen/activity_vertical_margin"
+        android:paddingRight="@dimen/activity_vertical_margin"
         android:ems="10" 
         >
 
@@ -32,8 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/actions"
-        
+        android:text="@string/actions_caps"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     
