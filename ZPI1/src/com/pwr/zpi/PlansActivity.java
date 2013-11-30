@@ -182,6 +182,7 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 			}
 			else {
 				Log.i(PlansActivity.class.getSimpleName(), "no actions");
+				listViewPlanDayActions.setAdapter(null);
 				listViewPlanDayActions.setVisibility(View.GONE);
 				textViewNoWorkoutActions.setVisibility(View.VISIBLE);
 			}

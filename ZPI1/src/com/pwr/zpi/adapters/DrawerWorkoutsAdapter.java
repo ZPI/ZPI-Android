@@ -58,8 +58,7 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 				rowHolder.actionTypeSimple.setVisibility(View.VISIBLE);
 				rowHolder.actionTextAdvanced.setVisibility(View.GONE);
 				int speedType = ((WorkoutActionSimple) action).getSpeedType();
-				switch (speedType)
-				{
+				switch (speedType) {
 					case WorkoutAction.ACTION_SIMPLE_SPEED_FAST:
 						rowHolder.actionTypeSimple.setText(R.string.fast);
 						

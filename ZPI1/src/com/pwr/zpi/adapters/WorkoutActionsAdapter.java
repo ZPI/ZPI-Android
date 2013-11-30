@@ -22,6 +22,8 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 	private final Context context;
 	
 	private static final long MILINSECONDS_IN_MINUTE = 60000;
+	private static final int SIMPLE = 0x1;
+	private static final int ADVANCED = 0x2;
 	
 	private final int layoutResourceSimpleID;
 	private final int layoutResourceAdvancedID;
@@ -38,15 +40,14 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 	@Override
 	public int getItemViewType(int position) {
 		WorkoutAction action = getItem(position);
-		if (action.isAdvanced()) return WorkoutAction.ACTION_ADVANCED;
-		else return WorkoutAction.ACTION_SIMPLE;
-		
+		if (action.isAdvanced()) return ADVANCED;
+		else return SIMPLE;
 	}
 	
 	@Override
 	public int getViewTypeCount() {
 		// TODO Auto-generated method stub
-		return 2;
+		return 1;
 	}
 	
 	@Override
@@ -55,45 +56,42 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 		WorkoutActionHolder holder = null;
 		WorkoutAction action = getItem(position);
 		int type = getItemViewType(position);
-		if (row == null)
-		{
-			holder = new WorkoutActionHolder();
-			
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-			
-			switch (type) {
-				case WorkoutAction.ACTION_SIMPLE:
-					row = inflater.inflate(layoutResourceSimpleID, parent, false);
-					holder.speedString = (TextView) row.findViewById(R.id.dataTextViewActionSpeedString);
-					holder.timeOrDistance = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistance);
-					
-					break;
-				
-				case WorkoutAction.ACTION_ADVANCED:
-					row = inflater.inflate(layoutResourceAdvancedID, parent, false);
-					holder.pace = (TextView) row.findViewById(R.id.dataTextViewActionPace);
-					holder.distance = (TextView) row.findViewById(R.id.dataTextViewActionDistance);
-					holder.time = (TextView) row.findViewById(R.id.dataTextViewActionTime);
-					break;
-			}
-			
-			holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
-			
-			row.setTag(holder);
-			
-		}
-		else
-		{
-			holder = (WorkoutActionHolder) row.getTag();
-		}
+		//		if (row == null || row.getTag() == null) {
+		holder = new WorkoutActionHolder();
+		
+		LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
+		
 		switch (type) {
-			case WorkoutAction.ACTION_SIMPLE:
+			case SIMPLE:
+				row = inflater.inflate(layoutResourceSimpleID, parent, false);
+				holder.speedString = (TextView) row.findViewById(R.id.dataTextViewActionSpeedString);
+				holder.timeOrDistance = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistance);
+				
+				break;
+			
+			case ADVANCED:
+				row = inflater.inflate(layoutResourceAdvancedID, parent, false);
+				holder.pace = (TextView) row.findViewById(R.id.dataTextViewActionPace);
+				holder.distance = (TextView) row.findViewById(R.id.dataTextViewActionDistance);
+				holder.time = (TextView) row.findViewById(R.id.dataTextViewActionTime);
+				break;
+		}
+		
+		holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
+		
+		//			row.setTag(holder);
+		//			
+		//		}
+		//		else {
+		//			holder = (WorkoutActionHolder) row.getTag();
+		//		}
+		switch (type) {
+			case SIMPLE:
 				//TODO set image here
 				//holder.image.setImageResource(/*advanced image id*/);
 				WorkoutActionSimple simpleAction = (WorkoutActionSimple) action;
 				int speedString = simpleAction.getSpeedType();
-				switch (speedString)
-				{
+				switch (speedString) {
 					case WorkoutAction.ACTION_SIMPLE_SPEED_SLOW:
 						holder.speedString.setText(context.getResources().getString(R.string.slow));
 						break;
@@ -105,20 +103,18 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 						break;
 				}
 				int valueType = simpleAction.getValueType();
-				switch (valueType)
-				{
+				switch (valueType) {
 					case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_DISTANCE:
 						holder.timeOrDistance.setText(String.format("%.3f%s", simpleAction.getValue() / 1000, context
 							.getResources().getString(R.string.km)));
 						break;
 					case WorkoutAction.ACTION_SIMPLE_VALUE_TYPE_TIME:
-						holder.timeOrDistance
-							.setText(TimeFormatter.formatTimeHHMMSS((long) (simpleAction.getValue())));
+						holder.timeOrDistance.setText(TimeFormatter.formatTimeHHMMSS((long) (simpleAction.getValue())));
 						break;
 				}
 				break;
 			
-			case WorkoutAction.ACTION_ADVANCED:
+			case ADVANCED:
 				//TODO set image here
 				//holder.image.setImageResource(/*advanced image id*/);
 				WorkoutActionAdvanced advancedAction = (WorkoutActionAdvanced) action;
@@ -131,8 +127,7 @@ public class WorkoutActionsAdapter extends ArrayAdapter<WorkoutAction> {
 		return row;
 	}
 	
-	static class WorkoutActionHolder
-	{
+	static class WorkoutActionHolder {
 		ImageView image;
 		TextView distance;
 		TextView time;
