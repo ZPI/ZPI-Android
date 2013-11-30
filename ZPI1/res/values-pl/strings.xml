@@ -54,7 +54,7 @@
 
     <!-- workouts -->
     <string name="workouts">Trening</string>
-    <string name="trening_plans">Plany \ntreningowe</string>
+    <string name="trening_plans">Plany treningowe</string>
     <string name="new_workout">Nowy trening</string>
     <string name="add_workout">Dodaj trening</string>
     <string name="times">razy</string>

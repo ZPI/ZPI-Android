@@ -34,8 +34,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.mock.TreningPlans;
 
-public class PlaningActivity extends Activity implements GestureListener, OnItemClickListener
-{
+public class PlaningActivity extends Activity implements GestureListener, OnItemClickListener {
 	public static final String ID_TAG = "id";
 	public static final String IS_NEW_TAG = "is_new";
 	public static final int MY_REQUEST_CODE_ADD = 1;
@@ -114,8 +113,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		return TreningPlans.getPlans();
 	}
 	
-	private ArrayList<Workout> getWorkoutsFromDB()
-	{
+	private ArrayList<Workout> getWorkoutsFromDB() {
 		ArrayList<Workout> workouts;
 		Database database = new Database(this);
 		workouts = (ArrayList<Workout>) database.getAllWorkoutNames();
@@ -131,8 +129,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		myGestureDetector = new MyGestureDetector(this,
-			false, false, false, true);
+		myGestureDetector = new MyGestureDetector(this, false, false, false, true);
 		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
@@ -185,8 +182,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-		if (!myGestureDetector.isFlingDetected())
-		{
+		if (!myGestureDetector.isFlingDetected()) {
 			Log.i(PlaningActivity.class.getSimpleName(), "item clicked");
 			if (adapter == workoutsListView) {
 				Intent intent = new Intent(PlaningActivity.this, WorkoutActivity.class);
@@ -203,7 +199,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				Log.i(PlaningActivity.class.getSimpleName(), "plan activity starting");
 				Intent intent = new Intent(PlaningActivity.this, PlansActivity.class);
 				TreningPlan plan = (TreningPlan) adapter.getItemAtPosition(position);
-				intent.putExtra(ID_TAG, plan.getID());
+				intent.putExtra(PlansActivity.ID_KEY, plan.getID());
 				
 				startActivity(intent);
 			}
@@ -212,8 +208,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode)
-		{
+		switch (requestCode) {
 			case MY_REQUEST_CODE_ADD:
 				
 				if (resultCode == RESULT_OK) {
@@ -227,8 +222,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				}
 				break;
 			case WORKOUT_REQUEST2:
-				if (resultCode == RESULT_OK)
-				{
+				if (resultCode == RESULT_OK) {
 					setResult(RESULT_OK, data);
 					finish();
 					overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
@@ -245,7 +239,6 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				info = (AdapterContextMenuInfo) item.getMenuInfo();
 				
 				if (workoutAdapter != null) {
-					MyDialog dialog = new MyDialog();
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
 						// romove
@@ -259,9 +252,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 							db.close();
 						}
 					};
-					dialog.showAlertDialog(this, R.string.dialog_message_remove_workout,
-						R.string.empty_string, android.R.string.yes,
-						android.R.string.no, positiveButtonHandler, null);
+					MyDialog.showAlertDialog(this, R.string.dialog_message_remove_workout, R.string.empty_string,
+						android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 					
 				}
 				break;
@@ -272,8 +264,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	}
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-		ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 			case R.id.listViewWorkouts:
 				MenuInflater inflater = getMenuInflater();
@@ -288,8 +279,7 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		if (mCurrent != null)
-		{
+		if (mCurrent != null) {
 			View v = mCurrent;
 			switch (v.getId())
 			
@@ -321,12 +311,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		
 	}
 	
-	private void setTab(int nr)
-	{
+	private void setTab(int nr) {
 		tabHost.setCurrentTab(nr);
 		currentTabButton.setSelected(false);
-		switch (nr)
-		{
+		switch (nr) {
 			case 0:
 				tab1Button.setSelected(true);
 				tab2Button.setSelected(false);

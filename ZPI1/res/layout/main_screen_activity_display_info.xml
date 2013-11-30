@@ -74,20 +74,40 @@
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:background="#FFFFFF" />
     
-    <Button
-        android:id="@+id/buttonMusic"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/musicBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider2"
-        android:background="@drawable/button_background"
-        android:padding="@dimen/buttons_padding"
-        android:text="Muzyka" />
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/small_margin"
+            android:text="@string/music"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+        
+        <Button
+            android:id="@+id/buttonMusic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:background="@color/transparent"
+            android:text="@string/select"
+            android:textColor="@color/clicable_text_color"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <View
         android:id="@+id/divider3"
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:layout_below="@id/buttonMusic"
+        android:layout_below="@id/musicBar"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:background="#FFFFFF" />
     
@@ -102,21 +122,22 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/small_margin"
             android:layout_weight="1"
+            android:layout_marginLeft="@dimen/small_margin"
             android:text="@string/trening_plans"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/textViewMainScreenTreningPlans"
+        
+        <Button
+            android:id="@+id/buttonMainScreenTreningPlans"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="bottom|center"
+            android:background="@color/transparent"
             android:text="@string/none"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white" />
+            android:textColor="@color/clicable_text_color"
+            android:textStyle="bold" />
     </LinearLayout>
     
     <View

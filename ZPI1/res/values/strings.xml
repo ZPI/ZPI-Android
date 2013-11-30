@@ -18,13 +18,13 @@
     <string name="dialog_choose_what_to_display">Choose what to display on this field</string>
     <string name="dialog_message_on_lost_gpsp">Waiting for gps signal#8230;</string>
     <string name="dialog_message_romve">Are you sure, you want to remove this activity?</string>
-     <string name="dialog_message_remove_action">Are you sure, you want to remove this action?</string>
-     <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
- 	<string name="runs_summary">Runs Summary</string>
+    <string name="dialog_message_remove_action">Are you sure, you want to remove this action?</string>
+    <string name="dialog_message_remove_workout">Are you sure, you want to remove this workout?</string>
+    <string name="runs_summary">Runs Summary</string>
     <string name="gps_accuracy">GPS Accuracy:</string>
     <string name="its_time_to_run_notification_title">Today\'s workout!</string>
     <string name="its_time_to_run_notification_message">There\'s planned activity for today\'s day</string>
-    
+    <string name="music">Music</string>
 
     <!-- meassured values -->
     <string name="distance">Distance</string>
@@ -82,20 +82,21 @@
     <string name="this_month">This month</string>
     <string name="all">All</string>
     <string name="distansAndTime">Distance \nand time</string>
-	<string name="distansAndPace">Distance \nand pace</string>
-	<string name="timeAndPace">Time \nand pace</string>
-	<string name="add_action">Add this action</string>
+    <string name="distansAndPace">Distance \nand pace</string>
+    <string name="timeAndPace">Time \nand pace</string>
+    <string name="add_action">Add this action</string>
     <string name="interval">Interval</string>
-	<string name="virtual_partner">Virtual \npartner</string>
-	<string name="edit_workout">Edit Workout</string>
-	<string name="edit_action">Edit Action</string>
-	<string name="edit">Edit</string>
-	<string name="no_workout_actions">This workout has no actions.</string>
-	<string name="settings_caps">SETTINGS</string>
-	<string name="actions_caps">ACTIONS</string>
-	<string name="name_caps">NAME</string>
-	<!--history -->
-	<string name="Annotations">Annotations</string>
+    <string name="virtual_partner">Virtual \npartner</string>
+    <string name="edit_workout">Edit Workout</string>
+    <string name="edit_action">Edit Action</string>
+    <string name="edit">Edit</string>
+    <string name="no_workout_actions">This workout has no actions.</string>
+    <string name="settings_caps">SETTINGS</string>
+    <string name="actions_caps">ACTIONS</string>
+    <string name="name_caps">NAME</string>
+
+    <!--history -->
+    <string name="Annotations">Annotations</string>
 	
     <!-- chart strings -->
     <string name="chart_title">Run\'s data</string>
@@ -117,68 +118,88 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">There\'s no activity history</string>
-	<string name="notification_message">Activity recording. Click here to open.</string>
-	<string name="colon">:</string>
-	<string name="workout_actions">Workout actions</string>
-	<string name="yes">Yes</string>
-	<string name="no">No</string>
-	<string name="run">Run</string>
-	
-	<!-- settings string -->
-	<string name="settings_title_reminder">Workout reminder</string>
-	<string name="settings_title_application">Application settings</string>
-	<string name="settings_title_other">Other</string>
-	<string name="key_aplication_sound">sound_app_key</string>
-	<string name="aplication_sound">In-App sounds</string>
-	<string name="key_auto_pause">auto_pause_key</string>
-	<string name="auto_pause">Auto pause</string>
-	<string name="key_countdown_before_start">countdown_key</string>
-	<string name="countdown_before_start">Countdown</string>
-	<string name="key_map_3d">map_key</string>
-	<string name="map_3d">Map in 3D mode</string>
-	<string name="key_warm_up_time">warm_up_time</string>
-	<string name="warm_up_time">Warm up</string>
-	<string name="reminder_day_key">reminder_day_key</string>
-	<string name="reminder_day">Reminder day</string>
-	<string name="reminder_day_dialog_title">Remind me every</string>
-	<string name="reminder_hour_key">reminder_hour_key</string>
-	<string name="reminder_hour">Reminder hour</string>
-	<string name="reminder_hour_dialog_title">Remind me at</string>
-	
-	<!-- speech strings -->
-	<string name="go">GO</string>
-	<string name="action">Action</string>
-	<string name="run_fast">Speed fast!</string>
-	<string name="run_steady">Speed steady!</string>
-	<string name="run_slow">Speed slow!</string>
-	<string name="for_how_much">For</string>
-	<string name="chase_virtual_partner">Chase virtual partner!</string>
-	<string name="meters">meters.</string>
-	<string name="minutes_speak">minutes.</string>
-	<string name="seconds_speak">seconds</string>
-	<string name="over_kilometer">per kilometer.</string>
-	<string name="with_pace">With pace</string>
-	<string name="warm_up_speak">Warm up!</string>
+    <string name="notification_message">Activity recording. Click here to open.</string>
+    <string name="colon">:</string>
+    <string name="workout_actions">Workout actions</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="run">Run</string>
 
-	<!-- after end of acticity -->
-	<string name="save">Save</string>
-	<string name="discard">Discard</string>
-	<string name="none">None</string>
-	<string name="remind">Remind me in</string>
-	<string name="set_remind">Set reminder</string>
-	<string name="run_summary">Run summary</string>
-	<string name="reminder_dialog_title">Set reminder</string>
-	<string name="reminder_set">Reminder set for</string>
-	<string name="reminder_disable">Reminder disabled</string>
-	
-	<string name="no_trening_plan_in_selected_day">No activity for selected day</string>
-	<string name="actions">Actions</string>
-	<string name="how">How</string>
-	<string name="select">Select</string>
-	
-	<!-- about application -->
-	<string name="version_title">Version</string>
-	<string name="version">2.1.3.4.5.6 LOL xD</string>
-	<string name="about_title">About</string>
-	<string name="about">This application was developed by \n Jakub Skuldarski and Marek Kresnicki. \n Run safe and beat all records.</string>
+    <!-- settings string -->
+    <string name="settings_title_reminder">Workout reminder</string>
+    <string name="settings_title_application">Application settings</string>
+    <string name="settings_title_other">Other</string>
+    <string name="key_aplication_sound">sound_app_key</string>
+    <string name="aplication_sound">In-App sounds</string>
+    <string name="key_auto_pause">auto_pause_key</string>
+    <string name="auto_pause">Auto pause</string>
+    <string name="key_countdown_before_start">countdown_key</string>
+    <string name="countdown_before_start">Countdown</string>
+    <string name="key_map_3d">map_key</string>
+    <string name="map_3d">Map in 3D mode</string>
+    <string name="key_warm_up_time">warm_up_time</string>
+    <string name="warm_up_time">Warm up</string>
+    <string name="reminder_day_key">reminder_day_key</string>
+    <string name="reminder_day">Reminder day</string>
+    <string name="reminder_day_dialog_title">Remind me every</string>
+    <string name="reminder_hour_key">reminder_hour_key</string>
+    <string name="reminder_hour">Reminder hour</string>
+    <string name="reminder_hour_dialog_title">Remind me at</string>
+
+    <!-- speech strings -->
+    <string name="go">GO</string>
+    <string name="action">Action</string>
+    <string name="run_fast">Speed fast!</string>
+    <string name="run_steady">Speed steady!</string>
+    <string name="run_slow">Speed slow!</string>
+    <string name="for_how_much">For</string>
+    <string name="chase_virtual_partner">Chase virtual partner!</string>
+    <string name="meters">meters.</string>
+    <string name="minutes_speak">minutes.</string>
+    <string name="seconds_speak">seconds</string>
+    <string name="over_kilometer">per kilometer.</string>
+    <string name="with_pace">With pace</string>
+    <string name="warm_up_speak">Warm up!</string>
+
+    <!-- after end of acticity -->
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="none">None</string>
+    <string name="remind">Remind me in</string>
+    <string name="set_remind">Set reminder</string>
+    <string name="run_summary">Run summary</string>
+    <string name="reminder_dialog_title">Set reminder</string>
+    <string name="reminder_set">Reminder set for</string>
+    <string name="reminder_disable">Reminder disabled</string>
+    
+    <!-- trening plans -->
+    <string name="no_trening_plan_in_selected_day">No activity for selected day</string>
+    <string name="actions">Actions</string>
+    <string name="how">How</string>
+    <string name="select">Select</string>
+    <string name="end_training">End training</string>
+    <string name="dismiss">Dismiss</string>
+
+    <!-- about application -->
+    <string name="version_title">Version</string>
+    <string name="version">2.1.3.4.5.6 LOL xD</string>
+    <string name="about_title">About</string>
+    <string name="about">This application was developed by \n Jakub Skuldarski and Marek Kresnicki. \n Run safe and beat all records.</string>
+
+    <!-- trening plan dialog -->
+    <string name="trening_plan_todays_workout_title">Trening plan</string>
+    <string name="trening_plan_todays_workout_message">There\'s planned workout for today in selected trening plan.</string>
+    <string name="trening_plan_todays_workout_positive_button">Start planned worokut</string>
+    <string name="trening_plan_todays_workout_negative_button">Later</string>
+    <string name="trening_plan_select_title">Select training?</string>
+    <string name="trening_plan_select_message">Do you want to select this training plan?</string>
+    <string name="trening_plan_change_title">Change training?</string>
+    <string name="trening_plan_change_message">Do you want to change your current training to this training plan?</string>
+    <string name="trening_plan_confirm_title">Trening plan selected</string>
+    <string name="trening_plan_confirm_message">All reminders and workouts for selected trening plan have been set.</string>
+    <string name="trening_plan_disable_title">Disable training?</string>
+    <string name="trening_plan_disable_message">Do you want to disable this training plan?</string>
+    <string name="trening_plan_confirm_disable_title">Trening plan disabled</string>
+    <string name="trening_plan_confirm_disable_message">All reminders and workouts for selected trening plan have been disabled.</string>
+    
 </resources>

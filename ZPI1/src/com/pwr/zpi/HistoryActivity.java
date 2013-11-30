@@ -36,8 +36,7 @@ import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 
-public class HistoryActivity extends Activity implements GestureListener,
-	OnItemClickListener {
+public class HistoryActivity extends Activity implements GestureListener, OnItemClickListener {
 	
 	GestureDetector gestureDetector;
 	MyGestureDetector myGestureDetector;
@@ -82,8 +81,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		addListeners();
 	}
 	
-	private void initTabs()
-	{
+	private void initTabs() {
 		tabHost = (TabHost) findViewById(R.id.tabhostHistory);
 		tabHost.setup();
 		TabSpec tabSpecs = tabHost.newTabSpec(TAB_SPEC_1_TAG);
@@ -112,8 +110,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		
 	}
 	
-	private void initFields()
-	{
+	private void initFields() {
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
@@ -121,16 +118,13 @@ public class HistoryActivity extends Activity implements GestureListener,
 		run_data = readfromDB();
 		
 		Collections.sort(run_data);
-		adapterThisAll = new RunAdapter(this,
-			R.layout.history_run_list_item, run_data);
+		adapterThisAll = new RunAdapter(this, R.layout.history_run_list_item, run_data);
 		ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
 			new ArrayList<SingleRun>(run_data), FILTER_MONTH);
-		adapterThisMonth = new RunAdapter(this,
-			R.layout.history_run_list_item, run_data_month);
+		adapterThisMonth = new RunAdapter(this, R.layout.history_run_list_item, run_data_month);
 		ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
 			run_data_month), FILTER_WEEK);
-		adapterThisWeek = new RunAdapter(this,
-			R.layout.history_run_list_item, run_data_week);
+		adapterThisWeek = new RunAdapter(this, R.layout.history_run_list_item, run_data_week);
 		listViewThisWeek.setAdapter(adapterThisWeek);
 		listViewThisMonth.setAdapter(adapterThisMonth);
 		listViewAll.setAdapter(adapterThisAll);
@@ -143,8 +137,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		//adapterThisWeek.getFilter().filter();
 	}
 	
-	private List<SingleRun> removeOlderThen(List<SingleRun> runs, int type)
-	{
+	private List<SingleRun> removeOlderThen(List<SingleRun> runs, int type) {
 		Calendar cal = Calendar.getInstance();
 		switch (type) {
 			case FILTER_MONTH:
@@ -159,8 +152,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 		
 		Date lastMonth = cal.getTime();
 		Iterator<SingleRun> it = runs.iterator();
-		while (it.hasNext())
-		{
+		while (it.hasNext()) {
 			SingleRun singleRun = it.next();
 			if (singleRun.getStartDate().before(lastMonth)) {
 				it.remove();
@@ -186,8 +178,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		myGestureDetector = new MyGestureDetector(this,
-			false, false, true, false);
+		myGestureDetector = new MyGestureDetector(this, false, false, true, false);
 		gestureDetector = new GestureDetector(this, myGestureDetector);
 		gestureListener = new View.OnTouchListener() {
 			@Override
@@ -250,14 +241,10 @@ public class HistoryActivity extends Activity implements GestureListener,
 	}
 	
 	@Override
-	public void onItemClick(AdapterView<?> adapter, View view, int position,
-		long id) {
-		if (!myGestureDetector.isFlingDetected())
-		{
-			Intent intent = new Intent(HistoryActivity.this,
-				SingleRunHistoryActivity.class);
-			SingleRun selectedValue = (SingleRun) adapter
-				.getItemAtPosition(position);
+	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+		if (!myGestureDetector.isFlingDetected()) {
+			Intent intent = new Intent(HistoryActivity.this, SingleRunHistoryActivity.class);
+			SingleRun selectedValue = (SingleRun) adapter.getItemAtPosition(position);
 			intent.putExtra(ID_TAG, selectedValue.getRunID());
 			intent.putExtra(DISTANCE_TAG, selectedValue.getDistance());
 			intent.putExtra(TIME_TAG, selectedValue.getRunTime());
@@ -268,8 +255,7 @@ public class HistoryActivity extends Activity implements GestureListener,
 	}
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-		ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 			case R.id.listViewAll:
 			case R.id.listViewThisMonth:
@@ -304,7 +290,6 @@ public class HistoryActivity extends Activity implements GestureListener,
 						break;
 				}
 				if (adapter != null) {
-					MyDialog dialog = new MyDialog();
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
 						// romove
@@ -321,9 +306,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 							db.close();
 						}
 					};
-					dialog.showAlertDialog(this, R.string.dialog_message_romve,
-						R.string.empty_string, android.R.string.yes,
-						android.R.string.no, positiveButtonHandler, null);
+					MyDialog.showAlertDialog(this, R.string.dialog_message_romve, R.string.empty_string,
+						android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 					
 				}
 				break;
@@ -335,10 +319,8 @@ public class HistoryActivity extends Activity implements GestureListener,
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		if (mCurrent != null)
-		{
-			switch (mCurrent.getId())
-			{
+		if (mCurrent != null) {
+			switch (mCurrent.getId()) {
 				case R.id.buttonHistoryMainScreen:
 					finish();
 					overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
@@ -360,11 +342,9 @@ public class HistoryActivity extends Activity implements GestureListener,
 		
 	}
 	
-	private void setTab(int nr)
-	{
+	private void setTab(int nr) {
 		tabHost.setCurrentTab(nr);
-		switch (nr)
-		{
+		switch (nr) {
 			case 0:
 				tab1Button.setSelected(true);
 				tab2Button.setSelected(false);

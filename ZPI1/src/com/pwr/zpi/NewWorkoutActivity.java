@@ -65,8 +65,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		}
 	}
 	
-	private void initFields()
-	{
+	private void initFields() {
 		workoutsListView = (ListView) findViewById(R.id.listViewActions);
 		workoutsActionList = new ArrayList<WorkoutAction>();
 		
@@ -96,23 +95,19 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		registerForContextMenu(workoutsListView);
 	}
 	
-	private void addListeners()
-	{
+	private void addListeners() {
 		addActionButton.setOnClickListener(this);
 		addThisWorkoutButton.setOnClickListener(this);
 		workoutsListView.setOnItemClickListener(this);
 		picerEditText.addTextChangedListener(this);
 	}
 	
-	private void showActionChooseDialog()
-	{
+	private void showActionChooseDialog() {
 		final CharSequence[] items = getResources().getStringArray(R.array.choose_action);
-		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int item) {
-				switch (item)
-				{
+				switch (item) {
 					case 0:
 						startActivityForResult(
 							new Intent(NewWorkoutActivity.this, NewWorkoutActionSimpleActivity.class),
@@ -126,15 +121,14 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				
 			}
 		};
-		dialog.showAlertDialog(this, R.string.add_action, R.string.empty_string,
-			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
+		MyDialog.showAlertDialog(this, R.string.add_action, R.string.empty_string, R.string.empty_string,
+			R.string.empty_string, null, null, items, itemsHandler);
 		
 	}
 	
 	@Override
 	public void onClick(View v) {
-		if (v == addActionButton)
-		{
+		if (v == addActionButton) {
 			if (MainScreenActivity.REDUCED_VERSION) {
 				startActivityForResult(new Intent(this, NewWorkoutActionSimpleActivity.class), MY_REQUEST_CODE_ADD);
 			}
@@ -142,11 +136,9 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				showActionChooseDialog();
 			}
 		}
-		else if (v == addThisWorkoutButton)
-		{
+		else if (v == addThisWorkoutButton) {
 			Intent returnIntent = new Intent();
-			if (workout == null)
-			{
+			if (workout == null) {
 				workout = new Workout();
 			}
 			workout.setName(workautNameEditText.getText().toString());
@@ -183,8 +175,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 					WorkoutAction workoutAction = data.getParcelableExtra(WorkoutAction.TAG);
 					workoutsActionList.set(editedPos, workoutAction);
 					workoutActionAdapter.notifyDataSetChanged();
-					if (workout != null)
-					{
+					if (workout != null) {
 						Database db = new Database(this);
 						db.deleteWorkoutAction(workout.getID(), ID);
 						db.updateWorkoutAction(ID, workoutAction, index);
@@ -220,7 +211,6 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				info = (AdapterContextMenuInfo) item.getMenuInfo();
 				
 				if (workoutActionAdapter != null) {
-					MyDialog dialog = new MyDialog();
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
 						// romove
@@ -229,17 +219,15 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 							
 							WorkoutAction toDelete = workoutActionAdapter.getItem(info.position - 1);
 							workoutActionAdapter.remove(toDelete);
-							if (workout != null)
-							{
+							if (workout != null) {
 								Database db = new Database(NewWorkoutActivity.this);
 								db.deleteWorkoutAction(workout.getID(), toDelete.getID());
 								db.close();
 							}
 						}
 					};
-					dialog.showAlertDialog(this, R.string.dialog_message_remove_action,
-						R.string.empty_string, android.R.string.yes,
-						android.R.string.no, positiveButtonHandler, null);
+					MyDialog.showAlertDialog(this, R.string.dialog_message_remove_action, R.string.empty_string,
+						android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 					
 				}
 				break;
@@ -250,8 +238,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	}
 	
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-		ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		switch (v.getId()) {
 			case R.id.listViewActions:
 				MenuInflater inflater = getMenuInflater();
@@ -265,11 +252,9 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	}
 	
 	//set privious data if we are editing view
-	private boolean setDataIfEdit()
-	{
+	private boolean setDataIfEdit() {
 		Intent intent = getIntent();
-		if (intent.hasExtra(Workout.TAG))
-		{
+		if (intent.hasExtra(Workout.TAG)) {
 			workout = intent.getParcelableExtra(Workout.TAG);
 			workautNameEditText.setText(workout.getName());
 			isWarmUpToggleButton.setChecked(workout.isWarmUp());

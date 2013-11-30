@@ -35,4 +35,12 @@ public class Time {
 		c.set(Calendar.MILLISECOND, miliseconds);
 		return c.getTime();
 	}
+	
+	public static Calendar zeroTimeInDate(Calendar cal) {
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
 }

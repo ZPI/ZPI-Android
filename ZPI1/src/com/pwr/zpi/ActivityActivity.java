@@ -400,7 +400,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void showAlertDialog() {
-		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
@@ -423,7 +422,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				startActivityForResult(intent, MY_REQUEST_CODE);
 			}
 		};
-		dialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
+		MyDialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
 			android.R.string.no, positiveButtonHandler, null);
 	}
 	
@@ -432,8 +431,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		if (requestCode == MY_REQUEST_CODE) {
 			
-			if (isServiceConnected && resultCode == RESULT_OK)
-			{
+			if (isServiceConnected && resultCode == RESULT_OK) {
 				try {
 					String name = data.getStringExtra(NAME_TAG);
 					api.doSaveRun(data.getBooleanExtra(SAVE_TAG, false), name);
@@ -573,7 +571,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		final CharSequence[] items = { getMyString(R.string.distance), getMyString(R.string.pace),
 			getMyString(R.string.pace_avrage), getMyString(R.string.time) };
-		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int item) {
@@ -586,7 +583,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				}
 			}
 		};
-		dialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
+		MyDialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
 			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
 	}
 	
@@ -661,8 +658,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private CameraPosition buildCameraPosition(LatLng latLng, Location location, Location lastLocation) {
 		Builder builder = new CameraPosition.Builder().target(latLng).zoom(17);	// Sets the zoom
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_map_3d), true)) {
-			builder
-				.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
+			builder.bearing(lastLocation.bearingTo(location)) // Sets the orientation of the
 				// camera to east
 				.tilt(60); // Creates a CameraPosition from the builder
 		}
@@ -670,8 +666,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	private void addMarker(Location location, int distance) {
-		Marker marker = mMap.addMarker(new MarkerOptions().position(
-			new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
+		Marker marker = mMap.addMarker(new MarkerOptions()
+			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
 			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
 		marker.showInfoWindow();
 	}
@@ -796,8 +792,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				}
 				
 				int countDownTime = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(
-					ActivityActivity.this).getString(
-					getString(R.string.key_countdown_before_start), "0"));
+					ActivityActivity.this).getString(getString(R.string.key_countdown_before_start), "0"));
 				
 				api.setStarted(workoutCopy, countDownTime); // -,-' must be here because service has different preference context, so when user changes it in setting it doesn't work okay
 			}
@@ -854,8 +849,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 	};
 	
-	private void reset()
-	{
+	private void reset() {
 		distance = 0;
 		traceOnMap = new PolylineOptions();
 		traceOnMap.width(traceThickness);
@@ -864,8 +858,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		time = 0L;
 	}
 	
-	private void setWormUpText()
-	{
+	private void setWormUpText() {
 		handlerForService.post(new Runnable() {
 			
 			@Override

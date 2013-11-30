@@ -1,8 +1,12 @@
 package com.pwr.zpi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -10,12 +14,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -34,18 +40,25 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.dialogs.DialogFactory;
+import com.pwr.zpi.dialogs.DialogsEnum;
 import com.pwr.zpi.dialogs.ErrorDialogFragment;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.Reminders;
+import com.pwr.zpi.utils.Time;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class MainScreenActivity extends FragmentActivity implements GestureListener {
 	
 	public static final boolean REDUCED_VERSION = false;
+	public static final String NEW_PLAN_KEY = "new_plan_indicator";
 	
 	private RunListenerApi api;
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
@@ -58,6 +71,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton planningButton;
 	private Button startButton;
 	private Button musicButton;
+	private Button treningPlansButton;
 	private RelativeLayout runSummaryRelativeLayout;
 	private TextView runSummaryDistanceTextView;
 	private TextView runSummaryTotalTimeTextView;
@@ -75,6 +89,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private Workout workout;
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
+	private TreningPlan treningPlan;
+	private HashMap<Date, Workout> datedWorkouts;
+	private boolean isPlanLoaded;
+	private Workout todayWorkout;
 	
 	public static final short GPS_NOT_ENABLED = 0;
 	public static final short NO_GPS_SIGNAL = 1;
@@ -101,22 +119,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		super.onCreate(savedInstanceState);
 		handler = new Handler();
 		setContentView(R.layout.main_screen_activity);
-		isServiceConnected = false;
 		
-		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
-		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
-		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
-		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
-		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
-		startButton = (Button) findViewById(R.id.buttonStart);
-		musicButton = (Button) findViewById(R.id.buttonMusic);
-		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
-		runSummaryDistanceTextView = (TextView) findViewById(R.id.textViewMSDistance);
-		runSummaryTotalTimeTextView = (TextView) findViewById(R.id.textViewMSTotalTime);
-		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
-		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
-		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
-		// locationListener = new MyLocationListener(this);
+		init();
 		
 		prepareGestureListener();
 		addListeners();
@@ -126,6 +130,61 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		runNumber = 0;
 		isConnected = false;
 		
+	}
+	
+	private void init() {
+		isServiceConnected = false;
+		
+		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
+		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
+		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
+		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
+		planningButton = (ImageButton) findViewById(R.id.buttonPlans);
+		startButton = (Button) findViewById(R.id.buttonStart);
+		musicButton = (Button) findViewById(R.id.buttonMusic);
+		treningPlansButton = (Button) findViewById(R.id.buttonMainScreenTreningPlans);
+		workoutNameTextView = (TextView) findViewById(R.id.textViewMainScreenWorkout);
+		runSummaryDistanceTextView = (TextView) findViewById(R.id.textViewMSDistance);
+		runSummaryTotalTimeTextView = (TextView) findViewById(R.id.textViewMSTotalTime);
+		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
+		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
+		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
+		// locationListener = new MyLocationListener(this);
+		
+		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, true).commit(); //FIXME delete
+		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(TreningPlans.TRENING_PLANS_ID_KEY, 0).commit(); //FIXME delete
+		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(TreningPlans.TRENING_PLANS_START_DATE_KEY, Calendar.getInstance().getTimeInMillis()).commit(); //FIXME delete
+		
+		validateTreningPlan();
+	}
+	
+	private void validateTreningPlan() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean isTrenignEnabled = prefs.getBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
+		
+		if (isTrenignEnabled) {
+			long treningPlanID = prefs.getLong(TreningPlans.TRENING_PLANS_ID_KEY, -1);
+			isPlanLoaded = false;
+			new LoadTreningPlan().execute(treningPlanID);
+		}
+		else {
+			Log.i("T", "NO TRENING ----------------------------------");
+			treningPlansButton.setText(R.string.none);
+			treningPlansButton.setOnClickListener(null);
+		}
+	}
+	
+	private boolean wasWorkoutAlreadyToday() {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		long lastWorkoutForThatTrening = prefs.getLong(TreningPlans.TRENING_PLAN_LAST_WORKOUT_DATE, 0);
+		
+		Calendar cal = Calendar.getInstance();
+		Date today = Time.zeroTimeInDate(cal).getTime();
+		cal = Calendar.getInstance();
+		cal.setTimeInMillis(lastWorkoutForThatTrening);
+		cal = Time.zeroTimeInDate(cal);
+		Date lastWorkout = cal.getTime();
+		return today.equals(lastWorkout);
 	}
 	
 	private void checkSpeechSynthezator() {
@@ -148,8 +207,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	private void prepareGestureListener() {
 		// Gesture detection
-		gestureDetector = new GestureDetector(this, new MyGestureDetector(this,
-			true, true, true, true));
+		gestureDetector = new GestureDetector(this, new MyGestureDetector(this, true, true, true, true));
 		gestureListener = new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -160,14 +218,25 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	}
 	
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (intent != null) {
+			if (intent.hasExtra(NEW_PLAN_KEY)) {
+				validateTreningPlan();
+				Log.i(TAG, "new plan ----------------------------");
+			}
+		}
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
+		
 		new GetAllRunsFromDB().execute(new Void[0]);
 		if (!mIsBound) {
 			doBindService();
 		}
-		else
-		{
+		else {
 			try {
 				if (isServiceConnected) {
 					gpsStatus = api.getGPSStatus();
@@ -209,8 +278,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		return gestureListener.onTouch(mCurrent, event);
 	}
 	
-	private void startActivity(Class<? extends Activity> activity,
-		short swipeDirection) {
+	private void startActivity(Class<? extends Activity> activity, short swipeDirection) {
 		Intent i = new Intent(MainScreenActivity.this, activity);
 		if (swipeDirection == RIGHT) { //get workout
 			startActivityForResult(i, WORKOUT_REQUEST);
@@ -228,22 +296,20 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			startActivity(i);
 			
 		}
-		switch (swipeDirection)
-		{
+		switch (swipeDirection) {
 			case RIGHT:
-				overridePendingTransition(R.anim.in_right_anim,
-					R.anim.out_right_anim);
+				overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 				break;
 			case LEFT:
 				overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 				break;
 			case DOWN:
-				
 				overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
-				
 				break;
 			case UP:
 				overridePendingTransition(R.anim.in_up_anim, R.anim.out_up_anim);
+				break;
+			default:
 				break;
 		}
 	}
@@ -262,7 +328,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	@Override
 	public void onUpToDownSwipe() {
-		startActivityIfPossible();
+		startActivityIfPossible(false);
 		
 	}
 	
@@ -312,17 +378,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				else {
 					// missing data, install it
 					Intent installIntent = new Intent();
-					installIntent.setAction(
-						TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+					installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
 					startActivity(installIntent);
 				}
 				break;
 			case WORKOUT_REQUEST:
-				if (resultCode == RESULT_OK)
-				{
+				if (resultCode == RESULT_OK) {
 					workout = data.getParcelableExtra(Workout.TAG);
-					if (workout != null)
-					{
+					if (workout != null) {
 						workoutNameTextView.setText(workout.getName());
 					}
 				}
@@ -365,48 +428,42 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		super.onDestroy();
 	}
 	
-	private void startActivityIfPossible() {
-		switch (gpsStatus)
-		{
+	private void startActivityIfPossible(boolean fromTreningPlan) {
+		switch (gpsStatus) {
 			case -1:
 				// Shouldn't be here;
 				Log.e("Service_info", "no gps status info");
 				break;
 			case GPS_NOT_ENABLED:
-				MyDialog dialog = new MyDialog();
 				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						Intent intent = new Intent(
-							android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 						startActivity(intent);
 					}
 				};
 				
-				dialog.showAlertDialog(this, R.string.dialog_message_no_gps,
-					R.string.empty_string, android.R.string.yes,
-					android.R.string.no, positiveButtonHandler, null);
+				MyDialog.showAlertDialog(this, R.string.dialog_message_no_gps, R.string.empty_string,
+					android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 				
 				break;
 			case NO_GPS_SIGNAL:
-				dialog = new MyDialog();
-				positiveButtonHandler = new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						
-					}
-				};
-				dialog.showAlertDialog(this,
-					R.string.dialog_message_low_gps_accuracy,
-					R.string.empty_string, android.R.string.ok,
-					R.string.empty_string, positiveButtonHandler, null);
+				MyDialog.showAlertDialog(this, R.string.dialog_message_low_gps_accuracy, R.string.empty_string,
+					android.R.string.ok, R.string.empty_string, null, null);
 				break;
 			default:
 				//debugT2 = System.currentTimeMillis();
 				//Log.i("time", (debugT2 - debugT1) + " srodek");
-				startActivity(ActivityActivity.class, DOWN);
+				if (fromTreningPlan) {
+					PreferenceManager.getDefaultSharedPreferences(this).edit()
+						.putLong(TreningPlans.TRENING_PLAN_LAST_WORKOUT_DATE, Calendar.getInstance().getTimeInMillis());
+					startActivityActivityWithWorkout(todayWorkout);
+				}
+				else {
+					startActivity(ActivityActivity.class, DOWN);
+				}
 				break;
-				
+		
 		}
 		
 	}
@@ -442,9 +499,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					 * the error.
 					 */
 					// Get the error dialog from Google Play services
-					Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-						connectionResult.getErrorCode(), MainScreenActivity.this,
-						REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
+					Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(),
+						MainScreenActivity.this, REQUEST_GOOGLE_PLAY_SERVICES); // tu by�a z�a liczba w
 					// dokumentacji :/
 					
 					// If Google Play services can provide an error dialog
@@ -454,8 +510,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 						// Set the dialog in the DialogFragment
 						errorFragment.setDialog(errorDialog);
 						// Show the error dialog in the DialogFragment
-						errorFragment.show(getSupportFragmentManager(),
-							"Location Updates");
+						errorFragment.show(getSupportFragmentManager(), "Location Updates");
 					}
 				}
 				
@@ -507,22 +562,19 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	@Override
 	public void onSingleTapConfirmed(MotionEvent e) {
-		if (mCurrent != null)
-		{
-			switch (mCurrent.getId())
-			{
+		if (mCurrent != null) {
+			switch (mCurrent.getId()) {
 				case R.id.textViewGPSIndicator:
 					// if gps is not running
 					if (gpsStatus == GPS_NOT_ENABLED) {
-						Intent intent = new Intent(
-							Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+						Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 						startActivity(intent);
 					}
 					break;
 				case R.id.buttonStart:
 					debugT1 = System.currentTimeMillis();
 					//					Debug.startMethodTracing("calc");
-					startActivityIfPossible();
+					startActivityIfPossible(false);
 					break;
 				case R.id.buttonHistory:
 					startActivity(HistoryActivity.class, LEFT);
@@ -536,10 +588,82 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				case R.id.buttonMusic:
 					startSystemMusicPlayer();
 					break;
+				case R.id.buttonMainScreenTreningPlans:
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+					boolean isTrenignEnabled = prefs.getBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false);
+					if (isTrenignEnabled) {
+						showTreningPlanDialog();
+					}
+					break;
 				default:
 					break;
 			}
 		}
+	}
+	
+	private void showTreningPlanDialog() {
+		final boolean isWorkoutToday = todayWorkout != null;
+		CharSequence[] items;
+		
+		if (isWorkoutToday && !wasWorkoutAlreadyToday()) {
+			items = getResources().getStringArray(R.array.main_screen_trening_plan_dialog_with_workout);
+		}
+		else {
+			items = getResources().getStringArray(R.array.main_screen_trening_plan_dialog);
+		}
+		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				int clickedIndex = which;
+				if (!isWorkoutToday || wasWorkoutAlreadyToday()) {
+					clickedIndex++; //added one to match next switch
+				}
+				switch (clickedIndex) {
+					case 0:
+						startActivityIfPossible(true);
+						break;
+					case 1:
+						if (isPlanLoaded) {
+							Intent i = new Intent(MainScreenActivity.this, PlansActivity.class);
+							i.putExtra(PlansActivity.ID_KEY, treningPlan.getID());
+							Calendar c = Calendar.getInstance();
+							long startTimeInMilis = PreferenceManager.getDefaultSharedPreferences(
+								MainScreenActivity.this).getLong(TreningPlans.TRENING_PLANS_START_DATE_KEY,
+								Calendar.getInstance().getTimeInMillis());
+							c.setTimeInMillis(startTimeInMilis);
+							i.putExtra(PlansActivity.START_DATE_KEY, startTimeInMilis);
+							startActivity(i);
+						}
+						break;
+					case 2:
+						disableTreningPlan();
+						break;
+					default:
+						break;
+				}
+			}
+		};
+		MyDialog.showAlertDialog(this, R.string.trening_plan_todays_workout_title, R.string.empty_string,
+			android.R.string.ok, R.string.empty_string, null, null, items, itemsHandler);
+	}
+	
+	private void disableTreningPlan() {
+		DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreenActivity.this);
+				prefs.edit().putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, false).commit();
+				Reminders.cancelAllReminders(getApplicationContext());
+				validateTreningPlan();
+				treningPlansButton.setOnTouchListener(null);
+				DialogFactory.getDialogSingleButton(DialogsEnum.ConfirmationDisable, MainScreenActivity.this, null)
+					.show();
+			}
+		};
+		AlertDialog dialog = DialogFactory.getDialog(DialogsEnum.DisableThisTreningPlan, this, positiveListener, null);
+		dialog.show();
 	}
 	
 	private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -596,19 +720,15 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		public void handleCountDownChange(int countDownNumber) throws RemoteException {}
 	};
 	
-	private void getConnectionResult()
-	{
+	private void getConnectionResult() {
 		Intent intent;
 		try {
 			intent = api.getConnectionResult();
 			boolean connectionFailed = intent.getBooleanExtra(LocationService.CONNECTION_FIAILED_TAG, true);
-			if (connectionFailed)
-			{
+			if (connectionFailed) {
 				int errorCode = intent.getIntExtra("status_code", -1);
-				PendingIntent pendingIntent = intent
-					.getParcelableExtra("pending_intent");
-				showGoogleServicesDialog(new ConnectionResult(errorCode,
-					pendingIntent));
+				PendingIntent pendingIntent = intent.getParcelableExtra("pending_intent");
+				showGoogleServicesDialog(new ConnectionResult(errorCode, pendingIntent));
 			}
 		}
 		catch (RemoteException e) {
@@ -628,18 +748,16 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			int count;
 			if (runs != null) {
 				count = runs.size();
-				for (SingleRun run : runs)
-				{
+				for (SingleRun run : runs) {
 					totalTime += run.getRunTime();
 					distance += run.getDistance();
-					
 				}
-			} else {
+			}
+			else {
 				count = 0;
 			}
 			Pair<Pair<Integer, Long>, Pair<Double, Integer>> data = new Pair<Pair<Integer, Long>, Pair<Double, Integer>>(
-				new Pair<Integer, Long>(
-					count, totalTime), new Pair<Double, Integer>(distance, count));
+				new Pair<Integer, Long>(count, totalTime), new Pair<Double, Integer>(distance, count));
 			return data;
 		}
 		
@@ -650,13 +768,86 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			runSummaryTotalTimeTextView.setText(TimeFormatter.formatTimeHHMMSS(data.first.second));
 			runSummaryWorkoutsCountTextView.setText(data.first.first + "");
 			runNumber = data.second.second;
-			
 		}
 		
 	}
 	
-	private void handleGPSStatusChange()
-	{
+	private class LoadTreningPlan extends AsyncTask<Long, Void, HashMap<Date, Workout>> {
+		@Override
+		protected HashMap<Date, Workout> doInBackground(Long... params) {
+			long treningPlanID = params[0];
+			HashMap<Date, Workout> plan = null;
+			//FIXME change to read from db in future version
+			treningPlan = TreningPlans.getTreningPlan(treningPlanID);
+			if (treningPlan == null) { //shouldn't be here
+				treningPlansButton.setText(R.string.none);
+			}
+			else {
+				long startDateInMilis = PreferenceManager.getDefaultSharedPreferences(MainScreenActivity.this).getLong(
+					TreningPlans.TRENING_PLANS_START_DATE_KEY, 0);
+				Calendar cal = Calendar.getInstance();
+				cal.setTimeInMillis(startDateInMilis);
+				Date startDate = cal.getTime();
+				plan = new HashMap<Date, Workout>();
+				for (Integer key : treningPlan.getWorkouts().keySet()) {
+					Workout workout = treningPlan.getWorkouts().get(key);
+					cal.setTime(startDate);
+					cal.add(Calendar.DATE, key);
+					cal = Time.zeroTimeInDate(cal);
+					Date workoutDate = cal.getTime();
+					plan.put(workoutDate, workout);
+				}
+			}
+			
+			return plan;
+		}
+		
+		@Override
+		protected void onPostExecute(HashMap<Date, Workout> result) {
+			treningPlansButton.setText(treningPlan.getName());
+			treningPlansButton.setOnTouchListener(gestureListener);
+			datedWorkouts = result;
+			isPlanLoaded = true;
+			if (!wasWorkoutAlreadyToday()) {
+				checkIsTodayPlannedWorkout();
+			}
+			Log.i(TAG, "plan read");
+		}
+		
+	}
+	
+	private void checkIsTodayPlannedWorkout() {
+		Calendar cal = Calendar.getInstance();
+		cal = Time.zeroTimeInDate(cal);
+		final Workout todayWorkout = datedWorkouts.get(cal.getTime());
+		this.todayWorkout = todayWorkout;
+		
+		if (todayWorkout != null) {
+			DialogInterface.OnClickListener startWorkoutListener = new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					startActivityIfPossible(true);
+				}
+			};
+			MyDialog.showAlertDialog(this, R.string.trening_plan_todays_workout_title,
+				R.string.trening_plan_todays_workout_message, R.string.trening_plan_todays_workout_positive_button,
+				R.string.trening_plan_todays_workout_negative_button, startWorkoutListener, null);
+		}
+	}
+	
+	private void startActivityActivityWithWorkout(Workout todayWorkout) {
+		PreferenceManager.getDefaultSharedPreferences(this).edit()
+			.putLong(TreningPlans.TRENING_PLAN_LAST_WORKOUT_DATE, Calendar.getInstance().getTimeInMillis()).commit();
+		
+		Intent i = new Intent(MainScreenActivity.this, ActivityActivity.class);
+		i.putExtra(Workout.TAG, todayWorkout);
+		i.putExtra(ActivityActivity.RUN_NUMBER_TAG, runNumber);
+		startActivity(i);
+		overridePendingTransition(R.anim.in_down_anim, R.anim.out_down_anim);
+	}
+	
+	private void handleGPSStatusChange() {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {

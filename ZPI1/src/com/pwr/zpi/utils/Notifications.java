@@ -15,17 +15,18 @@ public class Notifications {
 		int contentText) {
 		// Make sure the launch mode of the activity is singleTask, otherwise it will create a new one
 		Intent intent = new Intent(context, cls);
+		intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 		PendingIntent pIntent = PendingIntent.getActivity(context, 0, intent, 0);
 		
 		//		long[] vibrations = new long[] {1000L, 500L};
 		
 		// Build notification
 		Notification note = new NotificationCompat.Builder(context)
-		.setContentTitle(context.getResources().getString(contentTitle)).setSmallIcon(R.drawable.ic_launcher)
-		.setContentText(context.getResources().getString(contentText))
-		//		.setVibrate(vibrations)
-		//.setLights(0xff0000ff, 1000, 3000)
-		.setContentIntent(pIntent).build();
+			.setContentTitle(context.getResources().getString(contentTitle)).setSmallIcon(R.drawable.ic_launcher)
+			.setContentText(context.getResources().getString(contentText))
+			//		.setVibrate(vibrations)
+			//.setLights(0xff0000ff, 1000, 3000)
+			.setContentIntent(pIntent).build();
 		return note;
 	}
 }

@@ -73,6 +73,7 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		Intent returnIntent = new Intent();
+		returnIntent.putExtra(MainScreenActivity.NEW_PLAN_KEY, true);
 		switch (v.getId()) {
 			case R.id.buttonAfterActivitySave:
 				returnIntent.putExtra(ActivityActivity.SAVE_TAG, true);
@@ -99,7 +100,6 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 	
 	private void showReminderDialog() {
 		CharSequence[] items = getResources().getStringArray(R.array.reminder_days);
-		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			
 			@Override
@@ -121,13 +121,13 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 				}
 			}
 		};
-		dayDialog = dialog.showAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
+		dayDialog = MyDialog.getAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
 			R.string.empty_string, android.R.string.cancel, null, null, items, itemsHandler);
+		dayDialog.show();
 	}
 	
 	private void startHourDialog() {
 		CharSequence[] items = getResources().getStringArray(R.array.reminder_hours);
-		MyDialog dialog = new MyDialog();
 		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
 			
 			@Override
@@ -157,8 +157,9 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 			}
 			
 		};
-		dayDialog = dialog.showAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
+		dayDialog = MyDialog.getAlertDialog(this, R.string.reminder_dialog_title, R.string.empty_string,
 			R.string.empty_string, android.R.string.cancel, null, null, items, itemsHandler);
+		dayDialog.show();
 	}
 	
 	private Date setReminderForSelectedDay(int plusDay, int hour) {

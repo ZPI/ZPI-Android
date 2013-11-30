@@ -50,4 +50,13 @@
         <item name="sixteen">16</item>
         <item name="twenty">20</item>
     </string-array>
+    <string-array name="main_screen_trening_plan_dialog_with_workout">
+        <item name="disablePlan">Start today\'s workout</item>
+        <item name="disablePlan">Show trening plan</item>
+        <item name="disablePlan">Disable trening plan</item>
+    </string-array>
+    <string-array name="main_screen_trening_plan_dialog">
+        <item name="disablePlan">Show trening plan</item>
+        <item name="disablePlan">Disable trening plan</item>
+    </string-array>
 </resources>
