@@ -162,7 +162,8 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 			@Override
 			public void onCaldroidViewCreated() {
 				super.onCaldroidViewCreated();
-				//				calendar.getMonthTitleTextView().setTextA
+				
+				calendar.getWeekdayGridView().setVisibility(View.GONE);
 			}
 		});
 	}
