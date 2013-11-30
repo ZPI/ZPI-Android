@@ -376,10 +376,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					}
 				}
 				else {
-					// missing data, install it
-					Intent installIntent = new Intent();
-					installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-					startActivity(installIntent);
+					showMissingTTSDialog();
 				}
 				break;
 			case WORKOUT_REQUEST:
@@ -393,6 +390,20 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			default:
 				break;
 		}
+	}
+	
+	private void showMissingTTSDialog() {
+		DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				Log.e(TAG, "---------------- no tts data");
+				Intent installIntent = new Intent();
+				installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+				startActivity(installIntent);
+			}
+		};
+		DialogFactory.getDialog(DialogsEnum.NoTTSData, this, positive, null).show();
 	}
 	
 	public void showGPSAccuracy() {

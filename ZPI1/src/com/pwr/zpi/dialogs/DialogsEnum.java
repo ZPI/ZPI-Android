@@ -9,7 +9,8 @@ public enum DialogsEnum {
 		R.string.trening_plan_confirm_title, R.string.trening_plan_confirm_message, android.R.string.ok), DisableThisTreningPlan(
 		R.string.trening_plan_disable_title, R.string.trening_plan_disable_message, android.R.string.yes,
 		android.R.string.no), ConfirmationDisable(R.string.trening_plan_confirm_disable_title,
-		R.string.trening_plan_confirm_disable_message, android.R.string.ok);
+		R.string.trening_plan_confirm_disable_message, android.R.string.ok), NoTTSData(R.string.no_tts_dialog_title,
+		R.string.no_tts_dialog_message, android.R.string.yes, android.R.string.no);
 	
 	int title;
 	int message;
