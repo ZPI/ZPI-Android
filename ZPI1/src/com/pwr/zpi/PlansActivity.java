@@ -159,6 +159,11 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 				setViewForWorkout(workoutForDay);
 			}
 			
+			@Override
+			public void onCaldroidViewCreated() {
+				super.onCaldroidViewCreated();
+				//				calendar.getMonthTitleTextView().setTextA
+			}
 		});
 	}
 	

@@ -17,13 +17,12 @@
     <string name="dialog_message_romve">Czy na pewno chcesz usunąć tę aktywność?</string>
     <string name="dialog_message_remove_action">Czy na pewno chcesz usunąć tę akcję?</string>
     <string name="dialog_message_remove_workout">Czy na pewno chcesz usunąć ten trening?</string>
- 
     <string name="gps_accuracy">Dokładność GPS</string>
 
     <!-- meassured values -->
     <string name="distance">Dystans</string>
     <string name="actual_time">Akyaulny czas</string>
- <!-- godzina -->
+    <!-- godzina -->
     <string name="time">Czas</string>
     <string name="time_lap">Czas Okrążenia</string>
     <string name="time_last_lap">Czas Ostatniego Okrążenia</string>
@@ -73,11 +72,11 @@
     <string name="this_month">Ten miesiąc</string>
     <string name="all">Wszystko</string>
     <string name="distansAndTime">Dystans \ni czas</string>
-	<string name="distansAndPace">Dystans \ni tempo</string>
-	<string name="timeAndPace">Czas \ni tempo</string>
-	<string name="add_action">Dodaj tę akcję</string>
-	<string name="interval">Interwał</string>
-	<string name="virtual_partner">Wirtualny \npartner</string>
+    <string name="distansAndPace">Dystans \ni tempo</string>
+    <string name="timeAndPace">Czas \ni tempo</string>
+    <string name="add_action">Dodaj tę akcję</string>
+    <string name="interval">Interwał</string>
+    <string name="virtual_partner">Wirtualny \npartner</string>
 
     <!-- chart strings -->
     <string name="chart_title">Dane biegów</string>
@@ -99,21 +98,21 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">Brak historii aktywności</string>
-	<string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
-	<string name="colon">:</string>
-	
-	<!-- speech strings -->
-	<string name="action">Akcja</string>
-	<string name="run_fast">Szybki bieg!</string>
-	<string name="run_steady">Średni bieg!</string>
-	<string name="run_slow">Powolny bieg!</string>
-	<string name="for_how_much">Przez</string>
-	<string name="chase_virtual_partner">Goń wirtualnego partnera!</string>
-	<string name="meters">metrów.</string>
-	<string name="minutes_speak">minut.</string>
-	<string name="seconds_speak">sekund</string>
-	<string name="over_kilometer">na kilometr.</string>
-	<string name="with_pace">Tempem</string>
-	<string name="warm_up_speak">Rozgrzewka!</string>
+    <string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
+    <string name="colon">:</string>
+
+    <!-- speech strings -->
+    <string name="action">Akcja</string>
+    <string name="run_fast">Szybki bieg!</string>
+    <string name="run_steady">Średni bieg!</string>
+    <string name="run_slow">Powolny bieg!</string>
+    <string name="for_how_much">Przez</string>
+    <string name="chase_virtual_partner">Goń wirtualnego partnera!</string>
+    <string name="meters">metrów.</string>
+    <string name="minutes_speak">minut.</string>
+    <string name="seconds_speak">sekund</string>
+    <string name="over_kilometer">na kilometr.</string>
+    <string name="with_pace">Tempem</string>
+    <string name="warm_up_speak">Rozgrzewka!</string>
 
 </resources>

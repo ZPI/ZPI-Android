@@ -160,8 +160,10 @@
     <string name="over_kilometer">per kilometer.</string>
     <string name="with_pace">With pace</string>
     <string name="warm_up_speak">Warm up!</string>
+    <string name="no_tts_dialog_check_title">Application\'s voice</string>
+    <string name="no_tts_dialog_check_message">This application uses speech synthesator. Application will now check does your device has speech synthesator application.</string>
     <string name="no_tts_dialog_title">Application\'s voice</string>
-    <string name="no_tts_dialog_message">This application uses speech synthesator. You can install any speech synthesator you like (commonly called TTS or text-to-speech) and set it in your phone\'s settings.\n\nWould you like to install android\'s default TTS speech synthesator right now?</string>
+    <string name="no_tts_dialog_message">There\'s no speech synthesator on your device.\n\nYou can install any speech synthesator you like (commonly called TTS or text-to-speech) and set it in your phone\'s settings.\n\nWould you like to install android\'s default TTS speech synthesator right now?</string>
 
     <!-- after end of acticity -->
     <string name="save">Save</string>

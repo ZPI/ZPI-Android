@@ -51,6 +51,7 @@ import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.Reminders;
+import com.pwr.zpi.utils.SpeechSynthezator;
 import com.pwr.zpi.utils.Time;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
@@ -187,10 +188,31 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		return today.equals(lastWorkout);
 	}
 	
-	private void checkSpeechSynthezator() {
-		Intent checkIntent = new Intent();
-		checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-		startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE_REQUEST);
+	private void checkSpeechSynthezator() {//FIXME ?
+		boolean wasOk = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+			SpeechSynthezator.WAS_TTS_CHECKED_SHARED_PREF_KEY, false);
+		if (!wasOk) {
+			DialogInterface.OnClickListener positive = new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent checkIntent = new Intent();
+					checkIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+					startActivityForResult(checkIntent, TTS_DATA_CHECK_CODE_REQUEST);
+				}
+			};
+			AlertDialog dialog = DialogFactory.getDialogSingleButton(DialogsEnum.CheckTTS, this, positive);
+			dialog.setCancelable(false);
+			dialog.show();
+		}
+		else {
+			try {
+				api.prepareTextToSpeech();
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void addListeners() {
@@ -232,6 +254,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	protected void onResume() {
 		super.onResume();
 		
+		boolean soundEnabled = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+			getString(R.string.key_aplication_sound), false);
 		new GetAllRunsFromDB().execute(new Void[0]);
 		if (!mIsBound) {
 			doBindService();
@@ -241,13 +265,13 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				if (isServiceConnected) {
 					gpsStatus = api.getGPSStatus();
 					handleGPSStatusChange();
+					api.onSoundSettingChange(soundEnabled);
 				}
 			}
 			catch (RemoteException e) {
 				Log.w(TAG, "Failed to get gpsStatus ", e);
 			}
 		}
-		
 	}
 	
 	@Override
@@ -369,6 +393,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 				if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
 					// success, create the TTS instance
 					try {
+						PreferenceManager.getDefaultSharedPreferences(this).edit()
+							.putBoolean(SpeechSynthezator.WAS_TTS_CHECKED_SHARED_PREF_KEY, true).commit();
 						api.prepareTextToSpeech();
 					}
 					catch (RemoteException e) {
