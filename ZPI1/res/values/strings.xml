@@ -91,7 +91,10 @@
     <string name="edit_action">Edit Action</string>
     <string name="edit">Edit</string>
     <string name="no_workout_actions">This workout has no actions.</string>
-	
+    <string name="settings_caps">SETTINGS</string>
+    <string name="actions_caps">ACTIONS</string>
+    <string name="name_caps">NAME</string>
+
     <!--history -->
     <string name="Annotations">Annotations</string>
 	
@@ -194,7 +197,7 @@
     <string name="trening_plan_change_message">Do you want to change your current training to this training plan?</string>
     <string name="trening_plan_confirm_title">Trening plan selected</string>
     <string name="trening_plan_confirm_message">All reminders and workouts for selected trening plan have been set.</string>
-	<string name="trening_plan_disable_title">Disable training?</string>
+    <string name="trening_plan_disable_title">Disable training?</string>
     <string name="trening_plan_disable_message">Do you want to disable this training plan?</string>
     <string name="trening_plan_confirm_disable_title">Trening plan disabled</string>
     <string name="trening_plan_confirm_disable_message">All reminders and workouts for selected trening plan have been disabled.</string>

@@ -60,7 +60,8 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		long ID = getIntent().getLongExtra(PlaningActivity.ID_TAG, -1);
 		workout = readData(ID);
 		actions = (ArrayList<WorkoutAction>) workout.getActions();
-		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_list_item, actions);
+		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_simple_list_item,
+			R.layout.workout_action_advanced_list_item, actions);
 		
 		View header = getLayoutInflater().inflate(R.layout.workout_header, null);
 		View footer = getLayoutInflater().inflate(R.layout.workout_footer, null);

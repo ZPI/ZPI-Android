@@ -29,5 +29,5 @@
 	<color name="calendar_event_text_color">#FFFFFF</color>
 	<color name="save_button">#1eaff8</color>
 	<color name="red">#f61e1f</color>
-	
+	<color name="light_green">#82BF1A</color>
 </resources>

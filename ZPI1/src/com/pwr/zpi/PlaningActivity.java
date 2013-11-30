@@ -318,14 +318,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 			case 0:
 				tab1Button.setSelected(true);
 				tab2Button.setSelected(false);
-				tab1Button.setTextColor(getResources().getColor(R.color.main_color));
-				tab2Button.setTextColor(getResources().getColor(R.color.white));
 				break;
 			case 1:
 				tab2Button.setSelected(true);
 				tab1Button.setSelected(false);
-				tab2Button.setTextColor(getResources().getColor(R.color.main_color));
-				tab1Button.setTextColor(getResources().getColor(R.color.white));
 				break;
 		}
 	}

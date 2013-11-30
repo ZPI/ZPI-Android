@@ -71,10 +71,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:background="@drawable/button_border_background_inverted"
+                        android:background="@drawable/workouts_white_button_background"
                         android:textColor="@color/main_color"
-                        android:padding="@dimen/buttons_padding"
+                        android:padding="@dimen/small_text_size"
                         android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="@string/new_workout" />
 
                     <ImageButton
