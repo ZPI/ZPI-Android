@@ -57,8 +57,14 @@ public class ChartActivity extends Activity {
 			double speed[] = container.getSpeed();
 			
 			for (int i = 0; i < distance.length; i++) {
-				seriesSpeed.addPoint(new LinearPoint(distance[i], speed[i]));
-				seriesAltitude.addPoint(new LinearPoint(distance[i], altitude[i]));
+				if (container.getDistanceMin() <= distance[i] && distance[i] <= container.getDistanceMax()) {
+					if (container.getSpeedMin() <= speed[i] && speed[i] <= container.getSpeedMax()) {
+						seriesSpeed.addPoint(new LinearPoint(distance[i], speed[i]));
+					}
+					if (container.getAltitudeMin() <= altitude[i] && altitude[i] <= container.getAltitudeMax()) {
+						seriesAltitude.addPoint(new LinearPoint(distance[i], altitude[i]));
+					}
+				}
 			}
 			
 			return null;
