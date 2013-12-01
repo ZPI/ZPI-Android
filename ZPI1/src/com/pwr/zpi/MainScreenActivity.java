@@ -819,14 +819,18 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			treningPlan = TreningPlans.getTreningPlan(treningPlanID);
 			if (treningPlan == null) { //shouldn't be here
 				treningPlansButton.setText(R.string.none);
+				setRemindersFromSettings();
 			}
 			else {
 				long startDateInMilis = PreferenceManager.getDefaultSharedPreferences(MainScreenActivity.this).getLong(
 					TreningPlans.TRENING_PLANS_START_DATE_KEY, 0);
 				Calendar cal = Calendar.getInstance();
+				Date current = cal.getTime();
 				cal.setTimeInMillis(startDateInMilis);
 				Date startDate = cal.getTime();
 				plan = new HashMap<Date, Workout>();
+				Reminders.cancelAllReminders(getApplicationContext());
+				
 				for (Integer key : treningPlan.getWorkouts().keySet()) {
 					Workout workout = treningPlan.getWorkouts().get(key);
 					cal.setTime(startDate);
@@ -834,10 +838,32 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					cal = Time.zeroTimeInDate(cal);
 					Date workoutDate = cal.getTime();
 					plan.put(workoutDate, workout);
+					
+					if (workoutDate.after(current)) {
+						Date reminderDate = Time.getDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+							cal.get(Calendar.DAY_OF_MONTH), 10, 0, 0); //FIXME reminder hour
+						Reminders.setRemainder(getApplicationContext(), reminderDate);
+					}
 				}
 			}
 			
 			return plan;
+		}
+		
+		private void setRemindersFromSettings() {
+			SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainScreenActivity.this);
+			int days = Integer.parseInt(preferences.getString(getString(R.string.reminder_day_key), "0"));
+			int hour = Integer.parseInt(preferences.getString(getString(R.string.reminder_hour_key), "0"));
+			
+			Reminders.cancelAllReminders(getApplicationContext());
+			if (days != 0) {
+				Reminders.cancelAllReminders(getApplicationContext());
+				Calendar cal = Calendar.getInstance();
+				Date startDate = Time.getDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1,
+					cal.get(Calendar.DAY_OF_MONTH) + days, hour, 0, 0);
+				long dayInMilis = 24 * 60 * 60 * 1000; // one day
+				Reminders.setRemainderEvery(getApplicationContext(), startDate, dayInMilis);
+			}
 		}
 		
 		@Override
