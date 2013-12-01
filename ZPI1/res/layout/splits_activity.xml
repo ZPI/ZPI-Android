@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_grey_backgroud"
     android:orientation="vertical" >
 
+    <com.pwr.zpi.views.TopBar
+                android:id="@+id/topBarSplits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                app:titleText="@string/splits"
+                app:hasLeftButton="true"
+                app:leftButtonText="@string/activity">
+            </com.pwr.zpi.views.TopBar>
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

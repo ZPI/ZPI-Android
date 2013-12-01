@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -32,6 +31,7 @@ import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.Reminders;
 import com.pwr.zpi.utils.Time;
+import com.pwr.zpi.views.TopBar;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
 
@@ -50,8 +50,8 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	private RelativeLayout actionInDay;
 	private TreningPlan plan;
 	private Date startDateForPlan;
-	private ImageView arrowImageView;
-	private Button leftBarButton;
+	//private ImageView arrowImageView;
+	private RelativeLayout leftBarButton;
 	private Button rightBarButton;
 	private boolean isFromMainScreen;
 	
@@ -64,12 +64,12 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 		
 		init();
 		
-		isFromMainScreen = getIntent().hasExtra(START_DATE_KEY);
-		if (isFromMainScreen) { //started from main screen - change labels and functionality
-			leftBarButton.setText(R.string.end_training);
-			rightBarButton.setText(R.string.dismiss);
-			arrowImageView.setVisibility(View.GONE);
-		}
+		//isFromMainScreen = getIntent().hasExtra(START_DATE_KEY);
+		//if (isFromMainScreen) { //started from main screen - change labels and functionality
+		//		leftBarButton.setText(R.string.end_training);
+		//		rightBarButton.setText(R.string.dismiss);
+		//		arrowImageView.setVisibility(View.GONE);
+		//	}
 		
 		Pair<Long, Bundle> pair = new Pair<Long, Bundle>(getPlanIDFromIntent(), savedInstanceState);
 		new LoadCalendar().execute(pair);
@@ -80,7 +80,7 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 	private void addListeners() {
 		leftBarButton.setOnClickListener(this);
 		rightBarButton.setOnClickListener(this);
-		arrowImageView.setOnClickListener(this);
+		//	arrowImageView.setOnClickListener(this);
 	}
 	
 	private void init() {
@@ -91,11 +91,12 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 		textViewIsWarmUp = (TextView) findViewById(R.id.textViewIsWarmUpSet);
 		textViewPlanName = (TextView) findViewById(R.id.textViewTreningPlanName);
 		textViewNoWorkoutActions = (TextView) findViewById(R.id.textViewNoWorkoutActions);
-		
-		arrowImageView = (ImageView) findViewById(R.id.imageViewArrow);
-		leftBarButton = (Button) findViewById(R.id.buttonLeftBarLabel);
-		rightBarButton = (Button) findViewById(R.id.buttonRightBarLabel);
-		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarPlansActivity);
+		//	arrowImageView = (ImageView) findViewById(R.id.imageViewArrow);
+		//	leftBarButton = (Button) findViewById(R.id.buttonLeftBarLabel);
+		//	rightBarButton = (Button) findViewById(R.id.buttonRightBarLabel);
+		leftBarButton = topBar.getLeftButton();
+		rightBarButton = topBar.getRightButton();
 		workoutDays = new HashMap<Date, Workout>();
 	}
 	
@@ -273,9 +274,9 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 				selectTraining();
 			}
 		}
-		else if (view == arrowImageView) {
-			finish();
-		}
+		//	else if (view == arrowImageView) {
+		//		finish();
+		//	}
 	}
 	
 	private void selectTraining() {

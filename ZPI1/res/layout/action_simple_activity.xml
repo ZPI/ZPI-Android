@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <com.pwr.zpi.views.TopBar
+        android:id="@+id/topBarActionSimple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        custom:hasLeftButton="true"
+        custom:hasTitle="false"
+        custom:leftButtonText="@string/new_workout" >
+    </com.pwr.zpi.views.TopBar>
+
     <RelativeLayout
         android:id="@+id/RelativeLayout2"
         android:layout_width="wrap_content"
@@ -18,7 +27,6 @@
         <Button
             android:id="@+id/buttonSteady"
             style="@style/MultipleButtonMiddleStyle"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -52,9 +60,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/small_margin"
-        android:background="@drawable/button_enabled_background"
-        android:padding="@dimen/buttons_padding"
-        android:text="@string/add_action" />
+        android:background="@drawable/workouts_white_button_background"
+        android:padding="@dimen/small_text_size"
+        android:text="@string/add_action"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/main_color"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="wrap_content"

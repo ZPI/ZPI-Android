@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -16,12 +17,14 @@ import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.views.TopBar;
 
-public class SplitsActivity extends Activity {
+public class SplitsActivity extends Activity implements OnClickListener {
 	
 	ListView splitsListView;
 	RelativeLayout noSplitsInfoRelativeLayout;
 	SingleRun singleRun;
+	private RelativeLayout leftButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,10 @@ public class SplitsActivity extends Activity {
 			splitsListView.setVisibility(View.GONE);
 			noSplitsInfoRelativeLayout.setVisibility(View.VISIBLE);
 		}
+		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarSplits);
+		leftButton = topBar.getLeftButton();
+		leftButton.setOnClickListener(this);
 	}
 	
 	//parses location and time to distance kilometer by kilometer and associated times
@@ -80,6 +87,14 @@ public class SplitsActivity extends Activity {
 		long run_id = getIntent().getLongExtra(SingleRunHistoryActivity.RUN_ID, -1);
 		SingleRun singleRun = new Database(this).getRun(run_id);
 		return singleRun;
+	}
+	
+	@Override
+	public void onClick(View v) {
+		if (v == leftButton) {
+			finish();
+		}
+		
 	}
 	
 }

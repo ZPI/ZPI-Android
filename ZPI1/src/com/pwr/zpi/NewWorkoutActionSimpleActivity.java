@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.views.CustomPicker;
+import com.pwr.zpi.views.TopBar;
 
 public class NewWorkoutActionSimpleActivity extends Activity implements OnClickListener {
 	
@@ -36,6 +38,7 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 	CustomPicker pickerM;
 	LinearLayout timeChooser;
 	LinearLayout distanceChooser;
+	private RelativeLayout leftButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +70,8 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 		pickerM = (CustomPicker) findViewById(R.id.customPickerIntervalMPicker);
 		distanceChooser = (LinearLayout) findViewById(R.id.linearLayoutIntervalDistanceChooser);
 		timeChooser = (LinearLayout) findViewById(R.id.linearLayoutIntervalTimeChooser);
-		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarActionSimple);
+		leftButton = topBar.getLeftButton();
 	}
 	
 	private void addListeners()
@@ -79,7 +83,7 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 		buttonActionTypeDistance.setOnClickListener(this);
 		buttonActionTypeTime.setOnClickListener(this);
 		buttonAddInterval.setOnClickListener(this);
-		
+		leftButton.setOnClickListener(this);
 	}
 	
 	@Override
@@ -146,6 +150,11 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 					returnIntent.putExtra(WorkoutAction.TAG, actionSimple);
 					setResult(RESULT_OK, returnIntent);
 					finish();
+					break;
+				default:
+					if (v == leftButton) {
+						finish();
+					}
 					break;
 			}
 			

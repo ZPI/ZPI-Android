@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -21,6 +22,13 @@
                 android:visibility="gone" >
             </TabWidget>
 
+            <com.pwr.zpi.views.TopBar
+                android:id="@+id/topBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                app:titleText="@string/workouts">
+            </com.pwr.zpi.views.TopBar>
+            
             <LinearLayout
                 android:id="@+id/tabbar"
                 android:layout_width="match_parent"

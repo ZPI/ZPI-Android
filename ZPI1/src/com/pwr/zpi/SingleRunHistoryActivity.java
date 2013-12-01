@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +34,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.LineChart;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
+import com.pwr.zpi.views.TopBar;
 
 public class SingleRunHistoryActivity extends FragmentActivity implements
 	OnClickListener, OnCheckedChangeListener {
@@ -54,6 +56,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	private ProgressBar progressBar;
 	private TextView runNameTextView;
 	private CheckBox annotationsCheckBox;
+	private RelativeLayout leftButton;
 	
 	private SingleRun run;
 	
@@ -166,6 +169,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		runNameTextView = (TextView) findViewById(R.id.textViewSingleRunName);
 		annotationsCheckBox.setChecked(true);
 		allMarkers = new LinkedList<Marker>();
+		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarSingleRun);
+		leftButton = topBar.getLeftButton();
+		
 	}
 	
 	private void showData() {
@@ -196,6 +203,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		chartButton.setOnClickListener(this);
 		splitsButton.setOnClickListener(this);
 		annotationsCheckBox.setOnCheckedChangeListener(this);
+		leftButton.setOnClickListener(this);
 	}
 	
 	@Override
@@ -219,6 +227,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 				i.putExtra(RUN_ID, run.getRunID());
 				startActivity(i);
 				
+			}
+			else if (view == leftButton)
+			{
+				finish();
+				overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
 			}
 		}
 	}
