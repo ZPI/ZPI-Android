@@ -27,6 +27,7 @@ public class TreningPlans {
 		plans = new ArrayList<TreningPlan>();
 		
 		plans.add(getFirstTreningPlan());
+		plans.add(getSecondTreningPlan());
 		
 		setPlansIDs();
 	}
@@ -104,6 +105,76 @@ public class TreningPlans {
 		w.put(65, getFirstTreningPlanOneActionsWorkout(30, 1));
 		w.put(67, getFirstTreningPlanOneActionsWorkout(30, 1));
 		w.put(68, getFirstTreningPlanOneActionsWorkout(30, 1));
+		
+		plan.setWorkouts(w);
+		return plan;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static TreningPlan getSecondTreningPlan() {
+		TreningPlan plan = new TreningPlan();
+		plan.setName("Drugi plan treningowy");
+		HashMap<Integer, Workout> w = new HashMap<Integer, Workout>();
+		
+		//first week
+		w.put(0, getFirstTreningPlanTwoActionsWorkout(1, 5, 5));
+		w.put(2, getFirstTreningPlanTwoActionsWorkout(1, 5, 5));
+		w.put(4, getFirstTreningPlanTwoActionsWorkout(1, 5, 5));
+		w.put(6, getFirstTreningPlanTwoActionsWorkout(1, 5, 5));
+		
+		//second week
+		w.put(8, getFirstTreningPlanTwoActionsWorkout(2, 4, 5));
+		w.put(10, getFirstTreningPlanTwoActionsWorkout(2, 4, 5));
+		w.put(12, getFirstTreningPlanTwoActionsWorkout(2, 4, 5));
+		w.put(14, getFirstTreningPlanTwoActionsWorkout(2, 4, 5));
+		
+		//third week
+		w.put(16, getFirstTreningPlanTwoActionsWorkout(3, 3, 5));
+		w.put(18, getFirstTreningPlanTwoActionsWorkout(3, 3, 5));
+		w.put(20, getFirstTreningPlanTwoActionsWorkout(3, 3, 5));
+		w.put(22, getFirstTreningPlanTwoActionsWorkout(3, 3, 5));
+		
+		//fourth week
+		w.put(24, getFirstTreningPlanTwoActionsWorkout(5, 2.5, 4));
+		w.put(26, getFirstTreningPlanTwoActionsWorkout(5, 2.5, 4));
+		w.put(28, getFirstTreningPlanTwoActionsWorkout(5, 2.5, 4));
+		w.put(30, getFirstTreningPlanTwoActionsWorkout(5, 2.5, 4));
+		
+		//fifth week
+		w.put(32, getFirstTreningPlanTwoActionsWorkout(7, 3, 3));
+		w.put(34, getFirstTreningPlanTwoActionsWorkout(7, 3, 3));
+		w.put(36, getFirstTreningPlanTwoActionsWorkout(7, 3, 3));
+		w.put(38, getFirstTreningPlanTwoActionsWorkout(7, 3, 3));
+		
+		//sixth week
+		w.put(40, getFirstTreningPlanTwoActionsWorkout(8, 2, 3));
+		w.put(42, getFirstTreningPlanTwoActionsWorkout(8, 2, 3));
+		w.put(44, getFirstTreningPlanTwoActionsWorkout(8, 2, 3));
+		w.put(46, getFirstTreningPlanTwoActionsWorkout(8, 2, 3));
+		
+		//seventh week
+		w.put(48, getFirstTreningPlanTwoActionsWorkout(9, 1, 3));
+		w.put(50, getFirstTreningPlanTwoActionsWorkout(9, 1, 3));
+		w.put(52, getFirstTreningPlanTwoActionsWorkout(9, 1, 3));
+		w.put(54, getFirstTreningPlanTwoActionsWorkout(9, 1, 3));
+		
+		//eight week
+		w.put(56, getFirstTreningPlanTwoActionsWorkout(13, 2, 2));
+		w.put(58, getFirstTreningPlanTwoActionsWorkout(13, 2, 2));
+		w.put(60, getFirstTreningPlanTwoActionsWorkout(13, 2, 2));
+		w.put(62, getFirstTreningPlanTwoActionsWorkout(13, 2, 2));
+		
+		//ninth week
+		w.put(64, getFirstTreningPlanTwoActionsWorkout(14, 1, 2));
+		w.put(66, getFirstTreningPlanTwoActionsWorkout(14, 1, 2));
+		w.put(68, getFirstTreningPlanTwoActionsWorkout(14, 1, 2));
+		w.put(70, getFirstTreningPlanTwoActionsWorkout(14, 1, 2));
+		
+		//tenth week
+		w.put(72, getFirstTreningPlanOneActionsWorkout(30, 1));
+		w.put(74, getFirstTreningPlanOneActionsWorkout(30, 1));
+		w.put(76, getFirstTreningPlanOneActionsWorkout(30, 1));
+		w.put(78, getFirstTreningPlanOneActionsWorkout(30, 1));
 		
 		plan.setWorkouts(w);
 		return plan;
