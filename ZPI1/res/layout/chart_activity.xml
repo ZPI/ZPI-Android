@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:chartview="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ChartActivity" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/chart_title_speed"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FF0000"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <com.fima.chartview.ChartView
+            android:id="@+id/speed_chart_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            chartview:bottomLabelHeight="20dp"
+            chartview:gridLineColor="#E5E5E5"
+            chartview:gridLineWidth="1dp"
+            chartview:gridLinesHorizontal="5"
+            chartview:gridLinesVertical="5"
+            chartview:leftLabelWidth="40dp" />
+
+        <RelativeLayout
+            android:id="@+id/progressBarSpeed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Altitude (m)"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#0000FF"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <com.fima.chartview.ChartView
+            android:id="@+id/altitude_chart_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:visibility="gone"
+            chartview:bottomLabelHeight="20dp"
+            chartview:gridLineColor="#E5E5E5"
+            chartview:gridLineWidth="1dp"
+            chartview:gridLinesHorizontal="5"
+            chartview:gridLinesVertical="5"
+            chartview:leftLabelWidth="40dp" />
+
+        <RelativeLayout
+            android:id="@+id/progressBarAltitude"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

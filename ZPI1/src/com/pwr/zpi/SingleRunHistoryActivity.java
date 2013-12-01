@@ -30,12 +30,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
-import com.pwr.zpi.utils.LineChart;
+import com.pwr.zpi.utils.ChartDataHelperContainter;
+import com.pwr.zpi.utils.LineChartDataEvaluator;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 
-public class SingleRunHistoryActivity extends FragmentActivity implements
-	OnClickListener, OnCheckedChangeListener {
+public class SingleRunHistoryActivity extends FragmentActivity implements OnClickListener, OnCheckedChangeListener {
 	
 	protected static final String RUN_ID = "runID";
 	
@@ -71,8 +71,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	
 	private void mapCenter() {
 		
-		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run
-			.getTraceWithTime();
+		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
 		
 		boundsBuilder = new LatLngBounds.Builder();
 		double lastDistance = 0;
@@ -83,16 +82,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 			Location lastLocation = null;
 			for (Pair<Location, Long> singlePoint : singleTrace) {
 				Location location = singlePoint.first;
-				LatLng latLng = new LatLng(location.getLatitude(),
-					location.getLongitude());
+				LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 				polyLine.add(latLng);
 				boundsBuilder.include(latLng);
-				if (lastLocation != null)
-				{
+				if (lastLocation != null) {
 					newDistance += location.distanceTo(lastLocation);
 					int showDistance = (int) (newDistance / 1000);
-					if (showDistance - (int) (lastDistance / 1000) > 0)
-					{
+					if (showDistance - (int) (lastDistance / 1000) > 0) {
 						addMarker(location, showDistance);
 					}
 					
@@ -123,37 +119,33 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		if (!trace.isEmpty()) {
 			Location start = trace.getFirst().getFirst().first;
 			Location finish = trace.getLast().getLast().first;
-			addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()),
-				new LatLng(finish.getLatitude(), finish.getLongitude()));
+			addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()), new LatLng(finish.getLatitude(),
+				finish.getLongitude()));
 		}
 		progressBar.setVisibility(View.GONE);
 		LatLngBounds bounds = boundsBuilder.build();
 		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 	}
 	
-	private void addStartAndFinish(LatLng startPos, LatLng finishPos)
-	{
+	private void addStartAndFinish(LatLng startPos, LatLng finishPos) {
 		
-		allMarkers.add(mMap.addMarker(new MarkerOptions()
-			.position(startPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_pin))));
-		allMarkers.add(mMap.addMarker(new MarkerOptions()
-			.position(finishPos)
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.stop_pin))));;
+		allMarkers.add(mMap.addMarker(new MarkerOptions().position(startPos).icon(
+			BitmapDescriptorFactory.fromResource(R.drawable.start_pin))));
+		allMarkers.add(mMap.addMarker(new MarkerOptions().position(finishPos).icon(
+			BitmapDescriptorFactory.fromResource(R.drawable.stop_pin))));;
 	}
 	
 	private void addMarker(Location location, int distance) {
 		
-		Marker marker = mMap.addMarker(new MarkerOptions().position(
-			new LatLng(location.getLatitude(), location.getLongitude()))
-			.title(distance + "km").icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
+		Marker marker = mMap.addMarker(new MarkerOptions()
+			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
+			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
 		marker.showInfoWindow();
 		allMarkers.add(marker);
 	}
 	
 	private void initFields() {
-		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-			.findFragmentById(R.id.map);
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		chartButton = (Button) findViewById(R.id.buttonCharts);
 		splitsButton = (Button) findViewById(R.id.buttonSplits);
@@ -174,8 +166,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		double distance = intent.getDoubleExtra(HistoryActivity.DISTANCE_TAG, 0);
 		long time = intent.getLongExtra(HistoryActivity.TIME_TAG, 0);
 		// show distance
-		distanceTextView
-			.setText(String.format("%.3f", distance / 1000));
+		distanceTextView.setText(String.format("%.3f", distance / 1000));
 		
 		// show time
 		timeTextView.setText(TimeFormatter.formatTimeHHMMSS(time));
@@ -209,12 +200,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 	public void onClick(View view) {
 		if (run != null) {
 			if (view == chartButton) {
-				Intent i = LineChart.getChartForData(run, this);
+				Intent i = new Intent(SingleRunHistoryActivity.this, ChartActivity.class);
+				ChartDataHelperContainter container = LineChartDataEvaluator.evaluateDate(run);
+				i.putExtra(ChartActivity.CHART_DATA_KEY, container);
 				startActivity(i);
 			}
 			else if (view == splitsButton) {
-				Intent i = new Intent(SingleRunHistoryActivity.this,
-					SplitsActivity.class);
+				Intent i = new Intent(SingleRunHistoryActivity.this, SplitsActivity.class);
 				
 				i.putExtra(RUN_ID, run.getRunID());
 				startActivity(i);
@@ -245,10 +237,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements
 		
 	}
 	
-	private void setMarkersVisibile(boolean areVisible)
-	{
-		for (Marker m : allMarkers)
-		{
+	private void setMarkersVisibile(boolean areVisible) {
+		for (Marker m : allMarkers) {
 			m.setVisible(areVisible);
 		}
 	}

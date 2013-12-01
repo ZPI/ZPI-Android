@@ -99,12 +99,8 @@
     <string name="Annotations">Annotations</string>
 	
     <!-- chart strings -->
-    <string name="chart_title">Run\'s data</string>
-    <string name="chart_ox_distance">Distance</string>
-    <string name="chart_oy1_speed">Speed [km/h]</string>
-    <string name="chart_oy2_altitude">Altitude [m]</string>
-    <string name="chart_legend_oy1">Speed</string>
-    <string name="chart_legend_oy2">Altitude</string>
+    <string name="chart_title_speed">Speed [km/h] (Distance [km]))</string>
+    <string name="chart_title_altitude">Altitude [m] (Distance [km]))</string>
 
     <!-- splits strings -->
     <string name="split_time">Split time</string>
