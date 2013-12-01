@@ -114,8 +114,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		public Intent getConnectionResult() throws RemoteException {
 			Intent intent = new Intent(LocationService.class.getSimpleName());
 			intent.putExtra(CONNECTION_FIAILED_TAG, connectionFailed);
-			if (connectionFailed)
-			{
+			if (connectionFailed) {
 				int statusCode = connectionResult.getErrorCode();
 				PendingIntent pendingIntent = connectionResult.getResolution();
 				// Add data
@@ -127,8 +126,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 		@Override
 		public void setStarted(Workout workout, int countDownTime) throws RemoteException {
-			if (state == STOPED)
-			{
+			if (state == STOPED) {
 				locationList = new ArrayList<Location>();
 				state = STARTED;
 				isFirstTime = true;
@@ -151,8 +149,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 		@Override
 		public void setResumed() throws RemoteException {
-			if (state == PAUSED)
-			{
+			if (state == PAUSED) {
 				pauseTime += System.currentTimeMillis() - pauseStartTime;
 				state = STARTED;
 				Log.i(TAG, state + "");
@@ -164,7 +161,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setStoped() throws RemoteException {
 			state = STOPED;
-			
+			zeroFields();
 		}
 		
 		@Override
@@ -206,7 +203,21 @@ public class LocationService extends Service implements LocationListener, Connec
 			stopForeground(true);
 		}
 		
+		@Override
+		public void onSoundSettingChange(boolean enabled) throws RemoteException {
+			speechSynthezator.setSpeakingEnabled(enabled);
+		}
+		
 	};
+	
+	private void zeroFields() {
+		startTime = 0;
+		pauseStartTime = 0;
+		pauseTime = 0;
+		time = 0L;
+		distance = 0;
+		workout = null;
+	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -234,8 +245,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		connectionFailed = false;
 		isWromUpInProgress = false;
 		handler = new Handler();
-		mLocationClient = new LocationClient(getApplicationContext(), this,
-			this);
+		mLocationClient = new LocationClient(getApplicationContext(), this, this);
 		mLocationRequest = LocationRequest.create();
 		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -260,7 +270,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.i(TAG, "new Location state: " + state);
+		//		Log.i(TAG, "new Location state: " + state);
 		
 		if (state == STARTED) {
 			locationList.add(location);
@@ -272,8 +282,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		latestLocation = location;
 		synchronized (listeners) {
 			Iterator<RunListener> it = listeners.iterator();
-			while (it.hasNext())
-			{
+			while (it.hasNext()) {
 				RunListener listener = it.next();
 				try {
 					listener.handleLocationUpdate();
@@ -287,8 +296,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 	}
 	
-	private void updateTraceWithTime(Location newLocation)
-	{
+	private void updateTraceWithTime(Location newLocation) {
 		if (newLocation.getAccuracy() < REQUIRED_ACCURACY) {
 			// not first point after start or resume
 			
@@ -319,8 +327,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		Log.i(TAG, "onConnectionFailed LocationListener telling " + listeners.size() + " listeners");
 		this.connectionResult = connectionResult;
 		connectionFailed = true;
-		for (RunListener listener : listeners)
-		{
+		for (RunListener listener : listeners) {
 			try {
 				listener.handleConnectionResult();
 			}
@@ -336,15 +343,12 @@ public class LocationService extends Service implements LocationListener, Connec
 		//service.addGpsStatusListener(this);
 		short gpsStatus = 0;
 		
-		boolean enabled = service
-			.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		
 		if (!enabled) {
 			gpsStatus = MainScreenActivity.GPS_NOT_ENABLED;
 		}
-		else if (isConnected
-			&& (latestLocation == null || latestLocation
-				.getAccuracy() > REQUIRED_ACCURACY)) {
+		else if (isConnected && (latestLocation == null || latestLocation.getAccuracy() > REQUIRED_ACCURACY)) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -354,16 +358,14 @@ public class LocationService extends Service implements LocationListener, Connec
 		return gpsStatus;
 	}
 	
-	private void initActivityRecording()
-	{
+	private void initActivityRecording() {
 		
 		singleRun = new SingleRun();
 		calendar = Calendar.getInstance();
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		
-		if (workout != null)
-		{
+		if (workout != null) {
 			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
 			workout.notifyListeners(workout.getActions().get(0));
 		}
@@ -384,8 +386,15 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 	}
 	
+	Runnable startTimeSetHandler = new Runnable() {
+		@Override
+		public void run() {
+			startTime = System.currentTimeMillis();
+		}
+	};
+	
 	private void startWarmUp() {
-		startTime = System.currentTimeMillis();
+		handler.post(startTimeSetHandler);
 		//		int minutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
 		int minutes = ((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime();
 		int seconds = minutes * 60;
@@ -410,8 +419,7 @@ public class LocationService extends Service implements LocationListener, Connec
 				processWorkout();
 				Iterator<RunListener> it = listeners.iterator();
 				time = System.currentTimeMillis() - startTime - pauseTime;
-				while (it.hasNext())
-				{
+				while (it.hasNext()) {
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();
@@ -474,8 +482,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	private void listenersHandleCountDownChange(int howMuchLeft) {
 		Iterator<RunListener> it = listeners.iterator();
-		while (it.hasNext())
-		{
+		while (it.hasNext()) {
 			RunListener listener = it.next();
 			try {
 				listener.handleCountDownChange(howMuchLeft);
@@ -486,9 +493,9 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 	}
 	
-	private void startCountingTime()
-	{
-		startTime = System.currentTimeMillis();
+	private void startCountingTime() {
+		//		startTime = System.currentTimeMillis();
+		handler.post(startTimeSetHandler);
 		handler.post(timeHandler);
 	}
 	
@@ -503,19 +510,18 @@ public class LocationService extends Service implements LocationListener, Connec
 	}
 	
 	protected void runTimerTask() {
-		if (state == STARTED)
-		{
+		if (state == STARTED && startTime != 0) {
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
 				boolean changeWorkout = false;
+				Log.i(TAG, "current and start times: " + System.currentTimeMillis() + " " + startTime);
 				if (workout != null) {
 					processWorkout();
 					changeWorkout = true;
 				}
 				Log.i(TAG, time + "");
 				Iterator<RunListener> it = listeners.iterator();
-				while (it.hasNext())
-				{
+				while (it.hasNext()) {
 					RunListener listener = it.next();
 					try {
 						listener.handleTimeChange();

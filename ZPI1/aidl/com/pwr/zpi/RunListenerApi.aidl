@@ -17,6 +17,7 @@ interface RunListenerApi {
 	void setStoped();
 	void doSaveRun(in boolean save, in String name);
 	void prepareTextToSpeech();
+	void onSoundSettingChange(in boolean enabled);
    
   	void addListener(RunListener listener);
  

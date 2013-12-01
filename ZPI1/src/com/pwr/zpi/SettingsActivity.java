@@ -43,7 +43,8 @@ public class SettingsActivity extends PreferenceActivity implements GestureListe
 		if (isTreningPlan) {
 			findPreference(getString(R.string.reminder_day_key)).setEnabled(false);
 			findPreference(getString(R.string.reminder_hour_key)).setEnabled(false);
-		} else {
+		}
+		else {
 			findPreference(getString(R.string.reminder_day_key)).setEnabled(true);
 			setHourPreferencesIfDayIsSet(prefs, getString(R.string.reminder_day_key));
 		}

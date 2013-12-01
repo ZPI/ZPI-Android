@@ -17,6 +17,7 @@ import com.pwr.zpi.R;
 public class SpeechSynthezator implements OnInitListener {
 	
 	private static final String TAG = SpeechSynthezator.class.getSimpleName();
+	public static final String WAS_TTS_CHECKED_SHARED_PREF_KEY = "tts_checked_key";
 	
 	public TextToSpeech mTts;
 	private boolean initialized = false;
@@ -27,6 +28,8 @@ public class SpeechSynthezator implements OnInitListener {
 		canSpeak = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
 			context.getResources().getString(R.string.key_aplication_sound), false);
 		mTts = new TextToSpeech(context, this);
+		
+		Log.i(TAG, "can speak " + canSpeak);
 	}
 	
 	@Override
@@ -34,8 +37,8 @@ public class SpeechSynthezator implements OnInitListener {
 		
 		if (status == TextToSpeech.SUCCESS) {
 			Locale loc = Locale.getDefault();
-			if (mTts != null && (mTts.isLanguageAvailable(loc) == TextToSpeech.LANG_AVAILABLE
-				|| mTts.isLanguageAvailable(loc) == TextToSpeech.LANG_COUNTRY_AVAILABLE)) {
+			if (mTts != null
+				&& (mTts.isLanguageAvailable(loc) == TextToSpeech.LANG_AVAILABLE || mTts.isLanguageAvailable(loc) == TextToSpeech.LANG_COUNTRY_AVAILABLE)) {
 				mTts.setLanguage(loc);
 			}
 			
@@ -45,9 +48,11 @@ public class SpeechSynthezator implements OnInitListener {
 				mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
 			}
 			initialized = true;
+			Log.i(TAG, "initialized");
 		}
 		else {
 			initialized = false;
+			Log.i(TAG, "not initialized");
 		}
 	}
 	
@@ -65,6 +70,10 @@ public class SpeechSynthezator implements OnInitListener {
 	
 	public boolean canSpeak() {
 		return canSpeak && isInitialized();
+	}
+	
+	public void setSpeakingEnabled(boolean enabled) {
+		canSpeak = enabled;
 	}
 	
 	public void shutdown() {

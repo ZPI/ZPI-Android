@@ -7,16 +7,10 @@
     android:orientation="vertical" >
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-
-        android:background="@color/main_color" />
-
-    <TextView
         android:id="@+id/textViewTopBarTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:paddingBottom="@dimen/buttons_padding"
         android:paddingTop="@dimen/buttons_padding"
@@ -29,7 +23,7 @@
         android:id="@+id/relativeLayoutTopBarBackButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textViewTopBarTitle"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/textViewTopBarTitle"
         android:layout_toLeftOf="@+id/textViewTopBarTitle"
@@ -40,8 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/imageViewTopBarBackArrow"
-            android:paddingBottom="@dimen/buttons_padding"
-            android:paddingTop="@dimen/buttons_padding"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/buttons_padding"
             android:duplicateParentState="true"
             android:text="Large Text"
             android:textColor="@color/tab_color" />
@@ -49,7 +43,7 @@
         <ImageView
             android:id="@+id/imageViewTopBarBackArrow"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:duplicateParentState="true"
             android:src="@drawable/top_bar_arrow_background" />
@@ -60,11 +54,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/textViewTopBarTitle"
         android:paddingRight="@dimen/buttons_padding"
         android:background="@drawable/top_bar_button_background"
-        android:gravity="right"
+        android:gravity="right|center"
         android:paddingBottom="@dimen/buttons_padding"
         android:paddingTop="@dimen/buttons_padding"
         android:text="Button"

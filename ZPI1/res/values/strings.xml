@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ZPI1</string>
+    <string name="app_name">Run 42K</string>
     <string name="hello_world">Hello world!</string>
     <string name="pause">PAUSE</string>
     <string name="stop">STOP</string>
@@ -101,12 +101,11 @@
     <string name="activity">Activity</string>
 	
     <!-- chart strings -->
-    <string name="chart_title">Run\'s data</string>
-    <string name="chart_ox_distance">Distance</string>
-    <string name="chart_oy1_speed">Speed [km/h]</string>
-    <string name="chart_oy2_altitude">Altitude [m]</string>
-    <string name="chart_legend_oy1">Speed</string>
-    <string name="chart_legend_oy2">Altitude</string>
+    <string name="chart_title_speed">Speed (km/h)</string>
+    <string name="chart_title_altitude">Altitude (m)</string>
+<!--     FIXME Which better for user information ? -->
+<!--     <string name="chart_title_speed">Speed [km/h] (Distance [km]))</string> -->
+<!--     <string name="chart_title_altitude">Altitude [m] (Distance [km]))</string> -->
 
     <!-- splits strings -->
     <string name="split_time">Split time</string>
@@ -162,6 +161,10 @@
     <string name="over_kilometer">per kilometer.</string>
     <string name="with_pace">With pace</string>
     <string name="warm_up_speak">Warm up!</string>
+    <string name="no_tts_dialog_check_title">Application\'s voice</string>
+    <string name="no_tts_dialog_check_message">This application uses speech synthesator. Application will now check does your device has speech synthesator application.</string>
+    <string name="no_tts_dialog_title">Application\'s voice</string>
+    <string name="no_tts_dialog_message">There\'s no speech synthesator on your device.\n\nYou can install any speech synthesator you like (commonly called TTS or text-to-speech) and set it in your phone\'s settings.\n\nWould you like to install android\'s default TTS speech synthesator right now?</string>
 
     <!-- after end of acticity -->
     <string name="save">Save</string>
@@ -184,7 +187,7 @@
 
     <!-- about application -->
     <string name="version_title">Version</string>
-    <string name="version">2.1.3.4.5.6 LOL xD</string>
+    <string name="version">Run 42K ver. 1.0</string>
     <string name="about_title">About</string>
     <string name="about">This application was developed by \n Jakub Skuldarski and Marek Kresnicki. \n Run safe and beat all records.</string>
 
