@@ -97,6 +97,8 @@
 
     <!--history -->
     <string name="Annotations">Annotations</string>
+    <string name="history">History</string>
+    <string name="activity">Activity</string>
 	
     <!-- chart strings -->
     <string name="chart_title_speed">Speed (km/h)</string>

@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -18,6 +19,7 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.CustomPicker;
+import com.pwr.zpi.views.TopBar;
 
 public class NewWorkoutActionAdvancedActivity extends Activity implements OnClickListener, TextWatcher {
 	
@@ -36,6 +38,7 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 	private Button tab1Button;
 	private Button tab2Button;
 	private Button tab3Button;
+	private RelativeLayout leftButton;
 	//Virtual Partner
 	
 	ScrollView scrollViewDistanceTime;
@@ -150,6 +153,8 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		buttonTab3Add.setEnabled(false);
 		editTextTab3Distance = (EditText) findViewById(R.id.editTextTab3Distance);
 		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarActionAdvanced);
+		leftButton = topBar.getLeftButton();
 	}
 	
 	private void addListeners()
@@ -160,6 +165,7 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		tab1Button.setOnClickListener(this);
 		tab2Button.setOnClickListener(this);
 		tab3Button.setOnClickListener(this);
+		leftButton.setOnClickListener(this);
 		
 		pickerTab1DistanceKm.getDisplayEditText().addTextChangedListener(this);
 		pickerTab1DistanceM.getDisplayEditText().addTextChangedListener(this);
@@ -212,9 +218,13 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 				else if (v == tab2Button) {
 					setTab(1);
 				}
-				if (v == tab3Button) {
+				else if (v == tab3Button) {
 					setTab(2);
 				}
+				else if (v == leftButton) {
+					finish();
+				}
+				
 				break;
 		}
 		

@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_grey_backgroud"
     android:orientation="vertical" >
 
+    <com.pwr.zpi.views.TopBar
+                android:id="@+id/topBarSingleRun"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                app:titleText="@string/activity"
+                app:hasLeftButton="true"
+                app:leftButtonText="@string/history">
+            </com.pwr.zpi.views.TopBar>
+    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
