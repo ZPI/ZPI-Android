@@ -56,35 +56,46 @@ public class LineChartDataEvaluator {
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
 		double cumulativeDistance = 0;
 		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
-			Pair<Location, Long> previous = subrun.removeFirst();
-			LinkedBlockingQueue<Pair<Double, Long>> pointsCountedQueue = new LinkedBlockingQueue<Pair<Double, Long>>();
-			
-			long timeSum = 0;
-			double distanceSum = 0;
-			for (Pair<Location, Long> current : subrun) {
+			if (!subrun.isEmpty())
+			{
+				Pair<Location, Long> previous = subrun.peek();
+				LinkedBlockingQueue<Pair<Double, Long>> pointsCountedQueue = new LinkedBlockingQueue<Pair<Double, Long>>();
 				
-				double distance = current.first.distanceTo(previous.first);
-				
-				long time = current.second - previous.second;
-				if (distance > 0.5) {
-					distanceSum += distance;
-					timeSum += time;
-					pointsCountedQueue.add(new Pair<Double, Long>(distance, time));
+				long timeSum = 0;
+				double distanceSum = 0;
+				boolean first = true;
+				for (Pair<Location, Long> current : subrun) {
+					if (!first)
+					{
+						double distance = current.first.distanceTo(previous.first);
+						
+						long time = current.second - previous.second;
+						if (distance > 0.5) {
+							distanceSum += distance;
+							timeSum += time;
+							pointsCountedQueue.add(new Pair<Double, Long>(distance, time));
+						}
+						
+						while (timeSum > AVRAGE_FROM_LAST * 1000 && !pointsCountedQueue.isEmpty()) {
+							Pair<Double, Long> p = pointsCountedQueue.poll();
+							distanceSum -= p.first;
+							timeSum -= p.second;
+						}
+						if (currentIndex >= speedValues.length)
+						{
+							System.out.println();
+						}
+						speedValues[currentIndex] = (distanceSum / timeSum * 3600);
+						cumulativeDistance += distance / 1000;
+						distanceValues[currentIndex] = cumulativeDistance;
+						altitudeValues[currentIndex] = current.first.getAltitude();
+						findMinMax(speedValues[currentIndex], distanceValues[currentIndex],
+							altitudeValues[currentIndex]);
+						previous = current;
+						currentIndex++;
+					}
+					first = false;
 				}
-				
-				while (timeSum > AVRAGE_FROM_LAST * 1000 && !pointsCountedQueue.isEmpty()) {
-					Pair<Double, Long> p = pointsCountedQueue.poll();
-					distanceSum -= p.first;
-					timeSum -= p.second;
-				}
-				
-				speedValues[currentIndex] = (distanceSum / timeSum * 3600);
-				cumulativeDistance += distance / 1000;
-				distanceValues[currentIndex] = cumulativeDistance;
-				altitudeValues[currentIndex] = current.first.getAltitude();
-				findMinMax(speedValues[currentIndex], distanceValues[currentIndex], altitudeValues[currentIndex]);
-				previous = current;
-				currentIndex++;
 			}
 		}
 		
