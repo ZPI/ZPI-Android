@@ -7,7 +7,7 @@
     android:orientation="vertical" >
 
     <com.pwr.zpi.views.TopBar
-        android:id="@+id/topBarActionAdvanced"
+        android:id="@+id/topBarActionSimple"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         custom:hasLeftButton="true"
