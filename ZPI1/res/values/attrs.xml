@@ -7,19 +7,27 @@
         <attr name="digitNumber" format="integer" />
         <attr name="incrementValue" format="integer" />
         <attr name="editTextVisibility" format="enum">
-            <enum name="visible" value="0"/>
-            <enum name="gone" value="1"/>
+            <enum name="visible" value="0" />
+            <enum name="gone" value="1" />
         </attr>
         <attr name="orientation" format="enum">
-            <enum name="vertical" value="0"/>
-            <enum name="horizontal" value="1"/>
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
         </attr>
     </declare-styleable>
     <declare-styleable name="GPSSignalDisplayer">
         <attr name="displayType" format="enum">
-            <enum name="wide" value="0"/>
-            <enum name="narrow" value="1"/>
+            <enum name="wide" value="0" />
+            <enum name="narrow" value="1" />
         </attr>
+    </declare-styleable>
+    <declare-styleable name="TopBar">
+        <attr name="hasTitle" format="boolean" />
+        <attr name="titleText" format="string" />
+        <attr name="hasLeftButton" format="boolean" />
+        <attr name="hasRightButton" format="boolean" />
+        <attr name="leftButtonText" format="string" />
+        <attr name="rightButtonText" format="string" />
     </declare-styleable>
 
 </resources>

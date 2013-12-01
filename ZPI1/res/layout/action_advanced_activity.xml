@@ -23,6 +23,15 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" >
             </TabWidget>
+            <com.pwr.zpi.views.TopBar
+                android:id="@+id/topBarActionAdvanced"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" 
+                custom:hasTitle="false"
+                custom:hasLeftButton="true"
+                custom:leftButtonText="@string/new_workout">
+            </com.pwr.zpi.views.TopBar>
+            
             <LinearLayout
                 android:id="@+id/tabbar"
                 android:layout_width="match_parent"

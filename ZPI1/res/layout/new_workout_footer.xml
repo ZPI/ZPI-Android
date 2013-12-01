@@ -6,6 +6,7 @@
     android:background="@color/gray_background"
     android:orientation="vertical" >
 
+
     <RelativeLayout
         android:id="@+id/buttonNewWorkoutAction"
         android:layout_width="match_parent"
@@ -36,6 +37,7 @@
             android:layout_alignTop="@+id/textViewAddNewAction"
             android:layout_alignBottom="@+id/textViewAddNewAction"
             android:src="@drawable/plus_sign" />
+
     </RelativeLayout>
 
     <TextView
