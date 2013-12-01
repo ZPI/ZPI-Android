@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.RelativeLayout;
 
 import com.fima.chartview.ChartView;
 import com.fima.chartview.LinearSeries;
@@ -11,14 +13,16 @@ import com.fima.chartview.LinearSeries.LinearPoint;
 import com.pwr.zpi.adapters.ValueLabelAdapter;
 import com.pwr.zpi.adapters.ValueLabelAdapter.LabelOrientation;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
+import com.pwr.zpi.views.TopBar;
 
-public class ChartActivity extends Activity {
+public class ChartActivity extends Activity implements OnClickListener {
 	
 	public static final String CHART_DATA_KEY = "chart_data";
 	
 	ChartView speed;
 	ChartView altitude;
 	ChartDataHelperContainter container;
+	RelativeLayout leftButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +31,9 @@ public class ChartActivity extends Activity {
 		
 		speed = (ChartView) findViewById(R.id.speed_chart_view);
 		altitude = (ChartView) findViewById(R.id.altitude_chart_view);
-		
+		TopBar topBar = (TopBar) findViewById(R.id.topBarCharts);
+		leftButton = topBar.getLeftButton();
+		leftButton.setOnClickListener(this);
 		container = getChartDataFromIntent();
 		
 		new ChartDataLoader().execute(null, null); //overloaded method, two nulls to distinct
@@ -80,5 +86,13 @@ public class ChartActivity extends Activity {
 			findViewById(R.id.progressBarSpeed).setVisibility(View.GONE);
 			findViewById(R.id.progressBarAltitude).setVisibility(View.GONE);
 		}
+	}
+	
+	@Override
+	public void onClick(View v) {
+		if (v == leftButton) {
+			finish();
+		}
+		
 	}
 }
