@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class TopBar extends RelativeLayout {
 	private String titleText;
 	private String rightButtonText;
 	private String leftButtonText;
+	private ImageView leftBackArrowImageView;
 	private boolean hasLeftButton;
 	private boolean hasRightButton;
 	private boolean hasTitle;
@@ -40,10 +42,7 @@ public class TopBar extends RelativeLayout {
 	public TopBar(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		
-		TypedArray typedArray = context.getTheme().obtainStyledAttributes(
-			attrs,
-			R.styleable.TopBar,
-			0, 0);
+		TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.TopBar, 0, 0);
 		
 		try {
 			hasLeftButton = typedArray.getBoolean(R.styleable.TopBar_hasLeftButton, false);
@@ -63,8 +62,7 @@ public class TopBar extends RelativeLayout {
 	}
 	
 	private void init(Context mContext) {
-		LayoutInflater inflator = (LayoutInflater) mContext
-			.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		myTopBar = inflator.inflate(R.layout.top_bar, null);
 		
@@ -79,6 +77,7 @@ public class TopBar extends RelativeLayout {
 		rightButton = (Button) myTopBar.findViewById(R.id.buttonTopBarRightButton);
 		titleTextView = (TextView) myTopBar.findViewById(R.id.textViewTopBarTitle);
 		leftButtonTextView = (TextView) myTopBar.findViewById(R.id.textViewTopBarBack);
+		leftBackArrowImageView = (ImageView) myTopBar.findViewById(R.id.imageViewTopBarBackArrow);
 		
 		initData();
 		
@@ -110,14 +109,36 @@ public class TopBar extends RelativeLayout {
 		titleTextView.setText(titleText);
 	}
 	
-	public Button getRightButton()
-	{
+	public Button getRightButton() {
 		return rightButton;
 	}
 	
-	public RelativeLayout getLeftButton()
-	{
+	public RelativeLayout getLeftButton() {
 		return leftButton;
+	}
+	
+	public void setLeftButtonText(String text) {
+		leftButtonText = text;
+		sendToDisplay();
+	}
+	
+	public void setLeftButtonText(int resource) {
+		leftButtonText = getContext().getString(resource);
+		sendToDisplay();
+	}
+	
+	public void setRightButtonText(String text) {
+		rightButtonText = text;
+		sendToDisplay();
+	}
+	
+	public void setRightButtonText(int resource) {
+		rightButtonText = getContext().getString(resource);
+		sendToDisplay();
+	}
+	
+	public void showLeftArrowImageView(boolean show) {
+		leftBackArrowImageView.setVisibility(show ? View.VISIBLE : View.GONE);
 	}
 	
 }
