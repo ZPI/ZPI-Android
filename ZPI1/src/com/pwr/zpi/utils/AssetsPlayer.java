@@ -15,23 +15,34 @@ public class AssetsPlayer {
 	private static final String BEEP_FILE_NAME = "beep.mp3";
 	private static final String GO_FILE_NAME = "go.mp3";
 	
-	private final MediaPlayer player;
+	private MediaPlayer player;
 	private AssetFileDescriptor afd;
-	private final boolean canPlay;
+	private boolean canPlay;
+	private final Context context;
 	
 	public enum AssetsMp3Files {
-		Beep(BEEP_FILE_NAME),
-		Go(GO_FILE_NAME);
+		Beep(BEEP_FILE_NAME), Go(GO_FILE_NAME);
 		
 		String fileName;
+		
 		private AssetsMp3Files(String fileName) {
 			this.fileName = fileName;
 		}
 		
-		public String getFileName() {return fileName;}
+		public String getFileName() {
+			return fileName;
+		}
 	}
 	
 	public AssetsPlayer(Context context, AssetsMp3Files file) {
+		this.context = context;
+		
+		changePlayer(file);
+		canPlay = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+			context.getString(R.string.key_aplication_sound), false);
+	}
+	
+	public void changePlayer(AssetsMp3Files file) {
 		player = new MediaPlayer();
 		try {
 			afd = context.getAssets().openFd(file.getFileName());
@@ -44,13 +55,16 @@ public class AssetsPlayer {
 			Log.e(context.getClass().getSimpleName(), "error reading sound file from assets");
 			e.printStackTrace();
 		}
-		canPlay = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.key_aplication_sound), false);
 	}
 	
 	public void play() {
 		if (canPlay) {
 			player.start();
 		}
+	}
+	
+	public void setCanPlay(boolean canPlay) {
+		this.canPlay = canPlay;
 	}
 	
 	public void stopPlayer() {

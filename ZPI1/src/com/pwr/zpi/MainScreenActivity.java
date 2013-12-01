@@ -266,6 +266,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					gpsStatus = api.getGPSStatus();
 					handleGPSStatusChange();
 					api.onSoundSettingChange(soundEnabled);
+					Log.i(TAG, "changed sound settings in servie");
 				}
 			}
 			catch (RemoteException e) {

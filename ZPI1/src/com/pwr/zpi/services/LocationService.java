@@ -206,6 +206,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void onSoundSettingChange(boolean enabled) throws RemoteException {
 			speechSynthezator.setSpeakingEnabled(enabled);
+			soundsPlayer.setCanPlay(enabled);
 		}
 		
 	};
@@ -251,6 +252,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 		mLocationClient.connect();
 		Log.i(TAG, "Service creating");
+		soundsPlayer = new AssetsPlayer(getApplicationContext(), AssetsMp3Files.Beep);
 		Toast.makeText(getApplicationContext(), "Service creating", Toast.LENGTH_LONG).show(); //TODO remove
 	}
 	
@@ -402,7 +404,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	}
 	
 	private void startRunAfterCountDown() {
-		soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Beep);
+		soundsPlayer.changePlayer(AssetsMp3Files.Beep);
 		Log.i(TAG, "count down start " + countDownTime + " handler " + handler);
 		handler.post(new CounterRunnable(COUNTER_COUNT_DOWN, countDownTime, this));
 	}
@@ -413,6 +415,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		switch (counterID) {
 			case COUNTER_COUNT_DOWN:
 				listenersHandleCountDownChange(howMuchLeft);
+				Log.i(TAG, "beep !");
 				soundsPlayer.play();
 				break;
 			case COUNTER_WARM_UP:
@@ -443,7 +446,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		switch (counterID) {
 			case COUNTER_COUNT_DOWN:
 				soundsPlayer.stopPlayer();
-				soundsPlayer = new AssetsPlayer(this, AssetsMp3Files.Go);
+				soundsPlayer.changePlayer(AssetsMp3Files.Go);
 				listenersHandleCountDownChange(howMuchLeft);
 				soundsPlayer.play();
 				break;
