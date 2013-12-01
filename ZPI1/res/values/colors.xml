@@ -30,4 +30,7 @@
 	<color name="save_button">#1eaff8</color>
 	<color name="red">#f61e1f</color>
 	<color name="light_green">#82BF1A</color>
+	
+	<color name="chart_altitude">#258afd</color>
+	<color name="chart_speed">#dd7878</color>
 </resources>

@@ -45,12 +45,12 @@ public class ChartActivity extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 			seriesSpeed = new LinearSeries();
-			seriesSpeed.setLineColor(0xFF0099CC);
-			seriesSpeed.setLineWidth(2);
+			seriesSpeed.setLineColor(getResources().getColor(R.color.chart_speed));
+			seriesSpeed.setLineWidth(getResources().getDimension(R.dimen.chart_line_width));
 			
 			seriesAltitude = new LinearSeries();
-			seriesAltitude.setLineColor(0xFF0099CC);
-			seriesAltitude.setLineWidth(2);
+			seriesAltitude.setLineColor(getResources().getColor(R.color.chart_altitude));
+			seriesAltitude.setLineWidth(getResources().getDimension(R.dimen.chart_line_width));
 			
 			double distance[] = container.getDistance();
 			double altitude[] = container.getAltitude();

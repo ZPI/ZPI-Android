@@ -31,4 +31,5 @@
 	<dimen name="activity_button_size">40dp</dimen>
 	<dimen name="switch_screen_button_corner_radius">7dp</dimen>
 	<dimen name="medium_margin">15dp</dimen>
+	<dimen name="chart_line_width">2dp</dimen>
 </resources>

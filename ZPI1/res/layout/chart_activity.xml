@@ -13,7 +13,7 @@
         android:gravity="center"
         android:text="@string/chart_title_speed"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#FF0000"
+        android:textColor="@color/chart_speed"
         android:textStyle="bold" />
 
     <FrameLayout
@@ -50,9 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Altitude (m)"
+        android:text="@string/chart_title_altitude"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#0000FF"
+        android:textColor="@color/chart_altitude"
         android:textStyle="bold" />
 
     <FrameLayout

@@ -99,8 +99,11 @@
     <string name="Annotations">Annotations</string>
 	
     <!-- chart strings -->
-    <string name="chart_title_speed">Speed [km/h] (Distance [km]))</string>
-    <string name="chart_title_altitude">Altitude [m] (Distance [km]))</string>
+    <string name="chart_title_speed">Speed (km/h)</string>
+    <string name="chart_title_altitude">Altitude (m)</string>
+<!--     FIXME Which better for user information ? -->
+<!--     <string name="chart_title_speed">Speed [km/h] (Distance [km]))</string> -->
+<!--     <string name="chart_title_altitude">Altitude [m] (Distance [km]))</string> -->
 
     <!-- splits strings -->
     <string name="split_time">Split time</string>

@@ -77,14 +77,6 @@
     <string name="interval">Interwał</string>
     <string name="virtual_partner">Wirtualny \npartner</string>
 
-    <!-- chart strings -->
-    <string name="chart_title">Dane biegów</string>
-    <string name="chart_ox_distance">Dystans</string>
-    <string name="chart_oy1_speed">Prędkość [km/h]</string>
-    <string name="chart_oy2_altitude">Wysokość [m]</string>
-    <string name="chart_legend_oy1">Prędkość</string>
-    <string name="chart_legend_oy2">Wysokość</string>
-
     <!-- splits strings -->
     <string name="split_time">Czas km</string>
     <string name="total_time">Czas całkowity</string>
