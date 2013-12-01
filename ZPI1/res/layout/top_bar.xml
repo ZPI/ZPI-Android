@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/main_color"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textViewTopBarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="@dimen/buttons_padding"
+        android:paddingTop="@dimen/buttons_padding"
+
+        android:text="Large Text"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutTopBarBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/textViewTopBarTitle"
+        android:layout_toLeftOf="@+id/textViewTopBarTitle"
+        android:background="@drawable/top_bar_button_background" >
+
+        <TextView
+            android:id="@+id/textViewTopBarBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imageViewTopBarBackArrow"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/buttons_padding"
+            android:duplicateParentState="true"
+            android:text="Large Text"
+            android:textColor="@color/tab_color" />
+
+        <ImageView
+            android:id="@+id/imageViewTopBarBackArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:duplicateParentState="true"
+            android:src="@drawable/top_bar_arrow_background" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/buttonTopBarRightButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/textViewTopBarTitle"
+        android:paddingRight="@dimen/buttons_padding"
+        android:background="@drawable/top_bar_button_background"
+        android:gravity="right|center"
+        android:paddingBottom="@dimen/buttons_padding"
+        android:paddingTop="@dimen/buttons_padding"
+        android:text="Button"
+        android:textColor="@color/tab_color" />
+
+</RelativeLayout>

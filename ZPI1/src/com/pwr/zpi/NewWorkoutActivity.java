@@ -30,6 +30,7 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.views.CustomPicker;
+import com.pwr.zpi.views.TopBar;
 
 public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener, TextWatcher {
 	
@@ -48,6 +49,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private TextView workoutsRepeatsTextView;
 	private Workout workout;
 	private EditText picerEditText;
+	private TopBar topBar;
+	private RelativeLayout topBarLeftButton;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +89,9 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
 		
 		repeatPicker = (CustomPicker) footer.findViewById(R.id.customPickerRepeat);
+		topBar = (TopBar) header.findViewById(R.id.topBarNewWorkout);
+		
+		topBarLeftButton = topBar.getLeftButton();
 		
 		workoutsRepeatsTextView.setText(repeatPicker.getValue() + " " + getResources().getString(R.string.times));
 		
@@ -100,6 +106,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addThisWorkoutButton.setOnClickListener(this);
 		workoutsListView.setOnItemClickListener(this);
 		picerEditText.addTextChangedListener(this);
+		topBarLeftButton.setOnClickListener(this);
 	}
 	
 	private void showActionChooseDialog() {
@@ -148,6 +155,10 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 			
 			returnIntent.putExtra(Workout.TAG, workout);
 			setResult(RESULT_OK, returnIntent);
+			finish();
+		}
+		else if (v == topBarLeftButton)
+		{
 			finish();
 		}
 		
