@@ -90,6 +90,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private RelativeLayout dataRelativeLayout2;
 	private Location mLastLocation;
 	private boolean isPaused;
+	private ImageButton zoomIn;
+	private ImageButton zoomOut;
 	//private SingleRun singleRun;
 	//private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	//private Calendar calendar;
@@ -178,6 +180,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		transparentButton = findViewById(R.id.transparentView);
+		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
+		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		mMap.setMyLocationEnabled(true);
@@ -246,6 +250,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		dataRelativeLayout1.setOnClickListener(this);
 		dataRelativeLayout2.setOnClickListener(this);
+		
+		zoomIn.setOnClickListener(this);
+		zoomOut.setOnClickListener(this);
 		
 		musicPlayer.setOnClickListener(this);
 		transparentButton.setVisibility(View.GONE);
@@ -510,6 +517,13 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				break;
 			case R.id.buttonMusicDuringActivity:
 				startSystemMusicPlayer();
+				break;
+			case R.id.imageButtonMapZoomIn:
+				mMap.animateCamera(CameraUpdateFactory.zoomIn());
+				
+				break;
+			case R.id.imageButtonMapZoomOut:
+				mMap.animateCamera(CameraUpdateFactory.zoomOut());
 				break;
 		}
 		
@@ -863,7 +877,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			
 			@Override
 			public void run() {
-				countDownTextView.setText(R.string.wormup);
+				countDownTextView.setText(R.string.warmup);
 				
 			}
 		});

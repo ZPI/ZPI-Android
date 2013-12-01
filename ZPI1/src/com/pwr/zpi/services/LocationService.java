@@ -161,7 +161,6 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setStoped() throws RemoteException {
 			state = STOPED;
-			zeroFields();
 		}
 		
 		@Override
@@ -559,8 +558,12 @@ public class LocationService extends Service implements LocationListener, Connec
 		singleRun.setDistance(distance);
 		singleRun.setTraceWithTime(traceWithTime);
 		singleRun.setName(name);
+		//TODO remove
+		Log.i("debug1", time + " " + distance + " " + name);
+		
 		// store in DB
 		Database db = new Database(this);
 		db.insertSingleRun(singleRun);
+		zeroFields();
 	}
 }
