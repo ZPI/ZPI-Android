@@ -219,6 +219,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				workoutCopy.setWarmUp(true);
 				int warmUpMinutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(
 					this.getString(R.string.key_warm_up_time), "3"));
+				warmUpMinutes = 1; //FIXME delete this debug line
 				actions.add(new WorkoutActionWarmUp(warmUpMinutes));
 			}
 			for (int i = 0; i < workout.getRepeatCount(); i++) {

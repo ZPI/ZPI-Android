@@ -217,7 +217,6 @@ public class LocationService extends Service implements LocationListener, Connec
 		pauseTime = 0;
 		time = 0L;
 		distance = 0;
-		workout = null;
 	}
 	
 	@Override
@@ -395,6 +394,14 @@ public class LocationService extends Service implements LocationListener, Connec
 		}
 	};
 	
+	Runnable zeroFieldsHandler = new Runnable() {
+		
+		@Override
+		public void run() {
+			zeroFields();
+		}
+	};
+	
 	private void startWarmUp() {
 		handler.post(startTimeSetHandler);
 		//		int minutes = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(this.getString(R.string.key_warm_up_time), "3"));
@@ -461,7 +468,8 @@ public class LocationService extends Service implements LocationListener, Connec
 				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
 				isWromUpInProgress = false;
-				
+				workout.progressWorkout(0,
+					(long) (((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime() * 60 * 1000));
 				break;
 			default:
 				break;
@@ -498,6 +506,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	private void startCountingTime() {
 		//		startTime = System.currentTimeMillis();
+		handler.post(zeroFieldsHandler);
 		handler.post(startTimeSetHandler);
 		handler.post(timeHandler);
 	}
