@@ -130,7 +130,6 @@ public class LocationService extends Service implements LocationListener, Connec
 				handler.post(zeroFieldsHandler);
 				locationList = new ArrayList<Location>();
 				state = STARTED;
-				isFirstTime = true;
 				LocationService.this.countDownTime = countDownTime;
 				prepareWorkout(workout);
 				initActivityRecording();
@@ -162,6 +161,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setStoped() throws RemoteException {
 			state = STOPED;
+			handler.removeCallbacksAndMessages(null);
 		}
 		
 		@Override
@@ -217,6 +217,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		pauseTime = 0;
 		time = 0L;
 		distance = 0;
+		isFirstTime = true;
 	}
 	
 	@Override
@@ -435,7 +436,13 @@ public class LocationService extends Service implements LocationListener, Connec
 					try {
 						listener.handleTimeChange();
 						listener.handleWorkoutChange(workout, isFirstTime);
-						isFirstTime = false;
+						handler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								isFirstTime = false;
+							}
+						});
 						Log.i(TAG, listeners.size() + "");
 					}
 					catch (RemoteException e) {
