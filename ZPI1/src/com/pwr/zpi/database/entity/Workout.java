@@ -209,7 +209,8 @@ public class Workout implements Parcelable {
 				WorkoutAction action = getActions().get(currentAction);
 				notifyListeners(action);
 			}
-		} else {
+		}
+		else {
 			this.howMuchLeft = warmUpTime - currentTime;
 		}
 	}
@@ -268,7 +269,8 @@ public class Workout implements Parcelable {
 				sb.append(TimeFormatter.formatTimeHHMMSS(value.longValue()));
 				sb.append("h");
 			}
-		} else if (action.isWarmUp()) {
+		}
+		else if (action.isWarmUp()) {
 			WorkoutActionWarmUp warmUp = (WorkoutActionWarmUp) action;
 			if (getValue) {
 				value = (double) (warmUp.getWorkoutTime() * 60 * 1000);
@@ -352,4 +354,10 @@ public class Workout implements Parcelable {
 		lastActionTime = in.readLong();
 	}
 	
+	public void setWarmUpDone() {
+		currentAction = 1; // warm up is always first action (index = 0)
+		lastActionTime = 0;
+		lastActionDistance = 0;
+		initHowMuchLeft(actions, currentAction, 0, 0);
+	}
 }

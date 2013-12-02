@@ -127,6 +127,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setStarted(Workout workout, int countDownTime) throws RemoteException {
 			if (state == STOPED) {
+				handler.post(zeroFieldsHandler);
 				locationList = new ArrayList<Location>();
 				state = STARTED;
 				isFirstTime = true;
@@ -410,6 +411,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	}
 	
 	private void startRunAfterCountDown() {
+		handler.post(zeroFieldsHandler);
 		soundsPlayer.changePlayer(AssetsMp3Files.Beep);
 		Log.i(TAG, "count down start " + countDownTime + " handler " + handler);
 		handler.post(new CounterRunnable(COUNTER_COUNT_DOWN, countDownTime, this));
@@ -467,8 +469,9 @@ public class LocationService extends Service implements LocationListener, Connec
 				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
 				isWromUpInProgress = false;
-				workout.progressWorkout(0,
-					(long) (((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime() * 60 * 1000));
+				//				workout.progressWorkout(0,
+				//					(long) (((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime() * 60 * 1000));
+				workout.setWarmUpDone();
 				break;
 			default:
 				break;
@@ -573,6 +576,5 @@ public class LocationService extends Service implements LocationListener, Connec
 		// store in DB
 		Database db = new Database(this);
 		db.insertSingleRun(singleRun);
-		zeroFields();
 	}
 }
