@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
-import android.util.Log;
 
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.database.entity.Workout;
@@ -223,12 +222,9 @@ public class Database extends SQLiteOpenHelper {
 		Date endDate = new Date(cursor.getLong(1));
 		readSingleRun.setEndDate(endDate);
 		
-		Log.e("db", cursor.getLong(2) + "");
-		
 		readSingleRun.setRunID(cursor.getLong(2));
 		readSingleRun.setDistance(cursor.getDouble(3));
 		readSingleRun.setRunTime(cursor.getLong(4));
-		//	if (cursor.get)
 		readSingleRun.setName(cursor.getString(5));
 		if (needAllInfo) {
 			LinkedList<LinkedList<Pair<Location, Long>>> trace = getTraceForRunID(readSingleRun.getRunID(), db);

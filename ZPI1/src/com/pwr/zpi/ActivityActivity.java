@@ -796,17 +796,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		@Override
 		public void handleWorkoutChange(Workout workout, boolean firtTime) throws RemoteException {
-			handleWorkoutUpdate(workout);
-			for (WorkoutAction action : workout.getActions()) {
-				Log.i(TAG, action.getActionType() + ""); //TODO debug
-				if (action.isWarmUp()) {
-					WorkoutActionWarmUp wu = (WorkoutActionWarmUp) action;
-					if (firtTime) {
-						setWormUpText();
-					}
-					Log.i(TAG, wu.getWorkoutTime() + "");
-				}
+			Log.i(TAG, "workout data: " + workout.isWarmUp() + " " + workout.getCurrentAction() + " " + firtTime);
+			if (workout.isWarmUp() && workout.getCurrentAction() == 0 && firtTime) {
+				setWarmUpText();
 			}
+			handleWorkoutUpdate(workout);
 		}
 		
 		@Override
@@ -825,7 +819,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		time = 0L;
 	}
 	
-	private void setWormUpText() {
+	private void setWarmUpText() {
 		handlerForService.post(new Runnable() {
 			
 			@Override
