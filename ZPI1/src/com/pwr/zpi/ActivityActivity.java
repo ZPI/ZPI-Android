@@ -20,7 +20,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -186,6 +185,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		mMap = mapFragment.getMap();
 		mMap.setMyLocationEnabled(true);
 		mMap.getUiSettings().setMyLocationButtonEnabled(false);
+		mMap.getUiSettings().setCompassEnabled(false);
+		mMap.getUiSettings().setZoomControlsEnabled(false);
 		//		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		//		pauseTime = 0;
 		traceOnMap = new PolylineOptions();
@@ -240,7 +241,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			listView.setVisibility(View.GONE);
 		}
 		
-		moveSystemControls(mapFragment);
 	}
 	
 	private void addListeners() {
@@ -317,41 +317,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		doUnbindService();
 		
 		super.onDestroy();
-	}
-	
-	//TODO ikona kompasu
-	private void moveSystemControls(SupportMapFragment mapFragment) {
-		
-		View zoomControls = mapFragment.getView().findViewById(0x1);
-		
-		if (zoomControls != null && zoomControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-			// ZoomControl is inside of RelativeLayout
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) zoomControls.getLayoutParams();
-			
-			// Align it to - parent top|left
-			params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			
-			final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
-				.getDimension(R.dimen.zoom_buttons_margin), getResources().getDisplayMetrics());
-			params.setMargins(0, 0, 0, margin);
-		}
-		View locationControls = mapFragment.getView().findViewById(0x2);
-		
-		if (locationControls != null && locationControls.getLayoutParams() instanceof RelativeLayout.LayoutParams) {
-			// ZoomControl is inside of RelativeLayout
-			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) locationControls.getLayoutParams();
-			
-			// Align it to - parent bottom|left
-			params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-			params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			//params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-			//params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-			
-			final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, getResources()
-				.getDimension(R.dimen.zoom_buttons_margin), getResources().getDisplayMetrics());
-			params.setMargins(0, 0, 0, margin);
-		}
 	}
 	
 	private void initLabels(TextView textViewInitialValue, TextView textView, int meassuredValue) {
