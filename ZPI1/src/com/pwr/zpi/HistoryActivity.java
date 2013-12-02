@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -79,6 +80,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		initTabs();
 		initFields();
 		addListeners();
+		new GetRunsFromDB().execute(null, null);
 	}
 	
 	private void initTabs() {
@@ -115,46 +117,37 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
 		
-		run_data = readfromDB();
-		
-		Collections.sort(run_data);
-		adapterThisAll = new RunAdapter(this, R.layout.history_run_list_item, run_data);
-		ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
-			new ArrayList<SingleRun>(run_data), FILTER_MONTH);
-		adapterThisMonth = new RunAdapter(this, R.layout.history_run_list_item, run_data_month);
-		ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
-			run_data_month), FILTER_WEEK);
-		adapterThisWeek = new RunAdapter(this, R.layout.history_run_list_item, run_data_week);
-		listViewThisWeek.setAdapter(adapterThisWeek);
-		listViewThisMonth.setAdapter(adapterThisMonth);
-		listViewAll.setAdapter(adapterThisAll);
-		
-		registerForContextMenu(listViewThisWeek);
-		registerForContextMenu(listViewThisMonth);
-		registerForContextMenu(listViewAll);
-		
 		mainSceenButton = (ImageButton) findViewById(R.id.buttonHistoryMainScreen);
 		//adapterThisWeek.getFilter().filter();
 	}
 	
 	private List<SingleRun> removeOlderThen(List<SingleRun> runs, int type) {
 		Calendar cal = Calendar.getInstance();
+		
 		switch (type) {
 			case FILTER_MONTH:
-				cal.add(Calendar.DATE, -31);        //czy 30? czy wyœwietlaæ tylko bie¿¹cy miesi¹c?
+				//zmieniam na prawdziwy miesiac zamiast 30 ostatnich dni
+				cal.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().getActualMinimum(Calendar.DAY_OF_MONTH));
+				//cal.clear();
+				//cal.set(date.getYear(), date.getMonth(), date.getDay());
 				break;
 			case FILTER_WEEK:
-				cal.add(Calendar.DATE, -7);
+				cal.add(Calendar.DATE, -(((cal.get(Calendar.DAY_OF_WEEK) + 5) % 7)));
+				//date = cal.getTime();
+				//cal.set(date.getYear(), date.getMonth(), date.getDay());
 				break;
 			default:
 				break;
 		}
 		
 		Date lastMonth = cal.getTime();
+		lastMonth.setHours(0);
+		lastMonth.setMinutes(0);
+		lastMonth.setHours(0);
 		Iterator<SingleRun> it = runs.iterator();
 		while (it.hasNext()) {
 			SingleRun singleRun = it.next();
-			if (singleRun.getStartDate().before(lastMonth)) {
+			if (!singleRun.getStartDate().after(lastMonth)) {
 				it.remove();
 			}
 		}
@@ -166,13 +159,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		Database db = new Database(this);
 		List<SingleRun> runs;
 		runs = db.getAllRuns();
-		if (runs == null) {
-			runs = new ArrayList<SingleRun>();
-			RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayoutNoRunHistory);
-			rl.setVisibility(View.VISIBLE);
-			tabHost.setVisibility(View.GONE);
-			
-		}
+		
 		return runs;
 	}
 	
@@ -243,12 +230,14 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 		if (!myGestureDetector.isFlingDetected()) {
+			
 			Intent intent = new Intent(HistoryActivity.this, SingleRunHistoryActivity.class);
 			SingleRun selectedValue = (SingleRun) adapter.getItemAtPosition(position);
 			intent.putExtra(ID_TAG, selectedValue.getRunID());
 			intent.putExtra(DISTANCE_TAG, selectedValue.getDistance());
 			intent.putExtra(TIME_TAG, selectedValue.getRunTime());
 			intent.putExtra(NAME_TAG, selectedValue.getName());
+			
 			startActivity(intent);
 			overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
 		}
@@ -361,6 +350,47 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 				tab1Button.setSelected(false);
 				break;
 		}
+	}
+	
+	private class GetRunsFromDB extends AsyncTask<Void, Void, List<SingleRun>> {
+		@Override
+		protected List<SingleRun> doInBackground(Void... voids) {
+			ArrayList<SingleRun> list = (ArrayList<SingleRun>) readfromDB();
+			
+			Collections.sort(list);
+			
+			return list;
+		}
+		
+		@Override
+		protected void onPostExecute(List<SingleRun> list) {
+			
+			if (list == null) {
+				list = new ArrayList<SingleRun>();
+				RelativeLayout rl = (RelativeLayout) findViewById(R.id.relativeLayoutNoRunHistory);
+				rl.setVisibility(View.VISIBLE);
+				tabHost.setVisibility(View.GONE);
+				
+			}
+			
+			run_data = list;
+			adapterThisAll = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data);
+			ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
+				new ArrayList<SingleRun>(run_data), FILTER_MONTH);
+			adapterThisMonth = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data_month);
+			ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+				run_data), FILTER_WEEK);
+			adapterThisWeek = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data_week);
+			listViewThisWeek.setAdapter(adapterThisWeek);
+			listViewThisMonth.setAdapter(adapterThisMonth);
+			listViewAll.setAdapter(adapterThisAll);
+			
+			registerForContextMenu(listViewThisWeek);
+			registerForContextMenu(listViewThisMonth);
+			registerForContextMenu(listViewAll);
+			
+		}
+		
 	}
 	
 }

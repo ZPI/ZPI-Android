@@ -6,6 +6,13 @@
     android:background="@drawable/bg_blue_translucent"
     android:orientation="vertical" >
 
+    <fragment
+            android:id="@+id/map"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            
+            class="com.google.android.gms.maps.SupportMapFragment" />
+    
     <Button
         android:id="@+id/buttonStart"
         android:layout_width="match_parent"

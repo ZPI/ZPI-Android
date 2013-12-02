@@ -1,65 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="app_name">Run 42K</string>
+    <string name="hello_world">Hello world!</string>
     <string name="pause">PAUZA</string>
     <string name="stop">STOP</string>
     <string name="start">START</string>
     <string name="resume">WZNÓW</string>
     <string name="ustawienia">Ustawienia</string>
-    <string name="gps_enabled">GPS włączony</string>
-    <string name="gps_disabled">GPS wyłączony \nwłączyć?</string>
+    <string name="now">TERAZ</string>
+    <string name="done">WYKONANY</string>
     <string name="dialog_message_on_stop">Czy na pewno chcesz przerwać nagrywanie?</string>
-    <string name="dialog_message_low_gps_accuracy">Prszę poczekać na lepszy sygnał GPS</string>
-    <string name="dialog_message_no_gps">Proszę włączyć GPS</string>
-    <string name="dialog_choose_what_to_display">Co wyświetlać w tym polu?</string>
-    <string name="dialog_message_on_lost_gpsp">Oczekiwanie na sygnał GPS#8230;</string>
+    <string name="dialog_message_low_gps_accuracy">Proszę poczekaj na lepszy sygnał GPS</string>
+    <string name="dialog_message_no_gps">Proszę włącz GPS</string>
+    <string name="dialog_choose_what_to_display">Wybierz co wyświetlać w tym polu</string>
+    <string name="dialog_message_on_lost_gpsp">Poczekaj na lepszy sygnał GPS...</string>
     <string name="dialog_message_romve">Czy na pewno chcesz usunąć tę aktywność?</string>
     <string name="dialog_message_remove_action">Czy na pewno chcesz usunąć tę akcję?</string>
     <string name="dialog_message_remove_workout">Czy na pewno chcesz usunąć ten trening?</string>
-    <string name="gps_accuracy">Dokładność GPS</string>
+    <string name="runs_summary">Podsumowanie Biegów</string>
+    <string name="gps_accuracy">Dokładność GPS:</string>
+    <string name="its_time_to_run_notification_title">Dzisiejszy trening!</string>
+    <string name="its_time_to_run_notification_message">Masz trening zaplanowany na dziś</string>
+    <string name="music">Muzyka</string>
 
     <!-- meassured values -->
     <string name="distance">Dystans</string>
-    <string name="actual_time">Akyaulny czas</string>
-    <!-- godzina -->
+    <string name="actual_time">Aktualny Czas</string> <!-- godzina -->
     <string name="time">Czas</string>
     <string name="time_lap">Czas Okrążenia</string>
     <string name="time_last_lap">Czas Ostatniego Okrążenia</string>
     <string name="date">Data</string>
     <string name="gps_accuracy_value">Dokładność GPS</string>
-    <string name="distance_lap">Dystans Okrążenia</string>
+    <string name="distance_lap">Długość Okrążenia</string>
     <string name="distance_last_lap">Dystans Ostatniego Okrążenia</string>
     <string name="pace">Tempo</string>
     <string name="pace_avrage">Średnie Tempo</string>
     <string name="pace_lap">Tempo Okrążenia</string>
     <string name="pace_last_lap">Tempo Ostatniego Okrążenia</string>
-    <string name="pace_best">Najszybsze Tempo</string>
+    <string name="pace_best">Najlepsze Tempo</string>
     <string name="height">Wysokość</string>
     <string name="speed">Prędkość</string>
     <string name="speed_avrage">Średnia Prędkość</string>
     <string name="speed_lap">Prędkość Okrążenia</string>
     <string name="speed_last_lap">Prędkość Ostatniego Okrążenia</string>
-    <string name="speed_max">Największa Prędkość</string>
-    <string name="height_max">Największa Wyskość</string>
-    <string name="height_min">Najmniejsza Wysokość</string>
+    <string name="speed_max">Maksymalna Prędkość</string>
+    <string name="height_max">Maksymalna Wysokość</string>
+    <string name="height_min">Minimalna Wysokość</string>
     <string name="dashes">-:--</string>
+    <string name="dashes2">-,---</string>
 
     <!-- Units -->
     <string name="seconds">s</string>
     <string name="minutes_per_km">min/\nkm</string>
     <string name="km">km</string>
     <string name="km_per_hour">km/\nh</string>
+    <string name="m">m</string>
+    <string name="minutes">min</string>
+    <string name="duration">Czas Trwania</string>
 
     <!-- workouts -->
-    <string name="workouts">Trening</string>
+    <string name="workouts">Treningi</string>
     <string name="trening_plans">Plany treningowe</string>
     <string name="new_workout">Nowy trening</string>
-    <string name="add_workout">Dodaj trening</string>
+    <string name="add_workout">Dodaj ten trening</string>
     <string name="times">razy</string>
     <string name="repeat">Powtórzenia</string>
-    <string name="wormup">Rozgrzewka</string>
+    <string name="warmup">Rozgrzewka</string>
     <string name="add_new">Dodaj nową</string>
-    <string name="actions">Akcja</string>
+    <string name="actions">Akcje</string>
     <string name="name">Nazwa</string>
     <string name="select_workout">Wybierz ten trening</string>
     <string name="slow">Wolno</string>
@@ -76,11 +85,30 @@
     <string name="add_action">Dodaj tę akcję</string>
     <string name="interval">Interwał</string>
     <string name="virtual_partner">Wirtualny \npartner</string>
+    <string name="edit_workout">Edytuj Trening</string>
+    <string name="edit_action">Edytuj Akcję</string>
+    <string name="edit">Edytuj</string>
+    <string name="no_workout_actions">Ten trening nie ma akcji.</string>
+    <string name="settings_caps">USTAWIENIA</string>
+    <string name="actions_caps">AKCJE</string>
+    <string name="name_caps">NAZWA</string>
+
+    <!--history -->
+    <string name="Annotations">Znaczniki</string>
+    <string name="history">Historia</string>
+    <string name="activity">Aktywność</string>
+	
+    <!-- chart strings -->
+    <string name="chart_title_speed">Prędkość (km/h)</string>
+    <string name="chart_title_altitude">Wysokość (m)</string>
+<!--     FIXME Which better for user information ? -->
+<!--     <string name="chart_title_speed">Speed [km/h] (Distance [km]))</string> -->
+<!--     <string name="chart_title_altitude">Altitude [m] (Distance [km]))</string> -->
 
     <!-- splits strings -->
     <string name="split_time">Czas km</string>
     <string name="total_time">Czas całkowity</string>
-    <string name="no_splits_info">Żadnych międzyczasów. Przebiegnij więcej niż 1km</string>
+    <string name="no_splits_info">Brak międzyczasów. Przebiegnij więcej niż kilometr.</string>
 
     <!-- context menu -->
     <string name="menu_ctx_actions">Akcje</string>
@@ -89,21 +117,92 @@
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">Brak historii aktywności</string>
-    <string name="notification_message">Nagrywanie aktywności. Kliknij tutaj aby otworzyć.</string>
+    <string name="notification_message">Nagrywanie aktywności. Naciśnij tutaj aby otworzyć.</string>
     <string name="colon">:</string>
+    <string name="workout_actions">Akcje treningu</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="run">Bieg</string>
+
+    <!-- settings string -->
+    <string name="settings_title_reminder">Przypomnienie o treningu</string>
+    <string name="settings_title_application">Ustawienia aplikacji</string>
+    <string name="settings_title_other">Inne</string>
+    <string name="key_aplication_sound">sound_app_key</string>
+    <string name="aplication_sound">Dźwięki w aplikacji</string>
+    <string name="key_auto_pause">auto_pause_key</string>
+    <string name="auto_pause">Autopauza</string>
+    <string name="key_countdown_before_start">countdown_key</string>
+    <string name="countdown_before_start">Odliczanie przed startem</string>
+    <string name="key_map_3d">map_key</string>
+    <string name="map_3d">Mapa 3D</string>
+    <string name="key_warm_up_time">warm_up_time</string>
+    <string name="warm_up_time">Rozgrzewka</string>
+    <string name="reminder_day_key">reminder_day_key</string>
+    <string name="reminder_day">Dzień przypomnienia</string>
+    <string name="reminder_day_dialog_title">Przypomnij mi co</string>
+    <string name="reminder_hour_key">reminder_hour_key</string>
+    <string name="reminder_hour">Godzina przypomnienia</string>
+    <string name="reminder_hour_dialog_title">Przypomnij mi o</string>
 
     <!-- speech strings -->
+    <string name="go">GO</string>
     <string name="action">Akcja</string>
-    <string name="run_fast">Szybki bieg!</string>
-    <string name="run_steady">Średni bieg!</string>
-    <string name="run_slow">Powolny bieg!</string>
+    <string name="run_fast">Prędkość szybka!</string>
+    <string name="run_steady">Prędkość średnia!</string>
+    <string name="run_slow">Prędkość wolna!</string>
     <string name="for_how_much">Przez</string>
     <string name="chase_virtual_partner">Goń wirtualnego partnera!</string>
     <string name="meters">metrów.</string>
     <string name="minutes_speak">minut.</string>
     <string name="seconds_speak">sekund</string>
     <string name="over_kilometer">na kilometr.</string>
-    <string name="with_pace">Tempem</string>
+    <string name="with_pace">tempem</string>
     <string name="warm_up_speak">Rozgrzewka!</string>
+    <string name="no_tts_dialog_check_title">Głosy w aplikacji</string>
+    <string name="no_tts_dialog_check_message">Ta aplikacja używa syntezatora mowy. Aplikacja sprawdzi teraz czy twój telefon posiada syntezator mowy.\n </string>
+    <string name="no_tts_dialog_title">Application\'s voice</string>
+    <string name="no_tts_dialog_message">Na twoim telefonie nie ma syntezatora mowy. \n\nMożesz zainstalować dowolny syntezator mowy (potocznie TTS, text-to-speech) i włączyć go w ustawieniach telefonu.\n\nCzy chcesz zainstalować domyślny syntezator mowy?\n\nUWAGA jeśli chcesz korzystać z głosów w języku polskim musisz sam pobrać syntezator obsługujący język Polski ze sklepu</string>
 
+    <!-- after end of acticity -->
+    <string name="save">Zapisz</string>
+    <string name="discard">Usuń</string>
+    <string name="none">Brak</string>
+    <string name="remind">Przypomnij mi za</string>
+    <string name="set_remind">Ustaw przypomnienie</string>
+    <string name="run_summary">Podsumowanie biegu</string>
+    <string name="reminder_dialog_title">Ustaw przypomnienie</string>
+    <string name="reminder_set">Przypomnienie ustawione na</string>
+    <string name="reminder_disable">Przypomnienie skasowane</string>
+    
+    <!-- trening plans -->
+    <string name="no_trening_plan_in_selected_day">Bark aktywności w wybranym dniu</string>
+    <string name="actions">Akcje</string>
+    <string name="how">Jak</string>
+    <string name="select">Wybierz</string>
+    <string name="end_training">Zakończ trening</string>
+    <string name="dismiss">Odznacz</string> <!-- nie mam pomysłu jak jednym słowem -->
+
+    <!-- about application -->
+    <string name="version_title">Wersja</string>
+    <string name="version">Run 42K ver. 1.0</string>
+    <string name="about_title">Informacje</string>
+    <string name="about">Tę aplikację napisał \n Jakub Skudlarski i Marek Kresnicki. \n Biegaj bezpiecznie i pobij wszystkie swoje rekordy</string>
+
+    <!-- trening plan dialog -->
+    <string name="trening_plan_todays_workout_title">Plan treningowy</string>
+    <string name="trening_plan_todays_workout_message">Masz trening zaplanowany na dzisiaj w wybranym planie treningowym.</string>
+    <string name="trening_plan_todays_workout_positive_button">Rozpocznij zaplanowany trening</string>
+    <string name="trening_plan_todays_workout_negative_button">Później</string>
+    <string name="trening_plan_select_title">Czy chcesz wybrać trening?</string>
+    <string name="trening_plan_select_message">Czy chcesz wybrać ten plan treningowy?</string>
+    <string name="trening_plan_change_title">Zmień trening?</string>
+    <string name="trening_plan_change_message">Czy chcesz zamienić aktualny plan treningowy na ten plan?</string>
+    <string name="trening_plan_confirm_title">Plan treningowy wybrany</string>
+    <string name="trening_plan_confirm_message">Wszystkie przypomnienia i treningi z wybranego planu treningowego zostały ustawione.</string>
+    <string name="trening_plan_disable_title">Odznacz plan treningowy?</string>
+    <string name="trening_plan_disable_message">Czy chcesz odznaczyć ten plan treningowy?</string>
+    <string name="trening_plan_confirm_disable_title">Plan treningowy odznaczony</string>
+    <string name="trening_plan_confirm_disable_message">Wszystkie przypomnienia i treningi z wybranego planu treningowego zostały usunięte.</string>
+    
 </resources>
