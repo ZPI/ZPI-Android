@@ -62,6 +62,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	private TextView runNameTextView;
 	private CheckBox annotationsCheckBox;
 	private RelativeLayout leftButton;
+	private RelativeLayout annotationRelativeLayout;
 	
 	private SingleRun run;
 	
@@ -164,6 +165,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 		progressBar = (ProgressBar) findViewById(R.id.progressBarSingleRunHistory);
 		annotationsCheckBox = (CheckBox) findViewById(R.id.checkBoxSingleRunAnnotations);
 		runNameTextView = (TextView) findViewById(R.id.textViewSingleRunName);
+		annotationRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutSingleRunAnnotations);
 		annotationsCheckBox.setChecked(true);
 		allMarkers = new LinkedList<Marker>();
 		
@@ -200,6 +202,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 		splitsButton.setOnClickListener(this);
 		annotationsCheckBox.setOnCheckedChangeListener(this);
 		leftButton.setOnClickListener(this);
+		annotationRelativeLayout.setOnClickListener(this);
 	}
 	
 	@Override
@@ -232,6 +235,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			{
 				finish();
 				overridePendingTransition(R.anim.in_right_anim, R.anim.out_right_anim);
+			}
+			else if (view == annotationRelativeLayout)
+			{
+				annotationsCheckBox.setChecked(!annotationsCheckBox.isChecked());
 			}
 		}
 	}

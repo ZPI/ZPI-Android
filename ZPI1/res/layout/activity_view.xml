@@ -7,30 +7,22 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-		<RelativeLayout
-		    android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             class="com.google.android.gms.maps.SupportMapFragment" />
-        <!--
-                 this makes a drawer smooth on android 2. 
-				it is working bad with a map without it, the problem with list expanding itself remains
-        -->
 
-        <View
-            android:id="@+id/transparentView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
-
-        </RelativeLayout>
-        
         <include layout="@layout/activity_activity_buttons_and_display" />
 
         <include layout="@layout/count_down_timer_layer" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" >
     </FrameLayout>
 
     <ListView

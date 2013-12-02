@@ -54,7 +54,7 @@ import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
-	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
+	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
 	public static final String DISTANCE_TAG = "distance";
@@ -66,7 +66,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private GoogleMap mMap;
 	
-	private View transparentButton;
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
@@ -178,7 +177,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayerActivity);
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
-		transparentButton = findViewById(R.id.transparentView);
 		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -255,8 +253,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		zoomOut.setOnClickListener(this);
 		
 		musicPlayer.setOnClickListener(this);
-		transparentButton.setVisibility(View.GONE);
-		transparentButton.setBackgroundColor(Color.BLACK);
+		
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
 			
@@ -266,16 +263,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				public void onDrawerStateChanged(int arg0) {}
 				
 				@Override
-				public void onDrawerSlide(View arg0, float arg1) {
-					transparentButton.setVisibility(View.VISIBLE);
-					transparentButton.setBackgroundResource(R.color.transparent);
-					
-				}
+				public void onDrawerSlide(View arg0, float arg1) {}
 				
 				@Override
 				public void onDrawerOpened(View arg0) {
-					transparentButton.setVisibility(View.VISIBLE);
-					transparentButton.setBackgroundResource(R.color.transparent);
 					
 					if (workout == null) {
 						drawerLayout.closeDrawer(Gravity.LEFT);
@@ -289,9 +280,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				@Override
 				public void onDrawerClosed(View arg0) {
 					Log.i(TAG, "drawer closed");
-					transparentButton.setVisibility(View.GONE);
-					transparentButton.setBackgroundColor(Color.BLACK);
-					
 				}
 			});
 			

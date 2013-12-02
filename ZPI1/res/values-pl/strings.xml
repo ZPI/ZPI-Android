@@ -168,8 +168,8 @@
     <string name="save">Zapisz</string>
     <string name="discard">Usuń</string>
     <string name="none">Brak</string>
-    <string name="remind">Przypomnij mi za</string>
-    <string name="set_remind">Ustaw przypomnienie</string>
+    <string name="remind">Przypomnienie</string>
+    <string name="set_remind">Ustaw</string>
     <string name="run_summary">Podsumowanie biegu</string>
     <string name="reminder_dialog_title">Ustaw przypomnienie</string>
     <string name="reminder_set">Przypomnienie ustawione na</string>
