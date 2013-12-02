@@ -54,7 +54,7 @@ import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
-	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.3f;
+	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
 	public static final String DISTANCE_TAG = "distance";

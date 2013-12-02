@@ -39,7 +39,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private RelativeLayout addActionButton;
 	private Button addThisWorkoutButton;
 	private EditText workautNameEditText;
-	private CheckBox isWarmUpToggleButton;
+	private CheckBox isWarmUpCheckBox;
+	private RelativeLayout warmUpLayout;
 	private CustomPicker repeatPicker;
 	private int editedPos;
 	private ArrayList<WorkoutAction> workoutsActionList;
@@ -85,6 +86,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutAdd);
 		workautNameEditText = (EditText) header.findViewById(R.id.editTextWorkoutName);
 		workoutsRepeatsTextView = (TextView) footer.findViewById(R.id.TextViewNewWorkoutRepeatValue);
+		warmUpLayout = (RelativeLayout) footer.findViewById(R.id.RelativeLayoutNewWokoutWarmUp);
+		
 		int nr = getIntent().getIntExtra(PlaningActivity.WORKOUTS_NUMBER_TAG, 0);
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
 		
@@ -95,7 +98,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		
 		workoutsRepeatsTextView.setText(repeatPicker.getValue() + " " + getResources().getString(R.string.times));
 		
-		isWarmUpToggleButton = (CheckBox) footer.findViewById(R.id.ToggleButtonWormUp);
+		isWarmUpCheckBox = (CheckBox) footer.findViewById(R.id.ToggleButtonWormUp);
 		
 		picerEditText = repeatPicker.getDisplayEditText();
 		registerForContextMenu(workoutsListView);
@@ -107,6 +110,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workoutsListView.setOnItemClickListener(this);
 		picerEditText.addTextChangedListener(this);
 		topBarLeftButton.setOnClickListener(this);
+		warmUpLayout.setOnClickListener(this);
 	}
 	
 	private void showActionChooseDialog() {
@@ -150,7 +154,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 			}
 			workout.setName(workautNameEditText.getText().toString());
 			workout.setRepeatCount(repeatPicker.getValue());
-			workout.setWarmUp(isWarmUpToggleButton.isChecked());
+			workout.setWarmUp(isWarmUpCheckBox.isChecked());
 			workout.setActions(workoutsActionList);
 			
 			returnIntent.putExtra(Workout.TAG, workout);
@@ -160,6 +164,10 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		else if (v == topBarLeftButton)
 		{
 			finish();
+		}
+		else if (v == warmUpLayout)
+		{
+			isWarmUpCheckBox.setChecked(!isWarmUpCheckBox.isChecked());
 		}
 		
 	}
@@ -268,7 +276,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		if (intent.hasExtra(Workout.TAG)) {
 			workout = intent.getParcelableExtra(Workout.TAG);
 			workautNameEditText.setText(workout.getName());
-			isWarmUpToggleButton.setChecked(workout.isWarmUp());
+			isWarmUpCheckBox.setChecked(workout.isWarmUp());
 			repeatPicker.setValue(workout.getRepeatCount());
 			workoutsActionList.addAll(workout.getActions());
 			workoutActionAdapter.notifyDataSetChanged();

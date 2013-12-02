@@ -57,7 +57,7 @@
         android:background="@drawable/view_background">
 
         <RelativeLayout
-            android:id="@+id/RelativeLayout1"
+            android:id="@+id/RelativeLayoutNewWokoutWarmUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/small_text_size"
