@@ -71,7 +71,7 @@
                 android:layout_alignBaseline="@+id/ToggleButtonWormUp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:text="@string/wormup"
+                android:text="@string/warmup"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <CheckBox

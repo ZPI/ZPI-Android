@@ -161,6 +161,7 @@
         android:visibility="gone" />
 
     <LinearLayout
+        android:id="@+id/linearLayoutGPSBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/startStopLinearLayout"
@@ -194,5 +195,25 @@
         android:layout_marginTop="@dimen/very_small_margin"
         android:background="@drawable/activity_button_background"
         android:src="@drawable/ic_drawer_icon" />
+    
+     <ImageButton
+        android:id="@+id/imageButtonMapZoomOut"
+        android:layout_width="@dimen/activity_button_size"
+        android:layout_height="@dimen/activity_button_size"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/linearLayoutGPSBar"
+        android:layout_marginBottom="@dimen/very_small_margin"
+        android:background="@drawable/activity_button_background"
+        android:src="@drawable/minus_sign_white" />
+     <ImageButton
+        android:id="@+id/imageButtonMapZoomIn"
+        android:layout_width="@dimen/activity_button_size"
+        android:layout_height="@dimen/activity_button_size"
+        android:layout_alignParentRight="true"
+        android:layout_above="@+id/imageButtonMapZoomOut"
+        android:layout_marginBottom="@dimen/very_small_margin"
+        android:background="@drawable/activity_button_background"
+        android:src="@drawable/plus_sign_white" />
+    
 
 </RelativeLayout>

@@ -37,6 +37,7 @@ public class ChartActivity extends Activity implements OnClickListener {
 		container = getChartDataFromIntent();
 		
 		new ChartDataLoader().execute(null, null); //overloaded method, two nulls to distinct
+		
 	}
 	
 	private ChartDataHelperContainter getChartDataFromIntent() {

@@ -41,6 +41,11 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	
 	protected static final String RUN_ID = "runID";
 	
+	//TODO Debuging REMOVE
+	public static long time1;
+	public static long time2;
+	public static long time3;
+	
 	private GoogleMap mMap;
 	private LatLngBounds.Builder boundsBuilder;
 	private Polyline traceOnMapObject;
@@ -208,9 +213,12 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	public void onClick(View view) {
 		if (run != null) {
 			if (view == chartButton) {
+				time1 = System.currentTimeMillis();
+				
 				Intent i = new Intent(SingleRunHistoryActivity.this, ChartActivity.class);
 				ChartDataHelperContainter container = LineChartDataEvaluator.evaluateDate(run);
 				i.putExtra(ChartActivity.CHART_DATA_KEY, container);
+				
 				startActivity(i);
 			}
 			else if (view == splitsButton) {
