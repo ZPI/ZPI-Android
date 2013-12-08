@@ -43,7 +43,7 @@ public class TreningPlans {
 	@SuppressWarnings("unchecked")
 	private static TreningPlan getFirstTreningPlan() {
 		TreningPlan plan = new TreningPlan();
-		plan.setName("Prosty plan treningowy");
+		plan.setName("Simple trening plan");
 		HashMap<Integer, Workout> w = new HashMap<Integer, Workout>();
 		
 		//first week
@@ -113,7 +113,7 @@ public class TreningPlans {
 	@SuppressWarnings("unchecked")
 	private static TreningPlan getSecondTreningPlan() {
 		TreningPlan plan = new TreningPlan();
-		plan.setName("Drugi plan treningowy");
+		plan.setName("Second trening plan");
 		HashMap<Integer, Workout> w = new HashMap<Integer, Workout>();
 		
 		//first week
