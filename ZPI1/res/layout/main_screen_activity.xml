@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:paddingTop="@dimen/small_text_size"
+        android:paddingTop="@dimen/pull_view_top_marrgin"
         android:src="@drawable/pull1" />
 
     <ImageButton

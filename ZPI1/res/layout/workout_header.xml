@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_background"
         android:textColor="@color/white"
-        android:padding="@dimen/small_text_size"
+        android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/select_workout"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     

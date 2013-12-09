@@ -69,7 +69,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_above="@+id/buttonNewWorkout"
-                        android:layout_marginTop="@dimen/big_text_size"
+                        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
                         android:background="@drawable/view_background"
                         android:cacheColorHint="@color/list_transparent_color" >
                     </ListView>
@@ -81,7 +81,7 @@
                         android:layout_alignParentBottom="true"
                         android:background="@drawable/workouts_white_button_background"
                         android:textColor="@color/main_color"
-                        android:padding="@dimen/small_text_size"
+                        android:padding="@dimen/buttons_bigger_padding"
                         android:textStyle="bold"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:text="@string/new_workout" />
@@ -107,7 +107,7 @@
                         android:id="@+id/listViewPlaningActTraningPlans"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" 
-                        android:layout_marginTop="@dimen/big_text_size"
+                        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
                         android:background="@drawable/view_background"
                         android:cacheColorHint="@color/list_transparent_color">
                     </ListView>
