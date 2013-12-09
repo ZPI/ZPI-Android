@@ -17,8 +17,7 @@
     <dimen name="picker_button_width">57dp</dimen>
     <dimen name="picker_edit_text_width">63dp</dimen>
     <dimen name="picker_edit_text_height">40dp</dimen>
-    <dimen name="workouts_label_width">90dp</dimen>
-    <dimen name="history_label_width">72dp</dimen>
+    <dimen name="pull_arraw_height">80dp</dimen>
 
     <!-- margins -->
     <dimen name="very_small_margin">1dp</dimen>
@@ -30,7 +29,9 @@
     <dimen name="resume_button_margin">18dp</dimen>
     <dimen name="settings_button_margin">55dp</dimen>
     <dimen name="history_button_margin">75dp</dimen>
-    <dimen name="pull_view_top_marrgin">11dp</dimen>
+    <dimen name="pull_view_top_marrgin">35dp</dimen>
+    <dimen name="pull_name_right_margin">-15dp</dimen>
+	<dimen name="pull_right_margin">-5dp</dimen>
 
     <!-- paddings -->
     <dimen name="buttons_padding">8dp</dimen>

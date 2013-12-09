@@ -23,6 +23,7 @@
     <string name="its_time_to_run_notification_title">Dzisiejszy trening!</string>
     <string name="its_time_to_run_notification_message">Masz trening zaplanowany na dziś</string>
     <string name="music">Muzyka</string>
+    <string name="pull_name">Pociagnij aby zaczac trening</string>
 
     <!-- meassured values -->
     <string name="distance">Dystans</string>
