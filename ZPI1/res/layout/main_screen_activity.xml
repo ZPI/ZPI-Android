@@ -34,14 +34,17 @@
         android:layout_below="@id/statusDisplayLayout"
         android:layout_above="@+id/buttonHistory" />
     
-    <ImageView
-        android:id="@+id/imageViewPlansDesc"
-        android:layout_width="@dimen/workouts_label_width"
+    <TextView
+        android:id="@+id/textViewPlansDesc"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonPlans"
+        android:text="@string/workouts"
+        android:textColor="@color/white"
+        android:textSize="@dimen/big_text_size"
         android:layout_alignParentLeft="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/workouts_label" />
+        android:layout_centerHorizontal="true" 
+        android:layout_marginLeft="@dimen/small_margin"/>
 
     <ImageButton
         android:id="@+id/buttonHistory"
@@ -53,13 +56,16 @@
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_history" />
 
-    <ImageView
-        android:id="@+id/imageViewHistoryDesc"
-        android:layout_width="@dimen/history_label_width"
+    <TextView
+        android:id="@+id/textViewHistoryDesc"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/buttonHistory"
         android:layout_toLeftOf="@+id/buttonHistory"
-        android:src="@drawable/history_label" />
+        android:text="@string/history" 
+        android:textColor="@color/white"
+        android:textSize="@dimen/big_text_size"
+        android:layout_marginRight="@dimen/small_margin"/>
 
     <ImageButton
         android:id="@+id/buttonSettings"
@@ -71,22 +77,36 @@
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_settings" />
 
-    <ImageView
-        android:id="@+id/imageViewSettingsDesc"
-        android:layout_width="@dimen/history_label_width"
+    <TextView
+        android:id="@+id/textViewSettingsDesc"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/ustawienia"
+        android:textColor="@color/white"
+        android:textSize="@dimen/big_text_size"
         android:layout_alignTop="@+id/buttonSettings"
-        android:layout_toLeftOf="@+id/buttonSettings"
-        android:src="@drawable/settings_label" />
+        android:layout_toLeftOf="@+id/buttonSettings" 
+        android:layout_marginRight="@dimen/small_margin"/>
 
     <ImageView
         android:id="@+id/imageViewPull"
         android:layout_width="wrap_content"
+        android:layout_height="@dimen/pull_arraw_height"
+
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/textViewPullDesc"
+        android:layout_marginRight="@dimen/pull_right_margin"
+        android:src="@drawable/pull" />
+   	<TextView
+        android:id="@+id/textViewPullDesc"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="@dimen/small_text_size"
-        android:src="@drawable/pull1" />
+        android:text="@string/pull_name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/big_text_size"
+        android:layout_below="@+id/buttonStart"
+        android:layout_toLeftOf="@+id/imageViewPull" 
+        android:layout_marginRight="@dimen/pull_name_right_margin"/>
 
     <ImageButton
         android:id="@+id/buttonPlans"

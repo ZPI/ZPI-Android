@@ -25,6 +25,7 @@
     <string name="its_time_to_run_notification_title">Today\'s workout!</string>
     <string name="its_time_to_run_notification_message">There\'s planned activity for today\'s day</string>
     <string name="music">Music</string>
+    <string name="pull_name">Pull here to start workout</string>
 
     <!-- meassured values -->
     <string name="distance">Distance</string>

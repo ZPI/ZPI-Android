@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
         android:background="@drawable/workouts_white_button_background"
-        android:paddingTop="@dimen/small_text_size"
-        android:paddingBottom="@dimen/small_text_size"
+        android:paddingTop="@dimen/buttons_bigger_padding"
+        android:paddingBottom="@dimen/buttons_bigger_padding"
         android:paddingRight="@dimen/activity_vertical_margin" >
 
         <TextView
@@ -60,9 +60,9 @@
             android:id="@+id/RelativeLayoutNewWokoutWarmUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/small_text_size"
+            android:paddingBottom="@dimen/buttons_bigger_padding"
             android:paddingLeft="@dimen/activity_vertical_margin"
-            android:paddingTop="@dimen/small_text_size" >
+            android:paddingTop="@dimen/buttons_bigger_padding" >
 
             <TextView
                 android:id="@+id/textViewWormUpLabel"
@@ -136,9 +136,9 @@
         android:id="@+id/buttonWorkoutAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/big_text_size"
+        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
         android:background="@drawable/workouts_white_button_background"
-        android:padding="@dimen/small_text_size"
+        android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/add_workout"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/main_color"

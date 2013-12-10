@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -70,6 +71,9 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private ImageButton settingsButton;
 	private ImageButton historyButton;
 	private ImageButton planningButton;
+	private TextView historyButtonDesc;
+	private TextView settingsButtonDesc;
+	private TextView workoutsButtonDesc;
 	private Button startButton;
 	private Button musicButton;
 	private Button treningPlansButton;
@@ -78,6 +82,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private TextView runSummaryTotalTimeTextView;
 	private TextView runSummaryWorkoutsCountTextView;
 	private TextView GPSSignalTextViewValue;
+	private TextView pullText;
 	
 	long debugT1;
 	long debugT2;
@@ -150,6 +155,18 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
 		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
 		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
+		
+		//setting fonts
+		historyButtonDesc = (TextView) findViewById(R.id.textViewHistoryDesc);
+		workoutsButtonDesc = (TextView) findViewById(R.id.textViewPlansDesc);
+		settingsButtonDesc = (TextView) findViewById(R.id.textViewSettingsDesc);
+		pullText = (TextView) findViewById(R.id.textViewPullDesc);
+		Typeface type = Typeface.createFromAsset(getAssets(), "fonts/JennaSue.ttf");
+		historyButtonDesc.setTypeface(type);
+		settingsButtonDesc.setTypeface(type);
+		workoutsButtonDesc.setTypeface(type);
+		pullText.setTypeface(type);
+		
 		// locationListener = new MyLocationListener(this);
 		
 		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, true).commit(); //FIXME delete

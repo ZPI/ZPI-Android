@@ -61,7 +61,7 @@
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/small_margin"
         android:background="@drawable/workouts_white_button_background"
-        android:padding="@dimen/small_text_size"
+        android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/add_action"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/main_color"

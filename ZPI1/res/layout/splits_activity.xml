@@ -18,7 +18,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/big_text_size"
+        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
         android:background="@drawable/view_grey_background" >
 
         <TextView
