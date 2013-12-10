@@ -178,7 +178,6 @@
     
     <!-- trening plans -->
     <string name="no_trening_plan_in_selected_day">Bark aktywności w wybranym dniu</string>
-    <string name="actions">Akcje</string>
     <string name="how">Jak</string>
     <string name="select">Wybierz</string>
     <string name="end_training">Zakończ trening</string>

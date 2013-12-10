@@ -356,8 +356,9 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		@Override
 		protected List<SingleRun> doInBackground(Void... voids) {
 			ArrayList<SingleRun> list = (ArrayList<SingleRun>) readfromDB();
-			
-			Collections.sort(list);
+			if (list != null) {
+				Collections.sort(list);
+			}
 			
 			return list;
 		}
