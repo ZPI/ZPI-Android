@@ -23,6 +23,7 @@
         android:layout_below="@id/picker_plus"
         android:focusable="false"
         android:gravity="center"
+        android:textSize="@dimen/medium_text_size"
         android:singleLine="true" >
     </EditText>
 

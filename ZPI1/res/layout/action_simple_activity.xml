@@ -63,6 +63,7 @@
         android:background="@drawable/workouts_white_button_background"
         android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/add_action"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/main_color"
         android:textStyle="bold" />
@@ -94,6 +95,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/colon"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <com.pwr.zpi.views.CustomPicker
@@ -110,6 +112,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/colon"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <com.pwr.zpi.views.CustomPicker
@@ -142,6 +145,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/km"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <com.pwr.zpi.views.CustomPicker
@@ -158,6 +162,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="@string/m"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>
     </RelativeLayout>

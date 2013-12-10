@@ -10,6 +10,7 @@
         android:text="@string/workout_actions"
         android:gravity="center"
         android:textColor="@android:color/white"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView

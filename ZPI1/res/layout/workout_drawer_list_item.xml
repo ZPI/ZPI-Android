@@ -33,6 +33,7 @@
             android:gravity="right"
             android:textColor="@color/white"
             android:text="Large Text"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -45,6 +46,7 @@
             android:textColor="@color/white"
             android:visibility="gone"
             android:text="Large Text"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         
         <TextView
@@ -59,6 +61,7 @@
             android:gravity="right"
             android:text="Large Text"
             android:textColor="@color/white"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge" />
         
         <View

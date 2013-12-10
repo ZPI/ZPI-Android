@@ -81,59 +81,63 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	private void mapCenter() {
 		
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
-		
-		boundsBuilder = new LatLngBounds.Builder();
-		double lastDistance = 0;
-		double newDistance = 0;
-		for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
-			PolylineOptions polyLine = new PolylineOptions();
-			
-			Location lastLocation = null;
-			for (Pair<Location, Long> singlePoint : singleTrace) {
-				Location location = singlePoint.first;
-				LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-				polyLine.add(latLng);
-				boundsBuilder.include(latLng);
-				if (lastLocation != null) {
-					newDistance += location.distanceTo(lastLocation);
-					int showDistance = (int) (newDistance / 1000);
-					if (showDistance - (int) (lastDistance / 1000) > 0) {
-						addMarker(location, showDistance);
+		if (traceWithTime != null)
+		{
+			boundsBuilder = new LatLngBounds.Builder();
+			double lastDistance = 0;
+			double newDistance = 0;
+			for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
+				PolylineOptions polyLine = new PolylineOptions();
+				
+				Location lastLocation = null;
+				for (Pair<Location, Long> singlePoint : singleTrace) {
+					Location location = singlePoint.first;
+					LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+					polyLine.add(latLng);
+					boundsBuilder.include(latLng);
+					if (lastLocation != null) {
+						newDistance += location.distanceTo(lastLocation);
+						int showDistance = (int) (newDistance / 1000);
+						if (showDistance - (int) (lastDistance / 1000) > 0) {
+							addMarker(location, showDistance);
+						}
+						
 					}
+					lastDistance = newDistance;
+					
+					lastLocation = location;
 					
 				}
-				lastDistance = newDistance;
-				
-				lastLocation = location;
-				
+				if (mMap != null) {
+					traceOnMapObject = mMap.addPolyline(polyLine);
+					
+				}
 			}
-			if (mMap != null) {
-				traceOnMapObject = mMap.addPolyline(polyLine);
-				
-			}
-		}
-		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			
-			@Override
-			public void onCameraChange(CameraPosition arg0) {
-				// Move camera.
-				LatLngBounds bounds = boundsBuilder.build();
-				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
-				// Remove listener to prevent position reset on camera move.
-				mMap.setOnCameraChangeListener(null);
+			mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+				
+				@Override
+				public void onCameraChange(CameraPosition arg0) {
+					// Move camera.
+					LatLngBounds bounds = boundsBuilder.build();
+					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+					// Remove listener to prevent position reset on camera move.
+					mMap.setOnCameraChangeListener(null);
+				}
+			});
+			LinkedList<LinkedList<Pair<Location, Long>>> trace = run.getTraceWithTime();
+			
+			if (!trace.isEmpty()) {
+				Location start = trace.getFirst().getFirst().first;
+				Location finish = trace.getLast().getLast().first;
+				addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()),
+					new LatLng(finish.getLatitude(),
+						finish.getLongitude()));
 			}
-		});
-		LinkedList<LinkedList<Pair<Location, Long>>> trace = run.getTraceWithTime();
-		
-		if (!trace.isEmpty()) {
-			Location start = trace.getFirst().getFirst().first;
-			Location finish = trace.getLast().getLast().first;
-			addStartAndFinish(new LatLng(start.getLatitude(), start.getLongitude()), new LatLng(finish.getLatitude(),
-				finish.getLongitude()));
+			progressBar.setVisibility(View.GONE);
+			LatLngBounds bounds = boundsBuilder.build();
+			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 		}
-		progressBar.setVisibility(View.GONE);
-		LatLngBounds bounds = boundsBuilder.build();
-		mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 	}
 	
 	private void addStartAndFinish(LatLng startPos, LatLng finishPos) {

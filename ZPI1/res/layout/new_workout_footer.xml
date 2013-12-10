@@ -11,7 +11,7 @@
         android:id="@+id/buttonNewWorkoutAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
         android:background="@drawable/workouts_white_button_background"
         android:paddingTop="@dimen/buttons_bigger_padding"
         android:paddingBottom="@dimen/buttons_bigger_padding"
@@ -24,6 +24,7 @@
             android:layout_centerVertical="true"
             android:gravity="center"
             android:text="@string/add_new"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/light_green"
             android:textStyle="bold" />
@@ -46,8 +47,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@color/gray_background"
-        android:padding="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_vertical_margin"
         android:text="@string/settings_caps"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -72,6 +74,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:text="@string/warmup"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <CheckBox
@@ -106,6 +109,7 @@
                 android:layout_toLeftOf="@+id/customPickerRepeat"
                 android:layout_centerVertical="true"
                 android:text="@string/repeat"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <com.pwr.zpi.views.CustomPicker
@@ -128,6 +132,7 @@
                 android:layout_toLeftOf="@+id/customPickerRepeat"
                 android:text="@string/times"
                 android:layout_marginRight="@dimen/small_margin"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
     </LinearLayout>
@@ -140,6 +145,7 @@
         android:background="@drawable/workouts_white_button_background"
         android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/add_workout"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/main_color"
         android:textStyle="bold" />

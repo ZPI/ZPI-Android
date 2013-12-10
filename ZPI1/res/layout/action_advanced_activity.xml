@@ -84,6 +84,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -107,6 +108,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/km"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -123,6 +125,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/m"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
                         </LinearLayout>
 
@@ -132,6 +135,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/time"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -156,6 +160,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -172,6 +177,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -190,6 +196,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -211,6 +218,7 @@
                             android:padding="@dimen/buttons_bigger_padding"
                             android:textColor="@color/main_color"
                             android:textStyle="bold"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:text="@string/add_action" />
                     </LinearLayout>
@@ -233,6 +241,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -256,6 +265,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/km"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -272,6 +282,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/m"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
                         </LinearLayout>
 
@@ -281,6 +292,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -305,6 +317,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -329,6 +342,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/time"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -351,6 +365,7 @@
                             android:background="@drawable/workouts_white_button_background"
                             android:padding="@dimen/buttons_bigger_padding"
                             android:textStyle="bold"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="@color/main_color"
                             android:text="@string/add_action" />
@@ -374,6 +389,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/time"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -397,6 +413,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -413,6 +430,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -431,6 +449,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/pace"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <LinearLayout
@@ -455,6 +474,7 @@
                                 android:layout_height="match_parent"
                                 android:gravity="center"
                                 android:text="@string/colon"
+                                android:textSize="@dimen/large_text_size"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                             <com.pwr.zpi.views.CustomPicker
@@ -479,6 +499,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/distance"
                             android:paddingLeft="@dimen/activity_vertical_margin"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <EditText
@@ -500,6 +521,7 @@
                             android:padding="@dimen/buttons_bigger_padding"
                             android:textColor="@color/main_color"
                             android:textStyle="bold"
+                            android:textSize="@dimen/large_text_size"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:text="@string/add_action" />
                     </LinearLayout>

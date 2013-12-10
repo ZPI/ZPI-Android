@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/chart_title_speed"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/chart_speed"
         android:textStyle="bold" />
@@ -61,6 +62,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/chart_title_altitude"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/chart_altitude"
         android:textStyle="bold" />

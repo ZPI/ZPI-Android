@@ -57,6 +57,7 @@
         android:background="@drawable/view_background"
         android:gravity="center"
         android:text="@string/run_summary"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold" />
 
@@ -105,6 +106,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:text="@string/remind"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
@@ -115,6 +117,7 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:text="@string/set_remind"
+            android:textSize="@dimen/large_text_size"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/reminder_button_text_color"
             android:textStyle="bold" />
@@ -145,6 +148,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@string/duration"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey" />
 
@@ -154,6 +158,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Large Text"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey"
                     android:textStyle="bold" />
@@ -172,6 +177,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@string/pace_avrage"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey" />
 
@@ -181,6 +187,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Large Text"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey"
                     android:textStyle="bold" />
@@ -205,6 +212,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@string/distance"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey" />
 
@@ -215,6 +223,7 @@
                     android:gravity="center"
                     android:paddingBottom="@dimen/activity_vertical_margin"
                     android:text="Large Text"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey"
                     android:textStyle="bold" />
@@ -233,6 +242,7 @@
                     android:gravity="center"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:text="@string/speed_avrage"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey" />
 
@@ -243,6 +253,7 @@
                     android:gravity="center"
                     android:paddingBottom="@dimen/activity_vertical_margin"
                     android:text="Large Text"
+                    android:textSize="@dimen/large_text_size"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/text_grey"
                     android:textStyle="bold" />

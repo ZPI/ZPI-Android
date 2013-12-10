@@ -11,6 +11,7 @@
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:text="@string/settings_caps"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -30,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:text="@string/warmup"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -37,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
 
@@ -56,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:text="@string/repeat"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
@@ -63,6 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
     </LinearLayout>
@@ -75,6 +80,7 @@
         android:background="@drawable/workouts_white_button_background"
         android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/edit_workout"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/main_color"
         android:textStyle="bold" />

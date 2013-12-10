@@ -16,7 +16,7 @@
     <Button
         android:id="@+id/buttonStart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/strat_button_height"
         android:background="@drawable/start2"
         android:text="@string/start"
         android:textColor="@android:color/white" />
@@ -52,6 +52,7 @@
         android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:scaleType="centerInside"
         android:layout_marginBottom="@dimen/history_button_margin"
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_history" />
@@ -73,6 +74,7 @@
         android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+		android:scaleType="centerInside"
         android:layout_marginRight="@dimen/settings_button_margin"
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_settings" />
@@ -92,7 +94,6 @@
         android:id="@+id/imageViewPull"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/pull_arraw_height"
-
         android:layout_alignParentRight="true"
         android:layout_alignBottom="@+id/textViewPullDesc"
         android:layout_marginRight="@dimen/pull_right_margin"
@@ -114,7 +115,8 @@
         android:layout_height="@dimen/switch_screen_button_size"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:scaleType="centerInside"
         android:background="@drawable/button_border_background"
         android:src="@drawable/ic_workout" />
 

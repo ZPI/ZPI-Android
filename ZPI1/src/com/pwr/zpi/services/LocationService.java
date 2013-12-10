@@ -205,8 +205,11 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 		@Override
 		public void onSoundSettingChange(boolean enabled) throws RemoteException {
-			speechSynthezator.setSpeakingEnabled(enabled);
-			soundsPlayer.setCanPlay(enabled);
+			if (speechSynthezator != null) {
+				
+				speechSynthezator.setSpeakingEnabled(enabled);
+				soundsPlayer.setCanPlay(enabled);
+			}
 		}
 		
 	};
@@ -367,7 +370,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 		
-		if (workout != null) {
+		if (workout != null && !workout.getActions().isEmpty()) {
 			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
 			workout.notifyListeners(workout.getActions().get(0));
 		}
