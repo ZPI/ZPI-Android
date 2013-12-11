@@ -15,7 +15,6 @@ import android.widget.RelativeLayout;
 import com.pwr.zpi.adapters.SplitsAdapter;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
-import com.pwr.zpi.utils.GeographicalEvaluations;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.views.TopBar;
 
@@ -36,7 +35,6 @@ public class SplitsActivity extends Activity implements OnClickListener {
 	
 	private void init() {
 		singleRun = getSingleRunFromIntent();
-		
 		splitsListView = (ListView) findViewById(R.id.listViewSplits);
 		noSplitsInfoRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutNoSplitsInfo);
 		splitsListView.setAdapter(new SplitsAdapter(this, R.layout.splits_activity_list_item, parseData(singleRun
@@ -60,11 +58,14 @@ public class SplitsActivity extends Activity implements OnClickListener {
 		long cumulativeTime = 0;
 		double currentDistance = 0;
 		long currentTime = 0;
-		
+		if (traceWithTime == null)
+		{
+			traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();	//this should act as if there are no points
+		}
 		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
 			Pair<Location, Long> previous = subrun.removeFirst();
 			for (Pair<Location, Long> current : subrun) {
-				currentDistance += GeographicalEvaluations.countDistance(previous.first, current.first);
+				currentDistance += previous.first.distanceTo(current.first);
 				currentTime += current.second - previous.second;
 				
 				if (currentDistance >= nextKilometer) {
