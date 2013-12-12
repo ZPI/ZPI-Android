@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/name_caps"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/large_text_size" />
+        android:textSize="@dimen/medium_text_size" />
 
     <EditText
         android:id="@+id/editTextWorkoutName"
@@ -48,7 +48,7 @@
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/actions_caps"
-        android:textSize="@dimen/large_text_size"
+       	android:textSize="@dimen/medium_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>

@@ -9,16 +9,16 @@
     <dimen name="drawer_launcher_icon">50dp</dimen>
     <dimen name="drawer_icon_size">60dp</dimen>
     <dimen name="drawer_icon_size_bigger">80dp</dimen>
-    <dimen name="switch_screen_button_size">40dp</dimen>
+    <dimen name="switch_screen_button_size">35dp</dimen>
     <dimen name="count_down_timer_size">50dp</dimen>
     <dimen name="switch_screen_button_corner_radius">7dp</dimen>
     <dimen name="horizontal_line_stroke">2dp</dimen>
-    <dimen name="picker_button_height">35dp</dimen>
+    <dimen name="picker_button_height">28dp</dimen>
     <dimen name="picker_button_width">57dp</dimen>
     <dimen name="picker_edit_text_width">63dp</dimen>
-    <dimen name="picker_edit_text_height">40dp</dimen>
+    <dimen name="picker_edit_text_height">36dp</dimen>
     <dimen name="pull_arraw_height">80dp</dimen>
-    <dimen name="strat_button_height">85dp</dimen>
+    <dimen name="strat_button_height">75dp</dimen>
     <dimen name="top_arrow_height">19dp</dimen>
 
     <!-- margins -->
@@ -26,7 +26,7 @@
     <dimen name="small_margin">2dp</dimen>
     <dimen name="medium_margin">15dp</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">14dp</dimen>
     <dimen name="activity_bigger_vertical_margin">32dp</dimen>
     <dimen name="resume_button_margin">18dp</dimen>
     <dimen name="settings_button_margin">55dp</dimen>
@@ -36,13 +36,13 @@
 	<dimen name="pull_right_margin">-5dp</dimen>
 
     <!-- paddings -->
-    <dimen name="buttons_padding">8dp</dimen>
-    <dimen name="buttons_bigger_padding">11dp</dimen>
+    <dimen name="buttons_padding">7dp</dimen>
+    <dimen name="buttons_bigger_padding">9dp</dimen>
     
     <!-- text sizes -->
     <dimen name="small_text_size">11sp</dimen>
     <dimen name="medium_text_size">17sp</dimen>
     <dimen name="big_text_size">32sp</dimen>
-    <dimen name="large_text_size">22sp</dimen>
+    <dimen name="large_text_size">20sp</dimen>
 
 </resources>

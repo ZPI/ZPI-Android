@@ -65,7 +65,7 @@ public class SplitsActivity extends Activity implements OnClickListener {
 		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
 			Pair<Location, Long> previous = subrun.removeFirst();
 			for (Pair<Location, Long> current : subrun) {
-				currentDistance += previous.first.distanceTo(current.first);
+				currentDistance += previous.first.distanceTo(current.first) / 1000;
 				currentTime += current.second - previous.second;
 				
 				if (currentDistance >= nextKilometer) {

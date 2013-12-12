@@ -9,7 +9,7 @@
     <dimen name="drawer_launcher_icon">50dp</dimen>
     <dimen name="drawer_icon_size">60dp</dimen>
     <dimen name="drawer_icon_size_bigger">80dp</dimen>
-    <dimen name="switch_screen_button_size">40dp</dimen>
+    <dimen name="switch_screen_button_size">45dp</dimen>
     <dimen name="count_down_timer_size">50dp</dimen>
     <dimen name="switch_screen_button_corner_radius">7dp</dimen>
     <dimen name="horizontal_line_stroke">2dp</dimen>

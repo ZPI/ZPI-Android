@@ -36,7 +36,6 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/imageViewTopBarBackArrow"
             android:layout_centerVertical="true"
-            android:paddingLeft="@dimen/buttons_padding"
             android:duplicateParentState="true"
             android:textSize="@dimen/medium_text_size"
             android:text="Large Text"

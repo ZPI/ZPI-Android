@@ -62,10 +62,6 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".WorkoutsActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".NewWorkoutActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
