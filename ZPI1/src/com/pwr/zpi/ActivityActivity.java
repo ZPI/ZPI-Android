@@ -47,6 +47,7 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.dialogs.MyDialog;
+import com.pwr.zpi.listeners.ActityButtonStateChangeListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.TimeFormatter;
@@ -287,6 +288,23 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			
 			workoutCopy.setOnNextActionListener(new OnNextActionListener());
 		}
+		addOnStateChangedListener();
+		
+	}
+	
+	private void addOnStateChangedListener()
+	{
+		ActityButtonStateChangeListener stateChangedListener = new ActityButtonStateChangeListener(this);
+		pauseButton.setOnTouchListener(stateChangedListener);
+		stopButton.setOnTouchListener(stateChangedListener);
+		resumeButton.setOnTouchListener(stateChangedListener);
+		workoutDdrawerButton.setOnTouchListener(stateChangedListener);
+		musicPlayer.setOnTouchListener(stateChangedListener);
+		dataRelativeLayout1.setOnTouchListener(stateChangedListener);
+		dataRelativeLayout2.setOnTouchListener(stateChangedListener);
+		zoomIn.setOnTouchListener(stateChangedListener);
+		zoomOut.setOnTouchListener(stateChangedListener);
+		
 	}
 	
 	private void initDisplayedData() {
