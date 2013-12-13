@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -48,6 +49,7 @@ import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.ActityButtonStateChangeListener;
+import com.pwr.zpi.listeners.MapTrackingListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
 import com.pwr.zpi.utils.TimeFormatter;
@@ -76,7 +78,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	//map options
 	public static final float TRACE_THICKNESS = 5;
 	public static final int TRACE_COLOR = Color.RED;
-	private boolean isMapFollowing = true;
+	private MapTrackingListener mapTrackingListener;
 	
 	//views
 	private Button stopButton;
@@ -100,9 +102,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 	private Location mLastLocation;
+	private Location mPreLastLocation;
 	private ImageButton zoomIn;
 	private ImageButton zoomOut;
 	private ImageButton mapCenter;
+	private FrameLayout frameLayoutViewOverMap;
 	
 	//map
 	private PolylineOptions traceOnMap;
@@ -182,6 +186,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
 		mapCenter = (ImageButton) findViewById(R.id.imageButtonMapCenter);
+		frameLayoutViewOverMap = (FrameLayout) findViewById(R.id.frameLayoutViewOverMap);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		if (mMap != null)
@@ -196,6 +201,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			traceOnMap.color(TRACE_COLOR);
 			traceOnMapObject = mMap.addPolyline(traceOnMap);
 		}
+		
+		mapTrackingListener = new MapTrackingListener(mapCenter);
 		
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
@@ -261,6 +268,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		mapCenter.setOnClickListener(this);
 		
+		frameLayoutViewOverMap.setOnTouchListener(mapTrackingListener);
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
 			
@@ -308,6 +316,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataRelativeLayout2.setOnTouchListener(stateChangedListener);
 		zoomIn.setOnTouchListener(stateChangedListener);
 		zoomOut.setOnTouchListener(stateChangedListener);
+		mapCenter.setOnTouchListener(stateChangedListener);
 		
 	}
 	
@@ -497,19 +506,21 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				break;
 			case R.id.imageButtonMapZoomIn:
 				mMap.animateCamera(CameraUpdateFactory.zoomIn());
-				
+				mapTrackingListener.setMapTracking(false);
 				break;
 			case R.id.imageButtonMapZoomOut:
 				mMap.animateCamera(CameraUpdateFactory.zoomOut());
+				mapTrackingListener.setMapTracking(false);
 				break;
 			case R.id.imageButtonMapCenter:
 				if (mLastLocation != null)
 				{
+					Location preLast = (mPreLastLocation == null) ? mLastLocation : mPreLastLocation;
 					CameraPosition cameraPosition = buildCameraPosition(new LatLng(
-						mLastLocation.getLatitude(), mLastLocation.getLongitude()), mLastLocation, mLastLocation);
+						mLastLocation.getLatitude(), mLastLocation.getLongitude()), mLastLocation, preLast);
 					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition
 						));
-					isMapFollowing = true;
+					mapTrackingListener.setMapTracking(true);
 				}
 				break;
 		}
@@ -630,7 +641,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				traceOnMap.add(latLng);
 				traceOnMapObject.setPoints(traceOnMap.getPoints());
 				
-				if (isMapFollowing) {
+				mapTrackingListener.checkUserInactivity();
+				if (mapTrackingListener.isMapTracking()) {
 					CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
 					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 				}
@@ -699,6 +711,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					// TODO make progress dialog, waiting for gps
 					showLostGpsSignalDialog();
 				}
+				mPreLastLocation = mLastLocation;
 				mLastLocation = newLocation;
 			}
 		});
@@ -879,8 +892,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					traceOnMapObject.setPoints(traceOnMap.getPoints());
 					int size = locationList.size();
 					if (size > 1) {
-						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 2),
-							locationList.get(size - 1));
+						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 1),
+							locationList.get(size - 2));
 						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 						
 					}
