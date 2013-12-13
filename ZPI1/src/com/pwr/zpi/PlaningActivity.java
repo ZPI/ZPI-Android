@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -24,8 +25,10 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
-import com.pwr.zpi.adapters.TreningPlansAdapter;
-import com.pwr.zpi.adapters.WorkoutAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
+import com.pwr.zpi.adapters.GenericBaseAdapter;
+import com.pwr.zpi.adapters.WorkoutRowBuilder;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
@@ -53,8 +56,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 	private ListView traningPlansListView;
 	private ArrayList<TreningPlan> plansList;
 	private ArrayList<Workout> workoutsList;
-	private WorkoutAdapter workoutAdapter;
-	private TreningPlansAdapter plansAdapter;
+	private BaseAdapter workoutAdapter;
+	private BaseAdapter plansAdapter;
 	private View mCurrent;
 	private AdapterContextMenuInfo info;
 	
@@ -81,10 +84,10 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		tabHost.addTab(tabSpecs);
 		
 		workoutsList = getWorkoutsFromDB();
-		workoutAdapter = new WorkoutAdapter(this, R.layout.workouts_list_item, workoutsList);
+		workoutAdapter = AdapterFactory.getAdapter(AdapterType.WorkoutAdapter, this, workoutsList, null);
 		
 		plansList = getTraningPlans();
-		plansAdapter = new TreningPlansAdapter(this, R.layout.workouts_list_item, plansList);
+		plansAdapter = AdapterFactory.getAdapter(AdapterType.TreningPlansAdapter, this, plansList, null);
 		
 		workoutsListView = (ListView) findViewById(R.id.listViewWorkouts);
 		workoutsListView.setAdapter(workoutAdapter);
@@ -241,12 +244,13 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 				if (workoutAdapter != null) {
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
-						// romove
+						// remove
+						@SuppressWarnings("unchecked")
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							Workout toDelete = workoutAdapter.getItem(info.position);
-							workoutAdapter.remove(toDelete);
+							Workout toDelete = (Workout) workoutAdapter.getItem(info.position);
+							((GenericBaseAdapter<Workout, WorkoutRowBuilder>) workoutAdapter).remove(toDelete);
 							Database db = new Database(PlaningActivity.this);
 							db.deleteWorkout(toDelete.getID());
 							db.close();

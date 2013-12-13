@@ -16,11 +16,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.pwr.zpi.adapters.WorkoutActionsAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
+import com.pwr.zpi.adapters.GenericBaseAdapter;
+import com.pwr.zpi.adapters.WorkoutActionsRowBuilder;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
@@ -34,7 +38,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private MyGestureDetector myGestureDetector;
 	private ListView actionsListView;
 	private Workout workout;
-	private WorkoutActionsAdapter actionsAdapter;
+	private BaseAdapter actionsAdapter;
 	private View mCurrent;
 	private View.OnTouchListener gestureListener;
 	private Button addThisWorkoutButton;
@@ -60,8 +64,7 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		long ID = getIntent().getLongExtra(PlaningActivity.ID_TAG, -1);
 		workout = readData(ID);
 		actions = (ArrayList<WorkoutAction>) workout.getActions();
-		actionsAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_simple_list_item,
-			R.layout.workout_action_advanced_list_item, actions);
+		actionsAdapter = AdapterFactory.getAdapter(AdapterType.WorkoutActionAdapter, this, actions, null);
 		
 		View header = getLayoutInflater().inflate(R.layout.workout_header, null);
 		View footer = getLayoutInflater().inflate(R.layout.workout_footer, null);
@@ -110,7 +113,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	
 	private Workout readData(long ID) {
 		Workout workout;
-		Intent i = getIntent();
 		
 		Database database = new Database(this);
 		workout = database.getWholeSingleWorkout(ID);
@@ -217,11 +219,13 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
 						// romove
+						@SuppressWarnings("unchecked")
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							WorkoutAction toDelete = actionsAdapter.getItem(info.position - 1);
-							actionsAdapter.remove(toDelete);
+							WorkoutAction toDelete = (WorkoutAction) actionsAdapter.getItem(info.position - 1);
+							((GenericBaseAdapter<WorkoutAction, WorkoutActionsRowBuilder>) actionsAdapter)
+								.remove(toDelete);
 							Database db = new Database(WorkoutActivity.this);
 							db.deleteWorkoutAction(workout.getID(), toDelete.getID());
 							db.close();

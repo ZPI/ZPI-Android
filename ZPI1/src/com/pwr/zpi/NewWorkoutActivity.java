@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -24,7 +25,10 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pwr.zpi.adapters.WorkoutActionsAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
+import com.pwr.zpi.adapters.GenericBaseAdapter;
+import com.pwr.zpi.adapters.WorkoutActionsRowBuilder;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
@@ -44,7 +48,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private CustomPicker repeatPicker;
 	private int editedPos;
 	private ArrayList<WorkoutAction> workoutsActionList;
-	private WorkoutActionsAdapter workoutActionAdapter;
+	private BaseAdapter workoutActionAdapter;
 	private ListView workoutsListView;
 	private AdapterContextMenuInfo info;
 	private TextView workoutsRepeatsTextView;
@@ -77,8 +81,8 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		View footer = getLayoutInflater().inflate(R.layout.new_workout_footer, null);
 		workoutsListView.addHeaderView(header);
 		workoutsListView.addFooterView(footer);
-		workoutActionAdapter = new WorkoutActionsAdapter(this, R.layout.workouts_action_simple_list_item,
-			R.layout.workout_action_advanced_list_item, workoutsActionList);
+		workoutActionAdapter = AdapterFactory.getAdapter(AdapterType.WorkoutActionAdapter, this, workoutsActionList,
+			null);
 		workoutsListView.setAdapter(workoutActionAdapter);
 		
 		//all buttons are in header and footer
@@ -161,12 +165,10 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 			setResult(RESULT_OK, returnIntent);
 			finish();
 		}
-		else if (v == topBarLeftButton)
-		{
+		else if (v == topBarLeftButton) {
 			finish();
 		}
-		else if (v == warmUpLayout)
-		{
+		else if (v == warmUpLayout) {
 			isWarmUpCheckBox.setChecked(!isWarmUpCheckBox.isChecked());
 		}
 		
@@ -232,12 +234,14 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				if (workoutActionAdapter != null) {
 					DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 						
-						// romove
+						// remove
+						@SuppressWarnings("unchecked")
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							WorkoutAction toDelete = workoutActionAdapter.getItem(info.position - 1);
-							workoutActionAdapter.remove(toDelete);
+							WorkoutAction toDelete = (WorkoutAction) workoutActionAdapter.getItem(info.position - 1);
+							((GenericBaseAdapter<WorkoutAction, WorkoutActionsRowBuilder>) workoutActionAdapter)
+								.remove(toDelete);
 							if (workout != null) {
 								Database db = new Database(NewWorkoutActivity.this);
 								db.deleteWorkoutAction(workout.getID(), toDelete.getID());
