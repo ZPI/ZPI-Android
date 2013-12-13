@@ -55,6 +55,8 @@ import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
 	
+	private static final String TAG = ActivityActivity.class.getSimpleName();
+	
 	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
@@ -65,8 +67,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	public static final String RUN_NUMBER_TAG = "run_number";
 	public static final String NAME_TAG = "name_tag";
 	
-	private GoogleMap mMap;
+	// measured values IDs
+	private static final int distanceID = 0;
+	private static final int paceID = 1;
+	private static final int avgPaceID = 2;
+	private static final int timeID = 3;
 	
+	//map options
+	public static final float TRACE_THICKNESS = 5;
+	public static final int TRACE_COLOR = Color.RED;
+	private boolean isMapFollowing = true;
+	
+	//views
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
@@ -88,16 +100,14 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 	private Location mLastLocation;
-	private boolean isPaused;
 	private ImageButton zoomIn;
 	private ImageButton zoomOut;
-	//private SingleRun singleRun;
-	//private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
-	//private Calendar calendar;
+	private ImageButton mapCenter;
+	
+	//map
 	private PolylineOptions traceOnMap;
 	private Polyline traceOnMapObject;
-	private static final float traceThickness = 5;
-	private static final int traceColor = Color.RED;
+	private GoogleMap mMap;
 	
 	// measured values
 	private double pace;
@@ -105,29 +115,20 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private double distance;
 	private double lastDistance;
 	private Long time = 0L;
-	private long startTime;
-	private long pauseTime;
-	private long pauseStartTime;
 	private int runNumber;
 	
+	//diplay data changing
 	private int dataTextView1Content;
 	private int dataTextView2Content;
 	private int clickedField;
-	// measured values IDs
-	private static final int distanceID = 0;
-	private static final int paceID = 1;
-	private static final int avgPaceID = 2;
-	private static final int timeID = 3;
+	
+	private boolean isPaused;
 	
 	// service data
 	boolean mIsBound;
 	boolean isServiceConnected;
 	private RunListenerApi api;
 	private Handler handlerForService;
-	
-	// time counting fields
-	//	private Runnable timeHandler;
-	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
@@ -180,9 +181,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
+		mapCenter = (ImageButton) findViewById(R.id.imageButtonMapCenter);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		if (mMap != null)	//sometimes happens on emulator (dont know why)
+		if (mMap != null)
 		{
 			mMap.setMyLocationEnabled(true);
 			mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -190,8 +192,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			mMap.getUiSettings().setZoomControlsEnabled(false);
 			
 			traceOnMap = new PolylineOptions();
-			traceOnMap.width(traceThickness);
-			traceOnMap.color(traceColor);
+			traceOnMap.width(TRACE_THICKNESS);
+			traceOnMap.color(TRACE_COLOR);
 			traceOnMapObject = mMap.addPolyline(traceOnMap);
 		}
 		
@@ -256,6 +258,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		zoomOut.setOnClickListener(this);
 		
 		musicPlayer.setOnClickListener(this);
+		
+		mapCenter.setOnClickListener(this);
 		
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
@@ -498,6 +502,16 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			case R.id.imageButtonMapZoomOut:
 				mMap.animateCamera(CameraUpdateFactory.zoomOut());
 				break;
+			case R.id.imageButtonMapCenter:
+				if (mLastLocation != null)
+				{
+					CameraPosition cameraPosition = buildCameraPosition(new LatLng(
+						mLastLocation.getLatitude(), mLastLocation.getLongitude()), mLastLocation, mLastLocation);
+					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition
+						));
+					isMapFollowing = true;
+				}
+				break;
 		}
 		
 	}
@@ -616,9 +630,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				traceOnMap.add(latLng);
 				traceOnMapObject.setPoints(traceOnMap.getPoints());
 				
-				CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
-				mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-				
+				if (isMapFollowing) {
+					CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
+					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+				}
 				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				
 				float speed = location.getSpeed();
@@ -833,8 +848,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private void reset() {
 		distance = 0;
 		traceOnMap = new PolylineOptions();
-		traceOnMap.width(traceThickness);
-		traceOnMap.color(traceColor);
+		traceOnMap.width(TRACE_THICKNESS);
+		traceOnMap.color(TRACE_COLOR);
 		//mMap.clear();
 		time = 0L;
 	}
@@ -935,4 +950,5 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		i = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
 		startActivity(i);
 	}
+	
 }

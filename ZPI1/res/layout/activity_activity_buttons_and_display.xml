@@ -215,5 +215,14 @@
         android:background="@color/activity_blue"
         android:src="@drawable/plus_sign_white" />
     
-
+	<ImageButton
+        android:id="@+id/imageButtonMapCenter"
+        android:layout_width="@dimen/activity_button_size"
+        android:layout_height="@dimen/activity_button_size"
+        android:layout_alignParentLeft="true"
+        android:layout_above="@+id/linearLayoutGPSBar"
+        android:layout_marginBottom="@dimen/very_small_margin"
+        android:background="@color/activity_blue"
+        android:src="@drawable/ic_gps_arrow" />
+     
 </RelativeLayout>

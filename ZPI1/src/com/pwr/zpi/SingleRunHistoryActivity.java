@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
@@ -48,7 +47,6 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	
 	private GoogleMap mMap;
 	private LatLngBounds.Builder boundsBuilder;
-	private Polyline traceOnMapObject;
 	
 	private LinkedList<Marker> allMarkers;
 	
@@ -88,7 +86,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			double newDistance = 0;
 			for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
 				PolylineOptions polyLine = new PolylineOptions();
-				
+				polyLine.color(ActivityActivity.TRACE_COLOR);
+				polyLine.width(ActivityActivity.TRACE_THICKNESS);
 				Location lastLocation = null;
 				for (Pair<Location, Long> singlePoint : singleTrace) {
 					Location location = singlePoint.first;
@@ -108,10 +107,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 					lastLocation = location;
 					
 				}
-				if (mMap != null) {
-					traceOnMapObject = mMap.addPolyline(polyLine);
-					
-				}
+				
 			}
 			
 			mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
