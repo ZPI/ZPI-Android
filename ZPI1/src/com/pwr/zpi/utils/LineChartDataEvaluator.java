@@ -37,6 +37,8 @@ public class LineChartDataEvaluator {
 	
 	private static int countNumberOfPoints(SingleRun run) {
 		int numberOfPoints = 0;
+		if (run == null || run.getTraceWithTime() == null)	//if run has no points
+		return 0;
 		for (LinkedList<Pair<Location, Long>> subs : run.getTraceWithTime()) {
 			numberOfPoints += subs.size() - 1;
 		}
@@ -44,6 +46,7 @@ public class LineChartDataEvaluator {
 	}
 	
 	public static ChartDataHelperContainter evaluateDate(SingleRun run) {
+		
 		int numberOfPoints = countNumberOfPoints(run);
 		int currentIndex = 0;
 		double[] speedValues = new double[numberOfPoints];
@@ -52,53 +55,54 @@ public class LineChartDataEvaluator {
 		
 		speedMin = distanceMin = altitudeMin = Double.MAX_VALUE;
 		speedMax = distanceMax = altitudeMax = Double.MIN_VALUE;
-		
-		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
-		double cumulativeDistance = 0;
-		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
-			if (!subrun.isEmpty())
-			{
-				Pair<Location, Long> previous = subrun.peek();
-				LinkedBlockingQueue<Pair<Double, Long>> pointsCountedQueue = new LinkedBlockingQueue<Pair<Double, Long>>();
-				
-				long timeSum = 0;
-				double distanceSum = 0;
-				boolean first = true;
-				for (Pair<Location, Long> current : subrun) {
-					if (!first)
-					{
-						double distance = current.first.distanceTo(previous.first);
-						
-						long time = current.second - previous.second;
-						if (distance > 0.5) {
-							distanceSum += distance;
-							timeSum += time;
-							pointsCountedQueue.add(new Pair<Double, Long>(distance, time));
-						}
-						
-						while (timeSum > AVRAGE_FROM_LAST * 1000 && !pointsCountedQueue.isEmpty()) {
-							Pair<Double, Long> p = pointsCountedQueue.poll();
-							distanceSum -= p.first;
-							timeSum -= p.second;
-						}
-						if (currentIndex >= speedValues.length)
+		if (run == null || run.getTraceWithTime() != null)
+		{
+			LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
+			double cumulativeDistance = 0;
+			for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {
+				if (!subrun.isEmpty())
+				{
+					Pair<Location, Long> previous = subrun.peek();
+					LinkedBlockingQueue<Pair<Double, Long>> pointsCountedQueue = new LinkedBlockingQueue<Pair<Double, Long>>();
+					
+					long timeSum = 0;
+					double distanceSum = 0;
+					boolean first = true;
+					for (Pair<Location, Long> current : subrun) {
+						if (!first)
 						{
-							System.out.println();
+							double distance = current.first.distanceTo(previous.first);
+							
+							long time = current.second - previous.second;
+							if (distance > 0.5) {
+								distanceSum += distance;
+								timeSum += time;
+								pointsCountedQueue.add(new Pair<Double, Long>(distance, time));
+							}
+							
+							while (timeSum > AVRAGE_FROM_LAST * 1000 && !pointsCountedQueue.isEmpty()) {
+								Pair<Double, Long> p = pointsCountedQueue.poll();
+								distanceSum -= p.first;
+								timeSum -= p.second;
+							}
+							if (currentIndex >= speedValues.length)
+							{
+								System.out.println();
+							}
+							speedValues[currentIndex] = (distanceSum / timeSum * 3600);
+							cumulativeDistance += distance / 1000;
+							distanceValues[currentIndex] = cumulativeDistance;
+							altitudeValues[currentIndex] = current.first.getAltitude();
+							findMinMax(speedValues[currentIndex], distanceValues[currentIndex],
+								altitudeValues[currentIndex]);
+							previous = current;
+							currentIndex++;
 						}
-						speedValues[currentIndex] = (distanceSum / timeSum * 3600);
-						cumulativeDistance += distance / 1000;
-						distanceValues[currentIndex] = cumulativeDistance;
-						altitudeValues[currentIndex] = current.first.getAltitude();
-						findMinMax(speedValues[currentIndex], distanceValues[currentIndex],
-							altitudeValues[currentIndex]);
-						previous = current;
-						currentIndex++;
+						first = false;
 					}
-					first = false;
 				}
 			}
 		}
-		
 		ChartDataHelperContainter container = new ChartDataHelperContainter(distanceValues, speedValues,
 			altitudeValues, speedMin, speedMax, distanceMin, distanceMax, altitudeMin, altitudeMax);
 		

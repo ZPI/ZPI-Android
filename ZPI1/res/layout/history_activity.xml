@@ -135,6 +135,7 @@
                 android:layout_centerVertical="true"
                 android:gravity="center"
                 android:text="@string/no_history_info"
+                android:textSize="@dimen/large_text_size"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
         </RelativeLayout>
     </FrameLayout>
@@ -147,6 +148,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="@dimen/history_button_margin"
         android:background="@drawable/button_border_background"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_main_screen" />
+    
 
 </RelativeLayout>

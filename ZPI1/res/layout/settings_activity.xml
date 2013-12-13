@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:text="@string/ustawienia"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:gravity="center" />
 

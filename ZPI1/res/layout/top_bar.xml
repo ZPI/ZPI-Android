@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:paddingBottom="@dimen/buttons_padding"
         android:paddingTop="@dimen/buttons_padding"
-
+		android:textSize="@dimen/medium_text_size"
         android:text="Large Text"
         android:textColor="@color/white"
         android:textStyle="bold" />
@@ -26,6 +26,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/textViewTopBarTitle"
+        android:layout_alignBottom="@+id/textViewTopBarTitle"
         android:layout_toLeftOf="@+id/textViewTopBarTitle"
         android:background="@drawable/top_bar_button_background" >
 
@@ -35,15 +36,16 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/imageViewTopBarBackArrow"
             android:layout_centerVertical="true"
-            android:paddingLeft="@dimen/buttons_padding"
             android:duplicateParentState="true"
+            android:textSize="@dimen/medium_text_size"
             android:text="Large Text"
             android:textColor="@color/tab_color" />
 
         <ImageView
             android:id="@+id/imageViewTopBarBackArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/top_arrow_height"
+            android:layout_height="@dimen/top_arrow_height"
+            android:layout_centerVertical="true"
             android:adjustViewBounds="true"
             android:duplicateParentState="true"
             android:src="@drawable/top_bar_arrow_background" />
@@ -61,6 +63,9 @@
         android:gravity="right|center"
         android:paddingBottom="@dimen/buttons_padding"
         android:paddingTop="@dimen/buttons_padding"
+        android:layout_alignTop="@+id/textViewTopBarTitle"
+        android:layout_alignBottom="@+id/textViewTopBarTitle"
+        android:textSize="@dimen/medium_text_size"
         android:text="Button"
         android:textColor="@color/tab_color" />
 

@@ -250,6 +250,7 @@
                     android:layout_toLeftOf="@+id/TextView3HistoryUnit"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:gravity="center"
+                    android:singleLine="true"
                     android:textColor="@color/single_run_text_blue" />
 
                 <TextView

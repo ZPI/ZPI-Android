@@ -181,16 +181,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		mMap.setMyLocationEnabled(true);
-		mMap.getUiSettings().setMyLocationButtonEnabled(false);
-		mMap.getUiSettings().setCompassEnabled(false);
-		mMap.getUiSettings().setZoomControlsEnabled(false);
-		//		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
-		//		pauseTime = 0;
-		traceOnMap = new PolylineOptions();
-		traceOnMap.width(traceThickness);
-		traceOnMap.color(traceColor);
-		traceOnMapObject = mMap.addPolyline(traceOnMap);
+		if (mMap != null)	//sometimes happens on emulator (dont know why)
+		{
+			mMap.setMyLocationEnabled(true);
+			mMap.getUiSettings().setMyLocationButtonEnabled(false);
+			mMap.getUiSettings().setCompassEnabled(false);
+			mMap.getUiSettings().setZoomControlsEnabled(false);
+			
+			traceOnMap = new PolylineOptions();
+			traceOnMap.width(traceThickness);
+			traceOnMap.color(traceColor);
+			traceOnMapObject = mMap.addPolyline(traceOnMap);
+		}
 		
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);

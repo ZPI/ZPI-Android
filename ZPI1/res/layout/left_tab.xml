@@ -16,7 +16,7 @@
         android:background="@drawable/left_tab_background"
         android:paddingBottom="@dimen/buttons_padding"
         android:paddingTop="@dimen/buttons_padding"
-        android:textSize="@dimen/small_text_size"
+        android:textSize="@dimen/medium_text_size"
         android:text="Button"
         android:textColor="@color/tab_color" />
 

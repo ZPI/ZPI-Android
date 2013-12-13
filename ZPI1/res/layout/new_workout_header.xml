@@ -3,42 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="@color/gray_background" >
-    
-    
-    
+    android:background="@color/gray_background"
+    android:orientation="vertical" >
+
     <com.pwr.zpi.views.TopBar
         android:id="@+id/topBarNewWorkout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:titleText="@string/new_workout"
         app:hasLeftButton="true"
-        app:leftButtonText="@string/workouts" >
+        app:leftButtonText="@string/workouts"
+        app:titleText="@string/new_workout" >
     </com.pwr.zpi.views.TopBar>
-    
+
     <TextView
         android:id="@+id/textViewWorkoutNameLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/name_caps"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/medium_text_size" />
 
     <EditText
         android:id="@+id/editTextWorkoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:background="@drawable/view_background"
         android:editable="true"
-        android:paddingTop="@dimen/buttons_padding"
+        android:ems="10"
+        android:inputType="text"
         android:paddingBottom="@dimen/buttons_padding"
-        android:background="@drawable/view_background" 
         android:paddingLeft="@dimen/activity_vertical_margin"
         android:paddingRight="@dimen/activity_vertical_margin"
-        android:ems="10" 
-        >
+        android:paddingTop="@dimen/buttons_padding" >
 
         <requestFocus />
     </EditText>
@@ -47,11 +45,10 @@
         android:id="@+id/TextViewWorkoutActions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="@string/actions_caps"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
+       	android:textSize="@dimen/medium_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    
 
 </LinearLayout>

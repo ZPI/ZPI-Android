@@ -12,6 +12,7 @@
         android:layout_toRightOf="@+id/imageViewRunner"
         android:text="Large Text"
         android:textStyle="bold"
+        android:textSize="@dimen/large_text_size"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
