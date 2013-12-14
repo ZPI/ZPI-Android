@@ -52,6 +52,7 @@ import com.pwr.zpi.listeners.ActityButtonStateChangeListener;
 import com.pwr.zpi.listeners.MapTrackingListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
 
@@ -682,8 +683,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions()
 			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
-		marker.showInfoWindow();
+			.icon(BitmapDescriptorFactory
+				.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
 	}
 	
 	// this runs on every update

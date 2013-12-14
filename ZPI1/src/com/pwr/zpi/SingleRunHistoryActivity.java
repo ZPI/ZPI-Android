@@ -32,6 +32,7 @@ import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
 import com.pwr.zpi.utils.LineChartDataEvaluator;
+import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.TopBar;
@@ -149,9 +150,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	
 	private void addMarker(Location location, int distance) {
 		
-		Marker marker = mMap.addMarker(new MarkerOptions()
-			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
+		Marker marker = mMap
+			.addMarker(new MarkerOptions()
+				.position(new LatLng(location.getLatitude(), location.getLongitude()))
+				.title(distance + "km")
+				.icon(
+					BitmapDescriptorFactory
+						.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
 		marker.showInfoWindow();
 		allMarkers.add(marker);
 	}
