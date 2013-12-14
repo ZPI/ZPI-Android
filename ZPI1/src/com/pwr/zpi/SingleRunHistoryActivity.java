@@ -107,7 +107,10 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 					lastLocation = location;
 					
 				}
-				
+				if (mMap != null) {
+					mMap.addPolyline(polyLine);
+					
+				}
 			}
 			
 			mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
