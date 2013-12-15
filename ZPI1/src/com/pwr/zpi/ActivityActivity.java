@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -47,12 +48,17 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.dialogs.MyDialog;
+import com.pwr.zpi.listeners.ActityButtonStateChangeListener;
+import com.pwr.zpi.listeners.MapTrackingListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
 
 public class ActivityActivity extends FragmentActivity implements OnClickListener {
+	
+	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
 	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
 	private static final int MY_REQUEST_CODE = 1;
@@ -64,8 +70,18 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	public static final String RUN_NUMBER_TAG = "run_number";
 	public static final String NAME_TAG = "name_tag";
 	
-	private GoogleMap mMap;
+	// measured values IDs
+	private static final int distanceID = 0;
+	private static final int paceID = 1;
+	private static final int avgPaceID = 2;
+	private static final int timeID = 3;
 	
+	//map options
+	public static final float TRACE_THICKNESS = 5;
+	public static final int TRACE_COLOR = Color.RED;
+	private MapTrackingListener mapTrackingListener;
+	
+	//views
 	private Button stopButton;
 	private Button pauseButton;
 	private Button resumeButton;
@@ -87,16 +103,16 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private RelativeLayout dataRelativeLayout1;
 	private RelativeLayout dataRelativeLayout2;
 	private Location mLastLocation;
-	private boolean isPaused;
+	private Location mPreLastLocation;
 	private ImageButton zoomIn;
 	private ImageButton zoomOut;
-	//private SingleRun singleRun;
-	//private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
-	//private Calendar calendar;
+	private ImageButton mapCenter;
+	private FrameLayout frameLayoutViewOverMap;
+	
+	//map
 	private PolylineOptions traceOnMap;
 	private Polyline traceOnMapObject;
-	private static final float traceThickness = 5;
-	private static final int traceColor = Color.RED;
+	private GoogleMap mMap;
 	
 	// measured values
 	private double pace;
@@ -104,29 +120,20 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private double distance;
 	private double lastDistance;
 	private Long time = 0L;
-	private long startTime;
-	private long pauseTime;
-	private long pauseStartTime;
 	private int runNumber;
 	
+	//diplay data changing
 	private int dataTextView1Content;
 	private int dataTextView2Content;
 	private int clickedField;
-	// measured values IDs
-	private static final int distanceID = 0;
-	private static final int paceID = 1;
-	private static final int avgPaceID = 2;
-	private static final int timeID = 3;
+	
+	private boolean isPaused;
 	
 	// service data
 	boolean mIsBound;
 	boolean isServiceConnected;
 	private RunListenerApi api;
 	private Handler handlerForService;
-	
-	// time counting fields
-	//	private Runnable timeHandler;
-	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
@@ -179,9 +186,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
 		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
+		mapCenter = (ImageButton) findViewById(R.id.imageButtonMapCenter);
+		frameLayoutViewOverMap = (FrameLayout) findViewById(R.id.frameLayoutViewOverMap);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
-		if (mMap != null)	//sometimes happens on emulator (dont know why)
+		if (mMap != null)
 		{
 			mMap.setMyLocationEnabled(true);
 			mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -189,10 +198,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			mMap.getUiSettings().setZoomControlsEnabled(false);
 			
 			traceOnMap = new PolylineOptions();
-			traceOnMap.width(traceThickness);
-			traceOnMap.color(traceColor);
+			traceOnMap.width(TRACE_THICKNESS);
+			traceOnMap.color(TRACE_COLOR);
 			traceOnMapObject = mMap.addPolyline(traceOnMap);
 		}
+		
+		mapTrackingListener = new MapTrackingListener(mapCenter);
 		
 		DataTextView1 = (TextView) findViewById(R.id.dataTextView1);
 		DataTextView2 = (TextView) findViewById(R.id.dataTextView2);
@@ -256,6 +267,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		musicPlayer.setOnClickListener(this);
 		
+		mapCenter.setOnClickListener(this);
+		
+		frameLayoutViewOverMap.setOnTouchListener(mapTrackingListener);
 		if (workout != null) {
 			workoutDdrawerButton.setOnClickListener(this);
 			
@@ -287,6 +301,24 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			
 			workoutCopy.setOnNextActionListener(new OnNextActionListener());
 		}
+		addOnStateChangedListener();
+		
+	}
+	
+	private void addOnStateChangedListener()
+	{
+		ActityButtonStateChangeListener stateChangedListener = new ActityButtonStateChangeListener(this);
+		pauseButton.setOnTouchListener(stateChangedListener);
+		stopButton.setOnTouchListener(stateChangedListener);
+		resumeButton.setOnTouchListener(stateChangedListener);
+		workoutDdrawerButton.setOnTouchListener(stateChangedListener);
+		musicPlayer.setOnTouchListener(stateChangedListener);
+		dataRelativeLayout1.setOnTouchListener(stateChangedListener);
+		dataRelativeLayout2.setOnTouchListener(stateChangedListener);
+		zoomIn.setOnTouchListener(stateChangedListener);
+		zoomOut.setOnTouchListener(stateChangedListener);
+		mapCenter.setOnTouchListener(stateChangedListener);
+		
 	}
 	
 	private void initDisplayedData() {
@@ -475,10 +507,22 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				break;
 			case R.id.imageButtonMapZoomIn:
 				mMap.animateCamera(CameraUpdateFactory.zoomIn());
-				
+				mapTrackingListener.setMapTracking(false);
 				break;
 			case R.id.imageButtonMapZoomOut:
 				mMap.animateCamera(CameraUpdateFactory.zoomOut());
+				mapTrackingListener.setMapTracking(false);
+				break;
+			case R.id.imageButtonMapCenter:
+				if (mLastLocation != null)
+				{
+					Location preLast = (mPreLastLocation == null) ? mLastLocation : mPreLastLocation;
+					CameraPosition cameraPosition = buildCameraPosition(new LatLng(
+						mLastLocation.getLatitude(), mLastLocation.getLongitude()), mLastLocation, preLast);
+					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition
+						));
+					mapTrackingListener.setMapTracking(true);
+				}
 				break;
 		}
 		
@@ -598,9 +642,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				traceOnMap.add(latLng);
 				traceOnMapObject.setPoints(traceOnMap.getPoints());
 				
-				CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
-				mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-				
+				mapTrackingListener.checkUserInactivity();
+				if (mapTrackingListener.isMapTracking()) {
+					CameraPosition cameraPosition = buildCameraPosition(latLng, location, lastLocation);
+					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+				}
 				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				
 				float speed = location.getSpeed();
@@ -637,8 +683,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private void addMarker(Location location, int distance) {
 		Marker marker = mMap.addMarker(new MarkerOptions()
 			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
-		marker.showInfoWindow();
+			.icon(BitmapDescriptorFactory
+				.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
 	}
 	
 	// this runs on every update
@@ -666,6 +712,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					// TODO make progress dialog, waiting for gps
 					showLostGpsSignalDialog();
 				}
+				mPreLastLocation = mLastLocation;
 				mLastLocation = newLocation;
 			}
 		});
@@ -815,8 +862,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private void reset() {
 		distance = 0;
 		traceOnMap = new PolylineOptions();
-		traceOnMap.width(traceThickness);
-		traceOnMap.color(traceColor);
+		traceOnMap.width(TRACE_THICKNESS);
+		traceOnMap.color(TRACE_COLOR);
 		//mMap.clear();
 		time = 0L;
 	}
@@ -846,8 +893,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					traceOnMapObject.setPoints(traceOnMap.getPoints());
 					int size = locationList.size();
 					if (size > 1) {
-						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 2),
-							locationList.get(size - 1));
+						CameraPosition cameraPosition = buildCameraPosition(latLng, locationList.get(size - 1),
+							locationList.get(size - 2));
 						mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 						
 					}
@@ -917,4 +964,5 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		i = new Intent(MediaStore.INTENT_ACTION_MUSIC_PLAYER);
 		startActivity(i);
 	}
+	
 }

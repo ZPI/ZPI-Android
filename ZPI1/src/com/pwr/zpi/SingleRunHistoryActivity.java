@@ -27,12 +27,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
 import com.pwr.zpi.utils.LineChartDataEvaluator;
+import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.Pair;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.TopBar;
@@ -48,7 +48,6 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	
 	private GoogleMap mMap;
 	private LatLngBounds.Builder boundsBuilder;
-	private Polyline traceOnMapObject;
 	
 	private LinkedList<Marker> allMarkers;
 	
@@ -88,7 +87,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			double newDistance = 0;
 			for (LinkedList<Pair<Location, Long>> singleTrace : traceWithTime) {
 				PolylineOptions polyLine = new PolylineOptions();
-				
+				polyLine.color(ActivityActivity.TRACE_COLOR);
+				polyLine.width(ActivityActivity.TRACE_THICKNESS);
 				Location lastLocation = null;
 				for (Pair<Location, Long> singlePoint : singleTrace) {
 					Location location = singlePoint.first;
@@ -109,7 +109,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 					
 				}
 				if (mMap != null) {
-					traceOnMapObject = mMap.addPolyline(polyLine);
+					mMap.addPolyline(polyLine);
 					
 				}
 			}
@@ -150,9 +150,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	
 	private void addMarker(Location location, int distance) {
 		
-		Marker marker = mMap.addMarker(new MarkerOptions()
-			.position(new LatLng(location.getLatitude(), location.getLongitude())).title(distance + "km")
-			.icon(BitmapDescriptorFactory.fromResource(R.drawable.distance_pin)));
+		Marker marker = mMap
+			.addMarker(new MarkerOptions()
+				.position(new LatLng(location.getLatitude(), location.getLongitude()))
+				.title(distance + "km")
+				.icon(
+					BitmapDescriptorFactory
+						.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
 		marker.showInfoWindow();
 		allMarkers.add(marker);
 	}

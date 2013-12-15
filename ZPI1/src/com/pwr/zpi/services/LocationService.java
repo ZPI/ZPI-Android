@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -256,7 +255,6 @@ public class LocationService extends Service implements LocationListener, Connec
 		mLocationClient.connect();
 		Log.i(TAG, "Service creating");
 		soundsPlayer = new AssetsPlayer(getApplicationContext(), AssetsMp3Files.Beep);
-		Toast.makeText(getApplicationContext(), "Service creating", Toast.LENGTH_LONG).show(); //TODO remove
 	}
 	
 	@Override
