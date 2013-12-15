@@ -9,16 +9,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/start" />
+        android:src="@drawable/start"
+        android:visibility="gone" />
 
     <LinearLayout
-        android:id ="@+id/linearLayoutAdvancedActionData"
+        android:id="@+id/linearLayoutAdvancedActionData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/imageViewWorkoutAction"
         android:baselineAligned="false"
-        android:layout_toRightOf="@+id/imageViewWorkoutAction" >
+        android:padding="@dimen/buttons_padding" >
 
         <RelativeLayout
             android:id="@+id/dataRelativeLayoutActionDistance"
@@ -26,24 +28,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_margin"
             android:layout_weight="1"
-            android:background="@color/main_color"
             android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/dataTextViewActionDistanceDiscription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/buttons_padding"
-                android:text="@string/distance" />
 
             <TextView
                 android:id="@+id/dataTextViewActionDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/dataTextViewActionDistanceDiscription"
-                android:layout_below="@+id/dataTextViewActionDistanceDiscription"
+                android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/dataTextViewActionDistanceUnit"
                 android:gravity="center"
                 android:text="0.0"
@@ -58,50 +49,19 @@
                 android:layout_alignTop="@+id/dataTextViewActionDistance"
                 android:gravity="bottom"
                 android:text="@string/km"
-                android:textSize="@dimen/small_text_size"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="@dimen/small_text_size" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/dataRelativeLayoutActionTime"
+        <TextView
+            android:id="@+id/dataTextViewActionTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
             android:layout_weight="1"
-            android:background="@color/main_color"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/dataTextViewActionTimeDiscription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/buttons_padding"
-                android:text="@string/time" />
-
-            <TextView
-                android:id="@+id/dataTextViewActionTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/dataTextViewActionTimeDiscription"
-                android:layout_below="@+id/dataTextViewActionTimeDiscription"
-                android:layout_toLeftOf="@+id/dataTextViewActionTimeUnit"
-                android:gravity="center"
-                android:text="00:00:00"
-                android:textSize="@dimen/medium_text_size" />
-
-            <TextView
-                android:id="@+id/dataTextViewActionTimeUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/dataTextViewActionTime"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/dataTextViewActionTime"
-                android:gravity="bottom"
-                android:text="@string/empty_string"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-        </RelativeLayout>
+            android:gravity="center"
+            android:text="00:00:00"
+            android:layout_margin="@dimen/small_margin"
+            android:textSize="@dimen/medium_text_size" />
 
         <RelativeLayout
             android:id="@+id/dataRelativeLayoutActionPace"
@@ -109,24 +69,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_margin"
             android:layout_weight="1"
-            android:background="@color/main_color"
             android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/dataTextViewActionPaceDiscription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/buttons_padding"
-                android:text="@string/pace" />
 
             <TextView
                 android:id="@+id/dataTextViewActionPace"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/dataTextViewActionPaceDiscription"
-                android:layout_below="@+id/dataTextViewActionPaceDiscription"
+                android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/dataTextViewActionPaceUnit"
                 android:gravity="center"
                 android:text="0.0"
@@ -141,10 +90,9 @@
                 android:layout_alignTop="@+id/dataTextViewActionPace"
                 android:gravity="bottom"
                 android:text="@string/minutes_per_km"
-                android:textSize="@dimen/small_text_size"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="@dimen/small_text_size" />
         </RelativeLayout>
     </LinearLayout>
-   
 
 </RelativeLayout>

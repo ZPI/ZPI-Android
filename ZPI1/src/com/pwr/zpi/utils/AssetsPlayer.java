@@ -68,9 +68,16 @@ public class AssetsPlayer {
 	}
 	
 	public void stopPlayer() {
-		if (player != null && player.isPlaying()) {
-			player.stop();
-			player.release();
+		try {
+			
+			if (player != null && player.isPlaying()) {
+				player.stop();
+				player.release();
+			}
+		}
+		catch (IllegalStateException e)
+		{
+			//ignore exception
 		}
 	}
 }
