@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -43,7 +44,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.pwr.zpi.adapters.DrawerWorkoutsAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
@@ -139,7 +141,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private ProgressDialog lostGPSDialog;
 	
 	// workout drawer fields
-	private DrawerWorkoutsAdapter drawerListAdapter;
+	private BaseAdapter drawerListAdapter;
 	private ListView listView;
 	private Workout workout;
 	private Workout workoutCopy;
@@ -241,7 +243,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				actions.addAll(workout.getActions());
 			}
 			workoutCopy.setActions(actions);
-			drawerListAdapter = new DrawerWorkoutsAdapter(this, R.layout.workout_drawer_list_item,
+			drawerListAdapter = AdapterFactory.getAdapter(AdapterType.DrawerWorkoutsAdapter, this,
 				workoutCopy.getActions(), workoutCopy);
 			listView.setAdapter(drawerListAdapter);
 			listView.setVisibility(View.VISIBLE);

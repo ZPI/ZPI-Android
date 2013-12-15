@@ -22,7 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pwr.zpi.adapters.WorkoutActionsAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.database.entity.TreningPlan;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.dialogs.DialogFactory;
@@ -180,9 +181,8 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 				Log.i(PlansActivity.class.getSimpleName(), "has actions");
 				textViewNoWorkoutActions.setVisibility(View.GONE);
 				listViewPlanDayActions.setVisibility(View.VISIBLE);
-				listViewPlanDayActions.setAdapter(new WorkoutActionsAdapter(this,
-					R.layout.workouts_action_simple_list_item, R.layout.workout_action_advanced_list_item,
-					workoutForDay.getActions()));
+				listViewPlanDayActions.setAdapter(AdapterFactory.getAdapter(AdapterType.WorkoutActionAdapter, this,
+					workoutForDay.getActions(), null));
 			}
 			else {
 				Log.i(PlansActivity.class.getSimpleName(), "no actions");

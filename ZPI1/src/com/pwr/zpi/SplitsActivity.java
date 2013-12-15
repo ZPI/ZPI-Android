@@ -12,7 +12,8 @@ import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.pwr.zpi.adapters.SplitsAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.utils.Pair;
@@ -37,8 +38,8 @@ public class SplitsActivity extends Activity implements OnClickListener {
 		singleRun = getSingleRunFromIntent();
 		splitsListView = (ListView) findViewById(R.id.listViewSplits);
 		noSplitsInfoRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutNoSplitsInfo);
-		splitsListView.setAdapter(new SplitsAdapter(this, R.layout.splits_activity_list_item, parseData(singleRun
-			.getTraceWithTime())));
+		splitsListView.setAdapter(AdapterFactory.getAdapter(AdapterType.SplitsAdapter, this,
+			parseData(singleRun.getTraceWithTime()), null));
 		if (splitsListView.getAdapter().getCount() == 0) {
 			splitsListView.setVisibility(View.GONE);
 			noSplitsInfoRelativeLayout.setVisibility(View.VISIBLE);
@@ -50,16 +51,14 @@ public class SplitsActivity extends Activity implements OnClickListener {
 	}
 	
 	//parses location and time to distance kilometer by kilometer and associated times
-	private List<Pair<Integer, Pair<Long, Long>>> parseData(
-		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime) {
+	private List<Pair<Integer, Pair<Long, Long>>> parseData(LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime) {
 		List<Pair<Integer, Pair<Long, Long>>> result = new ArrayList<Pair<Integer, Pair<Long, Long>>>();
 		
 		int nextKilometer = 1;
 		long cumulativeTime = 0;
 		double currentDistance = 0;
 		long currentTime = 0;
-		if (traceWithTime == null)
-		{
+		if (traceWithTime == null) {
 			traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();	//this should act as if there are no points
 		}
 		for (LinkedList<Pair<Location, Long>> subrun : traceWithTime) {

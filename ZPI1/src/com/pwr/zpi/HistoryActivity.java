@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -30,7 +31,10 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
-import com.pwr.zpi.adapters.RunAdapter;
+import com.pwr.zpi.adapters.AdapterFactory;
+import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
+import com.pwr.zpi.adapters.GenericBaseAdapter;
+import com.pwr.zpi.adapters.RunAdapterRowBuilder;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.dialogs.MyDialog;
@@ -67,10 +71,10 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	private View mCurrent;
 	// context item stuff
 	AdapterContextMenuInfo info;
-	RunAdapter adapter;
-	RunAdapter adapterThisWeek;
-	RunAdapter adapterThisMonth;
-	RunAdapter adapterThisAll;
+	BaseAdapter adapter;
+	GenericBaseAdapter<SingleRun, RunAdapterRowBuilder> adapterThisWeek;
+	GenericBaseAdapter<SingleRun, RunAdapterRowBuilder> adapterThisMonth;
+	GenericBaseAdapter<SingleRun, RunAdapterRowBuilder> adapterThisAll;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -267,13 +271,13 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 				adapter = null; // when adapters will change use interface here ;)
 				switch (tabHost.getCurrentTab()) {
 					case 0:
-						adapter = (RunAdapter) listViewThisWeek.getAdapter();
+						adapter = (BaseAdapter) listViewThisWeek.getAdapter();
 						break;
 					case 1:
-						adapter = (RunAdapter) listViewThisMonth.getAdapter();
+						adapter = (BaseAdapter) listViewThisMonth.getAdapter();
 						break;
 					case 2:
-						adapter = (RunAdapter) listViewAll.getAdapter();
+						adapter = (BaseAdapter) listViewAll.getAdapter();
 						break;
 					default:
 						break;
@@ -285,7 +289,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
 							
-							SingleRun toDelete = adapter.getItem(info.position);
+							SingleRun toDelete = (SingleRun) adapter.getItem(info.position);
 							
 							adapterThisWeek.remove(toDelete);
 							adapterThisMonth.remove(toDelete);
@@ -363,6 +367,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 			return list;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void onPostExecute(List<SingleRun> list) {
 			
@@ -375,13 +380,16 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 			}
 			
 			run_data = list;
-			adapterThisAll = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data);
-			ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(
-				new ArrayList<SingleRun>(run_data), FILTER_MONTH);
-			adapterThisMonth = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data_month);
+			adapterThisAll = (GenericBaseAdapter<SingleRun, RunAdapterRowBuilder>) AdapterFactory.getAdapter(
+				AdapterType.RunAdapter, HistoryActivity.this, run_data, null);
+			ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+				run_data), FILTER_MONTH);
+			adapterThisMonth = (GenericBaseAdapter<SingleRun, RunAdapterRowBuilder>) AdapterFactory.getAdapter(
+				AdapterType.RunAdapter, HistoryActivity.this, run_data_month, null);
 			ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
 				run_data), FILTER_WEEK);
-			adapterThisWeek = new RunAdapter(HistoryActivity.this, R.layout.history_run_list_item, run_data_week);
+			adapterThisWeek = (GenericBaseAdapter<SingleRun, RunAdapterRowBuilder>) AdapterFactory.getAdapter(
+				AdapterType.RunAdapter, HistoryActivity.this, run_data_week, null);
 			listViewThisWeek.setAdapter(adapterThisWeek);
 			listViewThisMonth.setAdapter(adapterThisMonth);
 			listViewAll.setAdapter(adapterThisAll);

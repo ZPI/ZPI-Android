@@ -1,13 +1,7 @@
 package com.pwr.zpi.adapters;
 
-import java.util.List;
-
-import android.app.Activity;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,42 +10,44 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
 
-public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
+public class DrawerWorkoutsRowBuilder extends RowBuilder<WorkoutAction> {
 	
-	private static final int ACTIVE_HEIGHT = 200;
-	private static final int NOT_ACTIVE_HEIGHT = 100;
-	
-	private final int layoutResourceID;
 	private final Workout workout;
+	private final Context context;
 	
-	public DrawerWorkoutsAdapter(Context context, int layoutResourceID, List<WorkoutAction> actions, Workout workout) {
-		super(context, layoutResourceID, actions);
-		this.layoutResourceID = layoutResourceID;
+	public DrawerWorkoutsRowBuilder(Workout workout, Context context) {
 		this.workout = workout;
+		this.context = context;
 	}
 	
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		View row = convertView;
-		RowHolder rowHolder;
-		//	if (row == null) {
-		LayoutInflater inflater = ((Activity) getContext()).getLayoutInflater();
-		row = inflater.inflate(layoutResourceID, parent, false);
-		
-		rowHolder = new RowHolder();
+	public boolean isTagOK(Object tag, WorkoutAction item) { //FIXME this method should optimize code (commented code below still not working :/ )
+		//		if (tag != null) {
+		//			RowHolder holder = (RowHolder) tag;
+		//			if (holder.actionTextAdvanced.getVisibility() == View.GONE && item.isSimple()) return true;
+		//			else if (holder.actionTextAdvanced.getVisibility() == View.VISIBLE
+		//				&& (item.isAdvanced() || item.isWarmUp())) return true;
+		//		}
+		return false;
+	}
+	
+	@Override
+	public AbstractRowHolder buildRowHolder(View row, WorkoutAction item) {
+		RowHolder rowHolder = new RowHolder();
 		rowHolder.actionType = (ImageView) row.findViewById(R.id.imageViewState);
 		rowHolder.actionTextAdvanced = (TextView) row.findViewById(R.id.textViewWorkoutActionText);
 		rowHolder.actionTextSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleText);
 		rowHolder.actionTypeSimple = (TextView) row.findViewById(R.id.textViewWorkoutActionSimpleTypeText);
 		rowHolder.actionPointInTime = (TextView) row.findViewById(R.id.textViewState);
-		row.setTag(rowHolder);
-		//	}
-		//	else {
-		//		rowHolder = (RowHolder) row.getTag();
-		//	}
+		return rowHolder;
+	}
+	
+	@Override
+	public void fillRowDataToHolder(AbstractRowHolder holder, WorkoutAction item, int position, int[] layoutResourcesIDs) {
+		RowHolder rowHolder = (RowHolder) holder;
 		
 		int textColor = android.R.color.white;
-		WorkoutAction action = getItem(position);
+		WorkoutAction action = item;
 		switch (action.getActionType()) {
 			case WorkoutAction.ACTION_SIMPLE:
 				rowHolder.actionTextSimple.setVisibility(View.VISIBLE);
@@ -96,7 +92,6 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 		
 		if (position < workout.getCurrentAction()) {
 			textColor = R.color.white;
-			//rowHolder.layout.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
 			rowHolder.actionType.setVisibility(View.VISIBLE);
 			rowHolder.actionPointInTime.setVisibility(View.VISIBLE);
 			rowHolder.actionType.setImageResource(R.drawable.done);
@@ -119,7 +114,6 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 			else {
 				rowHolder.actionTextAdvanced.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
 			}
-			//	row.setMinimumHeight(ACTIVE_HEIGHT);
 		}
 		else {
 			textColor = R.color.white;
@@ -128,16 +122,12 @@ public class DrawerWorkoutsAdapter extends ArrayAdapter<WorkoutAction> {
 			}
 			else {
 				rowHolder.actionTextAdvanced.setText(Workout.formatActionValue(action, null));
-			}		//rowHolder.layout
-			//	.setBackgroundColor(getContext().getResources().getColor(R.color.workout_drawer_not_active));
-			
-			//	row.setMinimumHeight(NOT_ACTIVE_HEIGHT);
+			}
 		}
-		rowHolder.actionTextAdvanced.setTextColor(getContext().getResources().getColor(textColor));
-		return row;
+		rowHolder.actionTextAdvanced.setTextColor(context.getResources().getColor(textColor));
 	}
 	
-	private class RowHolder {
+	private class RowHolder extends AbstractRowHolder {
 		protected TextView actionTextSimple;
 		protected TextView actionTypeSimple;
 		protected TextView actionTextAdvanced;
