@@ -149,7 +149,9 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setResumed() throws RemoteException {
 			if (state == PAUSED) {
-				pauseTime += System.currentTimeMillis() - pauseStartTime;
+				if (pauseStartTime != 0) {
+					pauseTime += System.currentTimeMillis() - pauseStartTime;
+				}
 				state = STARTED;
 				Log.i(TAG, state + "");
 				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
@@ -214,7 +216,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	};
 	
 	private void zeroFields() {
-		startTime = 0;
+		startTime = System.currentTimeMillis();
 		pauseStartTime = 0;
 		pauseTime = 0;
 		time = 0L;
@@ -243,7 +245,8 @@ public class LocationService extends Service implements LocationListener, Connec
 		super.onCreate();
 		state = STOPED;
 		pauseTime = 0;
-		time = new Long(0);
+		time = 0L;
+		startTime = System.currentTimeMillis();
 		isConnected = false;
 		connectionFailed = false;
 		isWromUpInProgress = false;
@@ -322,6 +325,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	@Override
 	public void onDisconnected() {
 		Log.i(TAG, "onDisconnected LocationListener");
+		Log.i("tr", "test"); //TODO remove
 		isConnected = false;
 	}
 	
@@ -473,7 +477,8 @@ public class LocationService extends Service implements LocationListener, Connec
 				traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 				distance = 0;
 				pauseTime = 0;
-				time = 0L;
+				time = System.currentTimeMillis();
+				;
 				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
 				isWromUpInProgress = false;
@@ -536,7 +541,8 @@ public class LocationService extends Service implements LocationListener, Connec
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
 				boolean changeWorkout = false;
-				Log.i(TAG, "current and start times: " + System.currentTimeMillis() + " " + startTime);
+				Log.i(TAG, "current and start and pause times: " + System.currentTimeMillis() + " " + startTime + " "
+					+ pauseTime + " " + pauseStartTime);
 				if (workout != null) {
 					processWorkout();
 					changeWorkout = true;
