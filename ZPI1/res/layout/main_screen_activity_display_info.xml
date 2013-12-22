@@ -140,6 +140,7 @@
     </LinearLayout>
     
     <View
+        android:id="@+id/viewTreningPlansUnderline"
         android:layout_width="fill_parent"
         android:layout_height="1dip"
         android:layout_below="@id/treningPlansBar"

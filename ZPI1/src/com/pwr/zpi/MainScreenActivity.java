@@ -34,6 +34,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -61,6 +62,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	public static final boolean REDUCED_VERSION = false;
 	public static final String NEW_PLAN_KEY = "new_plan_indicator";
+	public static final boolean TREANING_PLANS_ACTIVE = false;
 	
 	private RunListenerApi api;
 	private static final String TAG = MainScreenActivity.class.getSimpleName();
@@ -78,6 +80,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private Button musicButton;
 	private Button treningPlansButton;
 	private RelativeLayout runSummaryRelativeLayout;
+	private LinearLayout treningPlansLayout;
 	private TextView runSummaryDistanceTextView;
 	private TextView runSummaryTotalTimeTextView;
 	private TextView runSummaryWorkoutsCountTextView;
@@ -132,6 +135,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		addListeners();
 		doStartService();
 		doBindService();
+		disableTraningPlans();
 		// locationListener.getmLocationClient().connect();
 		runNumber = 0;
 		isConnected = false;
@@ -155,6 +159,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		runSummaryRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMSRunSummary);
 		runSummaryWorkoutsCountTextView = (TextView) findViewById(R.id.textViewMSWorkoutsCount);
 		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
+		treningPlansLayout = (LinearLayout) findViewById(R.id.treningPlansBar);
 		
 		//setting fonts
 		historyButtonDesc = (TextView) findViewById(R.id.textViewHistoryDesc);
@@ -229,6 +234,16 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	private void disableTraningPlans()
+	{
+		if (!TREANING_PLANS_ACTIVE)
+		{
+			treningPlansLayout.setVisibility(View.GONE);
+			View underline = findViewById(R.id.viewTreningPlansUnderline);
+			underline.setVisibility(View.GONE);
 		}
 	}
 	

@@ -30,7 +30,7 @@
             </com.pwr.zpi.views.TopBar>
             
             <LinearLayout
-                android:id="@+id/tabbar"
+                android:id="@+id/linearLayoutPlaningActivityTabBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
