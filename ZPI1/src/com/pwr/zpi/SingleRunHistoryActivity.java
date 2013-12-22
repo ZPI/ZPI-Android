@@ -157,7 +157,6 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 				.icon(
 					BitmapDescriptorFactory
 						.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
-		marker.showInfoWindow();
 		allMarkers.add(marker);
 	}
 	

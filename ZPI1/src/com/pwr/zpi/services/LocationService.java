@@ -57,7 +57,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
-	public static final int REQUIRED_ACCURACY = 3000; //FIXME change to lower
+	public static final int REQUIRED_ACCURACY = 40; //FIXME change to lower
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
 	private boolean isWromUpInProgress;
@@ -149,9 +149,11 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setResumed() throws RemoteException {
 			if (state == PAUSED) {
-				if (pauseStartTime != 0) {
-					pauseTime += System.currentTimeMillis() - pauseStartTime;
-				}
+				//	if (pauseStartTime == 0) {
+				//		setPaused();
+				//	}
+				pauseTime += System.currentTimeMillis() - pauseStartTime;
+				
 				state = STARTED;
 				Log.i(TAG, state + "");
 				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
@@ -217,7 +219,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	private void zeroFields() {
 		startTime = System.currentTimeMillis();
-		pauseStartTime = 0;
+		pauseStartTime = System.currentTimeMillis();
 		pauseTime = 0;
 		time = 0L;
 		distance = 0;
@@ -245,6 +247,7 @@ public class LocationService extends Service implements LocationListener, Connec
 		super.onCreate();
 		state = STOPED;
 		pauseTime = 0;
+		pauseStartTime = System.currentTimeMillis();
 		time = 0L;
 		startTime = System.currentTimeMillis();
 		isConnected = false;

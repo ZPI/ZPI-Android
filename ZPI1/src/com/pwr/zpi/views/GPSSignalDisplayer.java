@@ -18,8 +18,8 @@ public class GPSSignalDisplayer extends RelativeLayout {
 	private final ImageView circle3;
 	View gpsSignalView;
 	
-	private static final double FIRST_CIRCLE_THRESHOLD = 100;
-	private static final double SECOND_CIRCLE_THRESHOLD = 40;
+	private static final double FIRST_CIRCLE_THRESHOLD = 40;
+	private static final double SECOND_CIRCLE_THRESHOLD = 20;
 	private static final double THIRD_CIRCLE_THRESHOLD = 10;
 	
 	public GPSSignalDisplayer(Context context) {
