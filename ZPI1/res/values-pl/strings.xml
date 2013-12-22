@@ -162,7 +162,7 @@
     <string name="warm_up_speak">Rozgrzewka!</string>
     <string name="no_tts_dialog_check_title">Głosy w aplikacji</string>
     <string name="no_tts_dialog_check_message">Ta aplikacja używa syntezatora mowy. Aplikacja sprawdzi teraz czy twój telefon posiada syntezator mowy.\n </string>
-    <string name="no_tts_dialog_title">Application\'s voice</string>
+    <string name="no_tts_dialog_title">Głos aplikacji</string>
     <string name="no_tts_dialog_message">Na twoim telefonie nie ma syntezatora mowy. \n\nMożesz zainstalować dowolny syntezator mowy (potocznie TTS, text-to-speech) i włączyć go w ustawieniach telefonu.\n\nCzy chcesz zainstalować domyślny syntezator mowy?\n\nUWAGA jeśli chcesz korzystać z głosów w języku polskim musisz sam pobrać syntezator obsługujący język Polski ze sklepu</string>
 
     <!-- after end of acticity -->
@@ -182,6 +182,7 @@
     <string name="select">Wybierz</string>
     <string name="end_training">Zakończ trening</string>
     <string name="dismiss">Odznacz</string> <!-- nie mam pomysłu jak jednym słowem -->
+    <string name="touch_to_create">Dotknij, aby utworzyć trening</string>
 
     <!-- about application -->
     <string name="version_title">Wersja</string>

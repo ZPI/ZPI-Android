@@ -184,6 +184,7 @@
     <string name="select">Select</string>
     <string name="end_training">End training</string>
     <string name="dismiss">Dismiss</string>
+    <string name="touch_to_create">Touch, to create new workout</string>
 
     <!-- about application -->
     <string name="version_title">Version</string>
