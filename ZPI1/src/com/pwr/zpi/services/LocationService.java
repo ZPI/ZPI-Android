@@ -57,7 +57,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	private static final long MAX_UPDATE_TIME = 5000;
-	public static final int REQUIRED_ACCURACY = 3000; //FIXME change to lower
+	public static final int REQUIRED_ACCURACY = 40; //FIXME change to lower
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
 	private boolean isWromUpInProgress;
@@ -149,7 +149,11 @@ public class LocationService extends Service implements LocationListener, Connec
 		@Override
 		public void setResumed() throws RemoteException {
 			if (state == PAUSED) {
+				//	if (pauseStartTime == 0) {
+				//		setPaused();
+				//	}
 				pauseTime += System.currentTimeMillis() - pauseStartTime;
+				
 				state = STARTED;
 				Log.i(TAG, state + "");
 				traceWithTime.add(new LinkedList<Pair<Location, Long>>());
@@ -214,8 +218,8 @@ public class LocationService extends Service implements LocationListener, Connec
 	};
 	
 	private void zeroFields() {
-		startTime = 0;
-		pauseStartTime = 0;
+		startTime = System.currentTimeMillis();
+		pauseStartTime = System.currentTimeMillis();
 		pauseTime = 0;
 		time = 0L;
 		distance = 0;
@@ -243,7 +247,9 @@ public class LocationService extends Service implements LocationListener, Connec
 		super.onCreate();
 		state = STOPED;
 		pauseTime = 0;
-		time = new Long(0);
+		pauseStartTime = System.currentTimeMillis();
+		time = 0L;
+		startTime = System.currentTimeMillis();
 		isConnected = false;
 		connectionFailed = false;
 		isWromUpInProgress = false;
@@ -322,6 +328,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	@Override
 	public void onDisconnected() {
 		Log.i(TAG, "onDisconnected LocationListener");
+		Log.i("tr", "test"); //TODO remove
 		isConnected = false;
 	}
 	
@@ -473,7 +480,8 @@ public class LocationService extends Service implements LocationListener, Connec
 				traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
 				distance = 0;
 				pauseTime = 0;
-				time = 0L;
+				time = System.currentTimeMillis();
+				;
 				locationList = new ArrayList<Location>();
 				startRunAfterCountDown();
 				isWromUpInProgress = false;
@@ -536,7 +544,8 @@ public class LocationService extends Service implements LocationListener, Connec
 			synchronized (time) {
 				time = System.currentTimeMillis() - startTime - pauseTime;
 				boolean changeWorkout = false;
-				Log.i(TAG, "current and start times: " + System.currentTimeMillis() + " " + startTime);
+				Log.i(TAG, "current and start and pause times: " + System.currentTimeMillis() + " " + startTime + " "
+					+ pauseTime + " " + pauseStartTime);
 				if (workout != null) {
 					processWorkout();
 					changeWorkout = true;

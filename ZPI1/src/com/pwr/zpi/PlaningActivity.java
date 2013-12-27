@@ -83,6 +83,8 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		tabSpecs.setIndicator(getResources().getString(R.string.trening_plans));
 		tabHost.addTab(tabSpecs);
 		
+		disableTraningPlans();
+		
 		workoutsList = getWorkoutsFromDB();
 		workoutAdapter = AdapterFactory.getAdapter(AdapterType.WorkoutAdapter, this, workoutsList, null);
 		
@@ -109,6 +111,14 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		setTab(0);
 		registerForContextMenu(workoutsListView);
 		addListeners();
+	}
+	
+	private void disableTraningPlans()
+	{
+		if (!MainScreenActivity.TREANING_PLANS_ACTIVE) {
+			LinearLayout tabBar = (LinearLayout) findViewById(R.id.linearLayoutPlaningActivityTabBar);
+			tabBar.setVisibility(View.GONE);
+		}
 	}
 	
 	private ArrayList<TreningPlan> getTraningPlans() {

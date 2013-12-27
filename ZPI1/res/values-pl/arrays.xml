@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="countDownValuesNames">
+        <item name="disabled">Wyłączone</item>
+        <item name="threeSeconds">3 sekundy</item>
+        <item name="fiveSeconds">5 sekund</item>
+    </string-array>
+    <string-array name="warmUpValuesNames">
+        <item name="threeMinutes">3 minuty</item>
+        <item name="fiveMinutes">5 minut</item>
+        <item name="tenMinutes">10 minut</item>
+        <item name="twentyMinutes">20 minut</item>
+    </string-array>
+    <string-array name="choose_action">
+	    <item >Nowa akcja interwałowa</item>
+	    <item >Nowa akcja Wirtualnego partnera</item>
+	</string-array>
+    <string-array name="reminder_days">
+        <item name="noReminder">Wyłącz przypomnienie</item>
+        <item name="oneDay">1 dzień</item>
+        <item name="twoDays">2 dni</item>
+        <item name="threeDays">3 dni</item>
+    </string-array>
+
+    <string-array name="main_screen_trening_plan_dialog_with_workout">
+        <item name="disablePlan">Zacznij dzisiejszy trening</item>
+        <item name="disablePlan">Pokaż plan treningowy</item>
+        <item name="disablePlan">Wyłącz wykonywanie planu treningowego</item>
+    </string-array>
+    <string-array name="main_screen_trening_plan_dialog">
+        <item name="disablePlan">Pokaż plan treningowy</item>
+        <item name="disablePlan">Wyłącz wykonywanie planu treningowego</item>
+    </string-array>
+</resources>

@@ -30,9 +30,8 @@
 
     <include layout="@layout/main_screen_activity_runs_summary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/statusDisplayLayout"
-        android:layout_above="@+id/buttonHistory" />
+        android:layout_height="@dimen/run_summary_height"
+        android:layout_below="@id/statusDisplayLayout"/>
     
     <TextView
         android:id="@+id/textViewPlansDesc"
