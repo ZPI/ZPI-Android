@@ -87,7 +87,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private TextView pullText;
 	
 	private boolean isServiceConnected;
-	private int gpsStatus = -1;
+	private int gpsStatus = NO_GPS_SIGNAL_INFO;
 	private View mCurrent;
 	private Handler handler;
 	private Workout workout;
@@ -467,7 +467,13 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			public void run() {
 				try {
 					//					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
-					gpsDisplayer.updateStrengthSignal(mLastLocation.getAccuracy());
+					//we can use other providers when gps is lost during activity, but I think we shouldn't start it with no GPS, thats why I set accurecy to max when gps is off
+					if (gpsStatus == NO_GPS_SIGNAL || gpsStatus == NO_GPS_SIGNAL_INFO || gpsStatus == GPS_NOT_ENABLED) {
+						gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
+					}
+					else {
+						gpsDisplayer.updateStrengthSignal(mLastLocation.getAccuracy());
+					}
 				}
 				catch (Throwable t) {
 					Log.e(TAG, "Error while updating the UI with tweets", t);
@@ -771,6 +777,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		@Override
 		public void handleCountDownChange(int countDownNumber) throws RemoteException {}
+		
+		@Override
+		public void handleLostGPS() throws RemoteException {
+			Log.i("debug1", "Main screen: lostGPS");
+			gpsStatus = api.getGPSStatus();
+			Log.i("debug1", "Main screen gps_status:" + gpsStatus);
+			showGPSAccuracy();
+		}
 	};
 	
 	private void getConnectionResult() {
