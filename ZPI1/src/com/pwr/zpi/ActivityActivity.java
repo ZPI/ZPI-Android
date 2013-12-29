@@ -142,6 +142,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
+	private boolean progressDialogDisplayed;
 	
 	// workout drawer fields
 	private BaseAdapter drawerListAdapter;
@@ -219,6 +220,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView2Content = timeID;
 		
 		isPaused = false;
+		progressDialogDisplayed = false;
 		
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
@@ -456,6 +458,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				if (isServiceConnected) {
 					
+					progressDialogDisplayed = true;
+					
 					lostGPSDialog = ProgressDialog.show(ActivityActivity.this,
 						getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
 					lostGPSDialog.setCancelable(true);
@@ -649,8 +653,6 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				}
 				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				
-				float speed = location.getSpeed();
-				//				GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
 				gpsDisplayer.updateStrengthSignal(location.getAccuracy());
 				
 				if (actualPaceCalculator == null) {
@@ -703,6 +705,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					if (lostGPSDialog != null) {
 						lostGPSDialog.dismiss();
 						lostGPSDialog = null;
+						progressDialogDisplayed = false;
 					}
 					if (mLastLocation != null) {
 						countData(newLocation, mLastLocation);
@@ -712,8 +715,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					updateData(DataTextView2, dataTextView2Content);
 				}
 				else if (newLocation.getAccuracy() >= LocationService.REQUIRED_ACCURACY) {
-					// TODO make progress dialog, waiting for gps
-					showLostGpsSignalDialog();
+					//prevents displaying two progress Dialogs at once
+					if (!progressDialogDisplayed) {
+						showLostGpsSignalDialog();
+					}
 				}
 				mPreLastLocation = mLastLocation;
 				mLastLocation = newLocation;
@@ -862,7 +867,17 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		
 		@Override
 		public void handleLostGPS() throws RemoteException {
-			// TODO Auto-generated method stub
+			if (!progressDialogDisplayed) {
+				showLostGpsSignalDialog();
+			}
+			handlerForService.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
+					
+				}
+			});
 			
 		}
 		

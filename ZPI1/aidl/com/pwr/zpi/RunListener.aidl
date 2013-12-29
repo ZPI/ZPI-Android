@@ -9,5 +9,5 @@ interface RunListener {
 	void handleTimeChange();
 	void handleWorkoutChange(in Workout workout, in boolean firstTime);
 	void handleCountDownChange(int countDownNumber);
-
+	void handleLostGPS();
 }
