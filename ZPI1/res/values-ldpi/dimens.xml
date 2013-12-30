@@ -35,6 +35,7 @@
     <dimen name="pull_view_top_marrgin">35dp</dimen>
     <dimen name="pull_name_right_margin">-15dp</dimen>
 	<dimen name="pull_right_margin">-5dp</dimen>
+	<dimen name="run_summary_margin">32dp</dimen>
 
     <!-- paddings -->
     <dimen name="buttons_padding">4dp</dimen>

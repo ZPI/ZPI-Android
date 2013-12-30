@@ -72,7 +72,7 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		Intent returnIntent = new Intent();
+		final Intent returnIntent = new Intent();
 		returnIntent.putExtra(MainScreenActivity.NEW_PLAN_KEY, true);
 		switch (v.getId()) {
 			case R.id.buttonAfterActivitySave:
@@ -82,9 +82,18 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 				finish();
 				break;
 			case R.id.buttonAfterActivityDiscard:
-				returnIntent.putExtra(ActivityActivity.SAVE_TAG, false);
-				setResult(RESULT_OK, returnIntent);
-				finish();
+				
+				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						returnIntent.putExtra(ActivityActivity.SAVE_TAG, false);
+						setResult(RESULT_OK, returnIntent);
+						finish();
+					}
+				};
+				MyDialog.showAlertDialog(this, R.string.dialog_message_romve, R.string.empty_string,
+					android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
+				
 				break;
 			case R.id.buttonAfterActivityRemind:
 				showReminderDialog();

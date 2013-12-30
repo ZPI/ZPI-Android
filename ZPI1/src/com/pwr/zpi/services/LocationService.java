@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -36,6 +37,7 @@ import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.listeners.ICountDownListner;
 import com.pwr.zpi.utils.AssetsPlayer;
 import com.pwr.zpi.utils.AssetsPlayer.AssetsMp3Files;
+import com.pwr.zpi.utils.CheckForLostGPS;
 import com.pwr.zpi.utils.CounterRunnable;
 import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.Pair;
@@ -56,7 +58,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	public static final int COUNTER_WARM_UP = 0x2;
 	private int state;
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
-	private static final long MAX_UPDATE_TIME = 5000;
+	public static final long MAX_UPDATE_TIME = 5000;
 	public static final int REQUIRED_ACCURACY = 40; //FIXME change to lower
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
@@ -67,6 +69,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	private ArrayList<Location> locationList;
 	private SingleRun singleRun;
 	private Calendar calendar;
+	private Timer lostGPSTimer;
 	// time counting fields
 	private Handler handler;
 	private Runnable timeHandler;
@@ -75,6 +78,7 @@ public class LocationService extends Service implements LocationListener, Connec
 	private SpeechSynthezator speechSynthezator;
 	private AssetsPlayer soundsPlayer;
 	private int countDownTime;
+	private boolean gpsLost;
 	
 	long startTime;
 	long pauseStartTime;
@@ -253,11 +257,13 @@ public class LocationService extends Service implements LocationListener, Connec
 		isConnected = false;
 		connectionFailed = false;
 		isWromUpInProgress = false;
+		gpsLost = true;
 		handler = new Handler();
 		mLocationClient = new LocationClient(getApplicationContext(), this, this);
 		mLocationRequest = LocationRequest.create();
 		mLocationRequest.setInterval(LOCATION_UPDATE_FREQUENCY);
 		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		//	mLocationRequest.setSmallestDisplacement(ActivityActivity.MIN_SPEED_FOR_AUTO_PAUSE); //TODO check how its working
 		mLocationClient.connect();
 		Log.i(TAG, "Service creating");
 		soundsPlayer = new AssetsPlayer(getApplicationContext(), AssetsMp3Files.Beep);
@@ -279,7 +285,15 @@ public class LocationService extends Service implements LocationListener, Connec
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		//		Log.i(TAG, "new Location state: " + state);
+		Log.i(TAG, "new Location state: " + state);
+		
+		gpsLost = false;
+		if (lostGPSTimer != null)
+		{
+			lostGPSTimer.cancel();
+		}
+		lostGPSTimer = new Timer();
+		lostGPSTimer.schedule(new CheckForLostGPS(this), 0, 1000);
 		
 		if (state == STARTED) {
 			locationList.add(location);
@@ -351,14 +365,15 @@ public class LocationService extends Service implements LocationListener, Connec
 		
 		LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
 		//service.addGpsStatusListener(this);
-		short gpsStatus = 0;
+		short gpsStatus = MainScreenActivity.NO_GPS_SIGNAL_INFO;
 		
 		boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		
 		if (!enabled) {
 			gpsStatus = MainScreenActivity.GPS_NOT_ENABLED;
 		}
-		else if (isConnected && (latestLocation == null || latestLocation.getAccuracy() > REQUIRED_ACCURACY)) {
+		else if (gpsLost
+			|| (isConnected && (latestLocation == null || latestLocation.getAccuracy() > REQUIRED_ACCURACY))) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -587,11 +602,25 @@ public class LocationService extends Service implements LocationListener, Connec
 		singleRun.setDistance(distance);
 		singleRun.setTraceWithTime(traceWithTime);
 		singleRun.setName(name);
-		//TODO remove
-		Log.i("debug1", time + " " + distance + " " + name);
 		
 		// store in DB
 		Database db = new Database(this);
 		db.insertSingleRun(singleRun);
 	}
+	
+	public void onLostGPSSignal()
+	{
+		Log.i("debug1", "gpsLost");
+		gpsLost = true;
+		for (RunListener listener : listeners)
+		{
+			try {
+				listener.handleLostGPS();
+			}
+			catch (RemoteException e) {
+				Log.w(TAG, "Failed to tell listener" + listener + " about update ", e);
+			}
+		}
+	}
+	
 }
