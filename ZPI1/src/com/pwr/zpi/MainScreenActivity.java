@@ -461,19 +461,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		DialogFactory.getDialog(DialogsEnum.NoTTSData, this, positive, null).show();
 	}
 	
-	public void showGPSAccuracy() {
+	public void showGPSAccuracy(final double accuracy) {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					//					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
-					//we can use other providers when gps is lost during activity, but I think we shouldn't start it with no GPS, thats why I set accurecy to max when gps is off
-					if (gpsStatus == NO_GPS_SIGNAL || gpsStatus == NO_GPS_SIGNAL_INFO || gpsStatus == GPS_NOT_ENABLED) {
-						gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
-					}
-					else {
-						gpsDisplayer.updateStrengthSignal(mLastLocation.getAccuracy());
-					}
+					
+					gpsDisplayer.updateStrengthSignal(accuracy);
+					
 				}
 				catch (Throwable t) {
 					Log.e(TAG, "Error while updating the UI with tweets", t);
@@ -760,7 +755,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			
 			gpsStatus = api.getGPSStatus();
 			mLastLocation = location;
-			showGPSAccuracy();
+			showGPSAccuracy(location.getAccuracy());
 		}
 		
 		@Override
@@ -783,7 +778,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			Log.i("debug1", "Main screen: lostGPS");
 			gpsStatus = api.getGPSStatus();
 			Log.i("debug1", "Main screen gps_status:" + gpsStatus);
-			showGPSAccuracy();
+			showGPSAccuracy(Double.MAX_VALUE);
 		}
 	};
 	
