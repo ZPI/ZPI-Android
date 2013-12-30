@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
+import android.widget.TextView;
 
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
@@ -40,6 +41,7 @@ import com.pwr.zpi.database.entity.SingleRun;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
+import com.pwr.zpi.utils.TimeFormatter;
 
 public class HistoryActivity extends Activity implements GestureListener, OnItemClickListener {
 	
@@ -49,6 +51,16 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	private ListView listViewThisWeek;
 	private ListView listViewThisMonth;
 	private ListView listViewAll;
+	private TextView workoutsWeekCount;
+	private TextView workoutsMonthCount;
+	private TextView workoutsAllCount;
+	private TextView workoutsWeekTime;
+	private TextView workoutsMonthTime;
+	private TextView workoutsAllTime;
+	private TextView workoutsWeekDistance;
+	private TextView workoutsMonthDistance;
+	private TextView workoutsAllDistance;
+	
 	private ImageButton mainSceenButton;
 	
 	private static final String TAB_SPEC_1_TAG = "TabSpec1";
@@ -120,6 +132,20 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		listViewThisWeek = (ListView) findViewById(R.id.listViewThisWeek);
 		listViewThisMonth = (ListView) findViewById(R.id.listViewThisMonth);
 		listViewAll = (ListView) findViewById(R.id.listViewAll);
+		
+		View weekSummary = findViewById(R.id.runSummaryThisWeek);
+		View monthSummary = findViewById(R.id.runSummaryThisMonth);
+		View allSummary = findViewById(R.id.runSummaryAll);
+		
+		workoutsWeekCount = (TextView) weekSummary.findViewById(R.id.textViewHisotryWorkoutsCount);
+		workoutsMonthCount = (TextView) monthSummary.findViewById(R.id.textViewHisotryWorkoutsCount);
+		workoutsAllCount = (TextView) allSummary.findViewById(R.id.textViewHisotryWorkoutsCount);
+		workoutsWeekTime = (TextView) weekSummary.findViewById(R.id.textViewHistoryWorkoutsTime);
+		workoutsMonthTime = (TextView) monthSummary.findViewById(R.id.textViewHistoryWorkoutsTime);
+		workoutsAllTime = (TextView) allSummary.findViewById(R.id.textViewHistoryWorkoutsTime);
+		workoutsWeekDistance = (TextView) weekSummary.findViewById(R.id.textViewHistoryWorkoutsDistance);
+		workoutsMonthDistance = (TextView) monthSummary.findViewById(R.id.textViewHistoryWorkoutsDistance);
+		workoutsAllDistance = (TextView) allSummary.findViewById(R.id.textViewHistoryWorkoutsDistance);
 		
 		mainSceenButton = (ImageButton) findViewById(R.id.buttonHistoryMainScreen);
 		//adapterThisWeek.getFilter().filter();
@@ -297,6 +323,7 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 							Database db = new Database(HistoryActivity.this);
 							db.deleteRun(toDelete.getRunID());
 							db.close();
+							recountSummary();
 						}
 					};
 					MyDialog.showAlertDialog(this, R.string.dialog_message_romve, R.string.empty_string,
@@ -394,11 +421,41 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 			listViewThisMonth.setAdapter(adapterThisMonth);
 			listViewAll.setAdapter(adapterThisAll);
 			
+			setSummary(run_data, workoutsAllCount, workoutsAllTime, workoutsAllDistance);
+			setSummary(run_data_month, workoutsMonthCount, workoutsMonthTime, workoutsMonthDistance);
+			setSummary(run_data_week, workoutsWeekCount, workoutsWeekTime, workoutsWeekDistance);
 			registerForContextMenu(listViewThisWeek);
 			registerForContextMenu(listViewThisMonth);
 			registerForContextMenu(listViewAll);
 			
 		}
+		
+	}
+	
+	private void setSummary(List<SingleRun> runList, TextView runCount, TextView runTotalTime, TextView runTotalDistance)
+	{
+		runCount.setText(runList.size() + "");
+		long totalTime = 0;
+		double totalDistance = 0;
+		for (SingleRun run : runList)
+		{
+			totalTime += run.getRunTime();
+			totalDistance += run.getDistance();
+		}
+		runTotalTime.setText(TimeFormatter.formatTimeHHMMSS(totalTime));
+		runTotalDistance.setText(String.format("%.3fkm", totalDistance / 1000));
+	}
+	
+	//after deleting run
+	private void recountSummary()
+	{
+		ArrayList<SingleRun> run_data_month = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+			run_data), FILTER_MONTH);
+		ArrayList<SingleRun> run_data_week = (ArrayList<SingleRun>) removeOlderThen(new ArrayList<SingleRun>(
+			run_data), FILTER_WEEK);
+		setSummary(run_data, workoutsAllCount, workoutsAllTime, workoutsAllDistance);
+		setSummary(run_data_month, workoutsMonthCount, workoutsMonthTime, workoutsMonthDistance);
+		setSummary(run_data_week, workoutsWeekCount, workoutsWeekTime, workoutsWeekDistance);
 		
 	}
 	

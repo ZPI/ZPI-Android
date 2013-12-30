@@ -30,11 +30,11 @@ import com.pwr.zpi.utils.AssetsPlayer;
 import com.pwr.zpi.utils.AssetsPlayer.AssetsMp3Files;
 import com.pwr.zpi.utils.CounterRunnable;
 import com.pwr.zpi.utils.LocationAPI;
-import com.pwr.zpi.utils.LocationAPI.IOnLocationChangeCallback;
+import com.pwr.zpi.utils.LocationAPI.ILocationCallback;
 import com.pwr.zpi.utils.Notifications;
 import com.pwr.zpi.utils.SpeechSynthezator;
 
-public class LocationService extends Service implements ICountDownListner, IOnLocationChangeCallback {
+public class LocationService extends Service implements ICountDownListner, ILocationCallback {
 	
 	private static final String TAG = LocationService.class.getSimpleName();
 	
@@ -42,6 +42,7 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 	public static final int COUNTER_COUNT_DOWN = 0x1;
 	public static final int COUNTER_WARM_UP = 0x2;
 	public static final int REQUIRED_ACCURACY = 40;
+	public static final long MAX_UPDATE_TIME = 5000;
 	
 	private final List<RunListener> listeners = new ArrayList<RunListener>();
 	private boolean isFirstTime;
@@ -65,8 +66,7 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 		
 		info = new RunInfo(getApplicationContext());
 		handler = new Handler();
-		
-		locationAPI = new LocationAPI(getApplicationContext(), this);
+		locationAPI = new LocationAPI(getApplicationContext(), this, true);
 		
 		Log.i(TAG, "Service creating");
 		soundsPlayer = new AssetsPlayer(getApplicationContext(), AssetsMp3Files.Beep);
@@ -196,7 +196,7 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 		@Override
 		public void doSaveRun(boolean save, String name) throws RemoteException {
 			if (save) {
-				saveRun(name);
+				info.saveRun(name);
 			}
 			info.zeroFieldsAfterSave();
 			stopForeground(true);
@@ -236,15 +236,15 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 		
 		LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
 		//service.addGpsStatusListener(this);
-		short gpsStatus = 0;
+		short gpsStatus = MainScreenActivity.NO_GPS_SIGNAL_INFO;
 		
 		boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		
 		if (!enabled) {
 			gpsStatus = MainScreenActivity.GPS_NOT_ENABLED;
 		}
-		else if (locationAPI.isConnected()
-			&& (latestLocation == null || latestLocation.getAccuracy() > REQUIRED_ACCURACY)) {
+		else if (locationAPI.isGPSLost()
+			|| (locationAPI.isConnected() && (latestLocation == null || latestLocation.getAccuracy() > REQUIRED_ACCURACY))) {
 			gpsStatus = MainScreenActivity.NO_GPS_SIGNAL;
 		}
 		else {
@@ -401,7 +401,6 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 	}
 	
 	private void startCountingTime() {
-		//		startTime = System.currentTimeMillis();
 		handler.post(zeroFieldsHandler);
 		handler.post(startTimeSetHandler);
 		handler.post(timeHandler);
@@ -422,9 +421,7 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 			synchronized (info.getTime()) {
 				info.updateTime();
 				boolean changeWorkout = false;
-				Log.i(TAG,
-					"current and start and pause times: " + System.currentTimeMillis() + " " + info.getStartTime()
-						+ " " + info.getPauseTime() + " " + info.getPauseStartTime());
+				
 				if (workout != null) {
 					processWorkout();
 					changeWorkout = true;
@@ -442,8 +439,6 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 					}
 					catch (RemoteException e) {
 						Log.w(TAG, "Failed to tell listener about new Time ", e);
-						//		it.remove();
-						
 					}
 				}
 			}
@@ -458,13 +453,9 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 		}
 	}
 	
-	// invoke when finishing activity
-	private void saveRun(String name) {
-		info.saveRun(name);
-	}
-	
 	@Override
 	public void onLocationChanged(Location location) {
+		
 		if (info.isStateStarted()) {
 			info.addToLocationList(location);
 			updateTraceWithTime(location);
@@ -500,4 +491,18 @@ public class LocationService extends Service implements ICountDownListner, IOnLo
 			}
 		}
 	}
+	
+	@Override
+	public void onLostGPSSignal() {
+		Log.i("debug1", "gpsLost");
+		for (RunListener listener : listeners) {
+			try {
+				listener.handleLostGPS();
+			}
+			catch (RemoteException e) {
+				Log.w(TAG, "Failed to tell listener" + listener + " about update ", e);
+			}
+		}
+	}
+	
 }

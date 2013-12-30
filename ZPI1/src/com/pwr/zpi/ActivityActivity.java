@@ -54,6 +54,7 @@ import com.pwr.zpi.listeners.ActityButtonStateChangeListener;
 import com.pwr.zpi.listeners.MapTrackingListener;
 import com.pwr.zpi.listeners.OnNextActionListener;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.ActualPaceCalculator;
 import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
@@ -62,7 +63,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
-	private static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
+	public static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
 	public static final String DISTANCE_TAG = "distance";
@@ -77,6 +78,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private static final int paceID = 1;
 	private static final int avgPaceID = 2;
 	private static final int timeID = 3;
+	private static final int lastKmPaceID = 4;
 	
 	//map options
 	public static final float TRACE_THICKNESS = 5;
@@ -123,6 +125,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private double lastDistance;
 	private Long time = 0L;
 	private int runNumber;
+	private ActualPaceCalculator actualPaceCalculator;
 	
 	//diplay data changing
 	private int dataTextView1Content;
@@ -139,6 +142,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	
 	// progress dialog lost gps
 	private ProgressDialog lostGPSDialog;
+	private boolean progressDialogDisplayed;
 	
 	// workout drawer fields
 	private BaseAdapter drawerListAdapter;
@@ -151,17 +155,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view);
-		long debugT = System.currentTimeMillis();
-		Log.i("time", debugT + "");
 		initFields();
 		addListeners();
-		long debugT2 = System.currentTimeMillis();
-		Log.i("time", debugT2 + " \t" + (debugT2 - debugT));
 		initDisplayedData();
 		
 		prepareServiceAndStart();
-		long debugT3 = System.currentTimeMillis();
-		Log.i("time", debugT3 + " \t" + (debugT3 - debugT2));
 		
 		//	Debug.stopMethodTracing();
 	}
@@ -222,6 +220,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView2Content = timeID;
 		
 		isPaused = false;
+		progressDialogDisplayed = false;
 		
 		Intent intent = getIntent();
 		listView = (ListView) findViewById(R.id.left_drawer);
@@ -459,6 +458,8 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				if (isServiceConnected) {
 					
+					progressDialogDisplayed = true;
+					
 					lostGPSDialog = ProgressDialog.show(ActivityActivity.this,
 						getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
 					lostGPSDialog.setCancelable(true);
@@ -535,6 +536,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			@Override
 			public void run() {
 				if (!isPaused) {
+					actualPaceCalculator.reset();
 					isPaused = true;
 					startStopLayout.setVisibility(View.INVISIBLE);
 					resumeButton.setVisibility(View.VISIBLE);
@@ -651,11 +653,12 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				}
 				// mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 				
-				float speed = location.getSpeed();
-				//				GPSAccuracy.setText(String.format("%s %.2f m", getString(R.string.gps_accuracy), location.getAccuracy()));
 				gpsDisplayer.updateStrengthSignal(location.getAccuracy());
 				
-				pace = (double) 1 / (speed * 60 / 1000);
+				if (actualPaceCalculator == null) {
+					actualPaceCalculator = new ActualPaceCalculator();
+				}
+				pace = actualPaceCalculator.addPoint(location);//(double) 1 / (speed * 60 / 1000);
 				
 				double lastDistance = ActivityActivity.this.lastDistance / 1000;
 				
@@ -702,6 +705,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					if (lostGPSDialog != null) {
 						lostGPSDialog.dismiss();
 						lostGPSDialog = null;
+						progressDialogDisplayed = false;
 					}
 					if (mLastLocation != null) {
 						countData(newLocation, mLastLocation);
@@ -711,8 +715,10 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					updateData(DataTextView2, dataTextView2Content);
 				}
 				else if (newLocation.getAccuracy() >= LocationService.REQUIRED_ACCURACY) {
-					// TODO make progress dialog, waiting for gps
-					showLostGpsSignalDialog();
+					//prevents displaying two progress Dialogs at once
+					if (!progressDialogDisplayed) {
+						showLostGpsSignalDialog();
+					}
 				}
 				mPreLastLocation = mLastLocation;
 				mLastLocation = newLocation;
@@ -857,6 +863,22 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		@Override
 		public void handleCountDownChange(int countDownNumber) throws RemoteException {
 			handleCountDownUpdate(countDownNumber);
+		}
+		
+		@Override
+		public void handleLostGPS() throws RemoteException {
+			if (!progressDialogDisplayed) {
+				showLostGpsSignalDialog();
+			}
+			handlerForService.post(new Runnable() {
+				
+				@Override
+				public void run() {
+					gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
+					
+				}
+			});
+			
 		}
 		
 	};

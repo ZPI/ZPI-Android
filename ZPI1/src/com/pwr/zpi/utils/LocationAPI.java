@@ -1,5 +1,8 @@
 package com.pwr.zpi.utils;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
@@ -11,22 +14,29 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.pwr.zpi.services.LocationService;
 
 public class LocationAPI implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener {
 	
 	private static final String TAG = LocationAPI.class.getSimpleName();
 	private static final long LOCATION_UPDATE_FREQUENCY = 1000;
 	
-	private final IOnLocationChangeCallback callback;
+	private final ILocationCallback callback;
 	
 	private final LocationClient mLocationClient;
 	private final LocationRequest mLocationRequest;
 	private boolean isConnected;
 	private boolean connectionFailed;
-	private ConnectionResult connectionResult;
+	private boolean gpsLost;
 	
-	public LocationAPI(Context context, IOnLocationChangeCallback callback) {
+	private ConnectionResult connectionResult;
+	private Timer lostGPSTimer;
+	
+	private boolean checkGPS = false;
+	
+	public LocationAPI(Context context, ILocationCallback callback, boolean checkGPS) {
 		this.callback = callback;
+		this.checkGPS = checkGPS;
 		isConnected = false;
 		connectionFailed = false;
 		mLocationClient = new LocationClient(context, this, this);
@@ -38,6 +48,14 @@ public class LocationAPI implements LocationListener, ConnectionCallbacks, OnCon
 	
 	@Override
 	public void onLocationChanged(Location location) {
+		if (checkGPS) {
+			gpsLost = false;
+			if (lostGPSTimer != null) {
+				lostGPSTimer.cancel();
+			}
+			lostGPSTimer = new Timer();
+			lostGPSTimer.schedule(new CheckForLostGPS(), 0, 1000);
+		}
 		callback.onLocationChanged(location);
 	}
 	
@@ -80,9 +98,37 @@ public class LocationAPI implements LocationListener, ConnectionCallbacks, OnCon
 		return connectionResult;
 	}
 	
-	public interface IOnLocationChangeCallback {
+	public boolean isGPSLost() {
+		return gpsLost;
+	}
+	
+	public interface ILocationCallback {
 		public void onLocationChanged(Location location);
 		
 		public void onConnectionFailed(ConnectionResult connectionResult);
+		
+		public void onLostGPSSignal();
+	}
+	
+	class CheckForLostGPS extends TimerTask {
+		
+		private long beginTime;
+		
+		public CheckForLostGPS() {
+			beginTime = System.currentTimeMillis();
+		}
+		
+		public void startFromBeginning() {
+			beginTime = System.currentTimeMillis();
+		}
+		
+		@Override
+		public void run() {
+			if (System.currentTimeMillis() - beginTime > LocationService.MAX_UPDATE_TIME) {
+				gpsLost = true;
+				callback.onLostGPSSignal();
+				cancel();
+			}
+		}
 	}
 }

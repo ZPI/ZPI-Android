@@ -24,7 +24,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -87,12 +86,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private TextView GPSSignalTextViewValue;
 	private TextView pullText;
 	
-	long debugT1;
-	long debugT2;
-	long debugT3;
-	
 	private boolean isServiceConnected;
-	private int gpsStatus = -1;
+	private int gpsStatus = NO_GPS_SIGNAL_INFO;
 	private View mCurrent;
 	private Handler handler;
 	private Workout workout;
@@ -103,9 +98,10 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private boolean isPlanLoaded;
 	private Workout todayWorkout;
 	
-	public static final short GPS_NOT_ENABLED = 0;
-	public static final short NO_GPS_SIGNAL = 1;
-	public static final short GPS_WORKING = 2;
+	public static final short NO_GPS_SIGNAL_INFO = 0;
+	public static final short GPS_NOT_ENABLED = 1;
+	public static final short NO_GPS_SIGNAL = 2;
+	public static final short GPS_WORKING = 3;
 	
 	private static final short LEFT = 0;
 	private static final short RIGHT = 1;
@@ -145,7 +141,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private void init() {
 		isServiceConnected = false;
 		
-		//		GPSSignalTextView = (TextView) findViewById(R.id.textViewGPSSignal);
 		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayer);
 		settingsButton = (ImageButton) findViewById(R.id.buttonSettings);
 		historyButton = (ImageButton) findViewById(R.id.buttonHistory);
@@ -161,6 +156,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
 		treningPlansLayout = (LinearLayout) findViewById(R.id.treningPlansBar);
 		
+		gpsStatus = NO_GPS_SIGNAL_INFO;
+		
+		setFont();
+		validateTreningPlan();
+	}
+	
+	private void setFont()
+	{
 		//setting fonts
 		historyButtonDesc = (TextView) findViewById(R.id.textViewHistoryDesc);
 		workoutsButtonDesc = (TextView) findViewById(R.id.textViewPlansDesc);
@@ -172,13 +175,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		workoutsButtonDesc.setTypeface(type);
 		pullText.setTypeface(type);
 		
-		// locationListener = new MyLocationListener(this);
-		
-		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(TreningPlans.TRENING_PLANS_IS_ENABLED_KEY, true).commit(); //FIXME delete
-		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(TreningPlans.TRENING_PLANS_ID_KEY, 0).commit(); //FIXME delete
-		//		PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(TreningPlans.TRENING_PLANS_START_DATE_KEY, Calendar.getInstance().getTimeInMillis()).commit(); //FIXME delete
-		
-		validateTreningPlan();
 	}
 	
 	private void validateTreningPlan() {
@@ -465,13 +461,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		DialogFactory.getDialog(DialogsEnum.NoTTSData, this, positive, null).show();
 	}
 	
-	public void showGPSAccuracy() {
+	public void showGPSAccuracy(final double accuracy) {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					//					GPSSignalTextView.setText(String.format("%.2fm", mLastLocation.getAccuracy()));
-					gpsDisplayer.updateStrengthSignal(mLastLocation.getAccuracy());
+					
+					gpsDisplayer.updateStrengthSignal(accuracy);
+					
 				}
 				catch (Throwable t) {
 					Log.e(TAG, "Error while updating the UI with tweets", t);
@@ -500,10 +497,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	
 	private void startActivityIfPossible(boolean fromTreningPlan) {
 		switch (gpsStatus) {
-			case -1:
-				// Shouldn't be here;
-				Log.e("Service_info", "no gps status info");
-				break;
+		
 			case GPS_NOT_ENABLED:
 				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
 					@Override
@@ -517,13 +511,12 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 					android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
 				
 				break;
+			case NO_GPS_SIGNAL_INFO:
 			case NO_GPS_SIGNAL:
 				MyDialog.showAlertDialog(this, R.string.dialog_message_low_gps_accuracy, R.string.empty_string,
 					android.R.string.ok, R.string.empty_string, null, null);
 				break;
 			default:
-				//debugT2 = System.currentTimeMillis();
-				//Log.i("time", (debugT2 - debugT1) + " srodek");
 				if (fromTreningPlan) {
 					PreferenceManager.getDefaultSharedPreferences(this).edit()
 						.putLong(TreningPlans.TRENING_PLAN_LAST_WORKOUT_DATE, Calendar.getInstance().getTimeInMillis());
@@ -634,16 +627,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	public void onSingleTapConfirmed(MotionEvent e) {
 		if (mCurrent != null) {
 			switch (mCurrent.getId()) {
-				case R.id.textViewGPSIndicator:
-					// if gps is not running
-					if (gpsStatus == GPS_NOT_ENABLED) {
-						Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-						startActivity(intent);
-					}
-					break;
 				case R.id.buttonStart:
-					debugT1 = System.currentTimeMillis();
-					//					Debug.startMethodTracing("calc");
 					startActivityIfPossible(false);
 					break;
 				case R.id.buttonHistory:
@@ -771,7 +755,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			
 			gpsStatus = api.getGPSStatus();
 			mLastLocation = location;
-			showGPSAccuracy();
+			showGPSAccuracy(location.getAccuracy());
 		}
 		
 		@Override
@@ -788,6 +772,14 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		@Override
 		public void handleCountDownChange(int countDownNumber) throws RemoteException {}
+		
+		@Override
+		public void handleLostGPS() throws RemoteException {
+			Log.i("debug1", "Main screen: lostGPS");
+			gpsStatus = api.getGPSStatus();
+			Log.i("debug1", "Main screen gps_status:" + gpsStatus);
+			showGPSAccuracy(Double.MAX_VALUE);
+		}
 	};
 	
 	private void getConnectionResult() {
