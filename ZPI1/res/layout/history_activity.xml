@@ -80,11 +80,19 @@
                         <ListView
                             android:id="@+id/listViewThisWeek"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginBottom="@dimen/activity_bigger_vertical_margin"
                             android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
+                            android:layout_weight="1"
                             android:background="@drawable/view_background"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
+
+                        <include
+                            android:id="@+id/runSummaryThisWeek"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            layout="@layout/history_run_summary"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -96,11 +104,19 @@
                         <ListView
                             android:id="@+id/listViewThisMonth"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="@dimen/activity_bigger_vertical_margin"
                             android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
                             android:background="@drawable/view_background"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
+
+                        <include
+                            android:id="@+id/runSummaryThisMonth"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            layout="@layout/history_run_summary"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -112,11 +128,19 @@
                         <ListView
                             android:id="@+id/listViewAll"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:layout_marginBottom="@dimen/activity_bigger_vertical_margin"
                             android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
                             android:background="@drawable/view_background"
                             android:cacheColorHint="@color/list_transparent_color" >
                         </ListView>
+
+                        <include
+                            android:id="@+id/runSummaryAll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            layout="@layout/history_run_summary" />
                     </LinearLayout>
                 </FrameLayout>
             </LinearLayout>
@@ -135,8 +159,8 @@
                 android:layout_centerVertical="true"
                 android:gravity="center"
                 android:text="@string/no_history_info"
-                android:textSize="@dimen/large_text_size"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="@dimen/large_text_size" />
         </RelativeLayout>
     </FrameLayout>
 
@@ -150,6 +174,5 @@
         android:background="@drawable/button_border_background"
         android:scaleType="centerInside"
         android:src="@drawable/ic_main_screen" />
-    
 
 </RelativeLayout>
