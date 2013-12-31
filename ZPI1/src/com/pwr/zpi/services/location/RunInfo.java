@@ -11,24 +11,34 @@ import android.util.Log;
 
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.database.entity.Workout;
+import com.pwr.zpi.database.entity.WorkoutActionWarmUp;
 import com.pwr.zpi.utils.Pair;
+import com.pwr.zpi.utils.SpeechSynthezator;
 
 public class RunInfo {
 	
 	private static final String TAG = RunInfo.class.getSimpleName();
+	
+	private ArrayList<Location> locationList;
+	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
+	private final SpeechSynthezator speechSynthezator;
+	private SingleRun singleRun;
+	private Calendar calendar;
+	private final Context context;
+	private Workout workout;
 	private State state;
 	private Long time;
+	
+	private boolean isFirstTime;
 	private double distance;
 	private long startTime;
 	private long pauseStartTime;
 	private long pauseTime;
-	private ArrayList<Location> locationList;
-	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
-	private SingleRun singleRun;
-	private Calendar calendar;
-	private Context context;
 	
-	public RunInfo(Context context) {
+	public RunInfo(Context context, SpeechSynthezator speechSynthezator) {
+		this.context = context;
+		this.speechSynthezator = speechSynthezator;
 		initFields();
 	}
 	
@@ -105,6 +115,7 @@ public class RunInfo {
 		pauseTime = 0;
 		time = 0L;
 		distance = 0;
+		isFirstTime = true;
 	}
 	
 	public boolean isStateStarted() {
@@ -161,6 +172,11 @@ public class RunInfo {
 		singleRun = new SingleRun();
 		singleRun.setStartDate(calendar.getTime());
 		traceWithTime = new LinkedList<LinkedList<Pair<Location, Long>>>();
+		
+		if (workout != null && !workout.getActions().isEmpty()) {
+			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+			workout.notifyListeners(workout.getActions().get(0));
+		}
 	}
 	
 	public void saveRun(String name) {
@@ -178,5 +194,52 @@ public class RunInfo {
 	
 	public void addToLocationList(Location location) {
 		locationList.add(location);
+	}
+	
+	public boolean isFirstTime() {
+		return isFirstTime;
+	}
+	
+	public void setIsFirstTime(boolean isFirstTime) {
+		this.isFirstTime = isFirstTime;
+	}
+	
+	public void prepareWorkout(Workout workout) {
+		this.workout = workout;
+		if (workout != null) {
+			workout.getOnNextActionListener().setConext(context);
+		}
+	}
+	
+	public boolean isWorkoutWarmUp() {
+		return workout != null && workout.isWarmUp();
+	}
+	
+	public int getWorkoutWarmUpMinutes() {
+		return ((WorkoutActionWarmUp) workout.getActions().get(0)).getWorkoutTime();
+	}
+	
+	public Workout getWorkout() {
+		return workout;
+	}
+	
+	public void setWorkoutWarmUpDone() {
+		workout.setWarmUpDone();
+	}
+	
+	public boolean progresWorkoutIfExists() {
+		boolean changeWorkout = false;
+		if (workout != null) {
+			processWorkout();
+			changeWorkout = true;
+		}
+		return changeWorkout;
+	}
+	
+	public void processWorkout() {
+		if (workout.hasNextAction()) {
+			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
+			workout.progressWorkout(getDistance(), getTime());
+		}
 	}
 }
