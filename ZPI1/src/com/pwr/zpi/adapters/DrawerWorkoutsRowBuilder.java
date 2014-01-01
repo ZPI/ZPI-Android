@@ -113,6 +113,7 @@ public class DrawerWorkoutsRowBuilder extends RowBuilder<WorkoutAction> {
 			}
 			else {
 				rowHolder.actionTextAdvanced.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
+				rowHolder.actionTextAdvanced.setBackgroundColor(context.getResources().getColor(textColor));
 			}
 		}
 		else {
@@ -124,7 +125,7 @@ public class DrawerWorkoutsRowBuilder extends RowBuilder<WorkoutAction> {
 				rowHolder.actionTextAdvanced.setText(Workout.formatActionValue(action, null));
 			}
 		}
-		rowHolder.actionTextAdvanced.setTextColor(context.getResources().getColor(textColor));
+		
 	}
 	
 	private class RowHolder extends AbstractRowHolder {
