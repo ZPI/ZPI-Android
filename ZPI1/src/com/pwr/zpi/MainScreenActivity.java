@@ -51,6 +51,7 @@ import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.mock.TreningPlans;
 import com.pwr.zpi.services.LocationService;
+import com.pwr.zpi.utils.LocationAPI.GPSServiceStatus;
 import com.pwr.zpi.utils.Reminders;
 import com.pwr.zpi.utils.SpeechSynthezator;
 import com.pwr.zpi.utils.Time;
@@ -87,7 +88,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private TextView pullText;
 	
 	private boolean isServiceConnected;
-	private int gpsStatus = NO_GPS_SIGNAL_INFO;
+	private GPSServiceStatus gpsStatus = GPSServiceStatus.NO_GPS_SIGNAL_INFO;
 	private View mCurrent;
 	private Handler handler;
 	private Workout workout;
@@ -97,11 +98,6 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 	private HashMap<Date, Workout> datedWorkouts;
 	private boolean isPlanLoaded;
 	private Workout todayWorkout;
-	
-	public static final short NO_GPS_SIGNAL_INFO = 0;
-	public static final short GPS_NOT_ENABLED = 1;
-	public static final short NO_GPS_SIGNAL = 2;
-	public static final short GPS_WORKING = 3;
 	
 	private static final short LEFT = 0;
 	private static final short RIGHT = 1;
@@ -156,14 +152,13 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		GPSSignalTextViewValue = (TextView) findViewById(R.id.textViewGPSIndicator);
 		treningPlansLayout = (LinearLayout) findViewById(R.id.treningPlansBar);
 		
-		gpsStatus = NO_GPS_SIGNAL_INFO;
+		gpsStatus = GPSServiceStatus.NO_GPS_SIGNAL_INFO;
 		
 		setFont();
 		validateTreningPlan();
 	}
 	
-	private void setFont()
-	{
+	private void setFont() {
 		//setting fonts
 		historyButtonDesc = (TextView) findViewById(R.id.textViewHistoryDesc);
 		workoutsButtonDesc = (TextView) findViewById(R.id.textViewPlansDesc);
@@ -233,10 +228,8 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		}
 	}
 	
-	private void disableTraningPlans()
-	{
-		if (!TREANING_PLANS_ACTIVE)
-		{
+	private void disableTraningPlans() {
+		if (!TREANING_PLANS_ACTIVE) {
 			treningPlansLayout.setVisibility(View.GONE);
 			View underline = findViewById(R.id.viewTreningPlansUnderline);
 			underline.setVisibility(View.GONE);
@@ -291,7 +284,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		else {
 			try {
 				if (isServiceConnected) {
-					gpsStatus = api.getGPSStatus();
+					gpsStatus = GPSServiceStatus.values()[api.getGPSStatus()];
 					handleGPSStatusChange();
 					api.onSoundSettingChange(soundEnabled);
 					Log.i(TAG, "changed sound settings in servie");
@@ -308,7 +301,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		super.onWindowFocusChanged(hasFocus);
 		try {
 			if (isServiceConnected) {
-				gpsStatus = api.getGPSStatus();
+				gpsStatus = GPSServiceStatus.values()[api.getGPSStatus()];
 			}
 			
 		}
@@ -730,7 +723,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 			api = RunListenerApi.Stub.asInterface(service);
 			try {
 				api.addListener(runListener);
-				gpsStatus = api.getGPSStatus();
+				gpsStatus = GPSServiceStatus.values()[api.getGPSStatus()];
 				handleGPSStatusChange();
 				getConnectionResult();
 			}
@@ -753,7 +746,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		public void handleLocationUpdate() throws RemoteException {
 			Location location = api.getLatestLocation();
 			
-			gpsStatus = api.getGPSStatus();
+			gpsStatus = GPSServiceStatus.values()[api.getGPSStatus()];
 			mLastLocation = location;
 			showGPSAccuracy(location.getAccuracy());
 		}
@@ -776,7 +769,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		@Override
 		public void handleLostGPS() throws RemoteException {
 			Log.i("debug1", "Main screen: lostGPS");
-			gpsStatus = api.getGPSStatus();
+			gpsStatus = GPSServiceStatus.values()[api.getGPSStatus()];
 			Log.i("debug1", "Main screen gps_status:" + gpsStatus);
 			showGPSAccuracy(Double.MAX_VALUE);
 		}
