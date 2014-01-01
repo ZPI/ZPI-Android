@@ -208,4 +208,9 @@
     <string name="trening_plan_confirm_disable_title">Trening plan disabled</string>
     <string name="trening_plan_confirm_disable_message">All reminders and workouts for selected trening plan have been disabled.</string>
     
+    <!-- exporting files -->
+    <string name ="file_saved_in">File saved in </string>
+    <string name ="export">Export</string>
+    <string name ="exporting">Exporting file...</string>
+    
 </resources>

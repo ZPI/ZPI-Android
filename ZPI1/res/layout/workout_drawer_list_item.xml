@@ -39,10 +39,10 @@
         <TextView
             android:id="@+id/textViewWorkoutActionText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_gravity="center|right"
-            android:gravity="right"
+            android:gravity="center|right"
             android:textColor="@color/white"
             android:visibility="gone"
             android:text="Large Text"
