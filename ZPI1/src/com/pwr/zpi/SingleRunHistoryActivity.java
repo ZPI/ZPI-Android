@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -71,8 +71,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	private RelativeLayout leftButton;
 	private RelativeLayout annotationRelativeLayout;
 	private RelativeLayout mapLayout;
-	private ImageButton enlargeButton;
-	private ImageButton reduceButton;
+	private ImageView enlargeButton;
+	private ImageView reduceButton;
 	private SupportMapFragment mapFragment;
 	private ProgressDialog exportRunDialog;
 	
@@ -192,8 +192,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 		runNameTextView = (TextView) findViewById(R.id.textViewSingleRunName);
 		annotationRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutSingleRunAnnotations);
 		mapLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMapLayout);
-		enlargeButton = (ImageButton) findViewById(R.id.imageButtonEnlargeMap);
-		reduceButton = (ImageButton) findViewById(R.id.imageButtonReduceMap);
+		enlargeButton = (ImageView) findViewById(R.id.imageButtonEnlargeMap);
+		reduceButton = (ImageView) findViewById(R.id.imageButtonReduceMap);
 		annotationsCheckBox.setChecked(true);
 		allMarkers = new LinkedList<Marker>();
 		
@@ -276,13 +276,13 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.MATCH_PARENT));
 				reduceButton.setVisibility(View.VISIBLE);
-				//mainLayout.setVisibility(View.GONE);
-				//mapLayout.setVisibility(View.VISIBLE);
+				enlargeButton.setVisibility(View.GONE);
 				
 			}
 			else if (view == reduceButton)
 			{
 				reduceButton.setVisibility(View.GONE);
+				enlargeButton.setVisibility(View.VISIBLE);
 				View layout = (View) mapFragment.getView().getParent();
 				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1));
 				

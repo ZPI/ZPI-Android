@@ -4,6 +4,7 @@
     <color name="main_color">#258afd</color>
 	<color name="gray_color">#C3D1DA</color>
     <color name="activity_blue">#8800AAFF</color>
+    <color name="white_transparent">#88FFFFFF</color>
     <color name="activity_blue_pressed">#2000AAFF</color>
     <color name="single_run_text_blue">#023C85</color>
     <color name="single_run_text_light_blue">#0077FF</color>
