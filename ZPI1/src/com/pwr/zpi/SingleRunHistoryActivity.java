@@ -2,20 +2,27 @@ package com.pwr.zpi;
 
 import java.util.LinkedList;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.files.GPXParser;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
 import com.pwr.zpi.utils.LineChartDataEvaluator;
 import com.pwr.zpi.utils.MarkerWithTextBuilder;
@@ -62,8 +70,15 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	private CheckBox annotationsCheckBox;
 	private RelativeLayout leftButton;
 	private RelativeLayout annotationRelativeLayout;
+	private RelativeLayout mapLayout;
+	private ImageView enlargeButton;
+	private ImageView reduceButton;
+	private SupportMapFragment mapFragment;
+	private ProgressDialog exportRunDialog;
 	
 	private SingleRun run;
+	
+	private boolean willExportFile = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +140,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 					mMap.setOnCameraChangeListener(null);
 				}
 			});
+			
 			LinkedList<LinkedList<Pair<Location, Long>>> trace = run.getTraceWithTime();
 			
 			if (!trace.isEmpty()) {
@@ -137,6 +153,7 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			progressBar.setVisibility(View.GONE);
 			LatLngBounds bounds = boundsBuilder.build();
 			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+			
 		}
 	}
 	
@@ -157,11 +174,12 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 				.icon(
 					BitmapDescriptorFactory
 						.fromBitmap(MarkerWithTextBuilder.markerWithText(this, distance).getBitmap())));
+		
 		allMarkers.add(marker);
 	}
 	
 	private void initFields() {
-		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
 		chartButton = (Button) findViewById(R.id.buttonCharts);
 		splitsButton = (Button) findViewById(R.id.buttonSplits);
@@ -173,6 +191,9 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 		annotationsCheckBox = (CheckBox) findViewById(R.id.checkBoxSingleRunAnnotations);
 		runNameTextView = (TextView) findViewById(R.id.textViewSingleRunName);
 		annotationRelativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutSingleRunAnnotations);
+		mapLayout = (RelativeLayout) findViewById(R.id.relativeLayoutMapLayout);
+		enlargeButton = (ImageView) findViewById(R.id.imageButtonEnlargeMap);
+		reduceButton = (ImageView) findViewById(R.id.imageButtonReduceMap);
 		annotationsCheckBox.setChecked(true);
 		allMarkers = new LinkedList<Marker>();
 		
@@ -210,6 +231,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 		annotationsCheckBox.setOnCheckedChangeListener(this);
 		leftButton.setOnClickListener(this);
 		annotationRelativeLayout.setOnClickListener(this);
+		reduceButton.setOnClickListener(this);
+		enlargeButton.setOnClickListener(this);
 	}
 	
 	@Override
@@ -247,6 +270,23 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			{
 				annotationsCheckBox.setChecked(!annotationsCheckBox.isChecked());
 			}
+			else if (view == enlargeButton)
+			{
+				View layout = (View) mapFragment.getView().getParent();
+				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+					LayoutParams.MATCH_PARENT));
+				reduceButton.setVisibility(View.VISIBLE);
+				enlargeButton.setVisibility(View.GONE);
+				
+			}
+			else if (view == reduceButton)
+			{
+				reduceButton.setVisibility(View.GONE);
+				enlargeButton.setVisibility(View.VISIBLE);
+				View layout = (View) mapFragment.getView().getParent();
+				layout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1));
+				
+			}
 		}
 	}
 	
@@ -268,6 +308,30 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 			chartButton.setFocusable(true);
 			splitsButton.setTextColor(getResources().getColor(R.color.single_run_text_light_blue));
 			chartButton.setTextColor(getResources().getColor(R.color.single_run_text_light_blue));
+			
+			if (willExportFile) {
+				new ExportRun().execute();
+				willExportFile = false;
+			}
+		}
+		
+	}
+	
+	private class ExportRun extends AsyncTask<Void, Void, String> {
+		@Override
+		protected String doInBackground(Void... voids) {
+			
+			return GPXParser.saveGPX(run);
+		}
+		
+		@Override
+		protected void onPostExecute(String path) {
+			if (path != null)
+			{
+				Toast.makeText(SingleRunHistoryActivity.this,
+					getResources().getString(R.string.file_saved_in) + path, Toast.LENGTH_LONG).show();
+				exportRunDialog.dismiss();
+			}
 		}
 		
 	}
@@ -281,5 +345,37 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		setMarkersVisibile(isChecked);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.single_run_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		
+		switch (item.getItemId())
+		{
+			case R.id.menu_button_export:
+				
+				exportRunDialog = ProgressDialog.show(SingleRunHistoryActivity.this,
+					getResources().getString(R.string.exporting), null); // TODO strings
+				exportRunDialog.setCancelable(true);
+				if (run != null) {
+					new ExportRun().execute();
+				}
+				else {
+					willExportFile = true;
+				}
+				
+				return true;
+				
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 }

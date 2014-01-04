@@ -42,11 +42,6 @@ public class SpeechSynthezator implements OnInitListener {
 				mTts.setLanguage(loc);
 			}
 			
-			String text = "cześć jestem Twoją superową aplikacją do biegania. Trenuj wytrwale, może kiedyś zostaniesz mistrzem świata! Wierzę w Twoje umiejętności biegaczu! Razem zwyciężymy wszystkie zawody! Wciśniij start, by zacząć Naszą przygodę z bieganiem.";
-			text = " test ";
-			if (mTts != null && canSpeak) {
-				mTts.speak(text, TextToSpeech.QUEUE_ADD, null);
-			}
 			initialized = true;
 			Log.i(TAG, "initialized");
 		}

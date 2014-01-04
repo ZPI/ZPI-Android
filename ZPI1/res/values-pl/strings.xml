@@ -206,4 +206,10 @@
     <string name="trening_plan_confirm_disable_title">Plan treningowy odznaczony</string>
     <string name="trening_plan_confirm_disable_message">Wszystkie przypomnienia i treningi z wybranego planu treningowego zostały usunięte.</string>
     
+    
+    <!-- exporting files -->
+    <string name ="file_saved_in">Plik zapisany w </string>
+    <string name ="export">Eksportuj</string>
+    <string name ="exporting">Eksportuję plik...</string>
+    
 </resources>

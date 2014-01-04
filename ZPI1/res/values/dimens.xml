@@ -36,6 +36,7 @@
     <dimen name="pull_name_right_margin">-15dp</dimen>
 	<dimen name="pull_right_margin">-5dp</dimen>
 	<dimen name="run_summary_margin">42dp</dimen>
+	<dimen name="map_change_size_margin">-5dp</dimen>
 
     <!-- paddings -->
     <dimen name="buttons_padding">8dp</dimen>
