@@ -536,7 +536,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			@Override
 			public void run() {
 				if (!isPaused) {
-					actualPaceCalculator.reset();
+					if (actualPaceCalculator != null) {
+						actualPaceCalculator.reset();
+					}
 					isPaused = true;
 					startStopLayout.setVisibility(View.INVISIBLE);
 					resumeButton.setVisibility(View.VISIBLE);
