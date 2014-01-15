@@ -183,6 +183,7 @@ public class LocationService extends Service implements ILocationCallback, ICoun
 		@Override
 		public void prepareTextToSpeech() throws RemoteException {
 			speechSynthezator = new SpeechSynthezator(getApplicationContext());
+			info.setSpeechSynthezator(speechSynthezator);
 		}
 		
 		@Override

@@ -21,6 +21,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 	private SpeechSynthezator speechSynthezator;
 	
 	public OnNextActionListener(Parcel in) {}
+	
 	public OnNextActionListener() {}
 	
 	@Override
@@ -30,7 +31,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 	
 	@Override
 	public void onNextActionSimple(WorkoutActionSimple simple) {
-		Log.i(TAG, "simple action");
+		Log.i(TAG, "simple action speechSyntezator is null:" + (speechSynthezator == null));
 		if (context != null && speechSynthezator != null) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(context.getString(R.string.action));
@@ -74,6 +75,7 @@ public class OnNextActionListener implements IOnNextActionListener {
 		minutes /= 60;
 		return minutes + "";
 	}
+	
 	@Override
 	public void onNextActionAdvanced(WorkoutActionAdvanced advanced) {
 		Log.i(TAG, "advanced action");
@@ -92,7 +94,8 @@ public class OnNextActionListener implements IOnNextActionListener {
 			if (splitedPace.length == 3) {
 				minutes = Integer.valueOf(splitedPace[0]) * 60 + Integer.valueOf(splitedPace[1]);
 				seconds = Integer.valueOf(splitedPace[2]);
-			} else {
+			}
+			else {
 				minutes = Integer.valueOf(splitedPace[0]);
 				seconds = Integer.valueOf(splitedPace[1]);
 			}
