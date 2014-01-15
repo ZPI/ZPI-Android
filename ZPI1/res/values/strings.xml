@@ -95,7 +95,15 @@
     <string name="settings_caps">SETTINGS</string>
     <string name="actions_caps">ACTIONS</string>
     <string name="name_caps">NAME</string>
+    <string name="generate_repeats">Generate Repeats</string>
 
+    <!-- repeats dialog -->
+    <string name="repeats_dialog_title">Repeat:</string>
+    <string name="from_action">From Action:</string>
+    <string name="to_action">To Action</string>
+    <string name="how_many_times">How Many Times:</string>
+    <string name="ok_caps">OK</string>
+    <string name="cancel_caps">CANCEL</string>
     <!--history -->
     <string name="Annotations">Annotations</string>
     <string name="history">History</string>

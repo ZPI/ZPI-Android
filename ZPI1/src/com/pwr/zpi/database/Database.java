@@ -22,7 +22,7 @@ import com.pwr.zpi.utils.Pair;
 
 public class Database extends SQLiteOpenHelper {
 	
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private static final String DATABASE_NAME = "Historia_biegacza";
 	
 	// Tables names
@@ -111,13 +111,20 @@ public class Database extends SQLiteOpenHelper {
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_ADVANCED);
-		db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_SIMPLE);
-		db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS_ACTIONS);
-		db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS);
-		db.execSQL("DROP TABLE IF EXISTS " + POINTS_WITH_TIME);
-		db.execSQL("DROP TABLE IF EXISTS " + DATES);
-		onCreate(db);
+		if (oldVersion == 2 && newVersion == 3)
+		{
+			//do nothing
+		}
+		else
+		{
+			db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_ADVANCED);
+			db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_SIMPLE);
+			db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS_ACTIONS);
+			db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS);
+			db.execSQL("DROP TABLE IF EXISTS " + POINTS_WITH_TIME);
+			db.execSQL("DROP TABLE IF EXISTS " + DATES);
+			onCreate(db);
+		}
 	}
 	
 	public boolean insertSingleRun(SingleRun singleRun) {

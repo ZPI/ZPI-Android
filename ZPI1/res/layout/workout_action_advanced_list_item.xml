@@ -3,6 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <TextView
+        android:id="@+id/textViewActionAdvancedPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center|top"
+        android:padding="@dimen/small_margin"
+        android:text="1."
+        android:textSize="@dimen/small_text_size" />
+    
     <ImageView
         android:id="@+id/imageViewWorkoutAction"
         android:layout_width="wrap_content"
@@ -11,6 +20,7 @@
         android:layout_centerVertical="true"
         android:src="@drawable/start"
         android:visibility="gone" />
+    
 
     <LinearLayout
         android:id="@+id/linearLayoutAdvancedActionData"

@@ -3,6 +3,7 @@ package com.pwr.zpi;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.pwr.zpi.adapters.WorkoutActionsRowBuilder;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
+import com.pwr.zpi.dialogs.DialogFactory;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.views.CustomPicker;
 import com.pwr.zpi.views.TopBar;
@@ -56,6 +58,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private EditText picerEditText;
 	private TopBar topBar;
 	private RelativeLayout topBarLeftButton;
+	private Button generateRepeats;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		workautNameEditText = (EditText) header.findViewById(R.id.editTextWorkoutName);
 		workoutsRepeatsTextView = (TextView) footer.findViewById(R.id.TextViewNewWorkoutRepeatValue);
 		warmUpLayout = (RelativeLayout) footer.findViewById(R.id.RelativeLayoutNewWokoutWarmUp);
+		generateRepeats = (Button) footer.findViewById(R.id.buttonWorkoutGenerateRepeats);
 		
 		int nr = getIntent().getIntExtra(PlaningActivity.WORKOUTS_NUMBER_TAG, 0);
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
@@ -115,6 +119,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		picerEditText.addTextChangedListener(this);
 		topBarLeftButton.setOnClickListener(this);
 		warmUpLayout.setOnClickListener(this);
+		generateRepeats.setOnClickListener(this);
 	}
 	
 	private void showActionChooseDialog() {
@@ -170,6 +175,13 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		}
 		else if (v == warmUpLayout) {
 			isWarmUpCheckBox.setChecked(!isWarmUpCheckBox.isChecked());
+		}
+		else if (v == generateRepeats) {
+			// custom dialog
+			Dialog dialog = DialogFactory.getRepeatsDialog(this, R.layout.generate_repeats_dialog, workoutsActionList,
+				workoutActionAdapter);
+			
+			dialog.show();
 		}
 		
 	}

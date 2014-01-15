@@ -12,14 +12,23 @@
         android:src="@drawable/start"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/textViewActionSimplePosition"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center|top"
+        android:padding="@dimen/small_margin"
+        android:text="1."
+        android:textSize="@dimen/small_text_size" />
+
     <LinearLayout
         android:id="@+id/linearLayoutSimpleActionData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:padding="@dimen/buttons_padding"
         android:layout_toRightOf="@+id/imageViewWorkoutAction"
-        android:baselineAligned="false" >
+        android:baselineAligned="false"
+        android:padding="@dimen/buttons_padding" >
 
         <TextView
             android:id="@+id/dataTextViewActionTimeOrDistance"

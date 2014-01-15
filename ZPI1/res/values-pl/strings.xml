@@ -93,7 +93,15 @@
     <string name="settings_caps">USTAWIENIA</string>
     <string name="actions_caps">AKCJE</string>
     <string name="name_caps">NAZWA</string>
+    <string name="generate_repeats">Generuj Powtórzenia</string>
 
+     <!-- repeats dialog -->
+    <string name="repeats_dialog_title">Powtórz:</string>
+    <string name="from_action">Od Akcji:</string>
+    <string name="to_action">Do Akcji:</string>
+    <string name="how_many_times">Ile Razy:</string>
+    <string name="cancel_caps">ANULUJ</string>
+    
     <!--history -->
     <string name="Annotations">Znaczniki</string>
     <string name="history">Historia</string>

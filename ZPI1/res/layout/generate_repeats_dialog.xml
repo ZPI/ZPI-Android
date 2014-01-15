@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.pwr.zpi"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_bigger_vertical_margin"
+        android:layout_marginRight="@dimen/activity_bigger_vertical_margin" >
+
+        <TextView
+            android:id="@+id/textViewRepeatsDialogFirstAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="@string/from_action"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.pwr.zpi.views.CustomPicker
+            android:id="@+id/customPickerRepeatsDialogFirstAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            app:minValue="1"
+            app:orientation="horizontal" >
+        </com.pwr.zpi.views.CustomPicker>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_bigger_vertical_margin"
+        android:layout_marginRight="@dimen/activity_bigger_vertical_margin" >
+
+        <TextView
+            android:id="@+id/textViewRepeatsDialogSecondAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to_action"
+            android:textColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.pwr.zpi.views.CustomPicker
+            android:id="@+id/customPickerRepeatsDialogSecondAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            app:minValue="1"
+            app:orientation="horizontal" >
+        </com.pwr.zpi.views.CustomPicker>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_bigger_vertical_margin"
+        android:layout_marginRight="@dimen/activity_bigger_vertical_margin" >
+
+        <TextView
+            android:id="@+id/textViewRepeatsDialogRepeats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/how_many_times"
+            android:textColor="@android:color/black"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <com.pwr.zpi.views.CustomPicker
+            android:id="@+id/customPickerRepeatsDialogRepeats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            app:maxValue="99"
+            app:minValue="1"
+            app:orientation="horizontal" >
+        </com.pwr.zpi.views.CustomPicker>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin" >
+
+        <Button
+            android:id="@+id/buttonRepeatsDialogOkButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/workouts_white_button_background"
+            android:padding="@dimen/buttons_bigger_padding"
+            android:text="@string/ok_caps"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonRepeatsDialogCancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/workouts_white_button_background"
+            android:padding="@dimen/buttons_bigger_padding"
+            android:text="@string/cancel_caps"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

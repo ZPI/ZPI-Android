@@ -50,13 +50,14 @@ public class WorkoutActionsRowBuilder extends RowBuilder<WorkoutAction> {
 			case SIMPLE:
 				holder.speedString = (TextView) row.findViewById(R.id.dataTextViewActionSpeedString);
 				holder.timeOrDistance = (TextView) row.findViewById(R.id.dataTextViewActionTimeOrDistance);
-				
+				holder.actionNumber = (TextView) row.findViewById(R.id.textViewActionSimplePosition);
 				break;
 			
 			case ADVANCED:
 				holder.pace = (TextView) row.findViewById(R.id.dataTextViewActionPace);
 				holder.distance = (TextView) row.findViewById(R.id.dataTextViewActionDistance);
 				holder.time = (TextView) row.findViewById(R.id.dataTextViewActionTime);
+				holder.actionNumber = (TextView) row.findViewById(R.id.textViewActionAdvancedPosition);
 				break;
 		}
 		holder.image = (ImageView) row.findViewById(R.id.imageViewWorkoutAction);
@@ -67,6 +68,7 @@ public class WorkoutActionsRowBuilder extends RowBuilder<WorkoutAction> {
 	public void fillRowDataToHolder(AbstractRowHolder holder, WorkoutAction item, int position, int[] layoutResourcesIDs) {
 		WorkoutActionHolder rowHolder = (WorkoutActionHolder) holder;
 		int type = getItemViewType(item);
+		rowHolder.actionNumber.setText((position + 1) + ".");
 		switch (type) {
 			case SIMPLE:
 				//TODO set image here
@@ -121,5 +123,6 @@ public class WorkoutActionsRowBuilder extends RowBuilder<WorkoutAction> {
 		
 		TextView speedString;
 		TextView timeOrDistance;
+		TextView actionNumber;
 	}
 }
