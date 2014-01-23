@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -253,6 +254,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			listView.setVisibility(View.GONE);
 		}
 		
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	}
 	
 	private void addListeners() {

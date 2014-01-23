@@ -17,6 +17,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -156,6 +157,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 		setFont();
 		validateTreningPlan();
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	}
 	
 	private void setFont() {
