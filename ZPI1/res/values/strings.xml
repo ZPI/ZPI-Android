@@ -96,6 +96,8 @@
     <string name="actions_caps">ACTIONS</string>
     <string name="name_caps">NAME</string>
     <string name="generate_repeats">Generate Repeats</string>
+    <string name="no_actions">No actions to repeat</string>
+    <string name="no_pause">Sorry, pause is not available during worm up yet</string>
 
     <!-- repeats dialog -->
     <string name="repeats_dialog_title">Repeat:</string>
@@ -124,6 +126,10 @@
     <!-- context menu -->
     <string name="menu_ctx_actions">Actions</string>
     <string name="delete_action">Delete</string>
+    <string name="change_name">Change Name</string>
+    
+    <!-- change name dialog -->
+    <string name="new_name">New Name</string>
 
     <!-- other -->
     <string name="empty_string"></string>

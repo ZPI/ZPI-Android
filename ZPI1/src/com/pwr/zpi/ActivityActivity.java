@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -134,6 +135,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private int clickedField;
 	
 	private boolean isPaused;
+	private boolean pausedManually;
 	
 	// service data
 	boolean mIsBound;
@@ -221,6 +223,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		dataTextView2Content = timeID;
 		
 		isPaused = false;
+		pausedManually = false;
 		progressDialogDisplayed = false;
 		
 		Intent intent = getIntent();
@@ -479,6 +482,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				showAlertDialog();
 				break;
 			case R.id.pauseButton:
+				pausedManually = true;
 				pauseRun();
 				break;
 			case R.id.resumeButton:
@@ -537,7 +541,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		handlerForService.post(new Runnable() {
 			@Override
 			public void run() {
-				if (!isPaused) {
+				if (!isPaused
+					&& (!(workout != null && workout.isWarmUp() && workout.getCurrentAction() == 0)))// || pausedManually))
+				{
 					if (actualPaceCalculator != null) {
 						actualPaceCalculator.reset();
 					}
@@ -553,6 +559,11 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 						Log.e(TAG, "Failed to tell that activity is paused", e);
 					}
 				}
+				else if (!isPaused && pausedManually)
+				{
+					Toast.makeText(ActivityActivity.this, getResources().getString(R.string.no_pause),
+						Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 	}
@@ -563,6 +574,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			public void run() {
 				if (isPaused) {
 					isPaused = false;
+					pausedManually = false;
 					startStopLayout.setVisibility(View.VISIBLE);
 					resumeButton.setVisibility(View.GONE);
 					try {
@@ -703,7 +715,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 			
 			@Override
 			public void run() {
-				if (!isPaused && newLocation.getAccuracy() < LocationService.REQUIRED_ACCURACY) {
+				if (newLocation.getAccuracy() < LocationService.REQUIRED_ACCURACY) {
 					// not first point after start or resume
 					
 					if (lostGPSDialog != null) {
@@ -711,12 +723,15 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 						lostGPSDialog = null;
 						progressDialogDisplayed = false;
 					}
-					if (mLastLocation != null) {
-						countData(newLocation, mLastLocation);
+					if (!isPaused)
+					{
+						if (mLastLocation != null) {
+							countData(newLocation, mLastLocation);
+						}
+						
+						updateData(DataTextView1, dataTextView1Content);
+						updateData(DataTextView2, dataTextView2Content);
 					}
-					
-					updateData(DataTextView1, dataTextView1Content);
-					updateData(DataTextView2, dataTextView2Content);
 				}
 				else if (newLocation.getAccuracy() >= LocationService.REQUIRED_ACCURACY) {
 					//prevents displaying two progress Dialogs at once
@@ -732,7 +747,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	}
 	
 	//	private void drawUserPosition(LatLng position)
-	//	{
+	//	{ 
 	//		Marker positionMarker = mMap.addMarker(new MarkerOptions()
 	//        .position(position)
 	//        .flat(true));
@@ -750,7 +765,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 				if (newLocation.getSpeed() < MIN_SPEED_FOR_AUTO_PAUSE) {
 					pauseRun();
 				}
-				else {
+				else if (!pausedManually) {
 					resumeRun();
 				}
 			}

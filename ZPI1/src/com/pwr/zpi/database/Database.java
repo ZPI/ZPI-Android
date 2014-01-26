@@ -396,6 +396,13 @@ public class Database extends SQLiteOpenHelper {
 		return cv;
 	}
 	
+	private ContentValues runNameToContentValues(String name) {
+		ContentValues cv = new ContentValues();
+		cv.put(DATES_RUN_NAME, name);
+		
+		return cv;
+	}
+	
 	private boolean insertWorkoutIDActionID(SQLiteDatabase db, long workoutID, long actionID, int workoutType) {
 		ContentValues cv = new ContentValues();
 		cv.put(WA_WORKOUT_ID, workoutID);
@@ -602,6 +609,13 @@ public class Database extends SQLiteOpenHelper {
 			index++;
 		}
 		return isOK;
+	}
+	
+	public boolean updateSingleRunName(long runId, String newName)
+	{
+		SQLiteDatabase db = getWritableDatabase();
+		ContentValues cv = runNameToContentValues(newName);
+		return db.update(DATES, cv, DATES_RUN_NUMBER + "=?", new String[] { runId + "" }) != 0;
 	}
 	
 	private boolean updateWorkoutAction(SQLiteDatabase db, long workoutId, WorkoutAction action, int index) {

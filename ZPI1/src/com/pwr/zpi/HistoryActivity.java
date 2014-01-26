@@ -96,7 +96,13 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 		initTabs();
 		initFields();
 		addListeners();
+		
+	}
+	
+	@Override
+	protected void onResume() {
 		new GetRunsFromDB().execute(null, null);
+		super.onResume();
 	}
 	
 	private void initTabs() {

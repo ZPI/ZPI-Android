@@ -45,7 +45,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private Button editThisWorkoutButton;
 	private TextView workoutNameTextView;
 	private AdapterContextMenuInfo info;
-	private TextView repeatsTextView;
 	private TextView warmUpTextView;
 	private ArrayList<WorkoutAction> actions;
 	private static final int MY_REQUEST_CODE_EDIT = 1;
@@ -75,12 +74,10 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		
 		addThisWorkoutButton = (Button) header.findViewById(R.id.ButtonChooseWorkout);
 		workoutNameTextView = (TextView) header.findViewById(R.id.textViewWorkoutName);
-		repeatsTextView = (TextView) footer.findViewById(R.id.textViewWrokoutActivityRepeat);
 		warmUpTextView = (TextView) footer.findViewById(R.id.textViewWorkoutActivityWarmUp);
 		editThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutEdit);
 		
 		workoutNameTextView.setText(workout.getName());
-		repeatsTextView.setText(workout.getRepeatCount() + "");
 		warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
 		
 		registerForContextMenu(actionsListView);
@@ -191,7 +188,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 					actions.clear();
 					actions.addAll(workout.getActions());
 					actionsAdapter.notifyDataSetChanged();
-					repeatsTextView.setText(workout.getRepeatCount() + "");
 					warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
 					Database db = new Database(this);
 					db.updateWorkout(workout);

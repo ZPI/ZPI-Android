@@ -2,7 +2,9 @@ package com.pwr.zpi;
 
 import java.util.LinkedList;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -37,6 +39,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.SingleRun;
+import com.pwr.zpi.dialogs.DialogFactory;
+import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.files.GPXParser;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
 import com.pwr.zpi.utils.LineChartDataEvaluator;
@@ -372,6 +376,29 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 					willExportFile = true;
 				}
 				
+				return true;
+			case R.id.menu_button_remove:
+				
+				DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
+					
+					// romove
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						
+						Database db = new Database(SingleRunHistoryActivity.this);
+						db.deleteRun(run.getRunID());
+						db.close();
+						finish();
+					}
+				};
+				MyDialog.showAlertDialog(this, R.string.dialog_message_romve, R.string.empty_string,
+					android.R.string.yes, android.R.string.no, positiveButtonHandler, null);
+				
+				return true;
+			case R.id.menu_button_change_name:
+				Dialog dialog = DialogFactory.getChangeNameDialog(this, R.layout.change_name_dialog,
+					runNameTextView, run.getRunID());
+				dialog.show();
 				return true;
 				
 			default:

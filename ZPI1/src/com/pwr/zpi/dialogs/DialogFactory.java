@@ -10,8 +10,11 @@ import android.content.DialogInterface.OnClickListener;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.pwr.zpi.R;
+import com.pwr.zpi.database.Database;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.views.CustomPicker;
 
@@ -66,6 +69,43 @@ public class DialogFactory {
 				workoutsActionList.clear();
 				workoutsActionList.addAll(linkedList);
 				workoutActionAdapter.notifyDataSetChanged();
+				dialog.dismiss();
+			}
+		});
+		return dialog;
+	}
+	
+	public static Dialog getChangeNameDialog(final Context context, int layoutID, final TextView oldName,
+		final long runId)
+	{
+		
+		final Dialog dialog = new Dialog(context);
+		dialog.setContentView(layoutID);
+		dialog.setTitle(context.getResources().getString(R.string.new_name));
+		// set the custom dialog components - text, image and button
+		final EditText name = (EditText) dialog.findViewById(R.id.editTextChangeNameEditText);
+		name.setText(oldName.getText());
+		name.findFocus();
+		name.selectAll();
+		
+		Button dialogOkButton = (Button) dialog.findViewById(R.id.buttonChangeNameDialogOkButton);
+		Button dialogCancelButton = (Button) dialog.findViewById(R.id.buttonChangeNameDialogCancelButton);
+		
+		// if button is clicked, close the custom dialog
+		dialogCancelButton.setOnClickListener(new android.view.View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialogOkButton.setOnClickListener(new android.view.View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//TODO change name in database
+				oldName.setText(name.getText());
+				Database db = new Database(context);
+				db.updateSingleRunName(runId, name.getText().toString());
+				
 				dialog.dismiss();
 			}
 		});

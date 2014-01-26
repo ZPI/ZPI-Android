@@ -7,8 +7,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
@@ -24,7 +22,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
@@ -35,10 +33,9 @@ import com.pwr.zpi.database.entity.Workout;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.dialogs.DialogFactory;
 import com.pwr.zpi.dialogs.MyDialog;
-import com.pwr.zpi.views.CustomPicker;
 import com.pwr.zpi.views.TopBar;
 
-public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener, TextWatcher {
+public class NewWorkoutActivity extends Activity implements OnClickListener, OnItemClickListener {
 	
 	public static final int MY_REQUEST_CODE_ADD = 1;
 	public static final int MY_REQUEST_CODE_EDIT = 2;
@@ -47,13 +44,11 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 	private EditText workautNameEditText;
 	private CheckBox isWarmUpCheckBox;
 	private RelativeLayout warmUpLayout;
-	private CustomPicker repeatPicker;
 	private int editedPos;
 	private ArrayList<WorkoutAction> workoutsActionList;
 	private BaseAdapter workoutActionAdapter;
 	private ListView workoutsListView;
 	private AdapterContextMenuInfo info;
-	private TextView workoutsRepeatsTextView;
 	private Workout workout;
 	private EditText picerEditText;
 	private TopBar topBar;
@@ -67,13 +62,7 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		initFields();
 		addListeners();
 		boolean isEdited = setDataIfEdit();
-		if (!isEdited) {
-			workautNameEditText.findFocus();
-			workautNameEditText.selectAll();
-		}
-		else {
-			//TODO remove focus from edit text, nie dziala mi google i nie moge sprawdzic jak to zrobic....
-		}
+		
 	}
 	
 	private void initFields() {
@@ -92,23 +81,18 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addActionButton = (RelativeLayout) footer.findViewById(R.id.buttonNewWorkoutAction);
 		addThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutAdd);
 		workautNameEditText = (EditText) header.findViewById(R.id.editTextWorkoutName);
-		workoutsRepeatsTextView = (TextView) footer.findViewById(R.id.TextViewNewWorkoutRepeatValue);
 		warmUpLayout = (RelativeLayout) footer.findViewById(R.id.RelativeLayoutNewWokoutWarmUp);
 		generateRepeats = (Button) footer.findViewById(R.id.buttonWorkoutGenerateRepeats);
 		
 		int nr = getIntent().getIntExtra(PlaningActivity.WORKOUTS_NUMBER_TAG, 0);
 		workautNameEditText.setText(getResources().getString(R.string.workouts) + (nr + 1));
 		
-		repeatPicker = (CustomPicker) footer.findViewById(R.id.customPickerRepeat);
 		topBar = (TopBar) header.findViewById(R.id.topBarNewWorkout);
 		
 		topBarLeftButton = topBar.getLeftButton();
 		
-		workoutsRepeatsTextView.setText(repeatPicker.getValue() + " " + getResources().getString(R.string.times));
-		
 		isWarmUpCheckBox = (CheckBox) footer.findViewById(R.id.ToggleButtonWormUp);
 		
-		picerEditText = repeatPicker.getDisplayEditText();
 		registerForContextMenu(workoutsListView);
 	}
 	
@@ -116,7 +100,6 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addActionButton.setOnClickListener(this);
 		addThisWorkoutButton.setOnClickListener(this);
 		workoutsListView.setOnItemClickListener(this);
-		picerEditText.addTextChangedListener(this);
 		topBarLeftButton.setOnClickListener(this);
 		warmUpLayout.setOnClickListener(this);
 		generateRepeats.setOnClickListener(this);
@@ -162,7 +145,6 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 				workout = new Workout();
 			}
 			workout.setName(workautNameEditText.getText().toString());
-			workout.setRepeatCount(repeatPicker.getValue());
 			workout.setWarmUp(isWarmUpCheckBox.isChecked());
 			workout.setActions(workoutsActionList);
 			
@@ -178,10 +160,17 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		}
 		else if (v == generateRepeats) {
 			// custom dialog
-			Dialog dialog = DialogFactory.getRepeatsDialog(this, R.layout.generate_repeats_dialog, workoutsActionList,
-				workoutActionAdapter);
-			
-			dialog.show();
+			if (!workoutsActionList.isEmpty())
+			{
+				Dialog dialog = DialogFactory.getRepeatsDialog(this, R.layout.generate_repeats_dialog,
+					workoutsActionList,
+					workoutActionAdapter);
+				dialog.show();
+			}
+			else
+			{
+				Toast.makeText(this, getResources().getString(R.string.no_actions), Toast.LENGTH_LONG).show();
+			}
 		}
 		
 	}
@@ -293,30 +282,11 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 			workout = intent.getParcelableExtra(Workout.TAG);
 			workautNameEditText.setText(workout.getName());
 			isWarmUpCheckBox.setChecked(workout.isWarmUp());
-			repeatPicker.setValue(workout.getRepeatCount());
 			workoutsActionList.addAll(workout.getActions());
 			workoutActionAdapter.notifyDataSetChanged();
 			addThisWorkoutButton.setText(R.string.edit_workout);
 			return true;
 		}
 		return false;
-	}
-	
-	@Override
-	public void afterTextChanged(Editable s) {
-		workoutsRepeatsTextView.setText(s + " " + getResources().getString(R.string.times));
-		
-	}
-	
-	@Override
-	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
-		
 	}
 }

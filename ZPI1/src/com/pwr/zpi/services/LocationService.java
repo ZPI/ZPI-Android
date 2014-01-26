@@ -142,8 +142,10 @@ public class LocationService extends Service implements ILocationCallback, ICoun
 		
 		@Override
 		public void setPaused() throws RemoteException {
+			
 			info.setPauseStartTime(System.currentTimeMillis());
 			info.setState(State.PAUSED);
+			
 		}
 		
 		@Override
