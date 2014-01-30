@@ -242,9 +242,9 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 					this.getString(R.string.key_warm_up_time), "3"));
 				actions.add(new WorkoutActionWarmUp(warmUpMinutes));
 			}
-			for (int i = 0; i < workout.getRepeatCount(); i++) {
-				actions.addAll(workout.getActions());
-			}
+			
+			actions.addAll(workout.getActions());
+			
 			workoutCopy.setActions(actions);
 			drawerListAdapter = AdapterFactory.getAdapter(AdapterType.DrawerWorkoutsAdapter, this,
 				workoutCopy.getActions(), workoutCopy);

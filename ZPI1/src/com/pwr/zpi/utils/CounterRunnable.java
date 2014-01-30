@@ -18,7 +18,8 @@ public class CounterRunnable implements Runnable {
 	public void run() {
 		if (x == -1) {
 			listener.onCountDownPostAction(counterID, x);
-		} else if (x == 0) {
+		}
+		else if (x == 0) {
 			listener.onCountDownDone(counterID, x);
 		}
 		else {

@@ -206,7 +206,6 @@ public class TreningPlans {
 	private static Workout getWorkoutForActions(List<WorkoutAction> actions, int repeats) {
 		Workout workout = new Workout();
 		workout.setActions(actions);
-		workout.setRepeatCount(repeats);
 		return workout;
 	}
 	

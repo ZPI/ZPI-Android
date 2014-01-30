@@ -16,7 +16,7 @@ public class Workout implements Parcelable {
 	private String name;
 	private List<WorkoutAction> actions;
 	private boolean isWarmUp;
-	private int repeatCount;
+	//	private int repeatCount;
 	private IOnNextActionListener onNextActionListener;
 	
 	// progressing workout fields
@@ -31,6 +31,7 @@ public class Workout implements Parcelable {
 		this.lastActionDistance = 0;
 		this.lastActionTime = 0;
 		this.howMuchLeft = 0;
+		//		this.repeatCount = 1;
 		this.ID = -1;
 	}
 	
@@ -97,14 +98,6 @@ public class Workout implements Parcelable {
 	
 	public void setWarmUp(boolean isWarmUp) {
 		this.isWarmUp = isWarmUp;
-	}
-	
-	public int getRepeatCount() {
-		return repeatCount;
-	}
-	
-	public void setRepeatCount(int repeatCount) {
-		this.repeatCount = repeatCount;
 	}
 	
 	// progressing actions methods
@@ -305,7 +298,6 @@ public class Workout implements Parcelable {
 		out.writeString(name);
 		out.writeList(actions);
 		out.writeByte((byte) (isWarmUp ? 1 : 0));
-		out.writeInt(repeatCount);
 		out.writeParcelable(onNextActionListener, flag);
 		out.writeInt(currentAction);
 		out.writeDouble(howMuchLeft);
@@ -346,7 +338,6 @@ public class Workout implements Parcelable {
 		name = in.readString();
 		actions = in.readArrayList(WorkoutAction.class.getClassLoader());
 		isWarmUp = in.readByte() == 1;
-		repeatCount = in.readInt();
 		onNextActionListener = in.readParcelable(IOnNextActionListener.class.getClassLoader());
 		currentAction = in.readInt();
 		howMuchLeft = in.readDouble();

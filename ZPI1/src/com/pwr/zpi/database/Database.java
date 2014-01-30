@@ -22,7 +22,7 @@ import com.pwr.zpi.utils.Pair;
 
 public class Database extends SQLiteOpenHelper {
 	
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private static final String DATABASE_NAME = "Historia_biegacza";
 	
 	// Tables names
@@ -52,7 +52,6 @@ public class Database extends SQLiteOpenHelper {
 	// workouts
 	private static final String WORKOUTS_ID = "workouts_id";
 	private static final String WORKOUTS_NAME = "workouts_name";
-	private static final String WORKOUTS_REPEATS = "workouts_repeats";
 	private static final String WORKOUTS_WARM_UP = "workouts_warm_up";
 	// workouts actions
 	private static final String WA_ID = "wa_id";
@@ -74,16 +73,17 @@ public class Database extends SQLiteOpenHelper {
 	private static final String AA_ORDER_NUMBER = "aa_order_number";
 	
 	// Tables creation schemas
-	private static final String CREATE_TABLE_DATES = "CREATE TABLE " + DATES + "(" + DATES_RUN_NUMBER
+	private static final String CREATE_TABLE_DATES = "CREATE TABLE IF NOT EXISTS " + DATES + "(" + DATES_RUN_NUMBER
 		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + DATES_START_HOUR + " INTEGER, " + DATES_END_HOUR + " INTEGER ,"
 		+ DATES_RUN_DISTANCE + " INTEGER, " + DATES_RUN_TIME + " INTEGER, " + DATES_RUN_NAME + " TEXT" + ")";
-	private static final String CREATE_TABLE_POINTS_WITH_TIME = "CREATE TABLE " + POINTS_WITH_TIME + "(" + PWT_ID
+	private static final String CREATE_TABLE_POINTS_WITH_TIME = "CREATE TABLE IF NOT EXISTS " + POINTS_WITH_TIME + "("
+		+ PWT_ID
 		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + PWT_RUN_NUMBER + " INTEGER, " + PWT_SUB_RUN_NUMBER + " INTEGER, "
 		+ PWT_LONGITUDE + " DOUBLE, " + PWT_LATITUDE + " DOUBLE, " + PWT_ALTITUDE + " DOUBLE, " + PWT_TIME_FROM_START
 		+ " INTEGER, " + "FOREIGN KEY (" + PWT_RUN_NUMBER + ")" + " REFERENCES " + DATES + " (" + DATES_RUN_NUMBER
 		+ ")" + ")";
 	private static final String CREATE_TABLE_WORKOUTS = "CREATE TABLE " + WORKOUTS + "(" + WORKOUTS_ID
-		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + WORKOUTS_NAME + " TEXT, " + WORKOUTS_REPEATS + " INTEGER, "
+		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + WORKOUTS_NAME + " TEXT, "
 		+ WORKOUTS_WARM_UP + " INTEGER" + ")";
 	private static final String CREATE_TABLE_WORKOUTS_ACTIONS = "CREATE TABLE " + WORKOUTS_ACTIONS + "(" + WA_ID
 		+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + WA_WORKOUT_ID + " INTEGER, " + WA_ACTION_ID + " INTEGER, "
@@ -114,6 +114,16 @@ public class Database extends SQLiteOpenHelper {
 		if (oldVersion == 2 && newVersion == 3)
 		{
 			//do nothing
+		}
+		else if (newVersion == 4 || newVersion == 5)
+		{
+			
+			db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_ADVANCED);
+			db.execSQL("DROP TABLE IF EXISTS " + ACTIONS_SIMPLE);
+			db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS_ACTIONS);
+			db.execSQL("DROP TABLE IF EXISTS " + WORKOUTS);
+			onCreate(db);
+			
 		}
 		else
 		{
@@ -352,7 +362,6 @@ public class Database extends SQLiteOpenHelper {
 	private ContentValues workoutToContentValues(Workout workout) {
 		ContentValues cv = new ContentValues();
 		cv.put(WORKOUTS_NAME, workout.getName());
-		cv.put(WORKOUTS_REPEATS, workout.getRepeatCount());
 		cv.put(WORKOUTS_WARM_UP, booleanToInt(workout.isWarmUp()));
 		return cv;
 	}
@@ -414,7 +423,7 @@ public class Database extends SQLiteOpenHelper {
 	
 	public List<Workout> getAllWorkoutNames() {
 		SQLiteDatabase db = getReadableDatabase();
-		String[] columns = new String[] { WORKOUTS_ID, WORKOUTS_NAME, WORKOUTS_REPEATS, WORKOUTS_WARM_UP };
+		String[] columns = new String[] { WORKOUTS_ID, WORKOUTS_NAME, WORKOUTS_WARM_UP };
 		Cursor cursor = db.query(WORKOUTS, columns, null, null, null, null, null);
 		
 		List<Workout> result = null;
@@ -436,14 +445,13 @@ public class Database extends SQLiteOpenHelper {
 		Workout workout = new Workout();
 		workout.setID(cursor.getLong(0));
 		workout.setName(cursor.getString(1));
-		workout.setRepeatCount(cursor.getInt(2));
-		workout.setWarmUp(intToBoolean(cursor.getInt(3)));
+		workout.setWarmUp(intToBoolean(cursor.getInt(2)));
 		return workout;
 	}
 	
 	public Workout getWholeSingleWorkout(long workoutID) {
 		SQLiteDatabase db = getReadableDatabase();
-		String[] columns = new String[] { WORKOUTS_ID, WORKOUTS_NAME, WORKOUTS_REPEATS, WORKOUTS_WARM_UP };
+		String[] columns = new String[] { WORKOUTS_ID, WORKOUTS_NAME, WORKOUTS_WARM_UP };
 		Cursor cursor = db.query(WORKOUTS, columns, WORKOUTS_ID + "=?", new String[] { workoutID + "" }, null, null,
 			null);
 		Workout workout = null;
