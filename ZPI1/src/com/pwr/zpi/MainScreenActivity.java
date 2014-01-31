@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.pwr.zpi.database.Database;
@@ -133,6 +134,18 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		runNumber = 0;
 		isConnected = false;
 		
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void init() {

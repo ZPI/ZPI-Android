@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.adapters.GenericBaseAdapter;
@@ -63,6 +64,18 @@ public class NewWorkoutActivity extends Activity implements OnClickListener, OnI
 		addListeners();
 		boolean isEdited = setDataIfEdit();
 		
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initFields() {

@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.dialogs.MyDialog;
 import com.pwr.zpi.utils.Reminders;
 import com.pwr.zpi.utils.Time;
@@ -38,6 +39,18 @@ public class AfterActivityActivity extends Activity implements OnClickListener {
 		initFields();
 		addListeners();
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initFields() {

@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionSimple;
 import com.pwr.zpi.views.CustomPicker;
@@ -48,6 +49,18 @@ public class NewWorkoutActionSimpleActivity extends Activity implements OnClickL
 		initFields();
 		addListeners();
 		setDataIfEdit();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initFields()

@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.adapters.GenericBaseAdapter;
@@ -111,6 +112,18 @@ public class PlaningActivity extends Activity implements GestureListener, OnItem
 		setTab(0);
 		registerForContextMenu(workoutsListView);
 		addListeners();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void disableTraningPlans()

@@ -202,7 +202,7 @@
 
     <!-- about application -->
     <string name="version_title">Version</string>
-    <string name="version">Run 42K ver. 1.0</string>
+    <string name="version">Run 42K ver. 1.2</string>
     <string name="about_title">About</string>
     <string name="about">This application was developed by \n Jakub Skudlarski and Marek Kresnicki. \n Run safe and beat all records.</string>
 

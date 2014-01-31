@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.database.entity.WorkoutAction;
 import com.pwr.zpi.database.entity.WorkoutActionAdvanced;
 import com.pwr.zpi.utils.TimeFormatter;
@@ -89,6 +90,18 @@ public class NewWorkoutActionAdvancedActivity extends Activity implements OnClic
 		initFields();
 		addListeners();
 		setDataIfEdit();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initTabs()

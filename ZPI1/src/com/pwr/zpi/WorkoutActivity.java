@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.adapters.GenericBaseAdapter;
@@ -56,6 +57,18 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		initFields();
 		addListeners();
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initFields() {

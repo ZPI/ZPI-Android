@@ -32,6 +32,7 @@ import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.adapters.GenericBaseAdapter;
@@ -103,6 +104,18 @@ public class HistoryActivity extends Activity implements GestureListener, OnItem
 	protected void onResume() {
 		new GetRunsFromDB().execute(null, null);
 		super.onResume();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initTabs() {

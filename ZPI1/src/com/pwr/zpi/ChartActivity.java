@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import com.fima.chartview.ChartView;
 import com.fima.chartview.LinearSeries;
 import com.fima.chartview.LinearSeries.LinearPoint;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.ValueLabelAdapter;
 import com.pwr.zpi.adapters.ValueLabelAdapter.LabelOrientation;
 import com.pwr.zpi.utils.ChartDataHelperContainter;
@@ -38,6 +39,18 @@ public class ChartActivity extends Activity implements OnClickListener {
 		
 		new ChartDataLoader().execute(null, null); //overloaded method, two nulls to distinct
 		
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private ChartDataHelperContainter getChartDataFromIntent() {
