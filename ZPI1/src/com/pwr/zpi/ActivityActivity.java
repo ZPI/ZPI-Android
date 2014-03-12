@@ -62,11 +62,11 @@ import com.pwr.zpi.utils.MarkerWithTextBuilder;
 import com.pwr.zpi.utils.TimeFormatter;
 import com.pwr.zpi.views.GPSSignalDisplayer;
 
-public class ActivityActivity extends FragmentActivity implements OnClickListener {
+public class ActivityActivity extends AbstractActivityActivity implements OnClickListener {
 	
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
-	public static final float MIN_SPEED_FOR_AUTO_PAUSE = 0.7f;
+	
 	private static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
 	public static final String DISTANCE_TAG = "distance";
@@ -76,12 +76,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	public static final String RUN_NUMBER_TAG = "run_number";
 	public static final String NAME_TAG = "name_tag";
 	
-	// measured values IDs
-	private static final int distanceID = 0;
-	private static final int paceID = 1;
-	private static final int avgPaceID = 2;
-	private static final int timeID = 3;
-	private static final int lastKmPaceID = 4;
+
 	
 	//map options
 	public static final float TRACE_THICKNESS = 5;
@@ -114,6 +109,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 	private ImageButton zoomIn;
 	private ImageButton zoomOut;
 	private ImageButton mapCenter;
+	private ImageButton imageButtonGoToScreen2;
 	private FrameLayout frameLayoutViewOverMap;
 	
 	//map
@@ -203,6 +199,7 @@ public class ActivityActivity extends FragmentActivity implements OnClickListene
 		zoomIn = (ImageButton) findViewById(R.id.imageButtonMapZoomIn);
 		zoomOut = (ImageButton) findViewById(R.id.imageButtonMapZoomOut);
 		mapCenter = (ImageButton) findViewById(R.id.imageButtonMapCenter);
+		imageButtonGoToScreen2 =(ImageButton) findViewById(R.id.imageButtonGoToActivityNoMap);
 		frameLayoutViewOverMap = (FrameLayout) findViewById(R.id.frameLayoutViewOverMap);
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		mMap = mapFragment.getMap();
