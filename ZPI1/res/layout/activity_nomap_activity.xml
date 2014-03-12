@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gps="http://schemas.android.com/apk/res/com.pwr.zpi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutNoMapField1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/very_small_margin"
+        android:layout_marginLeft="@dimen/very_small_margin"
+        android:layout_marginRight="@dimen/very_small_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_weight="1"
+        android:background="@color/activity_blue"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewNoMapField1Discription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/buttons_padding"
+            android:text="@string/time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/medium_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewNoMapField1Discription"
+            android:layout_below="@+id/textViewNoMapField1Discription"
+            android:layout_toLeftOf="@+id/textViewNoMapField1Unit"
+            android:gravity="center"
+            android:text="00:00:00 "
+            android:textColor="@color/white"
+            android:textSize="@dimen/bigger_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField1Unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textViewNoMapField1"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textViewNoMapField1"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@+id/textViewNoMapField1Discription"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/textViewNoMapField1Discription"
+            android:scaleType="fitEnd"
+            android:src="@drawable/down_arrow" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutNoMapField2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeLayoutNoMapField1"
+        android:layout_margin="@dimen/very_small_margin"
+        android:layout_weight="1"
+        android:background="@color/activity_blue"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewNoMapField2Discription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/buttons_padding"
+            android:text="@string/time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/medium_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewNoMapField2Discription"
+            android:layout_below="@+id/textViewNoMapField2Discription"
+            android:layout_toLeftOf="@+id/textViewNoMapField2Unit"
+            android:gravity="center"
+            android:text="00:00:00 "
+            android:textColor="@color/white"
+            android:textSize="@dimen/bigger_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField2Unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textViewNoMapField2"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textViewNoMapField2"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@+id/textViewNoMapField2Discription"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/textViewNoMapField2Discription"
+            android:scaleType="fitEnd"
+            android:src="@drawable/down_arrow" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutNoMapField3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeLayoutNoMapField2"
+        android:layout_margin="@dimen/very_small_margin"
+        android:layout_weight="1"
+        android:background="@color/activity_blue"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewNoMapField3Discription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/buttons_padding"
+            android:text="@string/time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/medium_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewNoMapField3Discription"
+            android:layout_below="@+id/textViewNoMapField3Discription"
+            android:layout_toLeftOf="@+id/textViewNoMapField3Unit"
+            android:gravity="center"
+            android:text="00:00:00 "
+            android:textColor="@color/white"
+            android:textSize="@dimen/bigger_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField3Unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textViewNoMapField3"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textViewNoMapField3"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@+id/textViewNoMapField3Discription"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/textViewNoMapField3Discription"
+            android:scaleType="fitEnd"
+            android:src="@drawable/down_arrow" />
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/relativeLayoutNoMapField4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeLayoutNoMapField3"
+        android:layout_margin="@dimen/very_small_margin"
+        android:layout_weight="1"
+        android:background="@color/activity_blue"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textViewNoMapField4Discription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/buttons_padding"
+            android:text="@string/time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/medium_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewNoMapField4Discription"
+            android:layout_below="@+id/textViewNoMapField4Discription"
+            android:layout_toLeftOf="@+id/textViewNoMapField4Unit"
+            android:gravity="center"
+            android:text="00:00:00 "
+            android:textColor="@color/white"
+            android:textSize="@dimen/bigger_text_size" />
+
+        <TextView
+            android:id="@+id/textViewNoMapField4Unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/textViewNoMapField4"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textViewNoMapField4"
+            android:gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@+id/textViewNoMapField4Discription"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/textViewNoMapField4Discription"
+            android:scaleType="fitEnd"
+            android:src="@drawable/down_arrow" />
+    </RelativeLayout>
+    
+    
+    
+    <LinearLayout
+        android:id="@+id/linearLayoutGPSBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/startStopLinearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:background="@color/activity_blue"
+        android:paddingLeft="@dimen/buttons_padding" >
+
+        <TextView
+            android:id="@+id/TextViewGPSAccuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gps_accuracy"
+            android:textColor="@color/white" />
+
+        <com.pwr.zpi.views.GPSSignalDisplayer
+            android:id="@+id/gpsDisplayerNoMapActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            gps:displayType="narrow" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/startStopLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" >
+
+        <Button
+            android:id="@+id/pauseButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/very_small_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/activity_blue"
+            android:clickable="false"
+            android:padding="@dimen/buttons_padding"
+            android:text="@string/pause"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/very_small_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/activity_blue"
+            android:clickable="false"
+            android:padding="@dimen/buttons_padding"
+            android:text="@string/stop"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/resumeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:background="@color/activity_blue"
+        android:padding="@dimen/buttons_padding"
+        android:text="@string/resume"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+</RelativeLayout>
