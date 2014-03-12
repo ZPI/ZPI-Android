@@ -110,7 +110,8 @@ public class SingleRunHistoryActivity extends FragmentActivity implements OnClic
 	}
 	
 	private void mapCenter() {
-		
+		if (mMap == null)
+			return;
 		LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime = run.getTraceWithTime();
 		if (traceWithTime != null)
 		{

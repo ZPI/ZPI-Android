@@ -42,8 +42,8 @@
             chartview:gridLineColor="#E5E5E5"
             chartview:gridLineWidth="1dp"
             chartview:gridLinesHorizontal="5"
-            chartview:gridLinesVertical="5"
-            chartview:leftLabelWidth="40dp" />
+            chartview:gridLinesVertical="4"
+            chartview:leftLabelWidth="50dp" />
 
         <RelativeLayout
             android:id="@+id/progressBarSpeed"
@@ -82,8 +82,8 @@
             chartview:gridLineColor="#E5E5E5"
             chartview:gridLineWidth="1dp"
             chartview:gridLinesHorizontal="5"
-            chartview:gridLinesVertical="5"
-            chartview:leftLabelWidth="40dp" />
+            chartview:gridLinesVertical="4"
+            chartview:leftLabelWidth="50dp" />
 
         <RelativeLayout
             android:id="@+id/progressBarAltitude"
