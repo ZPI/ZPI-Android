@@ -167,6 +167,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		treningPlansLayout = (LinearLayout) findViewById(R.id.treningPlansBar);
 		
 		gpsStatus = GPSServiceStatus.NO_GPS_SIGNAL_INFO;
+		gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
 		
 		setFont();
 		validateTreningPlan();
@@ -469,7 +470,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		DialogFactory.getDialog(DialogsEnum.NoTTSData, this, positive, null).show();
 	}
 	
-	public void showGPSAccuracy(final double accuracy) {
+	private void showGPSAccuracy(final double accuracy) {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {

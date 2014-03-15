@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.internal.av;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -67,7 +69,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	private static final String TAG = ActivityActivity.class.getSimpleName();
 	
 	
-	private static final int MY_REQUEST_CODE = 1;
+	public static final int MY_REQUEST_CODE = 1;
 	public static final String SAVE_TAG = "save";
 	public static final String DISTANCE_TAG = "distance";
 	public static final String AVG_SPEED_TAG = "avg_speed";
@@ -91,14 +93,11 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	private ImageButton workoutDdrawerButton;
 	private TextView DataTextView1;
 	private TextView DataTextView2;
-	private TextView clickedContentTextView;
 	private TextView LabelTextView1;
 	private TextView LabelTextView2;
-	private TextView clickedLabelTextView;
 	private TextView unitTextView1;
 	private TextView unitTextView2;
-	private TextView clickedUnitTextView;
-	private TextView GPSAccuracy;
+	//private TextView GPSAccuracy;
 	private GPSSignalDisplayer gpsDisplayer;
 	private TextView countDownTextView;
 	private LinearLayout startStopLayout;
@@ -126,14 +125,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	private int runNumber;
 	private ActualPaceCalculator actualPaceCalculator;
 	
-	//diplay data changing
-	private int dataTextView1Content;
-	private int dataTextView2Content;
-	private int clickedField;
-	
-	private boolean isPaused;
-	private boolean pausedManually;
-	
+
 	// service data
 	boolean mIsBound;
 	boolean isServiceConnected;
@@ -163,6 +155,11 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		
 		//	Debug.stopMethodTracing();
 	}
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		prepareServiceAndStart();
+	}
 	
 	@Override
 	public void onStart() {
@@ -176,13 +173,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
-	private Workout getWorkoutData() {
-		Intent i = getIntent();
-		
-		Workout workout;
-		workout = i.getParcelableExtra(Workout.TAG);
-		return workout;
-	}
+
 	
 	private void initFields() {
 		stopButton = (Button) findViewById(R.id.stopButton);
@@ -192,7 +183,6 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		workoutDdrawerButton = (ImageButton) findViewById(R.id.imageButtonWorkoutDrawerButton);
 		dataRelativeLayout1 = (RelativeLayout) findViewById(R.id.dataRelativeLayout1);
 		dataRelativeLayout2 = (RelativeLayout) findViewById(R.id.dataRelativeLayout2);
-		GPSAccuracy = (TextView) findViewById(R.id.TextViewGPSAccuracy);
 		gpsDisplayer = (GPSSignalDisplayer) findViewById(R.id.gpsDisplayerActivity);
 		countDownTextView = (TextView) findViewById(R.id.textViewCountDown);
 		startStopLayout = (LinearLayout) findViewById(R.id.startStopLinearLayout);
@@ -243,7 +233,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		if (intent.hasExtra(Workout.TAG)) {
 			// drawer initialization
 			listView.addHeaderView(getLayoutInflater().inflate(R.layout.workout_drawer_list_header, null));
-			workout = getWorkoutData();
+			workout = getWorkoutData(getIntent());
 			workoutCopy = new Workout();
 			List<WorkoutAction> actions = new ArrayList<WorkoutAction>();
 			if (workout.isWarmUp()) {
@@ -284,6 +274,8 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		musicPlayer.setOnClickListener(this);
 		
 		mapCenter.setOnClickListener(this);
+		
+		imageButtonGoToScreen2.setOnClickListener(this); //TODO implement
 		
 		frameLayoutViewOverMap.setOnTouchListener(mapTrackingListener);
 		if (workout != null) {
@@ -334,11 +326,11 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		zoomIn.setOnTouchListener(stateChangedListener);
 		zoomOut.setOnTouchListener(stateChangedListener);
 		mapCenter.setOnTouchListener(stateChangedListener);
+		imageButtonGoToScreen2.setOnTouchListener(stateChangedListener);
 		
 	}
 	
 	private void initDisplayedData() {
-		GPSAccuracy.setText(getMyString(R.string.gps_accuracy));
 		
 		initLabels(DataTextView1, LabelTextView1, dataTextView1Content);
 		initLabels(DataTextView2, LabelTextView2, dataTextView2Content);
@@ -352,89 +344,20 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	
 	@Override
 	protected void onDestroy() {
+		Log.i(TAG, "activityactiviy destroyed");
 		doUnbindService();
-		
 		super.onDestroy();
 	}
 	
-	private void initLabels(TextView textViewInitialValue, TextView textView, int meassuredValue) {
-		switch (meassuredValue) {
-			case distanceID:
-				textView.setText(R.string.distance);
-				textViewInitialValue.setText("0.000");
-				break;
-			case paceID:
-				textView.setText(R.string.pace);
-				textViewInitialValue.setText("0:00");
-				break;
-			case avgPaceID:
-				textView.setText(R.string.pace_avrage);
-				textViewInitialValue.setText("0:00");
-				break;
-			case timeID:
-				textView.setText(R.string.time);
-				textViewInitialValue.setText("00:00:00");
-				break;
-		}
-		
-	}
-	
-	private void updateLabels(int meassuredValue, TextView labelTextView, TextView unitTextView,
-		TextView contentTextView) {
-		switch (meassuredValue) {
-			case distanceID:
-				labelTextView.setText(R.string.distance);
-				unitTextView.setText(R.string.km);
-				break;
-			case paceID:
-				labelTextView.setText(R.string.pace);
-				unitTextView.setText(R.string.minutes_per_km);
-				break;
-			case avgPaceID:
-				labelTextView.setText(R.string.pace_avrage);
-				unitTextView.setText(R.string.minutes_per_km);
-				break;
-			case timeID:
-				labelTextView.setText(R.string.time);
-				unitTextView.setText(R.string.empty_string);
-				break;
-		}
-		
-		updateData(contentTextView, meassuredValue);
-	}
+
 	
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		showAlertDialog();
+		showAlertDialog(isServiceConnected,api,this,distance,time,runNumber);
 	}
 	
-	private void showAlertDialog() {
-		DialogInterface.OnClickListener positiveButtonHandler = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				
-				try {
-					if (isServiceConnected) {
-						api.setStoped();
-					}
-				}
-				catch (RemoteException e) {
-					Log.e(TAG, "Failed to tell that activity is stoped", e);
-				}
-				Intent intent = new Intent(ActivityActivity.this, AfterActivityActivity.class);
-				intent.putExtra(DURATION_TAG, time);
-				intent.putExtra(DISTANCE_TAG, distance);
-				double pace = avgPace = ((double) time / 60) / distance;
-				intent.putExtra(AVG_PACE_TAG, pace);
-				intent.putExtra(RUN_NUMBER_TAG, runNumber);
-				
-				startActivityForResult(intent, MY_REQUEST_CODE);
-			}
-		};
-		MyDialog.showAlertDialog(this, R.string.dialog_message_on_stop, R.string.empty_string, android.R.string.yes,
-			android.R.string.no, positiveButtonHandler, null);
-	}
+
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -476,7 +399,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 					progressDialogDisplayed = true;
 					
 					lostGPSDialog = ProgressDialog.show(ActivityActivity.this,
-						getResources().getString(R.string.dialog_message_on_lost_gpsp), null); // TODO strings
+						getResources().getString(R.string.dialog_message_on_lost_gpsp), null); 
 					lostGPSDialog.setCancelable(true);
 					
 				}
@@ -489,7 +412,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		
 		switch (v.getId()) {
 			case R.id.stopButton:
-				showAlertDialog();
+				showAlertDialog(isServiceConnected,api,this,distance,time,runNumber);
 				break;
 			case R.id.pauseButton:
 				pausedManually = true;
@@ -503,14 +426,14 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 				clickedLabelTextView = LabelTextView1;
 				clickedUnitTextView = unitTextView1;
 				clickedField = 1;
-				showMeassuredValuesMenu();
+				showMeassuredValuesMenu(distance,time,pace,avgPace);
 				break;
 			case R.id.dataRelativeLayout2:
 				clickedContentTextView = DataTextView2;
 				clickedLabelTextView = LabelTextView2;
 				clickedUnitTextView = unitTextView2;
 				clickedField = 2;
-				showMeassuredValuesMenu();
+				showMeassuredValuesMenu(distance,time,pace,avgPace);
 				break;
 			case R.id.imageButtonWorkoutDrawerButton:
 				boolean isOpen = drawerLayout.isDrawerOpen(Gravity.LEFT);
@@ -543,11 +466,13 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 					mapTrackingListener.setMapTracking(true);
 				}
 				break;
+			case R.id.imageButtonGoToActivityNoMap:
+				start2Screen();
 		}
 		
 	}
-	
-	private void pauseRun() {
+	@Override
+	protected void pauseRun() {
 		handlerForService.post(new Runnable() {
 			@Override
 			public void run() {
@@ -577,8 +502,8 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 			}
 		});
 	}
-	
-	private void resumeRun() {
+	@Override
+	protected void resumeRun() {
 		handlerForService.post(new Runnable() {
 			@Override
 			public void run() {
@@ -598,66 +523,6 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 				}
 			}
 		});
-	}
-	
-	private String getMyString(int stringId) {
-		return getResources().getString(stringId);
-	}
-	
-	private void showMeassuredValuesMenu() {
-		// chcia�em zrobi� tablice w stringach, ale potem zobaczy�em, �e
-		// ju� mam
-		// te wszystkie nazwy i teraz nie wiem czy tamto zmienia� w tablic�
-		// czy
-		// nie ma sensu
-		// kolejno�� w tablicy musi odpowiada� nr ID, tzn 0 - dystans itp.
-		
-		final CharSequence[] items = { getMyString(R.string.distance), getMyString(R.string.pace),
-			getMyString(R.string.pace_avrage), getMyString(R.string.time) };
-		DialogInterface.OnClickListener itemsHandler = new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int item) {
-				updateLabels(item, clickedLabelTextView, clickedUnitTextView, clickedContentTextView);
-				if (clickedField == 1) {
-					dataTextView1Content = item;
-				}
-				else {
-					dataTextView2Content = item;
-				}
-			}
-		};
-		MyDialog.showAlertDialog(this, R.string.dialog_choose_what_to_display, R.string.empty_string,
-			R.string.empty_string, R.string.empty_string, null, null, items, itemsHandler);
-	}
-	
-	// update display
-	protected void updateData(final TextView textBox, final int meassuredValue) {
-		
-		switch (meassuredValue) {
-			case distanceID:
-				textBox.setText(String.format("%.3f", distance / 1000));
-				break;
-			case paceID:
-				if (pace < 30) {
-					textBox.setText(TimeFormatter.formatTimeMMSSorHHMMSS(pace));
-				}
-				else {
-					textBox.setText(getResources().getString(R.string.dashes));
-				}
-				break;
-			case avgPaceID:
-				if (avgPace < 30) {
-					textBox.setText(TimeFormatter.formatTimeMMSSorHHMMSS(avgPace));
-				}
-				else {
-					textBox.setText(getResources().getString(R.string.dashes));
-				}
-				break;
-			case timeID:
-				textBox.setText(TimeFormatter.formatTimeHHMMSS(time));
-				break;
-		}
-		
 	}
 	
 	// count everything with 2 last location points
@@ -719,7 +584,8 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	}
 	
 	// this runs on every update
-	private void updateGpsInfo(final Location newLocation) {
+	@Override
+	protected void updateGpsInfo(final Location newLocation) {
 		autoPauseIfEnabled(newLocation);
 		handlerForService.post(new Runnable() {
 			
@@ -739,8 +605,8 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 							countData(newLocation, mLastLocation);
 						}
 						
-						updateData(DataTextView1, dataTextView1Content);
-						updateData(DataTextView2, dataTextView2Content);
+						updateData(DataTextView1, dataTextView1Content,distance,pace,time,avgPace);
+						updateData(DataTextView2, dataTextView2Content,distance,pace,time,avgPace);
 					}
 				}
 				else if (newLocation.getAccuracy() >= LocationService.REQUIRED_ACCURACY) {
@@ -753,20 +619,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 				mLastLocation = newLocation;
 			}
 		});
-		
 	}
-	
-	//	private void drawUserPosition(LatLng position)
-	//	{ 
-	//		Marker positionMarker = mMap.addMarker(new MarkerOptions()
-	//        .position(position)
-	//        .flat(true));
-	//
-	//		LatLng PERTH = new LatLng(-31.90, 115.86);
-	//		Marker perth = mMap.addMarker(new MarkerOptions()
-	//		                          .position(PERTH).
-	//		                          .flat(true));
-	//	}
 	
 	private void autoPauseIfEnabled(Location newLocation) {
 		if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.key_auto_pause), false)) {
@@ -794,7 +647,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			showAlertDialog();
+			showAlertDialog(isServiceConnected,api,this,distance,time,runNumber);
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -809,11 +662,10 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		//intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 		bindService(intent, serviceConnection, 0);
 		mIsBound = true;
-		
 	}
 	
 	private void doUnbindService() {
-		Log.i("Service_info", "Activity Unbinding");
+		Log.i("Service_info", "ActivityActivity Unbinding");
 		if (mIsBound) {
 			try {
 				api.removeListener(runListener);
@@ -903,8 +755,7 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 				
 				@Override
 				public void run() {
-					gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
-					
+					gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);					
 				}
 			});
 			
@@ -962,13 +813,13 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 			
 			@Override
 			public void run() {
-				updateData(DataTextView1, dataTextView1Content);
-				updateData(DataTextView2, dataTextView2Content);
+				updateData(DataTextView1, dataTextView1Content, distance, pace, time, avgPace);
+				updateData(DataTextView2, dataTextView2Content, distance, pace, time, avgPace);
 			}
 		});
 	}
-	
-	private void handleTimeUpdates() {
+	@Override
+	protected void handleTimeUpdates() {
 		try {
 			time = api.getTime();
 			updateViewsAfterTimeChange();
@@ -1018,4 +869,14 @@ public class ActivityActivity extends AbstractActivityActivity implements OnClic
 		startActivity(i);
 	}
 	
+	private void start2Screen()
+	{
+		Intent i = new Intent(ActivityActivity.this, ActivityNoMapActivity.class);
+		if (workout!=null)
+			i.putExtra(Workout.TAG, workout);
+		i.putExtra(RUN_NUMBER_TAG, runNumber);
+		finish();
+		startActivity(i);
+		overridePendingTransition(R.anim.in_left_anim, R.anim.out_left_anim);
+	}
 }

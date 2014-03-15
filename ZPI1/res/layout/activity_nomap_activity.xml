@@ -4,13 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <ImageButton
+        android:id="@+id/imageButtonGoToActivityActivity"
+        android:layout_width="@dimen/activity_button_size"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/linearLayoutNoMapField3_4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/linearLayoutNoMapField3_4"
+        android:layout_margin="@dimen/very_small_margin"
+        android:background="@color/activity_blue"
+        android:src="@drawable/map_icon" />
+
     <LinearLayout
         android:id="@+id/linearLayoutNoMapField1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayoutNoMapField2" >
 
-        <include  
-			android:id="@+id/layoutNoMapField1"
+        <include
+            android:id="@+id/layoutNoMapField1"
             layout="@layout/big_data_field" />
     </LinearLayout>
 
@@ -18,35 +30,36 @@
         android:id="@+id/linearLayoutNoMapField2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayoutNoMapField1" >
+        android:layout_above="@id/linearLayoutNoMapField3_4" >
 
-        <include 
+        <include
             android:id="@+id/layoutNoMapField2"
             layout="@layout/big_data_field" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </View>
+ <!-- Z jakiegoś powodu bez tego nie działa.... -->
+
     <LinearLayout
-        android:id="@+id/linearLayoutNoMapField3"
+        android:id="@+id/linearLayoutNoMapField3_4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayoutNoMapField2" >
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/imageButtonGoToActivityActivity"
+        android:orientation="vertical" >
 
-        <include 
+        <include
             android:id="@+id/layoutNoMapField3"
             layout="@layout/big_data_field" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/linearLayoutNoMapField4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/linearLayoutNoMapField3" >
 
-        <include 
+        <include
             android:id="@+id/layoutNoMapField4"
             layout="@layout/big_data_field" />
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/linearLayoutGPSBar"
         android:layout_width="match_parent"
@@ -120,12 +133,13 @@
         android:textColor="@color/white"
         android:visibility="gone" />
 
-    <ImageButton
-        android:id="@+id/imageButtonGoToActivityActivity"
+    <TextView
+        android:id="@+id/textViewActivityNoMapCountDown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/activity_button_background" />
+        android:textColor="@color/count_down_timer_color"
+        android:textSize="@dimen/count_down_timer_size" />
 
 </RelativeLayout>
