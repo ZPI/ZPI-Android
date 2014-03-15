@@ -120,25 +120,28 @@ public class TimeHandlers implements ICountDownListner {
 				soundsPlayer.play();
 				break;
 			case COUNTER_WARM_UP:
-				info.processWorkout();
-				Iterator<RunListener> it = listeners.iterator();
-				info.updateTime();
-				while (it.hasNext()) {
-					RunListener listener = it.next();
-					try {
-						listener.handleTimeChange();
-						listener.handleWorkoutChange(info.getWorkout(), info.isFirstTime());
-						handler.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								info.setIsFirstTime(false);
-							}
-						});
-						Log.i(TAG, listeners.size() + "");
-					}
-					catch (RemoteException e) {
-						Log.w(TAG, "Failed to tell listener about workout update", e);
+				if (!info.isStatePaused())
+				{
+					info.processWorkout();
+					Iterator<RunListener> it = listeners.iterator();
+					info.updateTime();
+					while (it.hasNext()) {
+						RunListener listener = it.next();
+						try {
+							listener.handleTimeChange();
+							listener.handleWorkoutChange(info.getWorkout(), info.isFirstTime());
+							handler.post(new Runnable() {
+								
+								@Override
+								public void run() {
+									info.setIsFirstTime(false);
+								}
+							});
+							Log.i(TAG, listeners.size() + "");
+						}
+						catch (RemoteException e) {
+							Log.w(TAG, "Failed to tell listener about workout update", e);
+						}
 					}
 				}
 				break;

@@ -51,6 +51,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ActivityNoMapActivity"
+            android:configChanges="orientation"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".HistoryActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />

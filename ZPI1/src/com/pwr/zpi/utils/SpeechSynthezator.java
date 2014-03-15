@@ -9,6 +9,7 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 import android.util.Log;
 
 import com.pwr.zpi.R;
+import com.pwr.zpi.utils.AssetsPlayer.AssetsMp3Files;
 
 /**
  * this class should be initializated only once and then referenced by static
@@ -22,9 +23,10 @@ public class SpeechSynthezator implements OnInitListener {
 	public TextToSpeech mTts;
 	private boolean initialized = false;
 	private boolean canSpeak = true;
+	private final Context context;
 	
 	public SpeechSynthezator(Context context) {
-		
+		this.context = context;
 		canSpeak = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
 			context.getResources().getString(R.string.key_aplication_sound), false);
 		mTts = new TextToSpeech(context, this);
@@ -53,9 +55,16 @@ public class SpeechSynthezator implements OnInitListener {
 	
 	public void say(String textToSay) {
 		Log.i(TAG, "realy almost there to say");
+		
 		if (canSpeak()) {
 			Log.i(TAG, "Should say now!");
 			mTts.speak(textToSay, TextToSpeech.QUEUE_ADD, null);
+		}
+		else
+		{
+			//play beep for people without speach syntezator
+			AssetsPlayer beepPlayer = new AssetsPlayer(context, AssetsMp3Files.Beep);
+			beepPlayer.play();
 		}
 	}
 	

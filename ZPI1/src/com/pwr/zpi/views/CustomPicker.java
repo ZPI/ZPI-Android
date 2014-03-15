@@ -137,6 +137,11 @@ public class CustomPicker extends RelativeLayout implements OnClickListener, OnL
 		displayEditText.setText(String.format("%0" + digitsNumber + "d", value));
 	}
 	
+	public void setMax(int max)
+	{
+		this.max = max;
+	}
+	
 	public int getValue() {
 		return value;
 	}

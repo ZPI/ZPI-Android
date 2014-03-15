@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/editTextChangeNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin" >
+
+        <Button
+            android:id="@+id/buttonChangeNameDialogOkButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/workouts_white_button_background"
+            android:padding="@dimen/buttons_bigger_padding"
+            android:text="@string/ok_caps"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonChangeNameDialogCancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/workouts_white_button_background"
+            android:padding="@dimen/buttons_bigger_padding"
+            android:text="@string/cancel_caps"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

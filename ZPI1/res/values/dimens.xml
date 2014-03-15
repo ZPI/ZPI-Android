@@ -34,18 +34,19 @@
     <dimen name="history_button_margin">75dp</dimen>
     <dimen name="pull_view_top_marrgin">35dp</dimen>
     <dimen name="pull_name_right_margin">-15dp</dimen>
-	<dimen name="pull_right_margin">-5dp</dimen>
-	<dimen name="run_summary_margin">42dp</dimen>
-	<dimen name="map_change_size_margin">-5dp</dimen>
+    <dimen name="pull_right_margin">-5dp</dimen>
+    <dimen name="run_summary_margin">42dp</dimen>
+    <dimen name="map_change_size_margin">-5dp</dimen>
 
     <!-- paddings -->
     <dimen name="buttons_padding">8dp</dimen>
     <dimen name="buttons_bigger_padding">11dp</dimen>
-    
+
     <!-- text sizes -->
     <dimen name="small_text_size">11sp</dimen>
     <dimen name="medium_text_size">17sp</dimen>
     <dimen name="big_text_size">32sp</dimen>
+    <dimen name="bigger_text_size">40sp</dimen>
     <dimen name="large_text_size">22sp</dimen>
 
 </resources>

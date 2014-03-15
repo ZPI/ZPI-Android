@@ -95,7 +95,17 @@
     <string name="settings_caps">SETTINGS</string>
     <string name="actions_caps">ACTIONS</string>
     <string name="name_caps">NAME</string>
+    <string name="generate_repeats">Generate Repeats</string>
+    <string name="no_actions">No actions to repeat</string>
+    <string name="no_pause">Sorry, pause is not available during worm up yet</string>
 
+    <!-- repeats dialog -->
+    <string name="repeats_dialog_title">Repeat:</string>
+    <string name="from_action">From Action:</string>
+    <string name="to_action">To Action</string>
+    <string name="how_many_times">How Many Times:</string>
+    <string name="ok_caps">OK</string>
+    <string name="cancel_caps">CANCEL</string>
     <!--history -->
     <string name="Annotations">Annotations</string>
     <string name="history">History</string>
@@ -116,6 +126,10 @@
     <!-- context menu -->
     <string name="menu_ctx_actions">Actions</string>
     <string name="delete_action">Delete</string>
+    <string name="change_name">Change Name</string>
+    
+    <!-- change name dialog -->
+    <string name="new_name">New Name</string>
 
     <!-- other -->
     <string name="empty_string"></string>
@@ -188,7 +202,7 @@
 
     <!-- about application -->
     <string name="version_title">Version</string>
-    <string name="version">Run 42K ver. 1.0</string>
+    <string name="version">Run 42K ver. 1.2</string>
     <string name="about_title">About</string>
     <string name="about">This application was developed by \n Jakub Skudlarski and Marek Kresnicki. \n Run safe and beat all records.</string>
 

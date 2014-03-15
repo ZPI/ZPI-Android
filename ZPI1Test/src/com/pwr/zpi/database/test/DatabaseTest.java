@@ -66,7 +66,6 @@ public class DatabaseTest extends AndroidTestCase {
 	private Workout prepareWorkout(int number) {
 		Workout workout = new Workout();
 		workout.setName("Workout " + number);
-		workout.setRepeatCount(number);
 		workout.setWarmUp(number % 2 == 0);
 		workout.setActions(prepareActions(number));
 		return workout;
@@ -150,7 +149,6 @@ public class DatabaseTest extends AndroidTestCase {
 	
 	private void checkSimpleWorkout(Workout w, int i) {
 		assertEquals("Workout " + i, w.getName());
-		assertEquals(i, w.getRepeatCount());
 		assertEquals(i % 2 == 0, w.isWarmUp());
 	}
 	
@@ -162,7 +160,7 @@ public class DatabaseTest extends AndroidTestCase {
 		
 		for (Workout workout : workouts) {
 			Workout w = db.getWholeSingleWorkout(workout.getID());
-			int creationI = w.getRepeatCount();// repeat count points the
+			int creationI = 1;// repeat count points the
 			// creation i number
 			checkSimpleWorkout(w, creationI);
 			checkActions(w.getActions(), creationI);

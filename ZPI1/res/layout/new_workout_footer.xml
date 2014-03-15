@@ -94,54 +94,25 @@
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:background="@color/gray_background" />
 
-        <RelativeLayout
-            android:id="@+id/RelativeLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="@dimen/activity_vertical_margin" >
 
-            <TextView
-                android:id="@+id/TextViewWorkoutRepeatLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/customPickerRepeat"
-                android:layout_centerVertical="true"
-                android:text="@string/repeat"
-                android:textSize="@dimen/large_text_size"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <com.pwr.zpi.views.CustomPicker
-                android:id="@+id/customPickerRepeat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                app:editTextVisibility="gone"
-                app:maxValue="99"
-                app:minValue="1"
-                app:orientation="horizontal" >
-            </com.pwr.zpi.views.CustomPicker>
-
-            <TextView
-                android:id="@+id/TextViewNewWorkoutRepeatValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/TextViewWorkoutRepeatLabel"
-                android:layout_toLeftOf="@+id/customPickerRepeat"
-                android:text="@string/times"
-                android:layout_marginRight="@dimen/small_margin"
-                android:textSize="@dimen/large_text_size"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-        </RelativeLayout>
     </LinearLayout>
 
+    <Button
+        android:id="@+id/buttonWorkoutGenerateRepeats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
+        android:background="@drawable/workouts_white_button_background"
+        android:padding="@dimen/buttons_bigger_padding"
+        android:text="@string/generate_repeats"
+        android:textSize="@dimen/large_text_size"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/main_color"
+        android:textStyle="bold" />
     <Button
         android:id="@+id/buttonWorkoutAdd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_bigger_vertical_margin"
         android:background="@drawable/workouts_white_button_background"
         android:padding="@dimen/buttons_bigger_padding"
         android:text="@string/add_workout"

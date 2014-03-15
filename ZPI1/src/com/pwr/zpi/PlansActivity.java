@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.database.entity.TreningPlan;
@@ -77,6 +78,18 @@ public class PlansActivity extends FragmentActivity implements OnClickListener {
 		new LoadCalendar().execute(pair);
 		
 		addListeners();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void addListeners() {

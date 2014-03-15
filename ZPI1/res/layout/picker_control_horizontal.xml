@@ -7,14 +7,9 @@
     android:gravity="center"
     android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/picker_plus"
-        android:layout_width="@dimen/picker_button_height"
-        android:layout_height="@dimen/picker_button_height"
-        android:layout_gravity="center"
-        android:background="@drawable/plus_sign_drawable" />
 
-    <EditText
+
+    <Button android:id="@+id/picker_minus" android:layout_width="@dimen/picker_button_height" android:layout_height="@dimen/picker_button_height" android:layout_gravity="center" android:background="@drawable/minus_sign_drawable" /><EditText
         android:id="@+id/picker_display"
         android:layout_width="@dimen/picker_edit_text_width"
         android:layout_height="@dimen/picker_edit_text_height"
@@ -23,12 +18,13 @@
         android:textSize="@dimen/medium_text_size"
         android:singleLine="true" >
     </EditText>
-
-    <Button
-        android:id="@+id/picker_minus"
+        <Button
+        android:id="@+id/picker_plus"
         android:layout_width="@dimen/picker_button_height"
         android:layout_height="@dimen/picker_button_height"
         android:layout_gravity="center"
-        android:background="@drawable/minus_sign_drawable" />
+        android:background="@drawable/plus_sign_drawable" />
+
+    
 
 </LinearLayout>

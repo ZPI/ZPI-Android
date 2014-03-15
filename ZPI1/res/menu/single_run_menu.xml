@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/menu_button_export" android:title="@string/export"></item>
+    <item android:id="@+id/menu_button_remove" android:title="@string/delete_action"></item>
+    <item android:id="@+id/menu_button_change_name" android:title="@string/change_name"></item>
     
 
 </menu>

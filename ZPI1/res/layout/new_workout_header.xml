@@ -38,7 +38,6 @@
         android:paddingRight="@dimen/activity_vertical_margin"
         android:paddingTop="@dimen/buttons_padding" >
 
-        <requestFocus />
     </EditText>
 
     <TextView

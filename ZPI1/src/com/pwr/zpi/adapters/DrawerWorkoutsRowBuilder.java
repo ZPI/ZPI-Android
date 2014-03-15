@@ -113,7 +113,9 @@ public class DrawerWorkoutsRowBuilder extends RowBuilder<WorkoutAction> {
 			}
 			else {
 				rowHolder.actionTextAdvanced.setText(workout.getHowMuchLeftCurrentActionStringWithUnits());
-				rowHolder.actionTextAdvanced.setBackgroundColor(context.getResources().getColor(textColor));
+				if (action.isAdvanced()) {
+					rowHolder.actionTextAdvanced.setBackgroundColor(context.getResources().getColor(textColor));
+				}
 			}
 		}
 		else {

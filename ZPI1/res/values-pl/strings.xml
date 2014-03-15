@@ -93,7 +93,17 @@
     <string name="settings_caps">USTAWIENIA</string>
     <string name="actions_caps">AKCJE</string>
     <string name="name_caps">NAZWA</string>
+    <string name="generate_repeats">Generuj Powtórzenia</string>
+    <string name="no_actions">Brak akcji do powtórzenia</string>
+    <string name="no_pause">Przepraszamy, nie można jeszcze dać pauzy podczas rozgrzewki</string>
 
+     <!-- repeats dialog -->
+    <string name="repeats_dialog_title">Powtórz:</string>
+    <string name="from_action">Od Akcji:</string>
+    <string name="to_action">Do Akcji:</string>
+    <string name="how_many_times">Ile Razy:</string>
+    <string name="cancel_caps">ANULUJ</string>
+    
     <!--history -->
     <string name="Annotations">Znaczniki</string>
     <string name="history">Historia</string>
@@ -114,7 +124,11 @@
     <!-- context menu -->
     <string name="menu_ctx_actions">Akcje</string>
     <string name="delete_action">Usuń</string>
+    <string name="change_name">Zmień Nazwę</string>
 
+        <!-- change name dialog -->
+    <string name="new_name">Nowa Nazwa</string>
+    
     <!-- other -->
     <string name="empty_string"></string>
     <string name="no_history_info">Brak historii aktywności</string>

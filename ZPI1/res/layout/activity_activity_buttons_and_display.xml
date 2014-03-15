@@ -245,5 +245,13 @@
         android:layout_marginBottom="@dimen/very_small_margin"
         android:background="@color/activity_blue"
         android:src="@drawable/ic_gps_arrow" />
+
+	<ImageButton
+	    android:id="@+id/imageButtonGoToActivityNoMap"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_centerVertical="true"
+	    android:src="@drawable/activity_button_background" />
      
 </RelativeLayout>

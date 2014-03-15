@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.adapters.GenericBaseAdapter;
@@ -45,7 +46,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 	private Button editThisWorkoutButton;
 	private TextView workoutNameTextView;
 	private AdapterContextMenuInfo info;
-	private TextView repeatsTextView;
 	private TextView warmUpTextView;
 	private ArrayList<WorkoutAction> actions;
 	private static final int MY_REQUEST_CODE_EDIT = 1;
@@ -57,6 +57,18 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		initFields();
 		addListeners();
 		super.onCreate(savedInstanceState);
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void initFields() {
@@ -75,12 +87,10 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 		
 		addThisWorkoutButton = (Button) header.findViewById(R.id.ButtonChooseWorkout);
 		workoutNameTextView = (TextView) header.findViewById(R.id.textViewWorkoutName);
-		repeatsTextView = (TextView) footer.findViewById(R.id.textViewWrokoutActivityRepeat);
 		warmUpTextView = (TextView) footer.findViewById(R.id.textViewWorkoutActivityWarmUp);
 		editThisWorkoutButton = (Button) footer.findViewById(R.id.buttonWorkoutEdit);
 		
 		workoutNameTextView.setText(workout.getName());
-		repeatsTextView.setText(workout.getRepeatCount() + "");
 		warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
 		
 		registerForContextMenu(actionsListView);
@@ -191,7 +201,6 @@ public class WorkoutActivity extends Activity implements GestureListener, OnItem
 					actions.clear();
 					actions.addAll(workout.getActions());
 					actionsAdapter.notifyDataSetChanged();
-					repeatsTextView.setText(workout.getRepeatCount() + "");
 					warmUpTextView.setText(workout.isWarmUp() ? R.string.yes : R.string.no);
 					Database db = new Database(this);
 					db.updateWorkout(workout);

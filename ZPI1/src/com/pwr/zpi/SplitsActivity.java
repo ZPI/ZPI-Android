@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.adapters.AdapterFactory;
 import com.pwr.zpi.adapters.AdapterFactory.AdapterType;
 import com.pwr.zpi.database.Database;
@@ -32,6 +33,18 @@ public class SplitsActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.splits_activity);
 		
 		init();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void init() {

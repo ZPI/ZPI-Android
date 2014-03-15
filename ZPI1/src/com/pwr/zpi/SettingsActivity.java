@@ -13,6 +13,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.pwr.zpi.listeners.GestureListener;
 import com.pwr.zpi.listeners.MyGestureDetector;
 import com.pwr.zpi.mock.TreningPlans;
@@ -35,6 +36,18 @@ public class SettingsActivity extends PreferenceActivity implements GestureListe
 		addListeners();
 		
 		disableReminderIfPlanSet();
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
 	}
 	
 	private void disableReminderIfPlanSet() {

@@ -22,7 +22,7 @@ public class RunInfo {
 	
 	private ArrayList<Location> locationList;
 	private LinkedList<LinkedList<Pair<Location, Long>>> traceWithTime;
-	private final SpeechSynthezator speechSynthezator;
+	private SpeechSynthezator speechSynthezator;
 	private SingleRun singleRun;
 	private Calendar calendar;
 	private final Context context;
@@ -241,5 +241,10 @@ public class RunInfo {
 			workout.getOnNextActionListener().setSyntezator(speechSynthezator);
 			workout.progressWorkout(getDistance(), getTime());
 		}
+	}
+	
+	public void setSpeechSynthezator(SpeechSynthezator speechSynthezator)
+	{
+		this.speechSynthezator = speechSynthezator;
 	}
 }

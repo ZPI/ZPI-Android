@@ -17,6 +17,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.pwr.zpi.database.Database;
@@ -134,6 +136,18 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);  // Add this method.
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);  // Add this method.
+	}
+	
 	private void init() {
 		isServiceConnected = false;
 		
@@ -153,9 +167,11 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		treningPlansLayout = (LinearLayout) findViewById(R.id.treningPlansBar);
 		
 		gpsStatus = GPSServiceStatus.NO_GPS_SIGNAL_INFO;
+		gpsDisplayer.updateStrengthSignal(Double.MAX_VALUE);
 		
 		setFont();
 		validateTreningPlan();
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
 	}
 	
 	private void setFont() {
@@ -454,7 +470,7 @@ public class MainScreenActivity extends FragmentActivity implements GestureListe
 		DialogFactory.getDialog(DialogsEnum.NoTTSData, this, positive, null).show();
 	}
 	
-	public void showGPSAccuracy(final double accuracy) {
+	private void showGPSAccuracy(final double accuracy) {
 		handler.post(new Runnable() {
 			@Override
 			public void run() {

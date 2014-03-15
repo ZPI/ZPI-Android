@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gps="http://schemas.android.com/apk/res/com.pwr.zpi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:id="@+id/imageButtonGoToActivityActivity"
+        android:layout_width="@dimen/activity_button_size"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/linearLayoutNoMapField3_4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/linearLayoutNoMapField3_4"
+        android:layout_margin="@dimen/very_small_margin"
+        android:background="@color/activity_blue"
+        android:src="@drawable/map_icon" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutNoMapField1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayoutNoMapField2" >
+
+        <include
+            android:id="@+id/layoutNoMapField1"
+            layout="@layout/big_data_field" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutNoMapField2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayoutNoMapField3_4" >
+
+        <include
+            android:id="@+id/layoutNoMapField2"
+            layout="@layout/big_data_field" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </View>
+ <!-- Z jakiegoś powodu bez tego nie działa.... -->
+
+    <LinearLayout
+        android:id="@+id/linearLayoutNoMapField3_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/imageButtonGoToActivityActivity"
+        android:orientation="vertical" >
+
+        <include
+            android:id="@+id/layoutNoMapField3"
+            layout="@layout/big_data_field" />
+
+        <include
+            android:id="@+id/layoutNoMapField4"
+            layout="@layout/big_data_field" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutGPSBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayoutNoMapStartStop"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:background="@color/activity_blue"
+        android:paddingLeft="@dimen/buttons_padding" >
+
+        <TextView
+            android:id="@+id/TextViewGPSAccuracy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gps_accuracy"
+            android:textColor="@color/white" />
+
+        <com.pwr.zpi.views.GPSSignalDisplayer
+            android:id="@+id/gpsDisplayerNoMapActivity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            gps:displayType="narrow" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutNoMapStartStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" >
+
+        <Button
+            android:id="@+id/buttonNoMapPause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/very_small_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/activity_blue"
+            android:clickable="false"
+            android:padding="@dimen/buttons_padding"
+            android:text="@string/pause"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/buttonNoMapStop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/very_small_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_weight="1"
+            android:background="@color/activity_blue"
+            android:clickable="false"
+            android:padding="@dimen/buttons_padding"
+            android:text="@string/stop"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonNoMapResume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:background="@color/activity_blue"
+        android:padding="@dimen/buttons_padding"
+        android:text="@string/resume"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewActivityNoMapCountDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/count_down_timer_color"
+        android:textSize="@dimen/count_down_timer_size" />
+
+</RelativeLayout>
